@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 19 | 199 | 89 | 307 |
+| Core | 20 | 198 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 19 | 199 | 98 | 316 |
+| Full target | 20 | 198 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-001 was exercised through its registered native segment and mixed-channel review journeys from the code and tests at commit `650e7ab7e6f6aaccc2d6f625a915dc6d71103df8` (5 November 2026); this status candidate retains those source and test bytes. Native SMS snapshot evidence establishes review counts without claiming live transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -106,7 +106,7 @@ Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 
 #### OPER-003 — Removal does not rewrite history
 
-Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
+Core · published · **done** · Cites BASE-ACCESS-002, BASE-AUDIT-001
 
 **Requirement.** Removing an operator preserves Mango’s authorship and decision history.
 
@@ -115,8 +115,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
 2. Campaign approvals, revisions, approval requests, transitions and audit entries retain the removed author’s and approver’s identity.
 3. Review, campaign detail and activity expose that retained attribution at desktop and phone widths.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every proposal remains attributed to the removed operator.. Missing public-door journey: “Removal does not rewrite history — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: successful, dismissed, provider-failed and rejected-output proposals retain independently expected generation and decision actors, original detail and persisted transitions after authorized removal and repeated reads; fresh-proof refusal and revoked-session reads and writes. `tests/go-live/roles.journeys.ts` — “roles govern native requests and removal retains authors, approvers and history”: approvals, revisions, approval requests, transitions and audits retain authors and approvers; review, campaign detail and filtered activity expose those names at 1440 and 390.
+**Gap.** None.
 
 ### Store signals
 
