@@ -1,16 +1,16 @@
 {
-  "utc": "2026-11-06T02:15:43.037087+00:00",
+  "utc": "2026-11-06T02:19:09.952892+00:00",
   "source": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
   "selected": [
     {
-      "path": "REPORT.md",
-      "bytes": 21433,
-      "sha256": "71ae978f4f12b45af3c28dad8691133db25b5ecbd2698b602b277d9d1b4453df"
+      "path": "COMMANDS.json",
+      "bytes": 4203,
+      "sha256": "3c82845695d0d0aa3626e5532c318cffe0f6c7a9ff3133c630223d98006e2bd0"
     },
     {
-      "path": "VERDICT.md",
-      "bytes": 21433,
-      "sha256": "71ae978f4f12b45af3c28dad8691133db25b5ecbd2698b602b277d9d1b4453df"
+      "path": "INTEGRITY-RECEIPT.json",
+      "bytes": 4420,
+      "sha256": "4eb55d79589fb37f7364ca9ffc1cf5c9cebcdb75f7f53c0592eebf4230ede9c5"
     },
     {
       "path": "PLAN.md",
@@ -18,9 +18,9 @@
       "sha256": "546e85c1469630c44602e96d956dfb084b1c0338ceee987a44ab52d16582132c"
     },
     {
-      "path": "COMMANDS.json",
-      "bytes": 3215,
-      "sha256": "634e2a98fce175bb9a89412cbd3d5806e344849a0077f4a893634913bc7a2fd2"
+      "path": "REPORT.md",
+      "bytes": 22254,
+      "sha256": "714be33f27091731c171784942fd3b4a0350d6904c5c959411a183fe7923a205"
     },
     {
       "path": "SOURCE-RECEIPT.json",
@@ -28,9 +28,34 @@
       "sha256": "20cf22ef6fa8acdbd605bbcb955ba6988a89c697c1ce5b39cd53d09d526e421e"
     },
     {
-      "path": "INTEGRITY-RECEIPT.json",
-      "bytes": 4420,
-      "sha256": "4eb55d79589fb37f7364ca9ffc1cf5c9cebcdb75f7f53c0592eebf4230ede9c5"
+      "path": "VERDICT.md",
+      "bytes": 22254,
+      "sha256": "714be33f27091731c171784942fd3b4a0350d6904c5c959411a183fe7923a205"
+    },
+    {
+      "path": "browser-command.mjs",
+      "bytes": 5251,
+      "sha256": "5ddfef23de161585cd0fd1f0f90fd926ead27ecb3f3acf8068b4ddf7b7c1bc73"
+    },
+    {
+      "path": "browser-receipt.json",
+      "bytes": 934,
+      "sha256": "3cbb75686baa3b13e387e2dec4e9cc4fa04b06b2434df42828360ef1b9820cf6"
+    },
+    {
+      "path": "cleanup-receipt.json",
+      "bytes": 906,
+      "sha256": "cde3dcae9a1f47cfbc80bc4ba67744c8ee283e50a64762c1e4a16396257229fe"
+    },
+    {
+      "path": "initial-evidence-publication.log",
+      "bytes": 3344,
+      "sha256": "fe3d6c3332a974e654ea1cfdb6ee9a2661df449836db969bc2da8522ae935151"
+    },
+    {
+      "path": "initial-evidence-roundtrip.json",
+      "bytes": 3396,
+      "sha256": "e9eff5e4d49f2fecf88b22c25eaebd3b08133f0143817f76275ffd2f6668b2fb"
     },
     {
       "path": "journey-receipt.json",
@@ -48,14 +73,14 @@
       "sha256": "972dc44b3ef22a037890fa5b301d67a1e427afd77011cdb2614c3883e61c67a2"
     },
     {
-      "path": "browser-command.mjs",
-      "bytes": 5251,
-      "sha256": "5ddfef23de161585cd0fd1f0f90fd926ead27ecb3f3acf8068b4ddf7b7c1bc73"
+      "path": "screens/manual-1440.png",
+      "bytes": 95768,
+      "sha256": "5eaee463f00e2952351294f6830f850699d88573c31c2320c097113fe8c93e8f"
     },
     {
-      "path": "browser-receipt.json",
-      "bytes": 934,
-      "sha256": "3cbb75686baa3b13e387e2dec4e9cc4fa04b06b2434df42828360ef1b9820cf6"
+      "path": "screens/manual-390.png",
+      "bytes": 82563,
+      "sha256": "432f67554b553a2883de9fd6d033794152f390fe27a4e6a1d85d85c4f97da5a9"
     },
     {
       "path": "screens/subscribe-1440.png",
@@ -68,14 +93,9 @@
       "sha256": "0f3e7ee2c437757875b7f441ca70de5981d65e3c8203da0672367d4c54c7a41e"
     },
     {
-      "path": "screens/manual-1440.png",
-      "bytes": 95768,
-      "sha256": "5eaee463f00e2952351294f6830f850699d88573c31c2320c097113fe8c93e8f"
-    },
-    {
-      "path": "screens/manual-390.png",
-      "bytes": 82563,
-      "sha256": "432f67554b553a2883de9fd6d033794152f390fe27a4e6a1d85d85c4f97da5a9"
+      "path": "terminal-provenance.json",
+      "bytes": 650,
+      "sha256": "07e644cd68c85459b11684acc203952bf772f515ebcfbff7e3703173f4c62f4c"
     }
   ],
   "regularFilesOnly": true,
@@ -85,5 +105,5 @@
   "authenticationMaterialSelected": false,
   "rawSetupAndFixtureLogsExcluded": true,
   "screenshotsViewed": 4,
-  "productDiffEmpty": true
+  "productDiffEmptyAtCleanup": true
 }

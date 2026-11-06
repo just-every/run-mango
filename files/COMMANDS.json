@@ -75,6 +75,29 @@
       "cause": "local upload-pack cannot lazily fetch missing promisor blobs from the filtered clone",
       "recovery": "identity audit reads local commit objects through temporary alternates and copies shallow boundaries; full candidate identity/trailer audit still enforced",
       "httpStatus": "not applicable; local audit fetch"
+    },
+    {
+      "command": "cloud_evidence.py publish (successful initial transfer)",
+      "exit": 0,
+      "head": "e56f5e893155561d3fc7a4a8d1fc885759644c62",
+      "ref": "refs/heads/evidence/ct-judge-mango-cont001-20261106-0058-sol1",
+      "files": 16
+    },
+    {
+      "command": "cloud_evidence.py fetch --head e56f5e893155561d3fc7a4a8d1fc885759644c62",
+      "exit": 0,
+      "status": "restored",
+      "filesVerified": 16
+    },
+    {
+      "command": "remove owned disposable product clone after verified evidence and empty tracked/index diff",
+      "exit": 0,
+      "receipt": "cleanup-receipt.json"
+    },
+    {
+      "command": "git clone --bare --depth 1 --filter=blob:none --single-branch --branch cloud/sd-mango-c-f60 https://github.com/just-every/run-mango.git <evidence-transport.git>; set local fleet identity; fetch main read-only",
+      "exit": 0,
+      "purpose": "report-only terminal receipt transport; no additional product judgment or runtime invocation"
     }
   ]
 }

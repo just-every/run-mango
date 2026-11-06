@@ -1,0 +1,18 @@
+{
+  "utc": "2026-11-06T02:17:52.498062+00:00",
+  "productBranch": "cloud/sd-mango-c-f60",
+  "productHead": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "trackedAndIndexStatus": "",
+  "evidenceHead": "e56f5e893155561d3fc7a4a8d1fc885759644c62",
+  "evidenceRef": "refs/heads/evidence/ct-judge-mango-cont001-20261106-0058-sol1",
+  "evidenceFilesVerified": 16,
+  "ownedServerPid": 2204,
+  "ownedServerStopped": true,
+  "browserClosed": true,
+  "productMutations": 0,
+  "productCommits": 0,
+  "productPushes": 0,
+  "prs": 0,
+  "ciQueries": 0,
+  "disposableClone": "/home/agent/rer-consolidation/work/ct-judge-mango-cont001-20261106-0058-sol1/run-mango"
+}
