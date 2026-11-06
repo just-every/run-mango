@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f130",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f130",
+  "head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+  "pinned_continuation": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+  "new_product_commits": 0,
+  "inherited_product_commits": [
+    "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+    "b586ec73be7b04dd1e06d72029fc37c7011a2b35"
+  ],
+  "local_checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "notes": "Frozen dependencies, migrations, and production build completed; setup output retained outside the public packet because it may contain private local setup material."
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+      "exit": 0,
+      "registered_tests_passed": 1,
+      "duration": "2.6 minutes",
+      "log": "results-journey.log"
+    }
+  ],
+  "mechanical": [
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0
+    }
+  ],
+  "verify_observation": {
+    "id": 42236124344,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42236124344",
+    "context": "Existing Verify for the pinned continuation; no rerun or dispatch requested."
+  },
+  "probe": {
+    "public_door": "GET /l with issued native tracked-link tokens",
+    "authenticated_door": "GET /api/campaigns/{campaignId}/engagement with revisionId",
+    "observed": {
+      "human_clicks": 8,
+      "unique_campaign_people": 2,
+      "automated_requests": 3,
+      "per_link_human_clicks": [
+        5,
+        3,
+        0
+      ],
+      "per_link_people": [
+        2,
+        1,
+        0
+      ],
+      "per_link_automated": [
+        1,
+        1,
+        1
+      ],
+      "performance_unique_clicked_recipient_steps": 3,
+      "control_revision": {
+        "human_clicks": 2,
+        "people": 1
+      },
+      "control_campaign": {
+        "human_clicks": 3,
+        "people": 1
+      },
+      "mismatched_campaign_revision_status": 404,
+      "csv_and_cohort": "Existing exact assertions retained and executed",
+      "reload": "API response unchanged and visible metrics retained"
+    }
+  },
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "contract_changed": false,
+  "acceptance_changed": false,
+  "status_gap_evidence_changed": false,
+  "publication_scan": {
+    "commit": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null,
+    "status": "Not run in cloud; exact-tree full-history publication scan belongs to the maintained Mac lander."
+  },
+  "main_equality": false,
+  "run_site": "Not established for the candidate; lander-owned post-landing gate.",
+  "screens": [
+    "links-1440.png",
+    "links-390.png",
+    "click-map-content-1440.png",
+    "click-map-1440.png",
+    "recipients-1440.png"
+  ],
+  "provider_boundary": "Native isolated Worker and D1 fixture; no real marketing provider or hosted qualification claimed.",
+  "security_boundary": "No new authorization, erasure, retention or delivery policy; existing private API and erasure middleware remain in place.",
+  "product_push": {
+    "command": "python3 /home/agent/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f130",
+    "exit": 0,
+    "attempts": 1,
+    "result": "PUSH_OK branch=cloud/sd-mango-c-f130",
+    "head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35"
+  },
+  "ci_runs_at_handoff": [
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f130",
+      "head_sha": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42252212490",
+      "id": 42252212490,
+      "name": "Verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f124",
+      "head_sha": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42236124344",
+      "id": 42236124344,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "named_branch_verify": {
+    "conclusion": "success",
+    "event": "push",
+    "head_branch": "cloud/sd-mango-c-f130",
+    "head_sha": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42252212490",
+    "id": 42252212490,
+    "name": "Verify",
+    "status": "completed"
+  },
+  "github_api_calls": 2,
+  "all_local_commands_completed": true,
+  "remote_product_head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+  "origin_main_at_publication": "a6ff098f6cdf8b356b76105c726c2561f6051a8d"
+}

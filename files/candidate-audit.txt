@@ -1,0 +1,10 @@
+b586ec73be7b04dd1e06d72029fc37c7011a2b35
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+62a3621e2f17facaa076ff1a88afa9e7ee34f810
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+
+All candidate authors, committers and trailers passed. CONTRACT.md unchanged. Working tree and index clean.
