@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7ef779ae8d6b91a0500ea7711546ad5f10fa3ca408a7466bec829209b61c6bc8",
+      "sha256": "83c6f4bca24a436cca4cd8250202b05efca6f954acf73fea003b099238dc2ab0",
       "executable": false
     },
     "DEMO.md": {
@@ -9138,7 +9138,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "69d8b93cca91c8f36e37b4198445172267b94c1db6bb49ff46aea2a8ddb6ebe6",
+      "sha256": "5a3ba1ee63762a509da6fb31a86e93398b2606e5a0d9b5e76999d14be1882d34",
       "executable": false
     },
     "tests/go-live/worker.ts": {

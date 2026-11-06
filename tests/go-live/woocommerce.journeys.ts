@@ -164,6 +164,19 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await expect(page.getByRole('heading', {name: 'Abandoned-checkout flows', exact: true})).toHaveCount(0);
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
+    // A fresh signed catalog notification and an explicit refresh cannot revive a disconnected source.
+    const retiredSource = {
+      requests: [...woo.state.requests],
+      receipts: await site.rows('SELECT * FROM commerce_receipts ORDER BY id'),
+      runs: await site.rows('SELECT * FROM source_sync_runs ORDER BY id'),
+    };
+    const productUpdate = await json(await webhook({id: woo.state.product.id}, 'synthetic-mango-disconnected-product', {'X-WC-Webhook-Topic': 'product.updated'}), 409);
+    expect(productUpdate).toEqual({error: 'woocommerce_not_connected'});
+    const productRefresh = await json(await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'product'}}), 409);
+    expect(productRefresh.error).toBe('source_unavailable');
+    expect(woo.state.requests).toEqual(retiredSource.requests);
+    expect(await site.rows('SELECT * FROM commerce_receipts ORDER BY id')).toEqual(retiredSource.receipts);
+    expect(await site.rows('SELECT * FROM source_sync_runs ORDER BY id')).toEqual(retiredSource.runs);
     expect(await site.count('woocommerce_connection')).toBe(0);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
