@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "990daff31890eb62068a2f28f96946fdc955f34d5360b7501f31bdceb6f88e50",
+      "sha256": "20496c62cfb189944d419f9ae307aefc6312ee949b9924734d11d8c870d77d9b",
       "executable": false
     },
     "DEMO.md": {
@@ -8842,7 +8842,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270",
+      "sha256": "0b8c8779d397da950d00dd65888357369af3a974ac5a94a194b634db8a281290",
       "executable": false
     },
     "tests/go-live/email-size-imports.ts": {
@@ -8942,11 +8942,11 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "210d564f2b290f2b072dec01bcb0b00e41d8252b9389aef74431d13674ddd951",
+      "sha256": "bdb510612eb2799af3fd93750bf17439c7a45b8f2f1a8b0743681bd3142dc52e",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "6e0327d82a10b666e1b069ca2535fed325dbb0ed3dd6dfa8277d3ea290c4095f",
+      "sha256": "9f861060a969a606d5b8f4bb523289637f1249e04f02b92cd6cd799a745529de",
       "executable": false
     },
     "tests/go-live/pause.flow.ts": {
