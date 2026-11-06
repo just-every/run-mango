@@ -1,0 +1,73 @@
+{
+  "head": "4120781cca98812ee98590c6fe7b6bf7e3efa72c",
+  "branch": "cloud/sd-mango-c-f70",
+  "tree": "90e9f8bd9ab99dcda3b213ee1cddc478e79678de",
+  "commands": [
+    {
+      "name": "candidate-journey",
+      "command": [
+        "timeout",
+        "1200",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/go-live/playwright.config.js",
+        "opt-out-reasons.journeys.ts"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T03:19:34.250632+00:00",
+      "finished": "2026-11-06T03:20:32.889966+00:00",
+      "log": "candidate-journey.log"
+    },
+    {
+      "name": "candidate-typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T03:20:32.895689+00:00",
+      "finished": "2026-11-06T03:20:53.208049+00:00",
+      "log": "candidate-typecheck.log"
+    },
+    {
+      "name": "candidate-first-party",
+      "command": [
+        "pnpm",
+        "exec",
+        "rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T03:20:53.213168+00:00",
+      "finished": "2026-11-06T03:20:54.062584+00:00",
+      "log": "candidate-first-party.log"
+    },
+    {
+      "name": "candidate-lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T03:20:54.067048+00:00",
+      "finished": "2026-11-06T03:20:54.437008+00:00",
+      "log": "candidate-lock-check.log"
+    }
+  ],
+  "source_sha256": {
+    "tests/go-live/opt-out-reasons.journeys.ts": "dbe25455ff9e43d59eb0d9f1264d875460ac5b513c5b509362dd648d774d224f",
+    "src/core/features/audience/service.ts": "552efeb7f532f06e7ff03e4ba636d1de20acdb54a899b3ca5d24c471b1892186",
+    "src/core/features/audience/repository.ts": "bc8040635dfb4baa8339913fa43220509d3391e7e268571ef05a9e0aeafcd79a",
+    "src/core/features/audience/contact-timeline.ts": "de267214ae65585d1548aed745ce77393c62139a27bb1ad9cded7b97fcefe123",
+    "src/core/features/lifecycle/delivery.ts": "23be0a4b82a9fd3aa9f85d6b5a00d035f94d322edb89123f907f66218a37e44a",
+    "CONTRACT.md": "70534116214c3e98f27450c5055ede1ac6e95306393737db8f2eed5942caf618",
+    "sources.lock.json": "40b065026cecc146caa2e313592195902a96242abfe88e1aef1bb6b4b8cb3cb0"
+  }
+}

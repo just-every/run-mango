@@ -1,0 +1,5 @@
+ WARN  Unsupported engine: wanted: {"node":"22.20.0"} (current: {"node":"v24.19.0","pnpm":"10.12.4"})
+
+> mango@0.4.0 typecheck /home/agent/rer-consolidation/work/sd-mango-c-f70/run-mango
+> tsc --noEmit
+

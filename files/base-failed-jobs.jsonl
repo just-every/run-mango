@@ -1,0 +1,2 @@
+{"conclusion":"failure","id":127673826259,"name":"Build and public command checks","steps":[{"conclusion":"failure","name":"Check generated contract documents"}]}
+{"conclusion":"failure","id":127673916491,"name":"verify","steps":[{"conclusion":"failure","name":"Require the selected coverage and its proof"}]}

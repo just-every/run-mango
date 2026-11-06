@@ -1,0 +1,143 @@
+{
+  "nonzeroCount": 3,
+  "resetCount": 0,
+  "freshCount": 1,
+  "replayCount": 1,
+  "expectedHistory": [
+    {
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "occurredAt": "2026-11-06T03:20:26.000Z"
+    },
+    {
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 2.",
+      "occurredAt": "2026-11-06T03:20:29.000Z"
+    },
+    {
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 3.",
+      "occurredAt": "2026-11-06T03:20:33.000Z"
+    },
+    {
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "occurredAt": "2026-11-06T03:20:44.000Z"
+    }
+  ],
+  "replayWhileSuppressed": {
+    "status": "suppressed",
+    "historyUnchanged": true,
+    "suppressionsUnchanged": true
+  },
+  "recipientOptOutUnchanged": true,
+  "recordedHistory": [
+    {
+      "id": "provider-soft-bounce:1c0fbb7380c57b172df8bfa49c713fd1c8d6ca99ac535faa8ac21c4e8fe7d13c:soft-bounce",
+      "contactId": "01M6QDXJKEVN5MR7TS5DAKZCNW",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "occurredAt": "2026-11-06T03:20:44.000Z",
+      "createdAt": "2026-11-06T03:20:44.000Z",
+      "updatedAt": "2026-11-06T03:20:44.000Z"
+    },
+    {
+      "id": "provider-soft-bounce:289520372f82f1e1a21cbaa3f40507fed95494892b8aafc4b4b8213d52ce2a90:soft-bounce",
+      "contactId": "01M6QDXJKEVN5MR7TS5DAKZCNW",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 3.",
+      "occurredAt": "2026-11-06T03:20:33.000Z",
+      "createdAt": "2026-11-06T03:20:33.000Z",
+      "updatedAt": "2026-11-06T03:20:33.000Z"
+    },
+    {
+      "id": "provider-soft-bounce:f9915905b9287c0493ec9e96d3211f24bec8743062069faa9c041e8097db20fb:soft-bounce",
+      "contactId": "01M6QDXJKEVN5MR7TS5DAKZCNW",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 2.",
+      "occurredAt": "2026-11-06T03:20:29.000Z",
+      "createdAt": "2026-11-06T03:20:29.000Z",
+      "updatedAt": "2026-11-06T03:20:29.000Z"
+    },
+    {
+      "id": "provider-soft-bounce:d2c2fe5170cae3a47fbe715f2993fbc149d9a1fd05abbcff020f6da1d9b9aa88:soft-bounce",
+      "contactId": "01M6QDXJKEVN5MR7TS5DAKZCNW",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "occurredAt": "2026-11-06T03:20:26.000Z",
+      "createdAt": "2026-11-06T03:20:26.000Z",
+      "updatedAt": "2026-11-06T03:20:26.000Z"
+    }
+  ],
+  "bounceFacts": [
+    {
+      "provider_event_id": "provider-soft-bounce:d2c2fe5170cae3a47fbe715f2993fbc149d9a1fd05abbcff020f6da1d9b9aa88",
+      "kind": "soft-bounce",
+      "occurred_at": 1793935226000
+    },
+    {
+      "provider_event_id": "provider-soft-bounce:f9915905b9287c0493ec9e96d3211f24bec8743062069faa9c041e8097db20fb",
+      "kind": "soft-bounce",
+      "occurred_at": 1793935229000
+    },
+    {
+      "provider_event_id": "provider-soft-bounce:289520372f82f1e1a21cbaa3f40507fed95494892b8aafc4b4b8213d52ce2a90",
+      "kind": "soft-bounce",
+      "occurred_at": 1793935233000
+    },
+    {
+      "provider_event_id": "provider-delivery:23dbc3cc3a16950b2d68ce2d38e6743db5447342383e730ff811f308b08f6c17",
+      "kind": "delivery",
+      "occurred_at": 1793935237000
+    },
+    {
+      "provider_event_id": "provider-soft-bounce:1c0fbb7380c57b172df8bfa49c713fd1c8d6ca99ac535faa8ac21c4e8fe7d13c",
+      "kind": "soft-bounce",
+      "occurred_at": 1793935244000
+    }
+  ],
+  "timeline": [
+    {
+      "id": "history:provider-soft-bounce:1c0fbb7380c57b172df8bfa49c713fd1c8d6ca99ac535faa8ac21c4e8fe7d13c:soft-bounce",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:44.000Z"
+    },
+    {
+      "id": "history:01M6QDYQW8XF986S4EJTMEGZKC",
+      "kind": "provider-delivery",
+      "detail": "email delivery confirmed by the provider.",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:37.000Z"
+    },
+    {
+      "id": "history:provider-soft-bounce:289520372f82f1e1a21cbaa3f40507fed95494892b8aafc4b4b8213d52ce2a90:soft-bounce",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 3.",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:33.000Z"
+    },
+    {
+      "id": "history:provider-soft-bounce:f9915905b9287c0493ec9e96d3211f24bec8743062069faa9c041e8097db20fb:soft-bounce",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 2.",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:29.000Z"
+    },
+    {
+      "id": "history:provider-soft-bounce:d2c2fe5170cae3a47fbe715f2993fbc149d9a1fd05abbcff020f6da1d9b9aa88:soft-bounce",
+      "kind": "soft-bounce",
+      "detail": "Consecutive soft bounce count: 1.",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:26.000Z"
+    },
+    {
+      "id": "history:01M6QDY81R1V2P6VP9AX0E05QZ_optout_0",
+      "kind": "opt-out",
+      "detail": "recipient-unsubscribe",
+      "source": "Contact ledger",
+      "occurredAt": "2026-11-06T03:20:23.380Z"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "head": "4120781cca98812ee98590c6fe7b6bf7e3efa72c",
+  "commands": [
+    {
+      "name": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "log": "mechanical-views-write.log"
+    },
+    {
+      "name": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "log": "mechanical-views-check.log"
+    },
+    {
+      "name": "restore-main-views",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "log": "mechanical-restore-main-views.log"
+    },
+    {
+      "name": "lock-regenerate",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "log": "mechanical-lock-regenerate.log"
+    },
+    {
+      "name": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "log": "mechanical-lock-check.log"
+    }
+  ],
+  "ledger": {
+    "command": null,
+    "reason": "No migration added or edited",
+    "exit": 0
+  },
+  "generated_views_committed": false,
+  "worktree_clean": true
+}

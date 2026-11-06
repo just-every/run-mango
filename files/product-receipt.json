@@ -1,0 +1,37 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f70",
+  "head": "4120781cca98812ee98590c6fe7b6bf7e3efa72c",
+  "push_command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f70",
+  "push_exit": 0,
+  "guard_result": "PUSH_OK branch=cloud/sd-mango-c-f70",
+  "remote_refs": [
+    "4120781cca98812ee98590c6fe7b6bf7e3efa72c\trefs/heads/cloud/sd-mango-c-f70",
+    "cc6321c2372d631d9607df9af8ad1dd9f7878e84\trefs/heads/main"
+  ],
+  "identity_audit": {
+    "candidate_commits": [
+      "4120781cca98812ee98590c6fe7b6bf7e3efa72c",
+      "49b620633c5e78e271f694af073bc87429db3e8f"
+    ],
+    "authors_and_committers": "Run Edit Run fleet",
+    "email": "fleet@runeditrun.com",
+    "trailers": []
+  },
+  "ci": {
+    "id": 42155797591,
+    "event": "push",
+    "conclusion": "failure",
+    "permitted_generated_view_failure": true
+  },
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  }
+}
