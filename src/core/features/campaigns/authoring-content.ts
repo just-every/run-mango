@@ -35,7 +35,7 @@ export function authoredLinks(html:string) {
 }
 /** Rounds of parsing and serialising that a body, and then a saved body, may take to reach a form that saves to itself. */
 const settleRounds = 16;
-/** Thrown when a body does not settle within `settleRounds`; no body is known to need more than two. */
+/** Thrown when a body does not settle within `settleRounds`; nested foreign raw-text layers can exceed this bound. */
 export class UnsettledEmailBodyError extends Error {}
 /** The body as the HTML fragment serialisation algorithm writes the tree a spec parser builds from it (CAMP-022):
  * every element closed where parsers keep it, attribute values double-quoted, character references decoded, and

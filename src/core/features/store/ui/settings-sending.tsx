@@ -29,7 +29,7 @@ export function SettingsSending() {
     {connection?<div role="status"><p>{connection.provider} account <strong>{connection.account}</strong> · key ending <code>{connection.lastFour}</code> · {connection.state}</p>
       <p>Connected by {connection.connectedBy} on {formatDate(connection.connectedAt)}.</p>
       {connection.broader?<p>{connection.provider==='Resend'?'Resend requires Full access for webhook management. Use a dedicated key for Mango.':'Broader than Mango needs. Use a restricted key with the permissions listed in the connection review.'}</p>:null}
-      {connection.deliveryEventsVerified?<p>Signed delivery events verified.</p>:<p>delivery-events-missing: send the Owner sender check in Settings. Campaign approval and flow activation stay blocked until its signed delivered event arrives.</p>}
+      {connection.deliveryEventsVerified?<p>Signed delivery events verified.</p>:connection.error?null:<p>delivery-events-missing: send the Owner sender check in Settings. Campaign approval and flow activation stay blocked until its signed delivered event arrives.</p>}
       {connection.error?<p role="alert">{connection.error}</p>:null}
       <button className="secondary-action" type="button" disabled={busy||connection.state==='connecting'} onClick={()=>void act('',undefined,'DELETE')}>Disconnect {connection.provider}</button></div>:null}
     {review?<div className="integration-create" role="group" aria-label={"Review "+review.provider+" connection"}><h3>Review {review.provider} connection</h3>
