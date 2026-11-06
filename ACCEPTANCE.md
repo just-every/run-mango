@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 18 | 200 | 89 | 307 |
+| Core | 20 | 198 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 18 | 200 | 98 | 316 |
+| Full target | 20 | 198 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -4470,7 +4470,7 @@ Core · target · **missing** · Rules D-2
 
 #### PUB-005 — Paid signup page and payer consent
 
-Core · target · **partial** · Rules D-2
+Core · target · **done** · Rules D-2
 
 **Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
 
@@ -4480,12 +4480,12 @@ Core · target · **partial** · Rules D-2
 3. Checkout returns the reader to a Mango explanation of the next step.
 4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-tier-journey.ts`
+**Gap.** None.
 
 #### PUB-006 — Paid-reader consent and restrictions
 
-Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
+Core · target · **done** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
 
 **Requirement.** A paying reader joins the mailing audience only with their own channel confirmation.
 
@@ -4496,8 +4496,8 @@ Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-
 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either).
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures.
+**Gap.** None.
 
 ### Installation services
 

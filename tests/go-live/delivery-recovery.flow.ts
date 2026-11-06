@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {transientRecovery} from './transient-recovery.flow';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
@@ -43,6 +44,7 @@ export const walk0 = async()=>{
     await site.control('/_golive/cron');expect(attempts()).toHaveLength(6);
     const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
     expect(detail.results.steps[0].failures.some((f:any)=>f.count===1&&f.code)).toBe(true);
+    await transientRecovery(site,edge,cookie,email);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close();await edge.close();}
 };
@@ -160,9 +162,11 @@ export const walk1 = async({page})=>{
     await readPaused();
     await page.screenshot({path:test.info().outputPath('outage-paused-pending-probe.png'),fullPage:true});
     await page.setViewportSize({width:390,height:844});
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await page.screenshot({path:test.info().outputPath('outage-paused-pending-probe-390.png'),fullPage:true});
     await page.setViewportSize({width:1440,height:1000});
     await readPaused();
+    console.log('PROBE SEND-009 acceptance-4: authenticated 503 probe -> persisted safe error, native paused campaign result and reopened detail agree; desktop and phone captures; queued identity, zero attempts and marketing handoffs unchanged');
     mark('deadline campaign and browser ready');
     const beforeDeadline=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:deadline-beforeDeadline.now+1});await site.control('/_golive/cron');
     expect(await site.rows(`SELECT transport_disposition,skip_reason,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired',attempt_count:0}]);
