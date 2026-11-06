@@ -1,0 +1,216 @@
+{
+  "tag": "sd-mango-c-f109",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f109",
+  "head": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+  "base": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "recorded_at": "2026-11-06T11:16:02.546668+00:00",
+  "checks": [
+    {
+      "command": "pnpm exec playwright test tests/campaign-authoring/design-import.spec.ts --workers=1",
+      "exit": 0,
+      "tests_passed": 1,
+      "seconds": 37.8,
+      "head": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+      "assertion_width": 1440,
+      "browser": "Chromium /usr/bin/chromium; --no-sandbox"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write && node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "views_restored": true
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock && node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09"
+    }
+  ],
+  "proof_files": {
+    "CONTRACT.md": "2f683d17b563958575cdc21129fa2cd659cc81fd0bbf5b9dfb662a74b83b7598",
+    "sources.lock.json": "fd719ba0a88f27eb628e390ad1603ca77ca04780d0e886bbf2cb3b8ca3d80c1a",
+    "tests/campaign-authoring/design-import.spec.ts": "7b6b253c774975b39892cc1abbdedb332664401bec505f2b1ef9ce3202e9da40",
+    "tests/campaign-authoring/design-input-bounds.ts": "c1a2a0260c13f3a48fefc5083d1bbc9c9a75bc5f6327c044a36d1fa884389400",
+    "src/core/features/design-import/layerdoc.ts": "79d0099bbd28e43dcab331ef6c5c3049998b2485604880bbd477c8c475cf1dfa",
+    "src/core/features/design-import/ui/import-dialog.tsx": "01e5b4a337b7343f7c5a2a3d4c8611868b8447bb4213ab68e534dba6cb1b7bc2"
+  },
+  "screens": [
+    {
+      "path": "screens/design-input-deep-input-refused-1440.png",
+      "bytes": 70833,
+      "sha256": "9ae1382ca4c78829c2f56c254a8894081327ea1b42881aad1ab08bfc06569a8f"
+    },
+    {
+      "path": "screens/design-input-deep-input-refused-390.png",
+      "bytes": 65917,
+      "sha256": "1a313e08ebab03226db98a4857ed8518f610b9a22e849ab1cf5cd2547f2d5782"
+    },
+    {
+      "path": "screens/design-input-file-size-refused-1440.png",
+      "bytes": 70126,
+      "sha256": "2b539e2ef8f7758c1a0d922e32d4e79ad31d6df51c62ce63c20ec45a526ae08d"
+    },
+    {
+      "path": "screens/design-input-file-size-refused-390.png",
+      "bytes": 65386,
+      "sha256": "de0d23b609746015403d626712d3ed25babe60938c6acc32c4b63a3728247861"
+    },
+    {
+      "path": "screens/design-input-nesting-refused-1440.png",
+      "bytes": 70775,
+      "sha256": "dbdb0a4f49d12945e31270bacff6388dc3b4cd028a5a5ca20390a4102bb0d0fb"
+    },
+    {
+      "path": "screens/design-input-nesting-refused-390.png",
+      "bytes": 65825,
+      "sha256": "c0a2c0e716f810acbf372414d158a81c5669f473526dde8a9d98a3bccda3a596"
+    },
+    {
+      "path": "screens/design-input-recovered-1440.png",
+      "bytes": 247265,
+      "sha256": "272b1846777ce97524f251b0f884eb3590a75d2cd5886967e06253b54f4e675d"
+    },
+    {
+      "path": "screens/design-input-recovered-390.png",
+      "bytes": 241026,
+      "sha256": "f9faa5e54716b83cb228e6f0f96b0ba1ab37a7d13e8b9a7ef66043063a0d5562"
+    },
+    {
+      "path": "screens/design-input-total-layers-refused-1440.png",
+      "bytes": 69845,
+      "sha256": "5900e6af9f0e52dcd0a61bb1ce2ecde918251404ed914097aee928eaad34ffe8"
+    },
+    {
+      "path": "screens/design-input-total-layers-refused-390.png",
+      "bytes": 65701,
+      "sha256": "40b6e65099144aaa424e37f7ec95481c72af9175420aeb7f42a9cf6c8058964f"
+    }
+  ],
+  "registrations_before": 1,
+  "registrations_after": 1,
+  "status_before": "partial",
+  "status_after": "partial",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "publication_scan": "not run in cloud; guarded Mac lander must scan exact candidate",
+  "landing": "not performed in cloud",
+  "pr": null,
+  "ci": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42208912590",
+      "id": 42208912590,
+      "name": "Verify",
+      "status": "in_progress"
+    }
+  ],
+  "product_push": "succeeded first attempt; exact named branch only",
+  "main_at_final_sync": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "ci_final": {
+    "conclusion": "failure",
+    "head_sha": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42208912590",
+    "status": "completed"
+  },
+  "ci_run_id": 42208912590,
+  "ci_event": "push",
+  "ci_classification": "expected generated-view-only failure; dependent shard and aggregate consequences only",
+  "ci_jobs": [
+    {
+      "conclusion": "success",
+      "failed_steps": [],
+      "id": 127862397721,
+      "name": "plan",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents",
+          "number": 5
+        }
+      ],
+      "id": 127862480734,
+      "name": "Build and public command checks",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127862482537,
+      "name": "light",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof",
+          "number": 2
+        }
+      ],
+      "id": 127862571454,
+      "name": "verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127862572612,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127862572816,
+      "name": "nightly-proof",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127862573534,
+      "name": "full-push-proof",
+      "status": "completed"
+    }
+  ],
+  "ci_log_reads": [
+    {
+      "command": "gh run view 42208912590 --repo just-every/run-mango --job 127862480734 --log-failed",
+      "job": "127862480734",
+      "exit": 0
+    },
+    {
+      "command": "gh run view 42208912590 --repo just-every/run-mango --job 127862571454 --log-failed",
+      "job": "127862571454",
+      "exit": 0
+    }
+  ],
+  "github_invocations": 6,
+  "handoff": "READY permitted by explicit generated-view-only exception; landing gates remain with Mac"
+}

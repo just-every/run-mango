@@ -1,0 +1,12 @@
+[
+  {
+    "command": "gh run view 42208912590 --repo just-every/run-mango --job 127862480734 --log-failed",
+    "job": "127862480734",
+    "exit": 0
+  },
+  {
+    "command": "gh run view 42208912590 --repo just-every/run-mango --job 127862571454 --log-failed",
+    "job": "127862571454",
+    "exit": 0
+  }
+]

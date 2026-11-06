@@ -1,0 +1,13 @@
+
+Running 1 test using 1 worker
+
+(node:3283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE DESIGN-014 acceptance-1 file-size: file inputs -> named refusal; files retained, editor and revision unchanged, no uploads, saves or authority
+PROBE DESIGN-014 acceptance-1 total-layers: file inputs -> named refusal; files retained, editor and revision unchanged, no uploads, saves or authority
+PROBE DESIGN-014 acceptance-1 nesting: file inputs -> named refusal; files retained, editor and revision unchanged, no uploads, saves or authority
+PROBE DESIGN-014 acceptance-1 deep-input: file inputs -> named refusal; files retained, editor and revision unchanged, no uploads, saves or authority
+PROBE DESIGN-014 acceptance-1 recovery: existing valid file pair -> unsaved imported body; saved revision unchanged and no approval, recipients or jobs
+  ✓  1 tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px (36.8s)
+
+  1 passed (37.8s)
