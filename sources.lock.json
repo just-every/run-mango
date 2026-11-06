@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "c0d153d18cc74000369f9cd5ec0c130546446e313504f570f856a02c47e0caec",
+      "sha256": "22c2464adc8bb3583ae3e1f1c556146420bf207f1a9272ae2a19265908efffb0",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "f6715d47d2d8887fd5594d1114022ecdef2a04f9d6cb4ff7dc394ce77886a5e9",
+      "sha256": "3bf374918e279ed15b30c0e34b9ee6de8da1ebf546c1341d4c1d8fe9da7dd3d5",
       "executable": false
     },
     "DEMO.md": {
@@ -8778,7 +8778,7 @@
       "executable": false
     },
     "tests/go-live/content-checks.journeys.ts": {
-      "sha256": "104671f45f77f55933c711cfe6352bea4200ddd23242416b8404586942702e28",
+      "sha256": "23a38100625fc5f928ed625b2e35d10351031921b1d4c93cb498993e53233c50",
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
@@ -9006,7 +9006,7 @@
       "executable": false
     },
     "tests/go-live/resubscribe.flow.ts": {
-      "sha256": "94500a596db8ee10f4f56030e79648da50dfe6f2d2f4c52ad53e9908cf526303",
+      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
       "executable": false
     },
     "tests/go-live/review-loyalty-journey.ts": {

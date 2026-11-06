@@ -106,13 +106,19 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
     const replayAt = (await site.control('/_golive/clock',{advanceMs:120000})).now;
     expect(replayAt).toBeGreaterThan(acknowledgedAt);
+    const replayOperatorId = 'synthetic-mango-2';
+    const replayCookie = await site.open([replayOperatorId,'example.test'].join('@'),replayOperatorId);
+    const replayOperator = await json(await site.call('/api/operator',{cookie:replayCookie}),200);
+    expect(replayOperator.operator.id).toBe(replayOperatorId);
+    expect(replayOperator.operator.id).not.toBe(acknowledged.acknowledgement.operatorId);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
     // Replay the exact original request before checks replace their transient row IDs.
     expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
     await review();
     const refreshed = await retainedFinding();
-    expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    // Another authenticated operator cannot replace the original actor or time.
+    expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
     await retainedFinding();
@@ -120,7 +126,7 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await noAuthority();
     await info.attach('msg-007-acknowledgement-retention',{contentType:'application/json',body:JSON.stringify({
       startedAt,finishedAt,replayAt,acknowledged,findingIdentity:advisory.findingIdentity,
-      refreshedFindingIdentity:refreshed.findingIdentity,audit:originalAudit,noAuthorityAsserted:true,
+      refreshedFindingIdentity:refreshed.findingIdentity,replayOperatorId,audit:originalAudit,noAuthorityAsserted:true,
     },null,2)});
     for (const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
