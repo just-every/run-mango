@@ -1,0 +1,52 @@
+{
+  "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+  "source_lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0,
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "check_exit": 0
+  },
+  "views": {
+    "write": "node src/base/contract-docs.mjs write",
+    "write_exit": 0,
+    "check": "node src/base/contract-docs.mjs check",
+    "check_exit": 0,
+    "output": "Wrote 1 contract documents. Contract documents are current.",
+    "restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ],
+    "committed": false
+  },
+  "migration_ledger": {
+    "command": null,
+    "exit": 0,
+    "reason": "No migration added or edited"
+  },
+  "status_rows": {
+    "parent": 316,
+    "candidate": 316,
+    "table_lines_parent": 490,
+    "table_lines_candidate": 490
+  },
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "focused_registrations": {
+    "before": 1,
+    "after": 1
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "timing": "Final source bytes before candidate commit"
+  },
+  "product_head_unchanged": true
+}

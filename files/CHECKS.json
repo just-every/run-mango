@@ -1,0 +1,71 @@
+{
+  "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+  "checks": [
+    {
+      "name": "typecheck",
+      "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T09:06:34.577929+00:00",
+      "finished": "2026-11-06T09:06:51.539331+00:00",
+      "log": "typecheck.log",
+      "log_sha256": "cb31632e886b16be9963e8988027826ddff34928afbdb7fe7061934d6d9ee142"
+    },
+    {
+      "name": "build",
+      "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "build"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T09:06:51.539871+00:00",
+      "finished": "2026-11-06T09:07:00.623444+00:00",
+      "log": "build.log",
+      "log_sha256": "71a88bf973c942007c70e3e107dbcb3e6c21ebd2e8ca16b476f2acc2f3c20252"
+    },
+    {
+      "name": "presend",
+      "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+      "command": [
+        "perl",
+        "-e",
+        "alarm 1200; exec @ARGV",
+        "--",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/go-live/playwright.config.js",
+        "presend-checks.journeys.ts",
+        "--workers=1"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T09:07:00.624082+00:00",
+      "finished": "2026-11-06T09:10:15.785845+00:00",
+      "log": "presend.log",
+      "log_sha256": "68936417975bd1771a0eb9422398089e2c5c71972b7095084ec43e3b22afce64"
+    },
+    {
+      "name": "lock-check",
+      "head": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T09:10:15.786200+00:00",
+      "finished": "2026-11-06T09:10:16.403022+00:00",
+      "log": "lock-check.log",
+      "log_sha256": "7cfd66e74f48bfe23816bc76817e14d2c98045fb0b49e3401ffac4acabdbeba9"
+    }
+  ]
+}
