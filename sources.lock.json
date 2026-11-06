@@ -4318,7 +4318,7 @@
       "executable": false
     },
     "src/core/features/design-generation/routes.ts": {
-      "sha256": "d24993e69ed5c0c68f0e454a3d26fa5b0f162e62c647a58cd54dd45093bfc4d5",
+      "sha256": "64a8bdabdd5f699f238f1d2c19e95377b9211336fbf6e430dfa9f156f108823b",
       "executable": false
     },
     "src/core/features/design-generation/sweep.ts": {
@@ -8490,7 +8490,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "ef53c15a68fe609b8960c4134e3f02392a1f0c2ad01fc48068a1820aae363a6a",
+      "sha256": "8109afe7069c5117e2f04a47f90dcd27cef90c7c02458e04697376a9f2f7b003",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
