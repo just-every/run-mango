@@ -1,0 +1,89 @@
+{
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "commands": [
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "duration_seconds": 16.066,
+      "log": "typecheck.log"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "node",
+        "node_modules/@runeditrun/rer/bin/rer.mjs",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.417,
+      "log": "first-party.log"
+    },
+    {
+      "name": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.183,
+      "log": "views-write.log"
+    },
+    {
+      "name": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.17,
+      "log": "views-check.log"
+    },
+    {
+      "name": "views-restore",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.005,
+      "log": "views-restore.log"
+    },
+    {
+      "name": "lock-write",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.277,
+      "log": "lock-write.log"
+    },
+    {
+      "name": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "duration_seconds": 0.298,
+      "log": "lock-check.log"
+    }
+  ],
+  "ledger": "none; no migration changes",
+  "recorded_at": "2026-11-06T10:34:53.608555+00:00"
+}

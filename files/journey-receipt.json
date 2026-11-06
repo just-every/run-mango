@@ -1,0 +1,57 @@
+{
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=/home/agent/rer-consolidation/work/sd-mango-c-f104/local-proof timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js multistep.journeys.ts",
+  "entry": "tests/go-live/multistep.journeys.ts:5",
+  "result": "1 passed (1.9m)",
+  "exit": 0,
+  "exit_observed_from": "completed exec session 73707",
+  "browser": "system Chromium, headless, --no-sandbox",
+  "assertion_width": 1440,
+  "screens": [
+    {
+      "path": "screens/scheduled-pause-1440.png",
+      "sha256": "3ab893fadcbece4584453e44f30755d9f8d114119a5cb3761cdb9a75d69d35c7",
+      "width": 1440
+    },
+    {
+      "path": "screens/scheduled-pause-390.png",
+      "sha256": "328aa66bb9dd8711a66f40c77bf64652130f06a4469a867db09795c3d8373ac1",
+      "width": 390
+    },
+    {
+      "path": "screens/dispatch-paused-1440.png",
+      "sha256": "d632d1b5757ff66538a7a2e25e87782efed319951da5ba8c192ca2a04dcd3fc2",
+      "width": 1440
+    },
+    {
+      "path": "screens/dispatch-paused-390.png",
+      "sha256": "c555d2eaa228195e5a850970efb5be50524b679915da05b9cb625b79a80f82cc",
+      "width": 390
+    },
+    {
+      "path": "screens/pause-completed-1440.png",
+      "sha256": "b24d07794f5e3f81d274859b974914057cb7000828aee874bb5a77e6cb231c65",
+      "width": 1440
+    },
+    {
+      "path": "screens/pause-completed-390.png",
+      "sha256": "f8f93ee2e79a1410b0162505709594ca21eadcaef382394d8948b36b6c9fe5f5",
+      "width": 390
+    },
+    {
+      "path": "screens/pause-history-1440.png",
+      "sha256": "c8a7d4e4b8d0e667bf0106124e574b62d34ab453f2f7386b1c1173f2c959fdbb",
+      "width": 1440
+    },
+    {
+      "path": "screens/pause-history-390.png",
+      "sha256": "d9a5a51906c00a3152433ed9142fda06d6ad195c938911b84919815c250e2389",
+      "width": 390
+    }
+  ],
+  "limits": [
+    "390 screenshots inspect layout only; no independent phone interaction claim",
+    "Provider network-edge fixtures only; no live provider qualification",
+    "No new test registration or source change"
+  ]
+}

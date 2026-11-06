@@ -1,0 +1,23 @@
+[
+  {
+    "commit": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+    "parent": "5847086d48f9b743f8211ec825cca729863ebaaf",
+    "parent_rows": 316,
+    "candidate_rows": 316,
+    "dropped": []
+  },
+  {
+    "commit": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+    "parent": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "parent_rows": 316,
+    "candidate_rows": 316,
+    "dropped": []
+  },
+  {
+    "commit": "5847086d48f9b743f8211ec825cca729863ebaaf",
+    "parent": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+    "parent_rows": 316,
+    "candidate_rows": 316,
+    "dropped": []
+  }
+]

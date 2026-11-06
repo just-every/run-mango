@@ -1,0 +1,11 @@
+{
+  "base": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "status_rows": 316,
+  "product_changes_added_this_run": 0
+}
