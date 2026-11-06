@@ -1,0 +1,16 @@
+{
+  "name": "first-party-final",
+  "command": [
+    "npx",
+    "-y",
+    "@runeditrun/rer",
+    "check",
+    "--profile",
+    "first-party"
+  ],
+  "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+  "started": "2026-11-06T00:14:03.005454+00:00",
+  "finished": "2026-11-06T00:14:05.295331+00:00",
+  "exit": 0,
+  "log": "first-party-final.log"
+}

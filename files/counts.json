@@ -1,0 +1,29 @@
+[
+  {
+    "ref": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+    "counts": {
+      "partial": 200,
+      "done": 18,
+      "missing": 98
+    },
+    "total": 316
+  },
+  {
+    "ref": "origin/main",
+    "counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "total": 316
+  },
+  {
+    "ref": "HEAD",
+    "counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "total": 316
+  }
+]

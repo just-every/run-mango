@@ -1,0 +1,23 @@
+{
+  "name": "erasure-boundary",
+  "command": [
+    "perl",
+    "-e",
+    "alarm 1200; exec @ARGV",
+    "--",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts",
+    "--workers=1",
+    "--reporter=list"
+  ],
+  "head": "8f3af77cfaa025ea736ae3e66f98bd7d352f0469",
+  "started": "2026-11-06T00:11:29.040183+00:00",
+  "finished": "2026-11-06T00:12:12.974784+00:00",
+  "exit": 1,
+  "log": "erasure-boundary.log"
+}

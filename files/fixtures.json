@@ -1,0 +1,17 @@
+[
+  {
+    "file": "tests/support/campaign-asset-images/synthetic-mango-1.jpg",
+    "bytes": 652,
+    "sha256": "c69277f7cf89d3c16ef8f419159ced9154ed070224101e52e2a38c1eead8368d"
+  },
+  {
+    "file": "tests/support/campaign-asset-images/synthetic-mango-2.gif",
+    "bytes": 282,
+    "sha256": "f641ccb9ea9da33deae7b92c882bc34aad8215d43ede2b3a202b1849f0bced03"
+  },
+  {
+    "file": "tests/support/campaign-asset-images/synthetic-mango-3.webp",
+    "bytes": 156,
+    "sha256": "ceedbc883fa4bc5cf7437e688d7b4ac838c574ac7624e3d13b1849820f651c04"
+  }
+]

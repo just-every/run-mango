@@ -1,0 +1,13 @@
+{
+  "name": "views-check-final",
+  "command": [
+    "node",
+    "src/base/contract-docs.mjs",
+    "check"
+  ],
+  "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+  "started": "2026-11-06T00:14:05.788323+00:00",
+  "finished": "2026-11-06T00:14:06.160318+00:00",
+  "exit": 0,
+  "log": "views-check-final.log"
+}

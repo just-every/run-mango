@@ -1,0 +1,254 @@
+{
+  "tag": "sd-mango-c-f61",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f61",
+  "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+  "product_pushed": true,
+  "pr_url": null,
+  "permanent_campaign_asset_tests": {
+    "before": 5,
+    "after": 5,
+    "passed": 5
+  },
+  "target": {
+    "id": "CAMP-012",
+    "before": "partial",
+    "after": "partial",
+    "selected_upload_point": "proven",
+    "remaining": "Acceptance 3 image erasure, gone response and approval refusal; existing CONT-013 hold retained"
+  },
+  "counts": [
+    {
+      "ref": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+      "counts": {
+        "partial": 200,
+        "done": 18,
+        "missing": 98
+      },
+      "total": 316
+    },
+    {
+      "ref": "origin/main",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "total": 316
+    },
+    {
+      "ref": "HEAD",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "total": 316
+    }
+  ],
+  "checks": [
+    {
+      "name": "campaign-assets-final",
+      "command": [
+        "perl",
+        "-e",
+        "alarm 1200; exec @ARGV",
+        "--",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "tests/campaign-assets.spec.ts",
+        "--workers=1",
+        "--reporter=list"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:13:34.589144+00:00",
+      "finished": "2026-11-06T00:17:50.790184+00:00",
+      "exit": 0,
+      "log": "campaign-assets-final.log"
+    },
+    {
+      "name": "first-party-final",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:14:03.005454+00:00",
+      "finished": "2026-11-06T00:14:05.295331+00:00",
+      "exit": 0,
+      "log": "first-party-final.log"
+    },
+    {
+      "name": "lock-check-final",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:14:06.225443+00:00",
+      "finished": "2026-11-06T00:14:06.817375+00:00",
+      "exit": 0,
+      "log": "lock-check-final.log"
+    },
+    {
+      "name": "typecheck-final",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:13:34.587376+00:00",
+      "finished": "2026-11-06T00:14:02.905696+00:00",
+      "exit": 0,
+      "log": "typecheck-final.log"
+    },
+    {
+      "name": "views-check-final",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:14:05.788323+00:00",
+      "finished": "2026-11-06T00:14:06.160318+00:00",
+      "exit": 0,
+      "log": "views-check-final.log"
+    },
+    {
+      "name": "views-write-final",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+      "started": "2026-11-06T00:14:05.385127+00:00",
+      "finished": "2026-11-06T00:14:05.731360+00:00",
+      "exit": 0,
+      "log": "views-write-final.log"
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "erasure-boundary",
+      "command": [
+        "perl",
+        "-e",
+        "alarm 1200; exec @ARGV",
+        "--",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts",
+        "--workers=1",
+        "--reporter=list"
+      ],
+      "head": "8f3af77cfaa025ea736ae3e66f98bd7d352f0469",
+      "started": "2026-11-06T00:11:29.040183+00:00",
+      "finished": "2026-11-06T00:12:12.974784+00:00",
+      "exit": 1,
+      "log": "erasure-boundary.log"
+    },
+    {
+      "name": "erasure-boundary-main",
+      "command": [
+        "perl",
+        "-e",
+        "alarm 1200; exec @ARGV",
+        "--",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts",
+        "--workers=1",
+        "--reporter=list"
+      ],
+      "head": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "started": "2026-11-06T00:12:05.377335+00:00",
+      "finished": "2026-11-06T00:12:50.073260+00:00",
+      "exit": 1,
+      "log": "erasure-boundary-main.log"
+    }
+  ],
+  "ci": {
+    "discovered_at": "2026-11-06T00:19:11.801970+00:00",
+    "runs": [],
+    "observation": "Immediate exact-head discovery returned no runs; push workflow entry exists; no dispatch or rerun performed"
+  },
+  "main_ci": [
+    {
+      "conclusion": "skipped",
+      "event": "push",
+      "head_sha": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42130882145",
+      "id": 42130882145,
+      "name": "Run demo",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42130882310",
+      "id": 42130882310,
+      "name": "Verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42130882206",
+      "id": 42130882206,
+      "name": "Run site",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "dynamic",
+      "head_sha": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42130881836",
+      "id": 42130881836,
+      "name": "Push on main",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42128526907",
+      "id": 42128526907,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "generated_views_match_integrated_main": true,
+  "publication_scan": {
+    "status": "not run in cloud",
+    "owner": "guarded Mac lander"
+  },
+  "run_site": {
+    "status": "not run for candidate on cloud branch",
+    "owner": "guarded Mac lander after landing"
+  },
+  "migration_ledger": "not applicable: no migration changed",
+  "product_custody": "branch-only",
+  "mechanical_receipts": "all final checks above are bound to the exact product head"
+}

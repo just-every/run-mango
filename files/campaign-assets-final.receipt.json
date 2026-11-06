@@ -1,0 +1,23 @@
+{
+  "name": "campaign-assets-final",
+  "command": [
+    "perl",
+    "-e",
+    "alarm 1200; exec @ARGV",
+    "--",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/campaign-assets.spec.ts",
+    "--workers=1",
+    "--reporter=list"
+  ],
+  "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+  "started": "2026-11-06T00:13:34.589144+00:00",
+  "finished": "2026-11-06T00:17:50.790184+00:00",
+  "exit": 0,
+  "log": "campaign-assets-final.log"
+}

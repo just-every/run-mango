@@ -1,0 +1,4 @@
+929a790d89209ad7ae776f448bcb6d9af1a9a085 8f3af77cfaa025ea736ae3e66f98bd7d352f0469 4d12f9dea9a4a866334e361714e5d16a3ff6fe79 Integrate campaign image proof with current main
+8f3af77cfaa025ea736ae3e66f98bd7d352f0469 9f5128e6da762065dbf8b79ddbe3f37a0e95efef Prove image deduplication across MIME declarations [skip ci]
+9f5128e6da762065dbf8b79ddbe3f37a0e95efef a54a53943e3ba76ca69aeb15dbeaa5041636afee Complete native campaign image lifecycle proof and retain erasure gap
+a54a53943e3ba76ca69aeb15dbeaa5041636afee 955785c08ed00910bc83e3aa3bbb0a54703f6f71 Prove complete JPEG GIF and WebP campaign uploads [skip ci]

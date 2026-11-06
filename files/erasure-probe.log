@@ -1,0 +1,9 @@
+
+Running 1 test using 1 worker
+
+(node:2808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ERASURE_PROBE {"receiptState":"complete","continuations":162,"identifierImageStatus":410,"unrelatedImageStatus":200,"retainedOriginal":false}
+  ✓  1 tests/.task-sd-mango-c-f61/erasure-probe.spec.ts:17:1 › diagnostic CAMP-012 erased image response (5.0m)
+
+  1 passed (5.0m)

@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:4918) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ERASURE_BOUNDARY_PROBE {"receiptState":"complete","checksumFirstByte":65,"identifierImageStatus":200,"retainedOriginal":true}
+  ✘  1 tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts:10:1 › diagnostic CAMP-012 contact identifier followed by a PNG checksum byte (41.3s)
+
+
+  1) tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts:10:1 › diagnostic CAMP-012 contact identifier followed by a PNG checksum byte 
+
+    Error: erased identifier-bearing image must answer gone
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 410
+    Received: 200
+
+      41 |       checksumFirstByte: checksumByte, identifierImageStatus: response.status,
+      42 |       retainedOriginal: createHash('sha256').update(observed).digest('hex') === asset.sha256 }));
+    > 43 |     expect(response.status, 'erased identifier-bearing image must answer gone').toBe(410);
+         |                                                                                 ^
+      44 |   } finally {
+      45 |     await site?.runtime.close();
+      46 |     await edge.close();
+        at /home/agent/rer-consolidation/work/sd-mango-c-f61/run-mango/tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts:43:81
+
+    Error Context: ../evidence/8d1bfba5d2de/main/.task-sd-mango-c-f61-erasu-7c521-owed-by-a-PNG-checksum-byte/error-context.md
+
+  1 failed
+    tests/.task-sd-mango-c-f61/erasure-boundary.spec.ts:10:1 › diagnostic CAMP-012 contact identifier followed by a PNG checksum byte 
