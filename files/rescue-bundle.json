@@ -1,0 +1,8 @@
+{
+  "path": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/product-c147c33081802768de02f968d6b76471906e3c09.bundle",
+  "head": "c147c33081802768de02f968d6b76471906e3c09",
+  "sha256": "473540ffe9e45a146c2d43c61964ee1358ae2d34bf29c4cb8dc1b0fb124b473c",
+  "verified": true,
+  "product_pushed": true,
+  "verify_output": "The bundle contains these 5 refs:\nc147c33081802768de02f968d6b76471906e3c09 refs/heads/cloud/sd-mango-c-f56-erasure-repair-1\ncc6321c2372d631d9607df9af8ad1dd9f7878e84 refs/heads/main\ncc6321c2372d631d9607df9af8ad1dd9f7878e84 refs/remotes/origin/HEAD\ncc6321c2372d631d9607df9af8ad1dd9f7878e84 refs/remotes/origin/main\nc147c33081802768de02f968d6b76471906e3c09 HEAD\nThe bundle records a complete history.\nThe bundle uses this hash algorithm: sha1\n/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/product-c147c33081802768de02f968d6b76471906e3c09.bundle is okay\n"
+}

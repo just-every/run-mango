@@ -1,0 +1,13 @@
+{
+  "head": "c147c33081802768de02f968d6b76471906e3c09",
+  "files": {
+    "src/core/features/audience/erasure/objects.ts": {
+      "committed_sha256": "f4b972903a0f12d05089b1400de6cfe69e16ab3c1de40e7174f1d06fd48c94f5",
+      "matches_local_tested_bytes": true
+    },
+    "tests/campaign-assets.spec.ts": {
+      "committed_sha256": "fadfade68f07855701d46221628a8992bb1e16936ad586e65c624116bb436233",
+      "matches_local_tested_bytes": true
+    }
+  }
+}

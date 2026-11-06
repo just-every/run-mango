@@ -1,0 +1,103 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f56-erasure-repair-1",
+  "head": "c147c33081802768de02f968d6b76471906e3c09",
+  "base": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "native_campaign_tests": {
+    "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_TEST_WORK_DIR=<external-task-root> pnpm exec playwright test --config playwright.config.js '(campaign-assets\\.spec\\.ts|contract\\.js)' --workers=1 --reporter=list,json",
+    "stats": {
+      "startTime": "2026-11-06T00:45:47.949Z",
+      "duration": 17932.682,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "exit": 0
+  },
+  "native_erasure_tests": {
+    "command": "MANGO_NO_FIXTURE_SERVER=1 pnpm exec playwright test tests/campaign-assets.spec.ts tests/audience-import/erasure.spec.ts --config playwright.config.js --workers=1 --reporter=list,json",
+    "stats": {
+      "startTime": "2026-11-06T00:40:54.323Z",
+      "duration": 35184.032,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "exit": 0,
+    "selection_note": "This invocation selected the three ordinary erasure tests. The campaign wrapper reports contract.js locations; its four tests were separately executed with that location included."
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "node": "v24.19.0",
+    "pnpm": "10.12.4"
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "output": "silent success"
+  },
+  "contract_write": {
+    "command": "node src/base/contract-docs.mjs write",
+    "exit": 0,
+    "documents_changed": 0
+  },
+  "contract_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 0
+  },
+  "source_lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0,
+    "last_generated_source": true
+  },
+  "source_lock_check": {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0
+  },
+  "source_check": {
+    "command": "pnpm run source:check",
+    "exit": 0
+  },
+  "registration_counts": {
+    "tests/campaign-assets.spec.ts": {
+      "before": 4,
+      "after": 4
+    },
+    "tests/audience-import/erasure.spec.ts": {
+      "before": 3,
+      "after": 3
+    }
+  },
+  "contract_views_byte_identical_to_main": {
+    "CONTRACT.md": true,
+    "ACCEPTANCE.md": true,
+    "docs/CLAIMS.md": true
+  },
+  "clause_counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "clause_counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "clause_status_changes": [],
+  "changed_files": [
+    "sources.lock.json",
+    "src/core/features/audience/erasure/objects.ts",
+    "tests/campaign-assets.spec.ts"
+  ],
+  "tested_file_hashes": {
+    "src/core/features/audience/erasure/objects.ts": "f4b972903a0f12d05089b1400de6cfe69e16ab3c1de40e7174f1d06fd48c94f5",
+    "tests/campaign-assets.spec.ts": "fadfade68f07855701d46221628a8992bb1e16936ad586e65c624116bb436233"
+  },
+  "test_provenance": "Local native tests ran before the commit; the tested scanner and test bytes equal this committed candidate. Exact-SHA push Verify is separate.",
+  "publication_scan": "Mac fleet publication/history scan remains a landing gate; unavailable in this cloud by task design."
+}

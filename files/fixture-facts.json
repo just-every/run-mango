@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/support/images.ts png(8,6,156)",
+  "insertAfter": 33,
+  "textDataLength": 40,
+  "crc32Hex": "7ae5bfab",
+  "firstCrcByte": 122,
+  "firstCrcCharacter": "z",
+  "bytes": 270,
+  "sha256": "1d1aa128c989e636c02e6e1051af6481a711eddf78f6289081ae5543ce7c093e"
+}

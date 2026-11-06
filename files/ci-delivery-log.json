@@ -1,0 +1,164 @@
+shards (delivery)	Run this shard	﻿2026-11-06T00:49:56.3803651Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3804256Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3824549Z shell: /usr/bin/bash -e {0}
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3824928Z env:
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3825215Z   CI: true
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3825672Z   WRANGLER_SEND_METRICS: false
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3826053Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3826571Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3827334Z   SHARD: delivery
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3828204Z   MANGO_VERIFY_MEMBERS: [
+shards (delivery)	Run this shard	  {
+shards (delivery)	Run this shard	    "name": "go-live",
+shards (delivery)	Run this shard	    "stage": "go-live",
+shards (delivery)	Run this shard	    "files": [
+shards (delivery)	Run this shard	      "delivery.journeys.ts",
+shards (delivery)	Run this shard	      "delivery-recovery.journeys.ts",
+shards (delivery)	Run this shard	      "multistep.journeys.ts"
+shards (delivery)	Run this shard	    ]
+shards (delivery)	Run this shard	  }
+shards (delivery)	Run this shard	]
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3829216Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/delivery
+shards (delivery)	Run this shard	2026-11-06T00:49:56.3829709Z ##[endgroup]
+shards (delivery)	Run this shard	2026-11-06T00:49:56.4140346Z VERIFY_MEMBER go-live
+shards (delivery)	Run this shard	2026-11-06T00:49:56.4716535Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (delivery)	Run this shard	2026-11-06T00:49:56.4721528Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/delivery/members/go-live/evidence/4b3746152534/verify/go-live-06Gvyl
+shards (delivery)	Run this shard	2026-11-06T00:49:56.4930187Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T00:49:56.472Z"}
+shards (delivery)	Run this shard	2026-11-06T00:49:56.4990301Z go-live
+shards (delivery)	Run this shard	2026-11-06T00:49:58.4720113Z 
+shards (delivery)	Run this shard	2026-11-06T00:49:58.4721143Z Running 5 tests using 2 workers
+shards (delivery)	Run this shard	2026-11-06T00:49:58.4737852Z 
+shards (delivery)	Run this shard	2026-11-06T00:51:25.4114492Z Shared pacing step: before-restart-receipts-settled marketing= 1
+shards (delivery)	Run this shard	2026-11-06T00:51:28.8142238Z SEND005 initial installation phase=57864ms total=57864ms
+shards (delivery)	Run this shard	2026-11-06T00:51:29.0118622Z SEND005 outage probe started phase=193ms total=58058ms
+shards (delivery)	Run this shard	2026-11-06T00:51:29.1287280Z SEND005 barrier wait phase=119ms total=58180ms
+shards (delivery)	Run this shard	2026-11-06T00:51:29.5111859Z SEND005 before restart 1 phase=382ms total=58562ms
+shards (delivery)	Run this shard	2026-11-06T00:51:29.7090186Z SEND005 close 1 phase=198ms total=58760ms
+shards (delivery)	Run this shard	2026-11-06T00:51:52.7068402Z SEND005 installation 2 phase=22995ms total=81755ms
+shards (delivery)	Run this shard	2026-11-06T00:51:53.3753197Z SEND005 before restart 2 phase=671ms total=82426ms
+shards (delivery)	Run this shard	2026-11-06T00:51:53.6098470Z SEND005 close 2 phase=228ms total=82655ms
+shards (delivery)	Run this shard	2026-11-06T00:51:55.4916649Z Shared pacing step: screen-open-with-shared-backlog marketing= 1
+shards (delivery)	Run this shard	2026-11-06T00:52:00.2243467Z Shared pacing step: b-acceptance-recorded marketing= 5
+shards (delivery)	Run this shard	2026-11-06T00:52:00.4236786Z Shared pacing step: b-acceptance-visible-without-navigation marketing= 5
+shards (delivery)	Run this shard	2026-11-06T00:52:07.6206670Z Shared pacing step: terminal marketing= 10
+shards (delivery)	Run this shard	2026-11-06T00:52:08.1187489Z   ✓  2 tests/go-live/delivery.journeys.ts:7:1 › [SEND-003][SEND-004] shared provider pacing survives a native restart and the open screen follows durable receipts (2.1m)
+shards (delivery)	Run this shard	2026-11-06T00:52:14.6048357Z SEND005 installation 3 phase=20998ms total=103653ms
+shards (delivery)	Run this shard	2026-11-06T00:52:15.9417215Z SEND005 dispatch queued phase=1340ms total=104993ms
+shards (delivery)	Run this shard	2026-11-06T00:52:16.0050578Z SEND005 dispatch wait phase=63ms total=105056ms
+shards (delivery)	Run this shard	2026-11-06T00:52:16.0428629Z SEND005 browser clock installed phase=37ms total=105093ms
+shards (delivery)	Run this shard	2026-11-06T00:52:23.5221918Z SEND005 deadline campaign and browser ready phase=7480ms total=112573ms
+shards (delivery)	Run this shard	2026-11-06T00:52:23.7504663Z SEND005 late replay queued phase=226ms total=112800ms
+shards (delivery)	Run this shard	2026-11-06T00:52:23.7813604Z SEND005 late replay wait phase=33ms total=112833ms
+shards (delivery)	Run this shard	2026-11-06T00:52:23.7888414Z SEND005 expired browser clock advanced phase=6ms total=112839ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.0394991Z SEND005 expired browser settled phase=251ms total=113090ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.2399160Z SEND005 recovery probe complete phase=201ms total=113291ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.2626398Z SEND005 recovery wait phase=23ms total=113314ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.2697958Z SEND005 recovery browser clock advanced phase=6ms total=113320ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.4615531Z SEND005 recovered browser settled phase=192ms total=113512ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.7073179Z SEND005 all assertions complete phase=246ms total=113758ms
+shards (delivery)	Run this shard	2026-11-06T00:52:24.9876562Z   ✓  1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (2.4m)
+shards (delivery)	Run this shard	2026-11-06T00:54:01.9270551Z   ✓  4 tests/go-live/delivery.journeys.ts:13:1 › [CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch (1.6m)
+shards (delivery)	Run this shard	2026-11-06T00:54:39.4314569Z Chosen catalog proof: setup
+shards (delivery)	Run this shard	2026-11-06T00:55:07.5938582Z Chosen catalog proof: search and product picker
+shards (delivery)	Run this shard	2026-11-06T00:55:10.6756507Z Chosen catalog proof: HTML round trip
+shards (delivery)	Run this shard	2026-11-06T00:55:11.1828809Z Chosen catalog proof: current previews
+shards (delivery)	Run this shard	2026-11-06T00:55:12.8368923Z Chosen catalog proof: fresh hand-off
+shards (delivery)	Run this shard	2026-11-06T00:55:12.9675054Z Chosen catalog proof: approved identifiers
+shards (delivery)	Run this shard	2026-11-06T00:55:13.0121499Z Chosen catalog proof: identifiers locked
+shards (delivery)	Run this shard	2026-11-06T00:55:13.0123815Z Chosen catalog proof: dispatch new price
+shards (delivery)	Run this shard	2026-11-06T00:55:13.5457398Z Chosen catalog proof: dispatched
+shards (delivery)	Run this shard	2026-11-06T00:55:13.5491942Z Chosen catalog proof: read outcomes
+shards (delivery)	Run this shard	2026-11-06T00:55:13.6052936Z Chosen catalog proof: open outcomes
+shards (delivery)	Run this shard	2026-11-06T00:55:15.0589044Z Chosen catalog proof: terminal availability cases
+shards (delivery)	Run this shard	2026-11-06T00:55:27.7682547Z   ✓  3 tests/go-live/delivery.journeys.ts:10:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation (3.3m)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4535387Z   ✘  5 tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume (4.4m)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4776891Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4780878Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4817571Z   1) tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4819065Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4820135Z     Error: Starting authoring fixture: readiness deadline exceeded (exit none, signal none). Last health: Health probe failed.
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4821164Z     Command: pnpm
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4821589Z     Last output (up to 40 lines):
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4822911Z     (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4824651Z       - import "../../../../base/run-site" without a file extension (src/core/features/docs/build/site.ts:9:44). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4826218Z       - import "../../../../site/run" without a file extension (src/core/features/docs/build/site.ts:10:21). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4827832Z       - import "../core/features/site/links" without a file extension (src/site/run.ts:2:27). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4829118Z       - import "./icon-head" without a file extension (src/base/run-site.ts:1:26). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4830322Z       - import "../base/run-pricing" without a file extension (src/site/run.ts:3:28). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4831907Z       - import "./run-chooser-style" without a file extension (src/base/run-site.ts:2:29). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4833180Z       - import "./identity" without a file extension (src/base/run-site.ts:11:53). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4834446Z       - import "./theme-frame" without a file extension (src/base/run-site.ts:12:21). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4835634Z       - import "./hosting-page" without a file extension (src/base/run-site.ts:13:34). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4836636Z     Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4837657Z     12:55:27 AM [vite] (ssr) [optimizer] scanning dependencies...
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4838865Z     Log: /home/runner/work/_temp/mango-verification/delivery/members/go-live/tmp/mango-tests/4b3746152534/go-live/runtime-F8ytCX/install.log
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4839683Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4839955Z        at ../campaign-authoring/browser-runtime.mjs:131
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4840296Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4840710Z       129 |       }
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4841080Z       130 |     };
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4841807Z     > 131 |     await commands.waitForReady('Starting authoring fixture', dev, async signal =>
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4842467Z           |     ^
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4843163Z       132 |       (await fetch(`${url}/health`, { headers: { Connection: 'close' }, signal })).status === 200,
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4844040Z       133 |       { timeoutMs: startupTimeout, intervalMs: 100 });
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4844876Z       134 |     return { url, token, sql, close, logs: () => logs, directory, state };
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4846250Z         at commandFailure ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/failures.mjs:37:14)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4848047Z         at failure ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/commands.mjs:56:24)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4849605Z         at [REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/commands.mjs:173:113
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4851129Z         at fail ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/readiness.mjs:21:41)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4852770Z         at waitForReadiness ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/readiness.mjs:32:43)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4854145Z         at authoringRuntime ([REDACTED]/tests/campaign-authoring/browser-runtime.mjs:131:5)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4855029Z         at installation ([REDACTED]/tests/go-live/harness.ts:19:19)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4855770Z         at walk0 ([REDACTED]/tests/go-live/pause.flow.ts:12:69)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4856500Z         at [REDACTED]/tests/go-live/multistep.journeys.ts:10:3
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4857139Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4858383Z     Error Context: ../../_temp/mango-verification/delivery/members/go-live/evidence/4b3746152534/go-live/multistep.journeys.ts--AUD-b9243-sion-and-consent-and-resume/error-context.md
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4859623Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4859775Z   1 failed
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4861162Z     tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.4862241Z   4 passed (8.4m)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5780083Z Verification failed: go-live: exit 1, signal none.
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5780716Z Command: pnpm
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5781000Z Last output (up to 40 lines):
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5781281Z     Command: pnpm
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5781541Z     Last output (up to 40 lines):
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5782329Z     (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5783423Z       - import "../../../../base/run-site" without a file extension (src/core/features/docs/build/site.ts:9:44). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5784664Z       - import "../../../../site/run" without a file extension (src/core/features/docs/build/site.ts:10:21). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5785583Z       - import "../core/features/site/links" without a file extension (src/site/run.ts:2:27). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5786426Z       - import "./icon-head" without a file extension (src/base/run-site.ts:1:26). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5787516Z       - import "../base/run-pricing" without a file extension (src/site/run.ts:3:28). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5788374Z       - import "./run-chooser-style" without a file extension (src/base/run-site.ts:2:29). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5789169Z       - import "./identity" without a file extension (src/base/run-site.ts:11:53). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5789987Z       - import "./theme-frame" without a file extension (src/base/run-site.ts:12:21). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5790785Z       - import "./hosting-page" without a file extension (src/base/run-site.ts:13:34). Add the file extension
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5791691Z     Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5792246Z     12:55:27 AM [vite] (ssr) [optimizer] scanning dependencies...
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5793070Z     Log: /home/runner/work/_temp/mango-verification/delivery/members/go-live/tmp/mango-tests/4b3746152534/go-live/runtime-F8ytCX/install.log
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5793659Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5793847Z        at ../campaign-authoring/browser-runtime.mjs:131
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5794111Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5794222Z       129 |       }
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5794458Z       130 |     };
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5794930Z     > 131 |     await commands.waitForReady('Starting authoring fixture', dev, async signal =>
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5795408Z           |     ^
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5795890Z       132 |       (await fetch(`${url}/health`, { headers: { Connection: 'close' }, signal })).status === 200,
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5796497Z       133 |       { timeoutMs: startupTimeout, intervalMs: 100 });
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5797275Z       134 |     return { url, token, sql, close, logs: () => logs, directory, state };
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5798091Z         at commandFailure ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/failures.mjs:37:14)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5799086Z         at failure ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/commands.mjs:56:24)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5800130Z         at [REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/commands.mjs:173:113
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5801674Z         at fail ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/readiness.mjs:21:41)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5802720Z         at waitForReadiness ([REDACTED]/node_modules/.pnpm/@runeditrun+rer@0.2.85/node_modules/@runeditrun/rer/onboarding/readiness.mjs:32:43)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5803758Z         at authoringRuntime ([REDACTED]/tests/campaign-authoring/browser-runtime.mjs:131:5)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5804334Z         at installation ([REDACTED]/tests/go-live/harness.ts:19:19)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5804789Z         at walk0 ([REDACTED]/tests/go-live/pause.flow.ts:12:69)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5805241Z         at [REDACTED]/tests/go-live/multistep.journeys.ts:10:3
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5805488Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5806190Z     Error Context: ../../_temp/mango-verification/delivery/members/go-live/evidence/4b3746152534/go-live/multistep.journeys.ts--AUD-b9243-sion-and-consent-and-resume/error-context.md
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5806875Z 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5807242Z   1 failed
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5808268Z     tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume 
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5809142Z   4 passed (8.4m)
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5809873Z Log: /home/runner/work/_temp/mango-verification/delivery/members/go-live/evidence/4b3746152534/verify/go-live-06Gvyl/go-live/install.log
+shards (delivery)	Run this shard	2026-11-06T00:58:23.5870691Z ##[error]Process completed with exit code 1.

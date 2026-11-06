@@ -1,0 +1,340 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "(campaign-assets\\.spec\\.ts|contract\\.js)",
+      "--workers=1",
+      "--reporter=list,json"
+    ],
+    "configFile": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/playwright.config.js",
+    "rootDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/evidence/70772f4d633d/main",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/evidence/70772f4d633d/main",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests",
+        "snapshotDir": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "launchOptions": {
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "baseURL": "http://127.0.0.1:12031",
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "campaign-assets.spec.ts",
+      "file": "contract.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3065,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": "KG5vZGU6MjkyOCkgV2FybmluZzogVGhlICdOT19DT0xPUicgZW52IGlzIGlnbm9yZWQgZHVlIHRvIHRoZSAnRk9SQ0VfQ09MT1InIGVudiBiZWluZyBzZXQuCihVc2UgYG5vZGUgLS10cmFjZS13YXJuaW5ncyAuLi5gIHRvIHNob3cgd2hlcmUgdGhlIHdhcm5pbmcgd2FzIGNyZWF0ZWQpCg=="
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-06T00:45:51.770Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "png-erasure-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJyZWNlaXB0IjogewogICAgInJlZmVyZW5jZSI6ICJkOThiYzdkYy05MDQxLTQ2NTctODIyNy1iZDM1NGI4N2U5MjkiLAogICAgInN0YXRlIjogImNvbXBsZXRlIiwKICAgICJyZXF1ZXN0ZWRBdCI6ICIyMDI2LTExLTA2VDAwOjQ1OjU2LjQ0M1oiLAogICAgImNvbXBsZXRlZEF0IjogIjIwMjYtMTEtMDZUMDA6NDU6NTkuMDU4WiIsCiAgICAicmVtb3ZlZCI6IHsKICAgICAgInRyYW5zZmVyX2FydGlmYWN0cyI6IDAsCiAgICAgICJpa19kMV9wcmVwYXJhdGlvbl9yZWNlaXB0cyI6IDAsCiAgICAgICJpa19kMV9zdGFnaW5nX2hlYWRlcnMiOiAwLAogICAgICAiaWtfZDFfc3RhZ2luZ19jaHVua3MiOiAwLAogICAgICAiaWtfZDFfc3RhZ2luZ19vcmlnaW5hbHMiOiAwLAogICAgICAiaWtfZDFfc3RhZ2luZ19pbmRleCI6IDAsCiAgICAgICJpa19kMV9zdGFnaW5nX3BhZ2VzIjogMCwKICAgICAgImlrX2QxX3N0YWdpbmciOiAwLAogICAgICAiaWtfZDFfbmF0aXZlX3N0YWdpbmdfdmFsdWVzIjogMCwKICAgICAgImlrX2QxX25hdGl2ZV9zdGFnaW5nX2luZGV4IjogMCwKICAgICAgImlrX2QxX25hdGl2ZV9zdGFnaW5nIjogMCwKICAgICAgImlrX2QxX2NyZWF0aW9uX3BsYW5zIjogMCwKICAgICAgImlrX2QxX3JldmVyc2FsX3JlcG9ydHMiOiAwLAogICAgICAiaWtfZDFfc3RyZWFtX3BhZ2VzIjogMCwKICAgICAgImlrX2QxX2luZGV4ZWRfam9icyI6IDAsCiAgICAgICJpa19kMV9wbGFuX2luZGV4IjogMCwKICAgICAgImlrX2QxX3BsYW5fY2h1bmtzIjogMCwKICAgICAgImlrX2QxX29yaWdpbmFsX2NodW5rcyI6IDAsCiAgICAgICJpa19kMV9lbnRyaWVzIjogMCwKICAgICAgImlrX2QxX2hpc3RvcnkiOiAwLAogICAgICAiaWtfcHJvdmVuYW5jZSI6IDAsCiAgICAgICJpa19zb3VyY2VzIjogMCwKICAgICAgImlrX29yaWdpbmFscyI6IDAsCiAgICAgICJpa19vcmlnaW5hbF9zZXRzIjogMCwKICAgICAgImlrX3N0YWdlcyI6IDAsCiAgICAgICJpa19iYXRjaGVzIjogMCwKICAgICAgImlrX2QxX2N1c3RvZHlfcmV2aXNpb25zIjogMCwKICAgICAgImlrX3RhcmdldHMiOiAwLAogICAgICAiaWtfam9icyI6IDAsCiAgICAgICJpa19kMV9zdHJlYW1zIjogMCwKICAgICAgInByb3Bvc2FsX2V2aWRlbmNlX2l0ZW1zIjogMCwKICAgICAgImNvbW1lcmNlX3JlZnVuZHMiOiAwLAogICAgICAiY29tbWVyY2Vfb3JkZXJzIjogMCwKICAgICAgIm9wZW5fZXN0aW1hdGVfZmFjdHMiOiAwLAogICAgICAib3Blbl90cmFja2luZ190b2tlbnMiOiAwLAogICAgICAibGlua19jbGlja19mYWN0cyI6IDAsCiAgICAgICJ0cmFja2VkX2xpbmtzIjogMCwKICAgICAgImF0dHJpYnV0aW9uX2ZhY3RzIjogMCwKICAgICAgImV4dGVybmFsX2Nvc3RfZmFjdHMiOiAwLAogICAgICAiZGVsaXZlcnlfZmFjdHMiOiAwLAogICAgICAicHJvdmlkZXJfZmFjdF9pbmJveCI6IDAsCiAgICAgICJyZWNpcGllbnRfc3RlcHMiOiAwLAogICAgICAiY2FtcGFpZ25fcmV2aXNpb25fY2FuZGlkYXRlcyI6IDAsCiAgICAgICJjb21tZXJjZV9wcml2YWN5X2NvbnRyb2xzIjogMCwKICAgICAgImNvbW1lcmNlX29ic2VydmF0aW9ucyI6IDAsCiAgICAgICJzb3VyY2VfYWN0aXZpdGllcyI6IDAsCiAgICAgICJzb3VyY2VfcmVjb3JkcyI6IDAsCiAgICAgICJwdWJsaWNfdG9rZW5fcmF0ZV9saW1pdHMiOiAwLAogICAgICAic21zX2ZyZXF1ZW5jeV9jbGFpbXMiOiAwLAogICAgICAic21zX3NlcnZpY2VfbWVzc2FnZXMiOiAwLAogICAgICAic21zX2luYm91bmRfcmVjZWlwdHMiOiAwLAogICAgICAiY29uc2VudF9oYW5kb2ZmX2NsYWltcyI6IDAsCiAgICAgICJwdWJsaWNfYWN0aW9uX3Rva2VucyI6IDAsCiAgICAgICJjb25zZW50X2NvbmZpcm1hdGlvbnMiOiAwLAogICAgICAiY29udGFjdF9ib3VuY2VfZmFjdHMiOiAwLAogICAgICAiY29udGFjdF9ib3VuY2Vfc3RhdGVzIjogMCwKICAgICAgInNtc19jb21wbGlhbmNlX3JlcGxpZXMiOiAwLAogICAgICAiY29udGFjdF9pbXBvcnRfcm93cyI6IDAsCiAgICAgICJhdWRpZW5jZV9zaWdudXBfcmVxdWVzdHMiOiAwLAogICAgICAib2FfbGltaXRzIjogMCwKICAgICAgInJlcl9tYWlsX2RldmVsb3BtZW50X291dGJveCI6IDAsCiAgICAgICJtb3ZlX2luX2FyY2hpdmVfY2h1bmtzIjogMCwKICAgICAgIm1vdmVfaW5fY29udGVudCI6IDAsCiAgICAgICJhdWRpZW5jZV9pbXBvcnRfcGxhbl9jaHVua3MiOiAwLAogICAgICAiYXVkaWVuY2VfaW1wb3J0X3BsYW5fY29udGFjdHMiOiAwLAogICAgICAiYXVkaWVuY2VfaW1wb3J0X3BsYW5zIjogMCwKICAgICAgImF1ZGllbmNlX3NlZ21lbnRzIjogMCwKICAgICAgImNhbXBhaWducyI6IDAsCiAgICAgICJjYW1wYWlnbl9yZXZpc2lvbnMiOiAwLAogICAgICAiY2FtcGFpZ25fdGVtcGxhdGVzIjogMCwKICAgICAgIm5ld3NsZXR0ZXJfYXJjaGl2ZSI6IDAsCiAgICAgICJjYW1wYWlnbl9mb2xsb3d1cHMiOiAwLAogICAgICAiY2FtcGFpZ25fZHJhZnRfc3RlcF9zZXR0aW5ncyI6IDAsCiAgICAgICJhdWRpZW5jZV9zb3VyY2VfYXV0aG9yaXR5IjogMCwKICAgICAgImNvbW1lcmNlX3NvdXJjZV9jb3ZlcmFnZSI6IDAsCiAgICAgICJzb3VyY2Vfc3luY3MiOiAwLAogICAgICAic291cmNlX3N5bmNfcnVucyI6IDAsCiAgICAgICJzb3VyY2Vfc3luY19jdXJzb3JzIjogMCwKICAgICAgImNvbW1lcmNlX3NvdXJjZV9jYXBhYmlsaXRpZXMiOiAwLAogICAgICAiY2FtcGFpZ25fY2hhbm5lbF9wYXVzZXMiOiAwLAogICAgICAiY2FtcGFpZ25fcmV2aXNpb25fbGlua3MiOiAwLAogICAgICAiY2FtcGFpZ25fc3RlcHMiOiAwLAogICAgICAicHJvcG9zYWxfZm9yZWNhc3RzIjogMCwKICAgICAgImNhbXBhaWduX2F1ZGllbmNlcyI6IDAsCiAgICAgICJjYW1wYWlnbl9jaGVja3MiOiAwLAogICAgICAiY2FtcGFpZ25fc3RhdGVfdHJhbnNpdGlvbnMiOiAwLAogICAgICAicHJvcG9zYWxfYXVkaWVuY2VzIjogMCwKICAgICAgInByb3Bvc2FscyI6IDAsCiAgICAgICJwcm9wb3NhbF9leGNsdXNpb25zIjogMCwKICAgICAgInByb3Bvc2FsX3N0ZXBzIjogMCwKICAgICAgInByb3ZpZGVyX291dGFnZXMiOiAwLAogICAgICAicHJvcG9zYWxfdHJhbnNpdGlvbnMiOiAwLAogICAgICAiZGVzaWduX2pvYnMiOiAwLAogICAgICAibGlmZWN5Y2xlX2F1ZGl0X2VudHJpZXMiOiAxLAogICAgICAiYXVkaWVuY2VfaW1wb3J0X29ic2VydmF0aW9ucyI6IDAsCiAgICAgICJjb25zZW50X2NhcHR1cmVfbWV0YWRhdGEiOiAwLAogICAgICAiY29uc2VudF9ldmlkZW5jZSI6IDAsCiAgICAgICJjb250YWN0X2hpc3RvcnkiOiAwLAogICAgICAiYXVkaWVuY2VfcG9ydGFibGVfaGFzaGVzIjogMCwKICAgICAgIm1hbmdvX2F1ZGllbmNlX2hhc2hlcyI6IDAsCiAgICAgICJtYW5nb19pbXBvcnRfcmV2aXNpb25zIjogMCwKICAgICAgImNvbnRhY3RfZW1haWxfYWRkcmVzc2VzIjogMCwKICAgICAgImNvbnRhY3RfcGhvbmVzIjogMCwKICAgICAgImNvbnRhY3RfbWVyZ2VzIjogMCwKICAgICAgImxpc3RfZ3Jvd3RoX2F0dHJpYnV0aW9uIjogMCwKICAgICAgIm9wZXJhdG9yX3ByaXZhY3lfcmVxdWVzdHMiOiAwLAogICAgICAiaW1wb3J0ZWRfZW5nYWdlbWVudF9mYWN0cyI6IDAsCiAgICAgICJtb3ZlX2luX2NvbnRhY3RfaGlzdG9yeSI6IDAsCiAgICAgICJwYWlkX3N1YnNjcmlwdGlvbnMiOiAwLAogICAgICAiYXVkaWVuY2VfZXhjbHVzaW9uX3NldHRpbmdzIjogMCwKICAgICAgIndvb2NvbW1lcmNlX2Zsb3dfZW5yb2xsbWVudHMiOiAwLAogICAgICAiYW5hbHl0aWNzX3NldHRpbmdzIjogMCwKICAgICAgIm9wdF9pbl9tb2RlcyI6IDAsCiAgICAgICJsaW5rX2hvc3RfZXhjbHVzaW9ucyI6IDAsCiAgICAgICJsaW5rX2hvc3Rfc291cmNlcyI6IDAsCiAgICAgICJsaW5rX2hvc3Rfc291cmNlX3ZlcnNpb25zIjogMCwKICAgICAgInNlbmRlcl9yZW5ld2FsX2RlbGl2ZXJpZXMiOiAwLAogICAgICAiaW5zaWdodF9zYXZlZF9yZXBvcnRzIjogMCwKICAgICAgImluc2lnaHRfcmVwb3J0X3NjaGVkdWxlcyI6IDAsCiAgICAgICJpbnNpZ2h0X3JlcG9ydF9kZWxpdmVyaWVzIjogMCwKICAgICAgInJldmlld19sb3lhbHR5X2Nvbm5lY3Rpb25zIjogMCwKICAgICAgInJldmlld19sb3lhbHR5X3JlY2VpcHRzIjogMCwKICAgICAgInNlbmRpbmdfY29ubmVjdGlvbiI6IDAsCiAgICAgICJzZW5kaW5nX3Byb3Bvc2FscyI6IDAsCiAgICAgICJpbmN1bWJlbnRfY29uc2VudF9saW5rcyI6IDAsCiAgICAgICJmbG93X2RyYWZ0X3JldmlzaW9ucyI6IDAsCiAgICAgICJjb250YWN0X3Byb3BlcnR5X2RlZmluaXRpb25zIjogMCwKICAgICAgInN0b3JlZF9vYmplY3RzIjogMSwKICAgICAgImNvbnRhY3RzIjogMQogICAgfSwKICAgICJyZXRhaW5lZENoYW5uZWxzIjogW10KICB9LAogICJnb25lIjogWwogICAgewogICAgICAibWV0aG9kIjogIkdFVCIsCiAgICAgICJzdGF0dXMiOiA0MTAKICAgIH0sCiAgICB7CiAgICAgICJtZXRob2QiOiAiSEVBRCIsCiAgICAgICJzdGF0dXMiOiA0MTAKICAgIH0KICBdLAogICJyZW1vdmVkU2hhMjU2IjogIjFkMWFhMTI4Yzk4OWU2MzZjMDJlNmUxMDUxYWY2NDgxYTcxMWVkZGY3OGY2Mjg5MDgxYWU1NTQzY2U3YzA5M2UiLAogICJyZXRhaW5lZFNoYTI1NiI6IFsKICAgICI5MGJlZDc4ZDY1YzFhMzBkMjk2Mjk0MmNhNzdhYTRkMTYyZDc4ZGRlNmJkMzI5ODEzMWRiNzNlZTgzZmUyMzY1IiwKICAgICI0Y2Y3MDc3YTViNWY3MmI1OTZkYWNkMzliNzYwNjM3MzcyMzY3ZjNlOGE0YzFiMzQyNzJhYzdhZTZlZGNjNGIyIgogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4cdd9d4acea053e9f4b-3cae14dd87e32a651c35",
+          "file": "contract.js",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "title": "[CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 287,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T00:45:59.194Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4cdd9d4acea053e9f4b-312bb1acaac61800b883",
+          "file": "contract.js",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "title": "[CAMP-012] an image past its per-minute allowance answers 429 without affecting other images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6060,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T00:45:59.500Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4cdd9d4acea053e9f4b-2645ae5b3d4b897deae6",
+          "file": "contract.js",
+          "line": 7,
+          "column": 10
+        },
+        {
+          "title": "[CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 252,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T00:46:05.570Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/contract.js",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4cdd9d4acea053e9f4b-a98eac4c8f5ff9cb6614",
+          "file": "contract.js",
+          "line": 7,
+          "column": 10
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T00:45:47.949Z",
+    "duration": 17932.682,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

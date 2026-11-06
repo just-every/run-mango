@@ -1,0 +1,32 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f56-erasure-repair-1",
+  "head": "c147c33081802768de02f968d6b76471906e3c09",
+  "product_push": "success",
+  "readiness": "BLOCKED",
+  "run": 42139401035,
+  "run_url": "https://github.com/just-every/run-mango/actions/runs/42139401035",
+  "conclusion": "failure",
+  "failing_job": 127636292887,
+  "aggregate_failed_job": 127639734872,
+  "blocking_failure": "Native pause/resume installation readiness deadline; startup harness outside PNG correction lease",
+  "affected_native_registrations": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+  },
+  "clause_status_changes": [],
+  "before_counts": [
+    20,
+    198,
+    98
+  ],
+  "after_counts": [
+    20,
+    198,
+    98
+  ],
+  "direct_gh_invocations": 7,
+  "ci_reruns": 0,
+  "pr": null
+}

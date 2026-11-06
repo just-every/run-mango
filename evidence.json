@@ -1,0 +1,232 @@
+{
+  "files": [
+    {
+      "blob": "80f168b57a8b3ae3c76b1561cef832c754b758a4",
+      "bytes": 1253,
+      "path": "BEFORE.md",
+      "sha256": "b782b3a0734851cdb90dbaf18bbb70c4e5ffed499b3709992d106e3de789f2c6"
+    },
+    {
+      "blob": "31c32d3bf8e23cd04fe007bd2a0217850de92e2a",
+      "bytes": 814,
+      "path": "FINAL.json",
+      "sha256": "c35804fa0b9418e4c9f97acab9faa150d46c94d8807a7ea3128e2a587941a80f"
+    },
+    {
+      "blob": "0adcdbf8e42bd48abf5489254439117455da22a2",
+      "bytes": 2884,
+      "path": "PLAN.md",
+      "sha256": "2cebd1ca8669003a0941c05887fbad857fb8c880d6f9c83c62d6371e1b5c2a24"
+    },
+    {
+      "blob": "ad3410aa400053afb944078863c96e127970b43b",
+      "bytes": 11231,
+      "path": "REPORT.md",
+      "sha256": "464ac0d2beb5b673c8e892d8ee809cd5e229145202d9a0034ac79fc30ce1326a"
+    },
+    {
+      "blob": "2ffc8a17d12d76de6a1c2eea5ed67dd017fa3c38",
+      "bytes": 8903,
+      "path": "affected-tests.log",
+      "sha256": "1bf6c1984826c249325f7edef789731f68f287c19f512de48f01ad50f029b7fc"
+    },
+    {
+      "blob": "2057167260a654e1a2cccaece98946dcf440d415",
+      "bytes": 83,
+      "path": "auth-recovery-1-stderr.txt",
+      "sha256": "8403d2758c02d50045f5883a3471d31b32d23d892ef4630d5ec92f66d23719f7"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "auth-recovery-1.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "e40eac13587d2ebb1dd35f5e51515803bd83f938",
+      "bytes": 2582,
+      "path": "campaign-assets-fixture-failure.log",
+      "sha256": "3ad8bc767ba5ab25bd0c30acc47a9a3fb96dcc04a32cd12bdca0710ebb0b20dd"
+    },
+    {
+      "blob": "94500b2a6ba15f42befddd32263655a6f35db0cc",
+      "bytes": 2784,
+      "path": "campaign-assets-query-metadata-failure.log",
+      "sha256": "93409b8d5229f7368b00e39e392912b3af36db854e74dac33a55244bb4b3cb0c"
+    },
+    {
+      "blob": "537559f09570cb8600c10892bf4ceea9eeddba9b",
+      "bytes": 17245,
+      "path": "campaign-assets-results.json",
+      "sha256": "f439f0524399ffd7fbb36b76d3c9104e9c3a91117ee63bb71cfe50321217c59a"
+    },
+    {
+      "blob": "731a810cd154ff68e0076202be3e07962201a23c",
+      "bytes": 976,
+      "path": "campaign-assets.log",
+      "sha256": "a97f40061d73d28087515d8314bb6ae4d5828a60fe530eaf9a778f09c12a9c25"
+    },
+    {
+      "blob": "49d1fef15b0bbbb820b7c352eda761930d97b48f",
+      "bytes": 3346,
+      "path": "checks.json",
+      "sha256": "139f9afdd33e51f04d18e49353424f78972ca10faa4a538508862605d08a4de0"
+    },
+    {
+      "blob": "9d87c5289cd9f8f7bdba3543712b376cb7613ea2",
+      "bytes": 178,
+      "path": "ci-auth-recovery-2.json",
+      "sha256": "41fda2f3eb3130764b343e8f6ecbf58fb10b0ad3f370bd64011cf0e093ed6565"
+    },
+    {
+      "blob": "d51c29c998dce0c6ae328db1804523623cdb311b",
+      "bytes": 20955,
+      "path": "ci-delivery-failed.log",
+      "sha256": "1bd14110c62e7ebe7d2f639994c9df04508d1a626d3fd2792db4b504d4e0c6a8"
+    },
+    {
+      "blob": "d51c29c998dce0c6ae328db1804523623cdb311b",
+      "bytes": 20955,
+      "path": "ci-delivery-log.json",
+      "sha256": "1bd14110c62e7ebe7d2f639994c9df04508d1a626d3fd2792db4b504d4e0c6a8"
+    },
+    {
+      "blob": "10d4500a06dd4be3bac41434cd7be6572cb6390a",
+      "bytes": 295,
+      "path": "ci-discovery.json",
+      "sha256": "473580c22154f870b6f042c7f6970544fbaac36118690ff71076937084bd102b"
+    },
+    {
+      "blob": "29a3447c3b992856ed06968288e6af7afc2a772d",
+      "bytes": 21044,
+      "path": "ci-jobs.json",
+      "sha256": "18c7244a09afff1a6052661505e81b584eadc800fe3fcd52498b05d6cfd060e6"
+    },
+    {
+      "blob": "e30dce7e6c619d1a8e51c5bd05771b4d6b91739e",
+      "bytes": 175,
+      "path": "ci-status-1.json",
+      "sha256": "855a63639dd5b13e4c3aba3731c44032997634534d762d8a73e344e0d13d83f5"
+    },
+    {
+      "blob": "377961bacb41e652a150f58bb3a277c24048ba4d",
+      "bytes": 31,
+      "path": "ci-status-2-stderr.txt",
+      "sha256": "33b0294298d5029730486a8c9671a03841dcf76b0b8afc686b0279a10cb55722"
+    },
+    {
+      "blob": "580c860b146ff991a246052e078df38e6eba6092",
+      "bytes": 108,
+      "path": "ci-status-2.json",
+      "sha256": "f1840e6540f2d1bb27b6074f562577cbfbb63217cffdf5341a8dc764b4fdfb84"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "contract-check.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "58dd21c218846e90dd798f1845377f7422e45cac",
+      "bytes": 28,
+      "path": "contract-write.log",
+      "sha256": "14cee29b7bd19487e15f4013d4fb85016e022ef21d230676971a6490c88436d2"
+    },
+    {
+      "blob": "2ee72034f30411069b31496b453ac205b62a6864",
+      "bytes": 7646,
+      "path": "erasure-results.json",
+      "sha256": "4178ea6cde0cdecc9a5bcf2894e21eb83f278a1555f06487b2e41e55731c6dff"
+    },
+    {
+      "blob": "71cff27af5598aff771ab7cc426cfb4bfb470d49",
+      "bytes": 1257,
+      "path": "erasure.log",
+      "sha256": "85809e52862d320c96df80773225461b4791d8cd009516108ffab03c277e87ff"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "first-party.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "a34d5559fbcd5273f3dbfc2ad9f204cf97da13b3",
+      "bytes": 274,
+      "path": "fixture-facts.json",
+      "sha256": "7cf91d0d3146a0897561bbe115bfe6276d964880536205030e36989db32e7687"
+    },
+    {
+      "blob": "ba09a99d7694cb42c8f524f98dad7cb9c5ef5d41",
+      "bytes": 2075,
+      "path": "github-calls.json",
+      "sha256": "c271178853446050837372aabe41f05be0c8695bc242413b24cfb76db5951284"
+    },
+    {
+      "blob": "11c700e1121798ecc0229c4c7e5ed14e511cd8da",
+      "bytes": 4790,
+      "path": "native-png-erasure-receipt.json",
+      "sha256": "e339427a522414362b9189aed1d7f365cc15da4d56de5fccc83b3cc8ca714b88"
+    },
+    {
+      "blob": "8501c9bd57d86c7d282767de7d80a964b08e7660",
+      "bytes": 1323,
+      "path": "packet-review.json",
+      "sha256": "dbb2c5f3a16ca581421a01b20694b029ded20a114bdf1ded0fbdeeabd56b1115"
+    },
+    {
+      "blob": "fe337236660d9d277bec7fc57dcd729d1345c0dd",
+      "bytes": 645,
+      "path": "product-provenance.txt",
+      "sha256": "883f1ec8f91580c8b38d22725dd83ae338796431295fa01a751e99fe73f87d50"
+    },
+    {
+      "blob": "8d5599078ea86a92932a25a45831818027df2ab5",
+      "bytes": 12152,
+      "path": "product.patch",
+      "sha256": "7f830ff95bf8ed2f64eb9a29cdc85ee2ea844704efb3d42e7d82a4a7017591a7"
+    },
+    {
+      "blob": "2c7abcba834475a3774531b91735bfa4d9e04473",
+      "bytes": 922,
+      "path": "rescue-bundle.json",
+      "sha256": "08485395053f377d84b7233183c0df5405359ad444ba2a6ed14560a2fab1cb9f"
+    },
+    {
+      "blob": "8e0e1857ff4a130966a6eb6d369d7c4ecc0a223e",
+      "bytes": 478766,
+      "path": "source-check.log",
+      "sha256": "3d2fa68ab1805cdae2b88fa3a7b1edef00e704d535eb565b5003b155d3c71b12"
+    },
+    {
+      "blob": "911336e46bbfbece2ec5e9fb6e8d3c5a7f9e5392",
+      "bytes": 411263,
+      "path": "source-lock-check.log",
+      "sha256": "346bb3aa19a91d48bef9b6008afe2e0b5d97ea3729d5d0fea6242930ad40d2c1"
+    },
+    {
+      "blob": "cc18646c1f916a038942b9978aafdf99d6a25ebd",
+      "bytes": 411249,
+      "path": "source-lock.log",
+      "sha256": "0996998c6876ed5fb600872abb040d4a3e93a37fc4b58bf91b26c3606daafbe6"
+    },
+    {
+      "blob": "74b706c1a9310536d790ed9425c2b9160e60e762",
+      "bytes": 452,
+      "path": "test-byte-provenance.json",
+      "sha256": "ec8122aa82f950aff79caeca0cf0415f9b28c2321a3a70f0bc3ff9f7064fdc6b"
+    },
+    {
+      "blob": "32ad35a2a57732026b9096f4ca5493d0bbf4871c",
+      "bytes": 219,
+      "path": "typecheck.log",
+      "sha256": "25ad781a55540ff2a7f9d73e3eee0bb5af36992665344fcde17abac09d989e81"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f56-erasure-repair-1",
+  "product_head": "c147c33081802768de02f968d6b76471906e3c09",
+  "ref": "refs/heads/evidence/sd-mango-c-f56-erasure-repair-1",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f56-erasure-repair-1"
+}

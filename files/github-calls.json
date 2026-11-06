@@ -1,0 +1,97 @@
+[
+  {
+    "number": 1,
+    "label": "ci-discovery",
+    "at": 1793926075.1559718,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=c147c33081802768de02f968d6b76471906e3c09&per_page=100",
+      "--jq",
+      "{total_count,workflow_runs:[.workflow_runs[]|{id,name,status,conclusion,head_sha,event,html_url,created_at}]}"
+    ],
+    "exit": 0
+  },
+  {
+    "number": 2,
+    "label": "ci-status-1",
+    "at": 1793926375.2386153,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42139401035",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ],
+    "exit": 0
+  },
+  {
+    "number": 3,
+    "label": "ci-status-2",
+    "at": 1793926675.310603,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42139401035",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ],
+    "exit": 1
+  },
+  {
+    "number": 4,
+    "label": "auth-recovery-1",
+    "at": 1793926807.9683142,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/branches/main",
+      "--jq",
+      "{name,head:.commit.sha}"
+    ],
+    "exit": 1
+  },
+  {
+    "number": 5,
+    "label": "ci-auth-recovery-2",
+    "at": 1793926979.6104982,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42139401035",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ],
+    "exit": 0
+  },
+  {
+    "number": 6,
+    "label": "ci-jobs",
+    "at": 1793926993.7835262,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42139401035/jobs?per_page=100",
+      "--jq",
+      "{jobs:[.jobs[]|{id,name,status,conclusion,html_url,steps:[.steps[]|{name,conclusion}]}]}"
+    ],
+    "exit": 0
+  },
+  {
+    "number": 7,
+    "label": "ci-delivery-log",
+    "at": 1793927008.0057278,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42139401035",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "127636292887",
+      "--log-failed"
+    ],
+    "exit": 0
+  }
+]

@@ -1,0 +1,38 @@
+
+Running 4 tests using 1 worker
+
+(node:2680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/contract.js:7:10 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free (292ms)
+  -  2 tests/contract.js:7:10 › [CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing
+  -  3 tests/contract.js:7:10 › [CAMP-012] an image past its per-minute allowance answers 429 without affecting other images
+  -  4 tests/contract.js:7:10 › [CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection
+
+
+  1) tests/contract.js:7:10 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free 
+
+    Error: D1_ERROR: NOT NULL constraint failed: contacts.display_name: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_NOTNULL)
+
+       at campaign-assets.spec.ts:79
+
+      77 |   };
+      78 |   for (const [id, email] of [[contactId, 'synthetic-mango-156@example.test'], [`${contactId}z`, 'synthetic-mango-156-other@example.test']]) {
+    > 79 |     await runtime.db.prepare("INSERT INTO contacts(id,email,email_status,sms_status,created_at,updated_at) VALUES(?,?,'never-subscribed','never-subscribed',?,?)")
+         |     ^
+      80 |       .bind(id, email, Date.now(), Date.now()).run();
+      81 |   }
+      82 |   const identifying = withText(contactId), otherImage = withText(`${contactId}z`);
+        at /home/agent/rer-consolidation/work/sd-mango-c-f56-erasure-repair-1/repo/tests/campaign-assets.spec.ts:79:5
+    [cause]: Error: NOT NULL constraint failed: contacts.display_name: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_NOTNULL)
+        at D1DatabaseSessionAlwaysPrimary._sendOrThrow (cloudflare-internal:d1-api:189:24)
+        at async cloudflare-internal:d1-api:478:19
+
+    Error Context: ../evidence/70772f4d633d/main/campaign-assets--CAMP-012--b3989-y-immutable-and-cookie-free/error-context.md
+
+    Error Context: ../evidence/70772f4d633d/main/campaign-assets--CAMP-012--b3989-y-immutable-and-cookie-free/error-context.md
+
+  1 failed
+    tests/contract.js:7:10 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free 
+  3 did not run

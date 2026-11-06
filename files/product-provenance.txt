@@ -1,0 +1,15 @@
+commit c147c33081802768de02f968d6b76471906e3c09
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Fri Nov 6 00:47:43 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Fri Nov 6 00:47:43 2026 +0000
+
+    Fix PNG text chunk boundaries during contact erasure
+
+ sources.lock.json                             |  4 +-
+ src/core/features/audience/erasure/objects.ts | 44 ++++++++++++++++++++--
+ tests/campaign-assets.spec.ts                 | 54 +++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+), 6 deletions(-)
+
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
