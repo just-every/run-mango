@@ -1,0 +1,66 @@
+{
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "source": "exact candidate registered multistep journey",
+  "assertion_width": 1440,
+  "screenshots": [
+    {
+      "file": "scheduled-pause-1440.png",
+      "width": 1440,
+      "height": 3083,
+      "bytes": 335336,
+      "sha256": "134af5ba7698ad2256a96c212242368b8d015912ebc1845848dee36a2309ddf7"
+    },
+    {
+      "file": "scheduled-pause-390.png",
+      "width": 390,
+      "height": 5534,
+      "bytes": 333027,
+      "sha256": "68b310451e09a210927ea50ebb25db6224c41249e0c7f5a85eecc24c89df81db"
+    },
+    {
+      "file": "dispatch-paused-1440.png",
+      "width": 1440,
+      "height": 2414,
+      "bytes": 251894,
+      "sha256": "5e9137d2dcd5ed1442b4d8b8da5fd637e9a703ef98339683eb104d413565b65a"
+    },
+    {
+      "file": "dispatch-paused-390.png",
+      "width": 390,
+      "height": 5873,
+      "bytes": 351175,
+      "sha256": "1b04774e308732c68e631a3bcddba59f21cc6cf47f63bd0e6b7ae40d8f512266"
+    },
+    {
+      "file": "pause-completed-1440.png",
+      "width": 1440,
+      "height": 2413,
+      "bytes": 283761,
+      "sha256": "38b8fc0e756f85c21eecd584bc809e3974dbbb30051b9381180e47fef008e739"
+    },
+    {
+      "file": "pause-completed-390.png",
+      "width": 390,
+      "height": 5900,
+      "bytes": 349528,
+      "sha256": "c5a9abea9c2ed2cfd117f46adb8e4c563f141af500dddb33ece0e803b2d2d7bc"
+    },
+    {
+      "file": "pause-history-1440.png",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 55589,
+      "sha256": "585ccfa629a47f283b63d75dc6950b2bf4bc55bd7e9992593e37a57e99e6fd62"
+    },
+    {
+      "file": "pause-history-390.png",
+      "width": 390,
+      "height": 1183,
+      "bytes": 41861,
+      "sha256": "eabe3eb10830338c3006798adf77f3ab467700073ddf69c8cb14876db4e22825"
+    }
+  ],
+  "reviewed": "scheduled, mid-dispatch paused, completed and Activity screens at 1440 and 390",
+  "new_ui_changes": false,
+  "phone_execution_claim": false
+}

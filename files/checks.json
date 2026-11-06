@@ -1,0 +1,70 @@
+{
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "checks": [
+    {
+      "name": "journey",
+      "command": [
+        "perl",
+        "-e",
+        "alarm 1800; exec @ARGV",
+        "--",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/go-live/playwright.config.js",
+        "multistep.journeys.ts",
+        "--workers=1",
+        "--reporter=list,json"
+      ],
+      "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+      "started": "2026-11-06T09:53:12.165562+00:00",
+      "seconds": 107.542,
+      "exit": 0,
+      "log": "journey.log"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+      "started": "2026-11-06T09:54:59.708196+00:00",
+      "seconds": 16.29,
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+      "started": "2026-11-06T09:55:15.998619+00:00",
+      "seconds": 0.981,
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "name": "lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+      "started": "2026-11-06T09:55:16.979893+00:00",
+      "seconds": 0.292,
+      "exit": 0,
+      "log": "lock.log"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "output": "Wrote 1 contract documents.\n"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output": "Contract documents are current.\n"
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output": "{\"ok\": true}\n"
+    }
+  ],
+  "ledger": "not applicable; no migration changed",
+  "lock_regenerated_before_commit": true,
+  "views_restored_from_main": true
+}

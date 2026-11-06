@@ -1,0 +1,11 @@
+Candidate 1be192cc51d208a35826bb77e211b841d8f22d3b; registered native multistep journey, 1 passed, 0 skipped.
+PROBE CAMP-001 acceptance-2 operation-1: native operator paused request bracket [1793958890351, 1793958890351] -> persisted original time 1793958890351, actor operator go-live-owner; authenticated history matches.
+PROBE CAMP-001 acceptance-2 operation-2: native operator resumed request bracket [1793958908351, 1793958908351] -> persisted original time 1793958908351, actor operator go-live-owner; authenticated history matches.
+PROBE CAMP-001 acceptance-2 operation-3: native operator paused request bracket [1793962528352, 1793962528352] -> persisted original time 1793962528352, actor operator go-live-owner; authenticated history matches.
+PROBE CAMP-001 acceptance-2 operation-4: native operator resumed request bracket [1793962583352, 1793962583352] -> persisted original time 1793962583352, actor operator go-live-owner; authenticated history matches.
+PROBE CAMP-001 acceptance-2 replay: later native POST pause while paused, then reload -> unchanged audit events, original times, channel-pause rows, history, approval, revision, recipients, commands and marketing handoff count.
+PROBE CAMP-001 acceptance-2 invalid-transition: POST resume while scheduled -> HTTP 409 campaign_not_operator_paused; completed POST pause -> HTTP 409 campaign_not_pausable; completed POST resume -> HTTP 409 campaign_not_operator_paused; all retained snapshots unchanged.
+PROBE CAMP-001 acceptance-2 unauthenticated: native POST pause without session -> HTTP 401.
+PROBE CAMP-001 inherited-dispatch: pause after first provider acceptance -> no extra marketing handoff until resume; current opt-out excluded; two eligible contacts each receive one handoff at each step, four total; expired resumed work skips send-window-expired with no extra handoff.
+PROBE CAMP-001 acceptance-1 complete-matrix: none, not selected this round; carried native state evidence retained and full missing state, deadline and provider matrix stays named in Gap.
+MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then node scripts/edition-authoring/cli.mjs check exit=0; views=node src/base/contract-docs.mjs write then check exit=0, views restored from origin main; ledger=none exit=0.

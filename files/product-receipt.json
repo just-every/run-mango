@@ -1,0 +1,33 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f100",
+  "head": "1be192cc51d208a35826bb77e211b841d8f22d3b",
+  "base": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "integrated_main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "parents": [
+    "5847086d48f9b743f8211ec825cca729863ebaaf",
+    "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e"
+  ],
+  "remote_ref": "1be192cc51d208a35826bb77e211b841d8f22d3b\trefs/heads/cloud/sd-mango-c-f100",
+  "clean_worktree": true,
+  "acceptance_text_changed": false,
+  "generated_views_diff_from_main": "",
+  "proof_bytes_changed_from_supplied_base": "",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "status_rows_retained_from_each_parent": 316,
+  "pipe_rows_in_each_parent_and_candidate": 490,
+  "focused_registrations_before": 1,
+  "focused_registrations_after": 1,
+  "new_registrations": 0
+}
