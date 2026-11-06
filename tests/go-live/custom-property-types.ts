@@ -26,7 +26,7 @@ export async function provePropertyTypes(site:Installation,cookie:string,page:Pa
   const inventory=await json(await site.call('/api/contact-properties',{cookie}),200);
   for(const definition of definitions)expect(inventory.definitions).toContainEqual(definition);
   const write=(fields:Record<string,unknown>)=>site.call('/api/contacts/'+contactId+'/properties',{method:'PUT',cookie,body:{fields}});
-  const initial={[textKey]:'synthetic-mango-1427',[numberKey]:12.5,[booleanKey]:true,[listKey]:[choices[0]]};
+  const initial={[textKey]:'synthetic-mango-1427',[numberKey]:0,[booleanKey]:false,[listKey]:[choices[0]]};
   expect((await json(await write(initial),200)).fields).toMatchObject({...priorProperties,...initial});
   expect((await profile()).profile.properties).toMatchObject({...priorProperties,...initial});
   const stored=await site.rows(`SELECT fields_json FROM integration_contact_profiles WHERE contact_id='${contactId}'`);
@@ -38,11 +38,21 @@ export async function provePropertyTypes(site:Installation,cookie:string,page:Pa
   await panel.getByRole('button',{name:'Edit properties',exact:true}).click();
   const text=panel.getByLabel(definitions[0].label,{exact:true}),number=panel.getByRole('spinbutton',{name:definitions[1].label,exact:true});
   const boolean=panel.getByRole('combobox',{name:definitions[2].label,exact:true}),list=panel.getByRole('listbox',{name:definitions[3].label,exact:true});
-  await expect(text).toHaveValue(initial[textKey]);await expect(number).toHaveValue('12.5');
-  await expect(boolean).toHaveValue('true');await expect(list).toHaveValues([choices[0]]);
+  await expect(text).toHaveValue(initial[textKey]);await expect(number).toHaveValue('0');
+  await expect(boolean).toHaveValue('false');await expect(list).toHaveValues([choices[0]]);
   await text.fill('synthetic-mango-1428');await number.fill('-7.25');
-  await boolean.selectOption('false');await list.selectOption([choices[2],choices[1]]);
-  // Record the actual controls at each width and operate the phone selects too.
+  await boolean.selectOption('true');await list.selectOption([choices[1],choices[0]]);
+  const desktopResponse=page.waitForResponse(response=>response.url().endsWith('/api/contacts/'+contactId+'/properties')&&response.request().method()==='PUT');
+  await panel.getByRole('button',{name:'Save properties',exact:true}).click();
+  const desktop={[textKey]:'synthetic-mango-1428',[numberKey]:-7.25,[booleanKey]:true,[listKey]:[choices[0],choices[1]]};
+  const desktopSaved=await desktopResponse;expect(desktopSaved.status()).toBe(200);
+  expect((await desktopSaved.json()).fields).toMatchObject({...priorProperties,...desktop});
+  expect((await profile()).profile.properties).toMatchObject({...priorProperties,...desktop});
+  await openPage(page,site.runtime.url+'/app/audience/'+contactId);
+  await panel.getByRole('button',{name:'Edit properties',exact:true}).click();
+  await expect(boolean).toHaveValue('true');await expect(list).toHaveValues([choices[0],choices[1]]);
+  // The phone changes a separately saved desktop value, rather than repeating
+  // a selection that was already pending before the viewport changed.
   await capturePropertyScreen(page,info,'typed-controls',panel);
   await page.setViewportSize({width:390,height:1000});
   await boolean.selectOption('false');await list.selectOption([choices[1],choices[2]]);
