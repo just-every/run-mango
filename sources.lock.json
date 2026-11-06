@@ -3174,7 +3174,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/objects.ts": {
-      "sha256": "80e902a74bb0666a6e27abc6c2ade841bbe747dd1be0d1fdf6860ecd7a633a17",
+      "sha256": "f4b972903a0f12d05089b1400de6cfe69e16ab3c1de40e7174f1d06fd48c94f5",
       "executable": false
     },
     "src/core/features/audience/erasure/portability.ts": {
@@ -8442,7 +8442,7 @@
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
-      "sha256": "519251f5a407cc61090b2b9bd417873bd6449d0de85c45e5dce2046c0fc330d6",
+      "sha256": "fadfade68f07855701d46221628a8992bb1e16936ad586e65c624116bb436233",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {

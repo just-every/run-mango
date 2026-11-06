@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { crc32 } from 'node:zlib';
 import { contract } from './contract';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { png, pngHeaderOnly } from './support/images';
+import { eraseHttp } from './audience-import/erase';
 import { createDatabase } from '../src/core/platform/db/client';
 import { createBlobStore } from '../src/core/platform/blobs';
 import { runApprovalChecks } from '../src/core/features/lifecycle/checks';
@@ -13,6 +15,7 @@ import type { CampaignRevisionSnapshot, LifecyclePlatform } from '../src/core/fe
 const limits = JSON.parse(readFileSync('seed.json', 'utf8')).limits;
 type Runtime = Awaited<ReturnType<typeof portabilityRuntime>>;
 let runtime: Runtime;
+let erasedImageHash: string;
 test.describe.configure({ mode: 'serial' });
 test.beforeAll(async () => { runtime = await portabilityRuntime(); });
 test.afterAll(async () => { await runtime?.close(); });
@@ -27,6 +30,7 @@ function upload(bytes: Uint8Array, contentType: string, { cookie = runtime.cooki
 const assetCount = async () => (await runtime.db.prepare('SELECT count(*) AS n FROM campaign_assets').first()).n as number;
 
 contract('CAMP-012', 'an uploaded image is stored once by content hash and served publicly, immutable and cookie-free', async () => {
+  test.setTimeout(120000);
   const image = png(4, 3), hash = sha(image), before = await assetCount();
   const first = await upload(image, 'image/png');
   expect(first.status).toBe(201);
@@ -61,6 +65,52 @@ contract('CAMP-012', 'an uploaded image is stored once by content hash and serve
   // Bytes under an approved letter can never change: the record refuses edits and deletion.
   await expect(runtime.db.prepare("UPDATE campaign_assets SET content_type='image/gif' WHERE sha256=?").bind(hash).run()).rejects.toThrow(/CAMPAIGN_ASSET_IMMUTABLE/);
   await expect(runtime.db.prepare('DELETE FROM campaign_assets WHERE sha256=?').bind(hash).run()).rejects.toThrow(/CAMPAIGN_ASSET_IMMUTABLE/);
+
+  // Retained valid-PNG erasure case: this tEXt payload's CRC starts with ASCII
+  // z, so treating the entire binary image as prose extends the exact id.
+  const contactId = 'synthetic-mango-156-person-6';
+  const withText = (value: string) => {
+    const original = png(8, 6, 156), text = Buffer.from(`Description\0${value}`, 'latin1');
+    const chunk = Buffer.alloc(text.length + 12);
+    chunk.writeUInt32BE(text.length); chunk.write('tEXt', 4, 'ascii'); text.copy(chunk, 8);
+    chunk.writeUInt32BE(crc32(chunk.subarray(4, 8 + text.length)) >>> 0, 8 + text.length);
+    return new Uint8Array(Buffer.concat([original.subarray(0, 33), chunk, original.subarray(33)]));
+  };
+  for (const [id, email] of [[contactId, 'synthetic-mango-156@example.test'], [`${contactId}z`, 'synthetic-mango-156-other@example.test']]) {
+    await runtime.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES(?,?,'','never-subscribed','never-subscribed',?,?)")
+      .bind(id, email, Date.now(), Date.now()).run();
+  }
+  const identifying = withText(contactId), otherImage = withText(`${contactId}z`);
+  const uploaded = await upload(identifying, 'image/png'); expect(uploaded.status).toBe(201);
+  const removed = (await uploaded.json()).asset;
+  erasedImageHash = removed.sha256;
+  const control = await upload(otherImage, 'image/png'); expect(control.status).toBe(201);
+  const kept = (await control.json()).asset;
+  expect(removed).toMatchObject({ sha256: sha(identifying), contentType: 'image/png', bytes: identifying.length, width: 8, height: 6 });
+  const originalPublic = await fetch(removed.url); expect(originalPublic.status).toBe(200);
+  expect(new Uint8Array(await originalPublic.arrayBuffer())).toEqual(identifying);
+  const metadataBefore = (await runtime.db.prepare('SELECT * FROM campaign_assets ORDER BY id').all()).results;
+  const otherBefore = await runtime.db.prepare('SELECT * FROM contacts WHERE id=?').bind(`${contactId}z`).first();
+  const started = await runtime.call(`/api/contacts/${contactId}`, { method: 'DELETE', cookie: runtime.cookie });
+  expect(started.status).toBe(202);
+  for (const method of ['GET', 'HEAD']) expect((await fetch(removed.url, { method })).status).toBe(503);
+  const receipt = await eraseHttp(runtime, runtime.cookie, contactId);
+  expect(receipt.state).toBe('complete'); expect(receipt.removed.stored_objects).toBe(1);
+  expect(await runtime.bucket.get(`campaign-assets/${removed.sha256}`)).toBeNull();
+  const gone = [];
+  for (const method of ['GET', 'HEAD']) {
+    const response = await fetch(removed.url, { method }); gone.push({ method, status: response.status });
+    expect(response.status).toBe(410);
+  }
+  for (const [url, bytes] of [[asset.url, image], [kept.url, otherImage]] as const) {
+    const response = await fetch(url); expect(response.status).toBe(200);
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(bytes);
+    expect((await fetch(url, { method: 'HEAD' })).status).toBe(200);
+  }
+  expect((await runtime.db.prepare('SELECT * FROM campaign_assets ORDER BY id').all()).results).toEqual(metadataBefore);
+  expect(await runtime.db.prepare('SELECT * FROM contacts WHERE id=?').bind(`${contactId}z`).first()).toEqual(otherBefore);
+  await test.info().attach('png-erasure-receipt', { contentType: 'application/json', body: JSON.stringify({ receipt, gone,
+    removedSha256: removed.sha256, retainedSha256: [hash, kept.sha256] }, null, 2) });
 });
 
 contract('CAMP-012', 'uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing', async () => {
@@ -138,4 +188,8 @@ contract('CAMP-012', 'approval verifies this deployment\'s own images in storage
   expect(unknown.checks.get('message.links.resolved')).toMatchObject({ status: 'blocked', blocking: true });
   expect(unknown.checks.get('message.links.resolved')!.detail).toContain(unknown.src);
   expect(inspected).not.toContain(unknown.src);
+  const erased = await approve(erasedImageHash);
+  expect(erased.checks.get('message.links.resolved')).toMatchObject({ status: 'blocked', blocking: true });
+  expect(erased.checks.get('message.links.resolved')!.detail).toContain(erased.src);
+  expect(inspected).not.toContain(erased.src);
 });

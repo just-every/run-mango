@@ -4,7 +4,8 @@ import type {ErasureScope} from './types';
 import {containsLiteral} from './literals';
 import {ownershipNeedles,type Needles} from './needles';
 
-type ObjectScan={bucket:number;cursor?:string;next?:string;key?:string;etag?:string;size?:number;offset?:number;complete?:boolean};
+type PngScan={next:number;textStart?:number;textEnd?:number;ended?:boolean};
+type ObjectScan={bucket:number;cursor?:string;next?:string;key?:string;etag?:string;size?:number;offset?:number;png?:PngScan;complete?:boolean};
 const pageBytes=256*1024,overlapBytes=64*1024;
 function personalText(text:string,scope:Needles){
  if(containsLiteral(text,scope))return true;
@@ -16,6 +17,41 @@ function personalText(text:string,scope:Needles){
   if(body){const bytes=Buffer.from(body,'base64'),decoded=bytes.toString('utf8');if(Buffer.from(decoded).equals(bytes)&&containsLiteral(decoded,scope))return true;}
  }
  return false;
+}
+/** PNG tEXt ends at its declared payload length, before the binary CRC. Keep
+ * that boundary across the same bounded ranges used by the ordinary text scan;
+ * checksum bytes must not extend a contact identifier. Raw text is still scanned. */
+function personalPngText(bytes:Uint8Array,begin:number,size:number,scan:ObjectScan,scope:Needles){
+ if(begin===0&&[137,80,78,71,13,10,26,10].every((byte,index)=>bytes[index]===byte))scan.png={next:8};
+ const png=scan.png;if(!png)return false;
+ const end=begin+bytes.length,view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ let found=false;
+ const inspect=()=>{
+  if(png.textEnd===undefined||png.textEnd>end)return;
+  const start=png.textStart!;
+  // A window beginning inside a long payload has no new left boundary. The
+  // overlap retains complete identifiers; do not invent one at the range edge.
+  const text=(start<begin?'x':'')+new TextDecoder('latin1').decode(bytes.subarray(Math.max(0,start-begin),png.textEnd-begin));
+  found=personalText(text,scope)||found;
+  delete png.textStart;delete png.textEnd;
+ };
+ inspect();
+ while(!png.ended&&png.next+8<=end){
+  const at=png.next-begin;
+  if(at<0)throw new Error('PNG chunk boundary lost during erasure inventory.');
+  const length=view.getUint32(at),payloadEnd=png.next+8+length,next=payloadEnd+4;
+  if(next>size)throw new Error('Incomplete PNG chunk during erasure inventory.');
+  const type=String.fromCharCode(...bytes.subarray(at+4,at+8));
+  if(png.next===8&&(type!=='IHDR'||length!==13))throw new Error('Invalid PNG header during erasure inventory.');
+  if(type==='tEXt'){png.textStart=png.next+8;png.textEnd=payloadEnd;inspect();}
+  if(type==='IEND'){
+   if(length!==0||next!==size)throw new Error('Invalid PNG end during erasure inventory.');
+   png.ended=true;
+  }
+  png.next=next;
+ }
+ if(end>=size&&!png.ended)throw new Error('Incomplete PNG during erasure inventory.');
+ return found;
 }
 // File extensions a stored object's name may carry after an identity. A segment like
 // ann@x.test.example is another address, not ann@x.test with an extension, so only these count.
@@ -53,12 +89,12 @@ export async function scanObject(buckets:Record<string,BlobStore>,encoded:string
  const object=await bucket.get(key,scan.size?{range:{offset:begin,length:pageBytes+offset-begin}}:undefined);
  if(!object)throw new Error('An object disappeared during erasure inventory.');
  if(object.etag!==scan.etag)throw new Error('An object changed during erasure inventory.');
- const body='body' in object&&object.body?new TextDecoder().decode(await object.arrayBuffer()):'';
- const found=keyNamesIdentity(key,scope)||containsLiteral({key,metadata:object.customMetadata,http:object.httpMetadata},scope)||personalText(body,scope);
+ const bytes='body' in object&&object.body?new Uint8Array(await object.arrayBuffer()):new Uint8Array();
+ const found=keyNamesIdentity(key,scope)||containsLiteral({key,metadata:object.customMetadata,http:object.httpMetadata},scope)||personalText(new TextDecoder().decode(bytes),scope)||personalPngText(bytes,begin,scan.size??0,scan,scope);
  scan.offset=offset+pageBytes;
  if(found||scan.offset>=(scan.size??0)){
   if(scan.next)scan.cursor=scan.next;else{scan.bucket++;delete scan.cursor;}
-  delete scan.key;delete scan.etag;delete scan.size;delete scan.offset;delete scan.next;
+  delete scan.key;delete scan.etag;delete scan.size;delete scan.offset;delete scan.next;delete scan.png;
  }
  return {scan,...(found?{remove:{bucket:bucketName,key}}:{})};
 }
