@@ -1,0 +1,12 @@
+Actual gh failed-job log excerpt. CI environment echo omitted from evidence; command and failure retained.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T11:11:22.8496933Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8497397Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8520184Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8520560Z env:
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8520763Z   CI: true
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8520975Z   WRANGLER_SEND_METRICS: false
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8521302Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8521653Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.8522209Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:22.9990319Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T11:11:23.0076890Z ##[error]Process completed with exit code 1.

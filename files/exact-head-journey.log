@@ -1,0 +1,20 @@
+
+Running 1 test using 1 worker
+
+(node:4918) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Chosen catalog proof: setup
+Chosen catalog proof: search and product picker
+Chosen catalog proof: HTML round trip
+Chosen catalog proof: current previews
+Chosen catalog proof: fresh hand-off
+Chosen catalog proof: approved identifiers
+Chosen catalog proof: identifiers locked
+Chosen catalog proof: dispatch new price
+Chosen catalog proof: dispatched
+Chosen catalog proof: read outcomes
+Chosen catalog proof: open outcomes
+Chosen catalog proof: terminal availability cases
+  ✓  1 tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume (1.7m)
+
+  1 passed (1.8m)

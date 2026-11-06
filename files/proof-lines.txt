@@ -1,0 +1,228 @@
+     1	const width = 1440;
+     2	import { expect } from '@playwright/test';
+     3	import { writeFile } from 'node:fs/promises';
+     4	import { providerEdge } from './edge';
+     5	import { eventSigner } from './sendgrid-events';
+     6	import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
+     7	import { openPage, reloadPage } from '../support/navigation';
+     8	
+     9	
+    10	export const walk0 = async ({page}, info) => {
+    11	  const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
+    12	  const marketing = () => edge.sends.filter(send => send.body.headers?.['List-Unsubscribe']);
+    13	  try {
+    14	    const cookie = await site.open();
+    15	    await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
+    16	    await site.control('/_golive/sender-evidence');
+    17	    const emails = ['iris@example.test','leo@example.test','maya@example.test'];
+    18	    for (const email of [...emails,'expiry@example.test']) await confirmedContact(site,edge,cookie,email,email.split('@')[0]);
+    19	    const clock = await site.control('/_golive/clock',{hold:true}), due = new Date(clock.now+3600000);
+    20	    const campaign = await draftCampaign(site,cookie,'Spring market reminders',emails,due);
+    21	    const later = new Date(due.getTime()+25*3600000);
+    22	    await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{steps:[
+    23	      {channel:'email',timezone:'Australia/Brisbane',scheduledAt:due.toISOString(),sendByAt:new Date(due.getTime()+2*3600000).toISOString(),whyThisTime:'Market announcement'},
+    24	      {channel:'email',timezone:'Australia/Brisbane',scheduledAt:later.toISOString(),sendByAt:new Date(later.getTime()+2*3600000).toISOString(),whyThisTime:'Next day reminder'},
+    25	    ]}}),200);
+    26	    await approve(site,cookie,campaign);
+    27	    // Each operation gets its own held installation instant, chosen before the
+    28	    // public request. A response timestamp cannot supply its own expectation.
+    29	    const transitions:Array<{action:string;at:number}>=[];
+    30	    const refusals:Array<{action:string;body:unknown}>=[];
+    31	    const observe = async (action:'paused'|'resumed', operation:()=>Promise<unknown>) => {
+    32	      const before=await site.control('/_golive/clock',{advanceMs:1700});
+    33	      await operation();
+    34	      const after=await site.control('/_golive/clock');
+    35	      expect(after.now).toBe(before.now);
+    36	      transitions.push({action,at:before.now});
+    37	      const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+    38	      expect(detail.campaign.state).toBe(action==='paused'?'paused':transitions.length===2?'scheduled':'dispatching');
+    39	    };
+    40	    const authority = async () => ({
+    41	      campaign:await site.rows(`SELECT active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`),
+    42	      approval:await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`),
+    43	      recipients:await site.rows(`SELECT id,revision_id,step_id,contact_id,channel,destination,created_at FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
+    44	    });
+    45	    const approvedAuthority=await authority();
+    46	    const audit = () => site.rows(`SELECT id,operation_key,actor_type,actor_id,action,detail_json,occurred_at,created_at FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`);
+    47	    const pauses = () => site.rows(`SELECT * FROM campaign_channel_pauses WHERE campaign_id='${campaign.campaignId}' AND reason='operator-pause' ORDER BY channel`);
+    48	    const history = async () => (await json(await site.call(`/api/activity?object=${campaign.campaignId}`,{cookie}),200)).entries.filter((entry:any)=>['paused','resumed'].includes(entry.action));
+    49	    const reconcile = async () => {
+    50	      expect((await audit()).map(row=>({action:row.action,actor:row.actor_id,type:row.actor_type,revision:JSON.parse(row.detail_json).revisionId,at:row.occurred_at,created:row.created_at}))).toEqual(
+    51	        transitions.map(event=>({action:event.action,actor:'go-live-owner',type:'operator',revision:campaign.revisionId,at:event.at,created:event.at})));
+    52	      expect((await history()).map((entry:any)=>({action:entry.action,actor:entry.operatorId,type:entry.actorType,revision:entry.detail.revisionId,at:entry.occurredAt}))).toEqual(
+    53	        [...transitions].reverse().map(event=>({action:event.action,actor:'go-live-owner',type:'operator',revision:campaign.revisionId,at:event.at})));
+    54	      const latestPause=transitions.filter(event=>event.action==='paused').at(-1)!;
+    55	      const latestResume=transitions.at(-1)!.action==='resumed'?transitions.at(-1)!.at:null;
+    56	      expect((await pauses()).map(row=>({revision:row.revision_id,channel:row.channel,paused:row.paused_at,resumed:row.resumed_at,created:row.created_at,updated:row.updated_at}))).toEqual([
+    57	        {revision:campaign.revisionId,channel:'email',paused:latestPause.at,resumed:latestResume,created:transitions[0].at,updated:transitions.at(-1)!.at},
+    58	      ]);
+    59	      expect(await authority()).toEqual(approvedAuthority);
+    60	    };
+    61	    const custody = async () => ({
+    62	      campaign:await site.rows(`SELECT * FROM campaigns WHERE id='${campaign.campaignId}'`),
+    63	      revisions:await site.rows(`SELECT * FROM campaign_revisions WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
+    64	      recipients:await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
+    65	      dispatches:await site.rows(`SELECT * FROM step_dispatches WHERE revision_id='${campaign.revisionId}' ORDER BY step_id`),
+    66	      events:await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' ORDER BY id`),
+    67	      transitions:await site.rows(`SELECT * FROM campaign_state_transitions WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
+    68	    });
+    69	    const unchanged = async (operation:()=>Promise<unknown>) => {
+    70	      const before={custody:await custody(),pauses:await pauses(),history:await history(),authority:await authority(),handoffs:marketing().length};
+    71	      await site.control('/_golive/clock',{advanceMs:4300});
+    72	      await operation();
+    73	      expect({custody:await custody(),pauses:await pauses(),history:await history(),authority:await authority(),handoffs:marketing().length}).toEqual(before);
+    74	      await reconcile();
+    75	    };
+    76	    const capture = async (name:string) => {
+    77	      for(const captureWidth of [1440,390]) {
+    78	        await page.setViewportSize({width:captureWidth,height:1000});
+    79	        await page.screenshot({path:info.outputPath(`${name}-${captureWidth}.png`),fullPage:true});
+    80	      }
+    81	      await page.setViewportSize({width,height:1000});
+    82	    };
+    83	    const control = (action:string) => site.call(`/api/campaigns/${campaign.campaignId}/${action}`,{method:'POST',cookie});
+    84	    const refuse = async (action:'pause'|'resume') => {
+    85	      const body=await json(await control(action),409);
+    86	      expect(body).toEqual({error:action==='pause'?'campaign_not_pausable':'campaign_not_operator_paused'});
+    87	      refusals.push({action,body});
+    88	    };
+    89	    expect((await site.call(`/api/campaigns/${campaign.campaignId}/pause`,{method:'POST'})).status).toBe(401);
+    90	    await page.setViewportSize({width,height:1000});
+    91	    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    92	    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+    93	    await observe('paused',async()=>{
+    94	      await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
+    95	      await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toBeVisible();
+    96	    });
+    97	    await reconcile();
+    98	    await capture('scheduled-pause');
+    99	    await observe('resumed',async()=>{
+   100	      await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
+   101	      await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
+   102	    });
+   103	    await reconcile();
+   104	    await unchanged(async()=>{
+   105	      await refuse('resume');
+   106	      await reloadPage(page);
+   107	      await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
+   108	    });
+   109	    const recipients = await site.rows(`SELECT r.id,r.destination FROM recipient_steps r JOIN campaign_steps s ON s.id=r.step_id WHERE r.revision_id='${campaign.revisionId}' AND s.sequence=1 ORDER BY r.created_at,r.rowid`);
+   110	    await site.control('/_golive/barrier',{action:'arm',point:'handoff',identity:recipients[1].id});
+   111	    await site.control('/_golive/clock',{advanceMs:3600001});
+   112	    await site.control('/_golive/cron');
+   113	    await expect.poll(async () => (await site.control('/_golive/barrier',{action:'status'}))?.waiting,{timeout:60000}).toBe(true);
+   114	    expect(marketing()).toHaveLength(1);
+   115	    await reloadPage(page);
+   116	    await observe('paused',async()=>{
+   117	      await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
+   118	      await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
+   119	    });
+   120	    await reconcile();
+   121	    await unchanged(async()=>{
+   122	      await json(await control('pause'),200); // Replay retains the original transition.
+   123	      await reloadPage(page);
+   124	      await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
+   125	    });
+   126	    const before = marketing().length;
+   127	    await site.control('/_golive/barrier',{action:'release'});
+   128	    await expect.poll(async () => (await site.rows(`SELECT lease_token FROM recipient_steps WHERE id='${recipients[1].id}'`))[0].lease_token,{timeout:60000}).toBeNull();
+   129	    await site.control('/_golive/clock',{advanceMs:31000});
+   130	    await site.control('/_golive/cron');
+   131	    expect(marketing()).toHaveLength(before);
+   132	    const optedOut = recipients[2].destination;
+   133	    const [contact] = await site.rows(`SELECT id FROM contacts WHERE email='${optedOut}'`);
+   134	    const unsubscribe = await site.control('/_golive/unsubscribe-link',{contactId:contact.id});
+   135	    expect((await fetch(site.local(unsubscribe.url),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
+   136	    await reloadPage(page);
+   137	    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+   138	    await capture('dispatch-paused');
+   139	    await observe('resumed',async()=>{
+   140	      await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
+   141	      await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
+   142	    });
+   143	    await reconcile();
+   144	    await site.control('/_golive/clock',{advanceMs:10*60000});
+   145	    await site.control('/_golive/cron');
+   146	    await expect.poll(() => Promise.resolve(marketing().length),{timeout:60000}).toBe(2);
+   147	    await site.control('/_golive/clock',{advanceMs:25*3600000});
+   148	    // This network receipt connector's sender observation lasts one day.
+   149	    // Renew it just as an operator must before the following day's handoffs.
+   150	    await site.control('/_golive/sender-evidence');
+   151	    await site.control('/_golive/clock',{advanceMs:60000});
+   152	    await site.control('/_golive/cron');
+   153	    // The real shared provider budget may defer the second remaining recipient.
+   154	    await expect.poll(async () => {
+   155	      if(marketing().length<4){await site.control('/_golive/clock',{advanceMs:60000});await site.control('/_golive/cron');}
+   156	      return marketing().length;
+   157	    },{timeout:60000}).toBe(4);
+   158	    await expect.poll(async () => (await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state,{timeout:60000}).toBe('completed');
+   159	    const sent = marketing().map(send => send.to);
+   160	    expect(sent.filter(email => email===optedOut)).toHaveLength(0);
+   161	    for(const email of emails.filter(email=>email!==optedOut)) expect(sent.filter(value=>value===email)).toHaveLength(2);
+   162	    expect(await site.rows(`SELECT actor_id,action FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`)).toEqual([
+   163	      {actor_id:'go-live-owner',action:'paused'},{actor_id:'go-live-owner',action:'resumed'},
+   164	      {actor_id:'go-live-owner',action:'paused'},{actor_id:'go-live-owner',action:'resumed'},
+   165	    ]);
+   166	    await reloadPage(page);
+   167	    await expect(page.getByRole('heading',{name:'Spring market reminders',exact:true})).toBeVisible();
+   168	    await expect(page.locator('[data-step-id] [data-disposition=accepted] dd')).toHaveText(['2','2']);
+   169	    await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toHaveCount(0);
+   170	    await capture('pause-completed');
+   171	    await unchanged(async()=>{
+   172	      await refuse('pause');
+   173	      await refuse('resume');
+   174	      await reloadPage(page);
+   175	      expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state).toBe('completed');
+   176	    });
+   177	    await openPage(page,`${site.runtime.url}/app/settings/activity`);
+   178	    await page.getByRole('textbox',{name:'Object',exact:true}).fill(campaign.campaignId);
+   179	    await page.getByRole('button',{name:'Apply filters',exact:true}).click();
+   180	    const activity=page.getByRole('region',{name:'Activity log table'});
+   181	    for(const event of transitions) {
+   182	      const row=activity.locator('tbody tr').filter({has:page.locator(`time[datetime="${new Date(event.at).toISOString()}"]`)});
+   183	      await expect(row.locator('[data-label="Who"]')).toHaveText('Owner');
+   184	      await expect(row.locator('[data-label="What"]')).toHaveText(event.action==='paused'?'Paused':'Resumed');
+   185	    }
+   186	    await capture('pause-activity');
+   187	    await reconcile();
+   188	    const now = (await site.control('/_golive/clock')).now;
+   189	    const expired = await draftCampaign(site,cookie,'Window closes during pause',['expiry@example.test'],new Date(now+3600000));
+   190	    await approve(site,cookie,expired);
+   191	    await json(await site.call(`/api/campaigns/${expired.campaignId}/pause`,{method:'POST',cookie}),200);
+   192	    await site.control('/_golive/clock',{advanceMs:4*3600000});
+   193	    await json(await site.call(`/api/campaigns/${expired.campaignId}/resume`,{method:'POST',cookie}),200);
+   194	    await site.control('/_golive/cron');
+   195	    expect(await site.rows(`SELECT transport_disposition,skip_reason FROM recipient_steps WHERE campaign_id='${expired.campaignId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired'}]);
+   196	    expect(marketing()).toHaveLength(4);
+   197	    expect(edge.unexpected).toEqual([]);
+   198	    const receipt=info.outputPath('pause-transition-retention.json');
+   199	    await writeFile(receipt,JSON.stringify({
+   200	      clause:'CAMP-001',point:'acceptance 2 operator pause and resume occurrence-time retention',
+   201	      campaignId:campaign.campaignId,revisionId:campaign.revisionId,
+   202	      independentlyBracketed:transitions,retainedAudit:await audit(),retainedHistory:await history(),
+   203	      retainedChannelPauses:await pauses(),refusals,
+   204	      observedLaterAt:(await site.control('/_golive/clock')).now,
+   205	      retainedApprovalAndFrozenRecipients:true,marketingHandoffs:marketing().length,
+   206	    },null,2)+'\n');
+   207	    await info.attach('pause-transition-retention',{path:receipt,contentType:'application/json'});
+   208	  } catch (error) {
+   209	    console.log('Pause journey transport state',await site.rows('SELECT transport_disposition,skip_reason,last_error_code,attempt_count FROM recipient_steps'));
+   210	    throw error;
+   211	  } finally {
+   212	    await site.control('/_golive/barrier',{action:'release'}).catch(()=>{});
+   213	    await page.close(); await site.runtime.close(); await edge.close();
+   214	  }
+   215	};
+     1	import {test} from '@playwright/test';
+     2	import {walk0 as section0} from "./multistep.flow";
+     3	import {walk0 as section1} from "./pause.flow";
+     4	
+     5	test("[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume", async ({page}, info) => {
+     6	  test.setTimeout(900000);
+     7	  if(page.isClosed()) page=await page.context().newPage();
+     8	  await section0({page} as any, info);
+     9	  if(page.isClosed()) page=await page.context().newPage();
+    10	  await test.step('CAMP-001 pause and resume retain original actor and occurrence time',async()=>{
+    11	    await section1({page} as any, info);
+    12	  });
+    13	});

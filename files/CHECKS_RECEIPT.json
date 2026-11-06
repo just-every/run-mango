@@ -1,0 +1,84 @@
+{
+  "head": "5f52f4da71efe7256ff23865df4a64c3bc11302c",
+  "focusedJourney": {
+    "exit": 0,
+    "registrationCount": 1,
+    "sourceReceipt": "EXACT_HEAD_RECEIPT.json"
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log",
+    "finalSourceBytesUnchanged": true
+  },
+  "firstParty": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "log": "first-party.log"
+  },
+  "views": {
+    "write": "node src/base/contract-docs.mjs write",
+    "check": "node src/base/contract-docs.mjs check",
+    "writeExit": 0,
+    "checkExit": 0,
+    "log": "views.log",
+    "restoredViewCheckExit": 1,
+    "restoredViewCheckLog": "expected-restored-views.log"
+  },
+  "sourceLock": {
+    "generate": "node scripts/edition-authoring/cli.mjs lock",
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "generateExit": 0,
+    "checkExit": 0,
+    "log": "lock-check.log"
+  },
+  "baseIntegrity": {
+    "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+    "exit": 0,
+    "log": "base-integrity.log"
+  },
+  "migrationLedger": {
+    "required": false,
+    "reason": "No migration changed"
+  },
+  "statusCountsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "statusCountsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "generatedViews": {
+    "ACCEPTANCE.md": {
+      "candidateBlob": "4fb6a42f357f940a26b4ffd31ca1de61c62ebc97",
+      "mainBlob": "4fb6a42f357f940a26b4ffd31ca1de61c62ebc97",
+      "committedChange": false
+    },
+    "docs/CLAIMS.md": {
+      "candidateBlob": "f18fb1bffe865053b14365d365c41aef67fd36ce",
+      "mainBlob": "f18fb1bffe865053b14365d365c41aef67fd36ce",
+      "committedChange": false
+    }
+  },
+  "publicationScan": {
+    "head": "5f52f4da71efe7256ff23865df4a64c3bc11302c",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "custodian": "fleet lander"
+  },
+  "verify": {
+    "id": 42208321239,
+    "conclusion": "failure",
+    "head_sha": "5f52f4da71efe7256ff23865df4a64c3bc11302c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42208321239",
+    "status": "completed",
+    "originatingJob": 127860487343,
+    "aggregateJob": 127860590026,
+    "exception": "generated contract views intentionally restored from main",
+    "runtimeShards": "skipped"
+  }
+}

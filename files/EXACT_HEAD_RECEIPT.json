@@ -1,0 +1,15 @@
+{
+  "head": "5f52f4da71efe7256ff23865df4a64c3bc11302c",
+  "headAfter": "5f52f4da71efe7256ff23865df4a64c3bc11302c",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js multistep.journeys.ts --workers=1",
+  "exit": 0,
+  "startedAt": "2026-11-06T11:12:13Z",
+  "completedAt": "2026-11-06T11:13:59.988218+00:00",
+  "files": {
+    "tests/go-live/pause.flow.ts": "68d96a63b13d22b55636dea2bfc622c771378f4ba96930ea4213b0af78857e92",
+    "tests/go-live/multistep.journeys.ts": "a5bad26d02a7a5f92afef5a5b6c3802695eb7d9eca80777505a12c11325df4ab",
+    "src/core/features/lifecycle/campaign-controls.ts": "716e121827e7d95d5b72c763e422c4f3b554176a168c1b28b06591a951b6e2ed",
+    "src/core/features/lifecycle/routes.ts": "0f57886456a2ae5dbd7aea678650884c17575c9248bce202b2f04bdb3d9b4398"
+  },
+  "trackedDiff": ""
+}

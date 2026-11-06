@@ -1,0 +1,158 @@
+{
+  "clause": "CAMP-001",
+  "point": "acceptance 2 operator pause and resume occurrence-time retention",
+  "campaignId": "01M6R910VXSKAD1A8M6RE4WB0A",
+  "revisionId": "01M6R910VXR48FQZGN0Y8X8FXH",
+  "independentlyBracketed": [
+    {
+      "action": "paused",
+      "at": 1793963624993
+    },
+    {
+      "action": "resumed",
+      "at": 1793963626693
+    },
+    {
+      "action": "paused",
+      "at": 1793967232694
+    },
+    {
+      "action": "resumed",
+      "at": 1793967269694
+    }
+  ],
+  "retainedAudit": [
+    {
+      "id": "01M6R912H1A8583WAWT17V3QMF",
+      "operation_key": "01M6R912H1A8583WAWT17V3QMF",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "paused",
+      "detail_json": "{\"revisionId\":\"01M6R910VXR48FQZGN0Y8X8FXH\"}",
+      "occurred_at": 1793963624993,
+      "created_at": 1793963624993
+    },
+    {
+      "id": "01M6R91465FR5MHQ3WVDKXMG0W",
+      "operation_key": "01M6R91465FR5MHQ3WVDKXMG0W",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "resumed",
+      "detail_json": "{\"revisionId\":\"01M6R910VXR48FQZGN0Y8X8FXH\"}",
+      "occurred_at": 1793963626693,
+      "created_at": 1793963626693
+    },
+    {
+      "id": "01M6RCF5NPA4EDKX3ZF0GTS8MT",
+      "operation_key": "01M6RCF5NPA4EDKX3ZF0GTS8MT",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "paused",
+      "detail_json": "{\"revisionId\":\"01M6R910VXR48FQZGN0Y8X8FXH\"}",
+      "occurred_at": 1793967232694,
+      "created_at": 1793967232694
+    },
+    {
+      "id": "01M6RCG9SYWT0FZDJF79MM0HXT",
+      "operation_key": "01M6RCG9SYWT0FZDJF79MM0HXT",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "resumed",
+      "detail_json": "{\"revisionId\":\"01M6R910VXR48FQZGN0Y8X8FXH\"}",
+      "occurred_at": 1793967269694,
+      "created_at": 1793967269694
+    }
+  ],
+  "retainedHistory": [
+    {
+      "id": "01M6RCG9SYWT0FZDJF79MM0HXT",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "resumed",
+      "objectType": "campaign",
+      "objectId": "01M6R910VXSKAD1A8M6RE4WB0A",
+      "occurredAt": 1793967269694,
+      "detail": {
+        "revisionId": "01M6R910VXR48FQZGN0Y8X8FXH"
+      }
+    },
+    {
+      "id": "01M6RCF5NPA4EDKX3ZF0GTS8MT",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "paused",
+      "objectType": "campaign",
+      "objectId": "01M6R910VXSKAD1A8M6RE4WB0A",
+      "occurredAt": 1793967232694,
+      "detail": {
+        "revisionId": "01M6R910VXR48FQZGN0Y8X8FXH"
+      }
+    },
+    {
+      "id": "01M6R91465FR5MHQ3WVDKXMG0W",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "resumed",
+      "objectType": "campaign",
+      "objectId": "01M6R910VXSKAD1A8M6RE4WB0A",
+      "occurredAt": 1793963626693,
+      "detail": {
+        "revisionId": "01M6R910VXR48FQZGN0Y8X8FXH"
+      }
+    },
+    {
+      "id": "01M6R912H1A8583WAWT17V3QMF",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "paused",
+      "objectType": "campaign",
+      "objectId": "01M6R910VXSKAD1A8M6RE4WB0A",
+      "occurredAt": 1793963624993,
+      "detail": {
+        "revisionId": "01M6R910VXR48FQZGN0Y8X8FXH"
+      }
+    }
+  ],
+  "retainedChannelPauses": [
+    {
+      "id": "01M6R910VXSKAD1A8M6RE4WB0A:01M6R910VXR48FQZGN0Y8X8FXH:email:operator-pause",
+      "campaign_id": "01M6R910VXSKAD1A8M6RE4WB0A",
+      "revision_id": "01M6R910VXR48FQZGN0Y8X8FXH",
+      "channel": "email",
+      "reason": "operator-pause",
+      "detail": "Paused by an operator. Resume explicitly to continue remaining sends.",
+      "paused_at": 1793967232694,
+      "resume_check_at": 1793963624993,
+      "resumed_at": 1793967269694,
+      "created_at": 1793963624993,
+      "updated_at": 1793967269694
+    }
+  ],
+  "refusals": [
+    {
+      "action": "resume",
+      "body": {
+        "error": "campaign_not_operator_paused"
+      }
+    },
+    {
+      "action": "pause",
+      "body": {
+        "error": "campaign_not_pausable"
+      }
+    },
+    {
+      "action": "resume",
+      "body": {
+        "error": "campaign_not_operator_paused"
+      }
+    }
+  ],
+  "observedLaterAt": 1794072393994,
+  "retainedApprovalAndFrozenRecipients": true,
+  "marketingHandoffs": 4
+}
