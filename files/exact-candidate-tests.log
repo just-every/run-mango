@@ -1,0 +1,85 @@
+
+Running 6 tests using 1 worker
+
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/portability.spec.ts:5:1 › [DATA-001][CONT-013] upgrade and restore populated records and assets, then enforce the current erasure fence (2.0m)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-004 acceptance-1 email body: generate, adopt, PATCH and repeated campaign and review GET -> chosen saved HTML and text, unchanged name and subject
+PROBE PROP-004 acceptance-3 email sender: authenticated PATCH and repeated campaign and review GET -> chosen sender name, From, Reply-to and postal address match persisted revision
+PROBE PROP-004 acceptance-3 destination links: authenticated PATCH and repeated campaign and review GET -> replacement destination and label only, stable persisted link row
+PROBE PROP-004 draft safety: unauthenticated PATCH refused; authorized edits and reads -> unchanged original proposal evidence, draft only, no approval, recipients, dispatch rows or commands
+  ✓  2 tests/proposals-decision/content-editing.spec.ts:4:1 › [PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority (5.6s)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 tests/proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes (10.5s)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-008 acceptance-2 summary: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 audience explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 timing explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 provider forecast: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 provider benchmark with owned history identifiers: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 recovery control: valid native generation after all benchmark refusals -> HTTP 201, independently expected owned revenue forecast, draft only, original forecast unchanged, no recipient or dispatch authority
+PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch
+  ✓  4 tests/proposals-decision/forecast-provenance.spec.ts:6:1 › [PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads (12.7s)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-006 acceptances-2-3 summary, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 summary, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 audience explanation, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 audience explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 timing explanation, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 timing explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 valid control: native generation after all six citation refusals -> HTTP 201 with retained grounded proposal, owned-history forecast and draft only; existing work unchanged, no approval or dispatch
+  ✓  5 tests/proposals-decision/grounding-citations.spec.ts:17:1 › [PROP-006] forged citations and altered observations fail without composition or campaign authority, then valid generation recovers (14.9s)
+(node:4868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-004 acceptance-5 missing sender: native PATCH with empty sender name and checks -> saved draft, named message.email-identity blocker with two eligible contacts
+PROBE CAMP-004 acceptance-4 missing sender refusal: native approve -> HTTP 409 with all current blockers; campaign, revision, steps and links unchanged; no approval receipt, recipients, dispatch, jobs or marketing handoff
+PROBE CAMP-004 acceptance-5 correction: native PATCH restoring configured sender and checks -> no blockers; campaign remains draft without approval or sending authority
+PROBE CAMP-004 acceptance-5 missing from email: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-5 missing reply-to email: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-5 missing postal address: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.personalisation: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.content: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.content: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-consent-scope: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 schedule.steps: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.configured: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.configured: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.deduplication: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.deduplication-window: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.reconciliation: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.reconciliation: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 delivery-events-missing: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-1 spf: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-1 dkim: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-1 dmarc: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 compliance: historical saved mail without managed unsubscribe or postal footer -> approval 409 with both named blockers and no authority; native resave repairs readiness only
+PROBE CAMP-004 acceptance-4 simultaneous failures: native approval -> all missing fields named together, unchanged draft and no authority
+PROBE CAMP-004 acceptance-1 sender authority: withdrawal after valid inspection -> atomic approval conflict, unchanged draft and no authority; repeated review remains blocked until fresh receiver evidence
+PROBE CAMP-004 acceptance-1 audience and consent: native unsubscribe during approval -> atomic conflict, unchanged draft and no authority; replay retains opt-out, fresh review contains only the eligible control
+PROBE CAMP-004 corrected approval: native approval -> immutable receipt and exact digest, one eligible control recipient and one dispatch command; replay creates no extra authority and the opted-out contact stays excluded
+  ✓  6 tests/proposals-decision/missing-sender.spec.ts:5:1 › [CAMP-004] a missing sender name blocks approval without authority and clears only after a saved correction (1.2m)
+
+  6 passed (4.0m)

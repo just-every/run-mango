@@ -1,0 +1,127 @@
+{
+  "api_calls_used": 6,
+  "base": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+  "base_landing_hold": "Existing f81 hold retained; base is not yet on merged main",
+  "branch": "cloud/sd-mango-c-f86",
+  "checks": {
+    "all_candidate_identity_and_trailer_audit": 0,
+    "contract_views_write_then_check": 0,
+    "first_party": 0,
+    "integration_check": 0,
+    "migration_ledger": 0,
+    "source_check_including_base_integrity": 0,
+    "source_lock": 0,
+    "typecheck": 0
+  },
+  "ci": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42184249151",
+      "id": 42184249151,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "ci_archive_reads": [
+    {
+      "command": "gh run view 42184249151 --repo just-every/run-mango --job 127780765231 --log-failed",
+      "exit": 0,
+      "job": 127780765231
+    },
+    {
+      "command": "gh run view 42184249151 --repo just-every/run-mango --job 127780835850 --log-failed",
+      "exit": 0,
+      "job": 127780835850
+    }
+  ],
+  "ci_failure_class": "permitted generated-view freshness exception",
+  "counts_after": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "counts_before": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "failed_jobs": [
+    127780765231,
+    127780835850
+  ],
+  "generated_view_check_on_committed_candidate_exit": 1,
+  "generated_views": "Both views equal origin/main; no builder-authored view changes",
+  "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "logs": [
+    {
+      "bytes": 12606,
+      "path": "exact-candidate-tests.log",
+      "sha256": "f4ae6ae395b0bf48999281be2d65227fdaca7ff42666bdc1c137e17480652b67"
+    },
+    {
+      "bytes": 207,
+      "path": "exact-typecheck.log",
+      "sha256": "fc2480dd872edecbb5e7bf3493141aa97ad00b58919db42ae89ceffa16a0f13e"
+    },
+    {
+      "bytes": 0,
+      "path": "exact-first-party-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 479284,
+      "path": "exact-source-check.log",
+      "sha256": "40741dbb8eb9f6ec16f74d227402a78b43172c174477ea32427a6c2a525bc757"
+    },
+    {
+      "bytes": 329,
+      "path": "exact-integration-check.log",
+      "sha256": "046656c53a4413bddd7040b7efe231dd4bc98090f52345eb196784c3d318b31e"
+    },
+    {
+      "bytes": 60,
+      "path": "final-views.log",
+      "sha256": "a0dc3e5a57608862eebb5d81291a8613096d4984f76019b102a0ac55b950fe97"
+    },
+    {
+      "bytes": 126,
+      "path": "migration-ledger-check.log",
+      "sha256": "54e339402a1aa1faa0b328a66a1aff88bd50235b375a96908285783a06888488"
+    },
+    {
+      "bytes": 411793,
+      "path": "final-committed-lock-check.log",
+      "sha256": "689ae5c8494c784bb5073a13be74c5e19df2e3b112b9c649d637615b0dbfb3e6"
+    },
+    {
+      "bytes": 408,
+      "path": "final-identity-audit.log",
+      "sha256": "73d1be9fd5e5a96b3dca576d908595a13df44d750823f8dd4bcc5571d6e899d0"
+    },
+    {
+      "bytes": 1117,
+      "path": "final-push.log",
+      "sha256": "c7b576aa00fabad6ab59feb45325638412ffa150ad3b2d01a9717b1ded7524bb"
+    }
+  ],
+  "main_at_merge": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "mechanical": "MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock; node scripts/edition-authoring/cli.mjs check exit=0; views=node src/base/contract-docs.mjs write; node src/base/contract-docs.mjs check exit=0; ledger=node packet/check-migration-ledger.mjs <checkout> exit=0",
+  "pr": null,
+  "product_pushed": true,
+  "publication_scan": "Deferred to the maintained Mac lander; no cloud scan result claimed",
+  "readiness": "READY under the explicitly permitted generated-view exception",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "shallow": false,
+  "status": "partial",
+  "tag": "sd-mango-c-f86",
+  "tests": {
+    "command": "MANGO_NO_FIXTURE_SERVER=1 cloud_run timeout 1200 pnpm exec playwright test tests/proposals-decision/missing-sender.spec.ts tests/proposals-decision/decision-routes.spec.ts tests/proposals-decision/content-editing.spec.ts tests/proposals-decision/forecast-provenance.spec.ts tests/proposals-decision/grounding-citations.spec.ts tests/portability.spec.ts --config playwright.config.js --workers=1 --reporter=list",
+    "exact_candidate_passed": 6,
+    "exit": 0,
+    "registered_tests_added_against_pinned_base": 0
+  },
+  "ui": "No screen or control changes; native route proof only"
+}

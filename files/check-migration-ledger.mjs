@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {readFileSync,readdirSync} from 'node:fs';
+import {pathToFileURL} from 'node:url';
+const root=process.argv[2];
+assert(root,'pass the product checkout root');
+const {matchMigrationLedger}=await import(pathToFileURL(root+'/src/vendor/base/portability/ledgers.mjs'));
+const names=execFileSync('git',['-C',root,'ls-tree','-r','--name-only','origin/main','--','migrations/core'],{encoding:'utf8'}).trim().split('\n').filter(name=>name.endsWith('.sql'));
+const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+const prior=names.map(name=>({name:name.split('/').at(-1),sha256:digest(execFileSync('git',['-C',root,'show','origin/main:'+name]))}));
+const files=readdirSync(root+'/migrations/core').filter(name=>name.endsWith('.sql')).sort().map(name=>({name,sha256:digest(readFileSync(root+'/migrations/core/'+name))}));
+assert.deepEqual(matchMigrationLedger(prior,files),prior.map(row=>row.name));
+const added=files.filter(file=>!prior.some(row=>row.name===file.name)).map(row=>row.name);
+assert.deepEqual(added,['0104_native_audience_authority.sql']);
+console.log(JSON.stringify({status:'passed',appliedMainMigrations:prior.length,unchangedHashes:true,newMigrations:added}));

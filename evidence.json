@@ -1,0 +1,154 @@
+{
+  "files": [
+    {
+      "blob": "5d173a85fe518d0b1c078fd9ed90777b1a00d3fe",
+      "bytes": 715,
+      "path": "CI-RESULT.md",
+      "sha256": "6831c05bd727af0a0b0ae1c013714bb7e27a073deb40faa8ebc2de11fdc9a153"
+    },
+    {
+      "blob": "23794f563dcf9bf518ce5eadc57c45cd485bb0ea",
+      "bytes": 2227,
+      "path": "DONE-RIDERS.md",
+      "sha256": "453f53a219600fd50b926f840d7330de4e8453b54032085052f8c33023028b83"
+    },
+    {
+      "blob": "80709d62d1edd37b4be00a3b1fba4930fcd9a928",
+      "bytes": 2386,
+      "path": "PLAN.md",
+      "sha256": "a46bbf180afa7999caf84dc3e923aadd1c8df6a6c9ee2eebed99c53d5e235a15"
+    },
+    {
+      "blob": "55dbb37e7ed418728dccd5033c5767b7f7f01cd1",
+      "bytes": 4844,
+      "path": "PROBES.md",
+      "sha256": "a6515cae0cc1b65b280c6ffef97932d2da6f4bc2ff2dc2eed31786f6e1560213"
+    },
+    {
+      "blob": "6a35f4b22861bb3990bb4fb16745c8feb28276ad",
+      "bytes": 4511,
+      "path": "RECEIPT.json",
+      "sha256": "7fc60103a1371e3c549230b91904ea8e8f84295af4945a29e0040687d76ca79d"
+    },
+    {
+      "blob": "041158b034a979de74dc937a45e2db7639db4822",
+      "bytes": 8754,
+      "path": "REPORT.md",
+      "sha256": "818dab1a3ffb6c0aed41986e0bede2b8d06e8b91f6ffe0c8f5bdaac1e46d7e15"
+    },
+    {
+      "blob": "0ba31f9a0f03369e2a2ea5fd9abe3ffddc3abe42",
+      "bytes": 3967,
+      "path": "candidate-ci-jobs.jsonl",
+      "sha256": "239ddad7879f0849ed9419ca19840bc894bc206c282537c5563e1313ae08eb23"
+    },
+    {
+      "blob": "10fb57818768e54c083477aba662588f3a6ec8bd",
+      "bytes": 226,
+      "path": "candidate-ci.jsonl",
+      "sha256": "677379e10355da3f02d245db44d3cea483253a58a58f1c413c489ce79a1ef04e"
+    },
+    {
+      "blob": "454b72d0902367d1d6378507b485d7aafb4d832d",
+      "bytes": 578,
+      "path": "candidate-provenance.json",
+      "sha256": "b8f0a57e142d393fa7dec19b9d32cb53b77ab6b6e2e3088c058467a25cc556b2"
+    },
+    {
+      "blob": "fba560db7c48416c914446f2a1e319a79104d105",
+      "bytes": 67,
+      "path": "candidate-view-check.log",
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    },
+    {
+      "blob": "4572cb6a1e27efdbd7c0f83dc37d689ac8cf89f5",
+      "bytes": 1321,
+      "path": "check-migration-ledger.mjs",
+      "sha256": "2ec0edfbbea141d71e809a397ec3b1bdd1b2f45be35d7ac195e5d887292c5dfa"
+    },
+    {
+      "blob": "19ba528e517fa271f5a62c84af832a0d36ab5f88",
+      "bytes": 407,
+      "path": "ci-watch.json",
+      "sha256": "24dc37911bd67dd2dca72451cde1f847105792a7aabf19783a4e1b5fd2b7e300"
+    },
+    {
+      "blob": "085a3ded4b0222b0ab60156d37f261623fb51f41",
+      "bytes": 6707,
+      "path": "consent-race-reproduction.log",
+      "sha256": "328493ad0dba0cdf412ee8e297fdcba5aab6ac8a6935dd2ab1a76a1d39d734ae"
+    },
+    {
+      "blob": "3573a0ab38662c7483c9be456176567f04b736a5",
+      "bytes": 12606,
+      "path": "exact-candidate-tests.log",
+      "sha256": "f4ae6ae395b0bf48999281be2d65227fdaca7ff42666bdc1c137e17480652b67"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "exact-first-party-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "cde0a6064e6c2b3cb5c086f8d6d138e707b20df5",
+      "bytes": 329,
+      "path": "exact-integration-check.log",
+      "sha256": "046656c53a4413bddd7040b7efe231dd4bc98090f52345eb196784c3d318b31e"
+    },
+    {
+      "blob": "09dedfae120f6da0571b6698e201988dc455f477",
+      "bytes": 479284,
+      "path": "exact-source-check.log",
+      "sha256": "40741dbb8eb9f6ec16f74d227402a78b43172c174477ea32427a6c2a525bc757"
+    },
+    {
+      "blob": "a52a3bfc51daaf16b6c2e1cfc0b5b4c91028b238",
+      "bytes": 207,
+      "path": "exact-typecheck.log",
+      "sha256": "fc2480dd872edecbb5e7bf3493141aa97ad00b58919db42ae89ceffa16a0f13e"
+    },
+    {
+      "blob": "0c36f2af4d1b4d5b3eda75cbec5e0a93a46dcf48",
+      "bytes": 411793,
+      "path": "final-committed-lock-check.log",
+      "sha256": "689ae5c8494c784bb5073a13be74c5e19df2e3b112b9c649d637615b0dbfb3e6"
+    },
+    {
+      "blob": "07991a7e44695448df0de3a5344491104bb57216",
+      "bytes": 408,
+      "path": "final-identity-audit.log",
+      "sha256": "73d1be9fd5e5a96b3dca576d908595a13df44d750823f8dd4bcc5571d6e899d0"
+    },
+    {
+      "blob": "cef56f3c5b217c6f1ba1bf8934c6ace3ce0f3d57",
+      "bytes": 1117,
+      "path": "final-push.log",
+      "sha256": "c7b576aa00fabad6ab59feb45325638412ffa150ad3b2d01a9717b1ded7524bb"
+    },
+    {
+      "blob": "0bdf8de6fd75f621dfa1fb2874d4907239559e87",
+      "bytes": 60,
+      "path": "final-views.log",
+      "sha256": "a0dc3e5a57608862eebb5d81291a8613096d4984f76019b102a0ac55b950fe97"
+    },
+    {
+      "blob": "f0089f36f666b5c276c203c3e2a2e08993a84b90",
+      "bytes": 1366,
+      "path": "main-ci.jsonl",
+      "sha256": "a4b6020ebb229742a53b3b95be546d6cb840da0becc6af211dccff7808b29394"
+    },
+    {
+      "blob": "a717300bcfb24fac3ac4abb655044ef77c97e350",
+      "bytes": 126,
+      "path": "migration-ledger-check.log",
+      "sha256": "54e339402a1aa1faa0b328a66a1aff88bd50235b375a96908285783a06888488"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f86",
+  "product_head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "ref": "refs/heads/evidence/sd-mango-c-f86",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f86"
+}

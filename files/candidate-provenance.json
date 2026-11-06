@@ -1,0 +1,24 @@
+{
+  "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "branch": "cloud/sd-mango-c-f86",
+  "repository": "just-every/run-mango",
+  "main_at_merge": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "files": [
+    {
+      "path": "tests/proposals-decision/missing-sender.spec.ts",
+      "lines": 263
+    },
+    {
+      "path": "tests/proposals-decision/runtime.ts",
+      "lines": 86
+    },
+    {
+      "path": "tests/support/sender-verification.ts",
+      "lines": 43
+    },
+    {
+      "path": "migrations/core/0104_native_audience_authority.sql",
+      "lines": 21
+    }
+  ]
+}

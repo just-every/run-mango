@@ -1,0 +1,26 @@
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+IDENTITY_AUDIT passed commits=4 all_parents=true OpenAI_coauthors=0
+
+PUSH attempt=1/5 command=git push --porcelain origin HEAD:refs/heads/cloud/sd-mango-c-f86
+PUSH_CREDENTIAL sha256_16=8addacf6ac95b0bc bundle_file_age_seconds=1935 token_issue_age=unknown
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+To https://github.com/just-every/run-mango.git
+ 	HEAD:refs/heads/cloud/sd-mango-c-f86	653a6ff..e5ddac0
+Done
+remote: 
+remote: GitHub found 14 vulnerabilities on just-every/run-mango's default branch (6 high, 7 moderate, 1 low). To find out more, visit:        
+remote:      https://github.com/just-every/run-mango/security/dependabot        
+remote: 
+PUSH_OK branch=cloud/sd-mango-c-f86

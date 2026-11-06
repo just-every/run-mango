@@ -1,0 +1,72 @@
+
+Running 1 test using 1 worker
+
+(node:3135) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3135) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-004 acceptance-5 missing sender: native PATCH with empty sender name and checks -> saved draft, named message.email-identity blocker with two eligible contacts
+PROBE CAMP-004 acceptance-4 missing sender refusal: native approve -> HTTP 409 with all current blockers; campaign, revision, steps and links unchanged; no approval receipt, recipients, dispatch, jobs or marketing handoff
+PROBE CAMP-004 acceptance-5 correction: native PATCH restoring configured sender and checks -> no blockers; campaign remains draft without approval or sending authority
+PROBE CAMP-004 acceptance-5 missing from email: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-5 missing reply-to email: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-5 missing postal address: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-identity: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.personalisation: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.content: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.links: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.content: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 message.email-consent-scope: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 schedule.steps: saved native draft -> named blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.configured: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.configured: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.deduplication: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.deduplication-window: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.reconciliation: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 mail.sender.v1.reconciliation: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-3 delivery-events-missing: unavailable provider guarantee -> approval 409 with unchanged draft and no authority
+PROBE CAMP-004 acceptance-1 spf: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-1 dkim: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-1 dmarc: failed receiver evidence -> named authentication blocker, approval 409 and no authority
+PROBE CAMP-004 acceptance-2 compliance: historical saved mail without managed unsubscribe or postal footer -> approval 409 with both named blockers and no authority; native resave repairs readiness only
+PROBE CAMP-004 acceptance-4 simultaneous failures: native approval -> all missing fields named together, unchanged draft and no authority
+PROBE CAMP-004 acceptance-1 sender authority: withdrawal after valid inspection -> atomic approval conflict, unchanged draft and no authority; repeated review remains blocked until fresh receiver evidence
+CONSENT_APPROVAL_PROBE {"status":200,"authority":[{"contact_id":"01M6QWTP5N87P8CK7JC18S2NJ6"},{"contact_id":"01M6QWTPB63357SXFSVVQX70JW"}],"optedOut":"01M6QWTP5N87P8CK7JC18S2NJ6"}
+  ✘  1 tests/proposals-decision/missing-sender.spec.ts:5:1 › [CAMP-004] a missing sender name blocks approval without authority and clears only after a saved correction (1.2m)
+
+
+  1) tests/proposals-decision/missing-sender.spec.ts:5:1 › [CAMP-004] a missing sender name blocks approval without authority and clears only after a saved correction 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 4
+
+      Object {
+        "body": Object {
+    -     "error": "approval_conflict",
+    +     "idempotent": false,
+    +     "revisionDigest": "685670f12880ad48b6db6848d5fc376595f126180fa579e3dbca4b9b6595e046",
+    +     "status": "scheduled",
+        },
+    -   "status": 409,
+    +   "status": 200,
+      }
+
+      231 |     const consentChanged=await runtime.call(`${campaignDoor}/approve`,{revisionId,idempotencyKey:'synthetic-mango-concurrent-optout'});
+      232 |     console.log('CONSENT_APPROVAL_PROBE',JSON.stringify({status:consentChanged.status,authority:(await runtime.db.prepare('SELECT contact_id FROM recipient_steps WHERE campaign_id=?').bind(campaignId).all()).results,optedOut:first!.id}));
+    > 233 |     expect(consentChanged).toMatchObject({status:409,body:{error:'approval_conflict'}});
+          |                            ^
+      234 |     expect(await persisted()).toEqual(unchanged);
+      235 |     await noAuthority();
+      236 |     runtime.platform.mailer.inspectSender=inspect;
+        at /home/agent/rer-consolidation/work/sd-mango-c-f86/run-mango/tests/proposals-decision/missing-sender.spec.ts:233:28
+
+    Error Context: ../evidence/28f0609202f2/main/proposals-decision-missing-c694a-ly-after-a-saved-correction/error-context.md
+
+  1 failed
+    tests/proposals-decision/missing-sender.spec.ts:5:1 › [CAMP-004] a missing sender name blocks approval without authority and clears only after a saved correction 

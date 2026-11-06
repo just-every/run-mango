@@ -1,0 +1,14 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "api_calls": 6,
+  "last_candidate_lookup_at": "2026-11-06T07:58:03.739028+00:00",
+  "run_id": 42184249151,
+  "status": "completed",
+  "conclusion": "failure",
+  "expected_failure": "Only generated contract views are stale; no product test job ran",
+  "failed_jobs": [
+    127780765231,
+    127780835850
+  ]
+}

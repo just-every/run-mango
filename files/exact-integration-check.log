@@ -1,0 +1,6 @@
+ WARN  Unsupported engine: wanted: {"node":"22.20.0"} (current: {"node":"v24.19.0","pnpm":"10.12.4"})
+
+> mango@0.4.0 integration:check /home/agent/rer-consolidation/work/sd-mango-c-f86/run-mango
+> node scripts/sync-integration.mjs --check
+
+Integration deployment specification and setup identity match the Base build reader.

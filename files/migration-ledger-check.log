@@ -1,0 +1,1 @@
+{"status":"passed","appliedMainMigrations":103,"unchangedHashes":true,"newMigrations":["0104_native_audience_authority.sql"]}
