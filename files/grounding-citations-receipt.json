@@ -1,0 +1,6 @@
+{
+  "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium timeout 1200 pnpm exec playwright test --config playwright.config.js tests/proposals-decision/grounding-citations.spec.ts --workers=1 --reporter=list",
+  "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "exit": 0,
+  "log": "grounding-citations.log"
+}

@@ -1,0 +1,13 @@
+# sd-mango-c-f88 verification plan
+
+Declared repository: just-every/run-mango. Product branch: cloud/sd-mango-c-f88.
+
+1. Inspect current main, PROP-006, its Status evidence, production grounding boundaries and registered public-door journey. Establish whether predecessor 9b32e897756337b0a011fa29c726b2254b12fc84 is already included before replaying anything.
+2. Map the selected points: independently replace a citation key and observed value in summary, audience explanation and timing explanation. Each native generation must fail with invalid_ai_output, remain failed through repeated detail and desk reads, expose no composition or accepted forecast, refuse adoption and preserve existing campaign, revision, recipient and dispatch authority. Finish with valid generation retaining draft-only authority.
+3. Current main already contains the exact selected journey, runtime support, verification registration and Status evidence from the predecessor. Preserve them without adding duplicate tests, an empty commit or a replay of published history. Run the focused registered journey, typecheck and first-party command check on the current candidate.
+4. Run the documented contract generator write and check; restore its two view files from origin/main. Run the edition lock command last and its check. Keep the checkout clean if output is unchanged.
+5. Refresh main before the final branch push. With no published task save, rebase only the task branch onto current main if necessary. Do not alter any published commit or main. Inspect every candidate author, committer and trailer before using the cloud product push guard.
+6. Publish the named branch with the verified existing SHA, discover its exact-SHA Verify once, and retain the actual CI and local receipts. No dispatch if a Verify run already exists. The maintained fleet owns publication scanning and landing.
+7. Save all actual non-secret reports and receipts in this packet. Publish explicitly selected files only on evidence/sd-mango-c-f88. Verify evidence transfer, remove the product clone only after successful publication, and return exact product and evidence custody.
+
+PROP-006 remains PARTIAL. Acceptance 1 complete imported-data and configured-knowledge request provenance, acceptance 2 general claim derivability and other malformed-schema proof, actual AI-provider behavior and real AI, commerce and sending-provider qualification remain named remainders. Existing fabricated-prose, benchmark and provider-failure evidence is retained. All CONT-013 holds and release prerequisites remain unchanged. No new policy decision, acceptance rewrite, UI change or DONE claim is planned.

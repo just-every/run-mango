@@ -1,0 +1,2 @@
+Command: git log origin/main..HEAD --format="%an <%ae>%n%cn <%ce>%n%(trailers:only,unfold)"
+No unpublished commits; product branch equals origin/main.

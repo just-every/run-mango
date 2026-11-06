@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f88",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f88",
+  "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "utc": "2026-11-06T07:53:23.887264+00:00",
+  "predecessor": "9b32e897756337b0a011fa29c726b2254b12fc84",
+  "predecessor_already_landed": true,
+  "new_product_commits": 0,
+  "product_diff": [],
+  "worktree_clean": true,
+  "checks": {
+    "grounding-citations-receipt.json": {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium timeout 1200 pnpm exec playwright test --config playwright.config.js tests/proposals-decision/grounding-citations.spec.ts --workers=1 --reporter=list",
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "exit": 0,
+      "log": "grounding-citations.log"
+    },
+    "typecheck-receipt.json": {
+      "command": "pnpm run typecheck",
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    "first-party-receipt.json": {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    "mechanical-receipt.json": {
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "commands": [
+        {
+          "command": "node src/base/contract-docs.mjs write",
+          "exit": 0,
+          "log": "mechanical-1.log"
+        },
+        {
+          "command": "node src/base/contract-docs.mjs check",
+          "exit": 0,
+          "log": "mechanical-2.log"
+        },
+        {
+          "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+          "exit": 0,
+          "log": "mechanical-3.log"
+        },
+        {
+          "command": "node scripts/edition-authoring/cli.mjs lock",
+          "exit": 0,
+          "log": "mechanical-4.log"
+        },
+        {
+          "command": "node scripts/edition-authoring/cli.mjs check",
+          "exit": 0,
+          "log": "mechanical-5.log"
+        }
+      ],
+      "migration_ledger": "none; no migration change",
+      "worktree_status": ""
+    }
+  },
+  "probes": [
+    "PROBE PROP-006 acceptances-2-3 summary, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 acceptances-2-3 summary, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 acceptances-2-3 audience explanation, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 acceptances-2-3 audience explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 acceptances-2-3 timing explanation, unknown key: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 acceptances-2-3 timing explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority",
+    "PROBE PROP-006 valid control: native generation after all six citation refusals -> HTTP 201 with retained grounded proposal, owned-history forecast and draft only; existing work unchanged, no approval or dispatch"
+  ],
+  "contract": {
+    "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+    "before": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "after": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "status_rows": 316,
+    "changes": []
+  },
+  "publication_scan": {
+    "status": "not run in cloud",
+    "custody": "maintained fleet"
+  },
+  "ui_proof": "not applicable; no changed screens",
+  "repair_rounds": 0,
+  "github_calls": 2,
+  "exact_sha_ci": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f88",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42183651100",
+      "id": 42183651100,
+      "name": "Verify",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "skipped",
+      "event": "push",
+      "head_branch": "main",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42181327448",
+      "id": 42181327448,
+      "name": "Run demo",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "main",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42181327459",
+      "id": 42181327459,
+      "name": "Verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "main",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42181327367",
+      "id": 42181327367,
+      "name": "Run site",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "dynamic",
+      "head_branch": "main",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42181326393",
+      "id": 42181326393,
+      "name": "Push on main",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f83-rebase-5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "head_sha": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42179839411",
+      "id": 42179839411,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ]
+}

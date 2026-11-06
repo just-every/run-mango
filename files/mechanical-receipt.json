@@ -1,0 +1,32 @@
+{
+  "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "commands": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "mechanical-1.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "mechanical-2.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "log": "mechanical-3.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "mechanical-4.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "mechanical-5.log"
+    }
+  ],
+  "migration_ledger": "none; no migration change",
+  "worktree_status": ""
+}

@@ -1,0 +1,41 @@
+{
+  "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "97838046205b2d1579bb7a62e4cdcbeedf74e23c36f9de83422d19150b3a230e",
+      "unchanged": true
+    },
+    {
+      "path": "tests/proposals-decision/grounding-citations.spec.ts",
+      "sha256": "8d3d6ac203c6b010715119c51e361809bc964244e065ad3289a9f3f7e6469d48",
+      "unchanged": true
+    },
+    {
+      "path": "tests/proposals-decision/runtime.ts",
+      "sha256": "fa4a0db4c4a0368806b22cb00ce919a2063dd39960b7885bd0b851d37f7bcb3a",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "103e938f65f655477598cf98252612176141450b056f796f0e4ebf992547b7b3",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/features/proposals/generation.ts",
+      "sha256": "492566d51e2a42fdf4a0b09b5c59c0681a30164040876efd03556478e91c43fc",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/features/proposals/service.ts",
+      "sha256": "3a7115a09417ee3e1eaa2b6fda92cc645ad9d98dcda6ea53dab08c5d6535ba00",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/features/proposals/repository.ts",
+      "sha256": "62a1a718fb0ec6539b2be14fbdedeac8538b35295e89775ea2ae58558baac338",
+      "unchanged": true
+    }
+  ],
+  "all_tracked_files_clean": true
+}
