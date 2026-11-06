@@ -1,0 +1,27 @@
+{
+  "head": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+  "command": [
+    "python3",
+    "/tmp/rer-reap.py",
+    "timeout",
+    "1200",
+    "env",
+    "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/go-live/playwright.config.js",
+    "woocommerce.journeys.ts"
+  ],
+  "exit": 0,
+  "elapsed_seconds": 52.0,
+  "started_at": "2026-11-06T02:39:18.537481+00:00",
+  "registered_test_count": 1,
+  "assertion_width": 1440,
+  "capture_widths": [
+    1440,
+    390
+  ]
+}

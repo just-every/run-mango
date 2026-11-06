@@ -1,0 +1,47 @@
+{
+  "commits": [
+    {
+      "commit": "bbf6957bbd7d70a86dd6c0e25c98c9cd65bce918",
+      "status_rows": 316,
+      "all_parent_status_ids_retained": true,
+      "generated_views_committed": false,
+      "files": [
+        "CONTRACT.md",
+        "sources.lock.json",
+        "tests/go-live/woocommerce-edge.ts",
+        "tests/go-live/woocommerce.journeys.ts"
+      ]
+    },
+    {
+      "commit": "ab1472fcf87fa3226015c2606d4018a558830cd9",
+      "status_rows": 316,
+      "all_parent_status_ids_retained": true,
+      "generated_views_committed": false,
+      "files": [
+        "sources.lock.json",
+        "tests/go-live/woocommerce.journeys.ts"
+      ]
+    },
+    {
+      "commit": "89076ee50471ca0d7246290bb68206ab99583941",
+      "status_rows": 316,
+      "all_parent_status_ids_retained": true,
+      "generated_views_committed": false,
+      "files": [
+        "sources.lock.json",
+        "tests/go-live/woocommerce.journeys.ts"
+      ]
+    },
+    {
+      "commit": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+      "status_rows": 316,
+      "all_parent_status_ids_retained": true,
+      "generated_views_committed": false,
+      "files": [
+        "sources.lock.json",
+        "tests/go-live/woocommerce.journeys.ts"
+      ]
+    }
+  ],
+  "removed_existing_assertions": 0
+}

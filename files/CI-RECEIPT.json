@@ -1,0 +1,18 @@
+{
+  "conclusion": "failure",
+  "head_sha": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42151836264",
+  "id": 42151836264,
+  "name": "Verify",
+  "status": "completed",
+  "disposition": "permitted-generated-view-only failure",
+  "build_job": 127676708928,
+  "aggregate_job": 127676782928,
+  "root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "local_reproduction": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1
+  },
+  "browser_shards": "skipped after generated-view failure",
+  "rerun_dispatched": false
+}

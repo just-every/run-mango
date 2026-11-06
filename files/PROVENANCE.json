@@ -1,0 +1,56 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f69",
+  "head": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+  "main_at_integration": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "status_before": "partial",
+  "status_after": "partial",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "pr": null,
+  "publication_scan": "Mac lander owns full-history scan; not claimed locally",
+  "run_site": "Main-only; Mac lander owns it",
+  "parent_status_rows_retained": 316,
+  "table_row_count_before": 490,
+  "table_row_count_after": 490,
+  "no_existing_assertion_removed_or_narrowed": true,
+  "test_registrations_before": 1,
+  "test_registrations_after": 1,
+  "new_email_shaped_strings": 0,
+  "production_files_changed": false,
+  "product_pushed": true,
+  "remote_branch_head_verified": true,
+  "commits": [
+    "41b888cca49b4ceb965cf896d791a2ea52f7f79b Capture the visible host source panel in the browser viewport",
+    "89076ee50471ca0d7246290bb68206ab99583941 Wait for the host source panel to paint before browser proof",
+    "ab1472fcf87fa3226015c2606d4018a558830cd9 Verify retained operator allowance and stable source-removal audit",
+    "bbf6957bbd7d70a86dd6c0e25c98c9cd65bce918 Prove WooCommerce catalog host removal on disconnect [skip ci]"
+  ],
+  "verify": {
+    "conclusion": "failure",
+    "head_sha": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42151836264",
+    "id": 42151836264,
+    "name": "Verify",
+    "status": "completed",
+    "disposition": "permitted-generated-view-only failure",
+    "build_job": 127676708928,
+    "aggregate_job": 127676782928,
+    "root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "local_reproduction": {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1
+    },
+    "browser_shards": "skipped after generated-view failure",
+    "rerun_dispatched": false
+  },
+  "handoff": "READY under permitted generated-view-only exception"
+}

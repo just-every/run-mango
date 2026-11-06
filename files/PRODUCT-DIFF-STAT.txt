@@ -1,0 +1,5 @@
+ CONTRACT.md                           |  2 +-
+ sources.lock.json                     |  6 +--
+ tests/go-live/woocommerce-edge.ts     |  4 +-
+ tests/go-live/woocommerce.journeys.ts | 97 +++++++++++++++++++++++++++++++++--
+ 4 files changed, 100 insertions(+), 9 deletions(-)

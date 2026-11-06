@@ -1,0 +1,25 @@
+{
+  "head": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+  "screens": [
+    {
+      "path": "woocommerce-disconnected-hosts-1440.png",
+      "sha256": "ade2994e218c231cd1ee402d4a0f62f90286381424537f153e5269c3f65072e7",
+      "bytes": 122844
+    },
+    {
+      "path": "woocommerce-disconnected-hosts-390.png",
+      "sha256": "5e98abdfa4b49b7e3461f62a0fb615774ae56f51581d7a4ec01cb8e30d96a27e",
+      "bytes": 87364
+    },
+    {
+      "path": "woocommerce-disconnected-review-1440.png",
+      "sha256": "bb36d79418284a76f5957aadc71ca243313e12acd027141982ec7f1f02a05dae",
+      "bytes": 663521
+    },
+    {
+      "path": "woocommerce-disconnected-review-390.png",
+      "sha256": "b7161e01e08446520b893395ac72cf0c5cb889c782f7759da15b2c2b8495b70c",
+      "bytes": 608659
+    }
+  ]
+}
