@@ -12,23 +12,34 @@ test('[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms 
     expect(info.status).toBe(200);
     const {disclosure}=await info.json() as {disclosure:string};
     const signup=(email:string,extra={})=>call('/subscribe',{email,consent:true,disclosure,...extra});
-    const email=['synthetic-mango-55','example.test'].join('@');
-    const mixedCase=['Synthetic-Mango-55','Example.Test'].join('@');
-    expect((await signup('bot@example.test',{website:'spam'})).status).toBe(202);expect(f.outbound).toHaveLength(0);
-    expect((await signup('stale@example.test',{disclosure:'stale-disclosure'})).status).toBe(409);
-    for(const malformed of ['   ',['synthetic mango 55','example.test'].join('@'),['synthetic-mango-55','example'].join('@')]) {
+    const formSignup=(email:string,extra={})=>app.fetch(new Request(origin+'/subscribe',{method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded','CF-Connecting-IP':'192.0.2.44'},
+      body:new URLSearchParams({email,consent:'true',disclosure,...extra})}),f.bindings);
+    const email=['synthetic-mango-60','example.test'].join('@');
+    const mixedCase=['Synthetic-Mango-60','Example.Test'].join('@');
+    const padded=` \t${mixedCase}\r\n`;
+    expect((await signup(['synthetic-mango-bot','example.test'].join('@'),{website:'spam'})).status).toBe(202);expect(f.outbound).toHaveLength(0);
+    expect((await signup(['synthetic-mango-stale','example.test'].join('@'),{disclosure:'stale-disclosure'})).status).toBe(409);
+    expect((await formSignup(mixedCase,{disclosure:'stale-disclosure'})).status).toBe(409);
+    for(const malformed of ['   ',['synthetic mango 60','example.test'].join('@'),['synthetic-mango-60','example'].join('@')]) {
       const refused=await signup(malformed);
       expect(refused.status).toBe(400);
       expect(await refused.json()).toMatchObject({error:'invalid_signup',fields:{email:expect.any(Array)}});
+      const formRefused=await formSignup(malformed);
+      expect(formRefused.status).toBe(400);
+      expect(await formRefused.json()).toMatchObject({error:'invalid_signup',fields:{email:expect.any(Array)}});
     }
     const noConsent=await signup(email,{consent:false});
     expect(noConsent.status).toBe(400);
     expect(await noConsent.json()).toMatchObject({error:'invalid_signup'});
+    expect((await formSignup(padded,{consent:'false'})).status).toBe(400);
     for(const table of ['contacts','contact_email_addresses','consent_evidence','consent_confirmations']) {
       expect((await f.db.prepare(`SELECT * FROM ${table}`).all()).results).toEqual([]);
     }
     expect(f.outbound).toHaveLength(0);
-    const results=await Promise.all([signup(` \t${mixedCase}\r\n`),signup(mixedCase)]);
+    const [formResult,...results]=await Promise.all([formSignup(padded),signup(padded),signup(mixedCase)]);
+    expect(formResult.status).toBe(303);
+    expect(formResult.headers.get('location')).toBe('/subscribe?submitted=1');
     expect(results.every(response=>response.status===202)).toBe(true);expect(f.outbound).toHaveLength(1);
     expect((await signup(email)).status).toBe(202);
     const contacts=(await f.db.prepare('SELECT id,email,email_status FROM contacts').all()).results;
@@ -45,8 +56,10 @@ test('[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms 
     const api=await requests(f);
     expect((await api.call(`/api/contacts/${contactId}`,undefined,'GET',false)).status).toBe(401);
     const readIdentity=async(status:string)=>{
-      const found=await api.json(`/api/contacts/search?address=${encodeURIComponent(mixedCase)}`);
-      expect(found.contacts).toEqual([expect.objectContaining({id:contactId,email,emailStatus:status})]);
+      for(const address of [email,mixedCase,padded]) {
+        const found=await api.json(`/api/contacts/search?address=${encodeURIComponent(address)}`);
+        expect(found.contacts).toEqual([expect.objectContaining({id:contactId,email,emailStatus:status})]);
+      }
       const detail=await api.json(`/api/contacts/${contactId}`);
       expect(detail.contact).toMatchObject({id:contactId,email,emailStatus:status});
       expect(detail.emails).toEqual([expect.objectContaining({contactId,email,channelStatus:status})]);
