@@ -1,0 +1,18 @@
+{
+  "head": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "command": [
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/audience-import/config.js",
+    "signup.spec.ts",
+    "--reporter=line"
+  ],
+  "exit": 0,
+  "started_at": "2026-11-06T00:13:49.294052+00:00",
+  "elapsed_seconds": 36.894,
+  "log": "candidate-signup.log",
+  "log_sha256": "907a1b0e1bd25aa1fed37e12531013ed0b4c690b56edf82fe3bcb7eeee691634"
+}

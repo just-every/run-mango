@@ -1,0 +1,201 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f60",
+  "head": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "proof_head": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+  "main_at_integration": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "proof_source_equality": true,
+  "files": [
+    {
+      "path": "src/core/features/audience/signup-routes.ts",
+      "blob": "6678f970f8af0a06e12f3f177fbf09e228d88e85",
+      "sha256": "fc71fb93bc1ae0560323e11996d6c5e143ee003c53fd1bab6495dbfca8de3382"
+    },
+    {
+      "path": "src/core/features/audience/manual-entry-schema.ts",
+      "blob": "d52e5bdfac724f17e2d20a1f35ea46763aec56d0",
+      "sha256": "51377a9c979967334ba3cb0d8feb27f028569facb4f1ba3fc332bcb745b8dfff"
+    },
+    {
+      "path": "tests/audience-import/signup.spec.ts",
+      "blob": "f56fbf2c673aa472986f177cc976d390071138d0",
+      "sha256": "7e09db9d67d5a0cc912733b3ed809f60487274d683e94eadcf3cdaf982bce811"
+    },
+    {
+      "path": "tests/audience-import/identity-doors.ts",
+      "blob": "1de45443d598835b53dc0d844703a9a4d305fbdc",
+      "sha256": "9419370c97ee43a476280ef6f70dfaa2ef802c0fc8918eb9da64466cc69ca57a"
+    }
+  ],
+  "working_tree_clean": true,
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "clause_changes": [
+    {
+      "id": "CONT-001",
+      "before": "partial",
+      "after": "done",
+      "acceptance_text_changed": false
+    }
+  ],
+  "local_checks": [
+    {
+      "command": "pnpm exec playwright test --config playwright.config.js tests/audience-import/signup.spec.ts --workers=1 --reporter=line",
+      "head": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+      "exit": 0,
+      "log": "proof-sha-signup.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+      "exit": 0,
+      "log": "proof-sha-typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "tree_equals": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "exit": 0,
+      "log": "final-first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write then check",
+      "tree_equals": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "write_exit": 0,
+      "check_exit": 0,
+      "views_restored_from_main": true
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock then check",
+      "head": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "write_exit": 0,
+      "check_exit": 0
+    },
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/audience-import/config.js",
+        "signup.spec.ts",
+        "--reporter=line"
+      ],
+      "head": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "exit": 0,
+      "log": "candidate-signup.log",
+      "elapsed_seconds": 36.894
+    }
+  ],
+  "migration_ledger": "not applicable, no migrations changed",
+  "source_lock_fresh": true,
+  "generated_views_equal_main": true,
+  "test_registration_delta": 0,
+  "removed_or_weakened_existing_assertions": false,
+  "ui_changed": false,
+  "publication_scan": {
+    "state": "not run in cloud",
+    "findings": null,
+    "historyScanned": null,
+    "owner": "Mac lander"
+  },
+  "landing": "branch only",
+  "product_commits": [
+    "1a4f7d299e3c366e6321a8eb4b481a6d2d840576 Record proven native contact identity acceptance [skip ci]",
+    "6a0bc82eeebc63536e6e0cbc002b72f32194f447 Prove canonical contact ownership through native capture and import [skip ci]",
+    "9e851da7565de6419b237cec2ab880e3ba79b790 Prove hosted signup identity across request encodings [skip ci]",
+    "697525917a55c6da6bb8612640b864a258586721 Normalize hosted signup email before validation"
+  ],
+  "ci": {
+    "repository": "just-every/run-mango",
+    "head": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+    "run": {
+      "conclusion": "failure",
+      "event": "workflow_dispatch",
+      "head_sha": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42134898452",
+      "id": 42134898452,
+      "name": "Verify",
+      "status": "completed"
+    },
+    "jobs": [
+      {
+        "conclusion": "success",
+        "failed_steps": [],
+        "id": 127620454554,
+        "name": "plan",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failed_steps": [
+          "Check generated contract documents"
+        ],
+        "id": 127620523679,
+        "name": "Build and public command checks",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127620525485,
+        "name": "light",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failed_steps": [
+          "Require the selected coverage and its proof"
+        ],
+        "id": 127620606162,
+        "name": "verify",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127620607830,
+        "name": "nightly-proof",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127620608229,
+        "name": "shards (${{ matrix.name }})",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127620608459,
+        "name": "full-push-proof",
+        "status": "completed"
+      }
+    ],
+    "github_calls_used": 8,
+    "failed_logs_read_once": [
+      127620523679,
+      127620606162
+    ],
+    "classification": "generated-view-only failure with dependent aggregate failure; brief exception applies",
+    "product_assertion_failure": false,
+    "ci_shards_executed": false,
+    "local_exact_candidate_probe_exit": 0,
+    "stale_views_local_command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "check"
+    ],
+    "stale_views_local_exit": 1,
+    "expected_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  }
+}

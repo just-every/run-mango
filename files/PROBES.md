@@ -1,0 +1,9 @@
+# Runtime probes
+
+Candidate: 1a4f7d299e3c366e6321a8eb4b481a6d2d840576. Native route journey; real migrated D1, network-boundary confirmation mail fixture. The same registered journey also passed on proof commit 6a0bc82eeebc63536e6e0cbc002b72f32194f447. Relevant source and test bytes are identical.
+
+PROBE CONT-001 1: GET /subscribe/info followed by mixed-case and surrounding-whitespace JSON and encoded form POST /subscribe with the current disclosure -> 202 and 303, one canonical contact and address, one confirmation; authenticated canonical, mixed-case and padded search plus detail -> the same identity while pending, subscribed and later unsubscribed. Manual consent POST, scoped integration PUT and CSV preview/apply -> the same canonical email and expected existing owner. Malformed email, missing consent and stale disclosure remain refused.
+
+PROBE CONT-001 2: manual consent POST carrying a formatted US phone; native CSV preview/apply carrying formatted UK and Australian phones, including duplicate phone-only rows -> authenticated detail returns +12025550147, +442079460147 and +61412345678, each once on its expected contact. Missing country prefix, zero country prefix and nondigit phone -> 409 on manual capture and E.164 row refusal on import, with unchanged contact and consent records. No SMS handoff is made.
+
+PROBE CONT-001 3: capture then duplicate CSV import, CSV import then manual capture, and repeated scoped API capture -> the independently retained contact IDs and exactly four expected contacts overall. Email and phone already owned by different contacts -> manual 409 and rejected import row, with unchanged complete contact, address, phone, evidence and confirmation snapshots. Revoked integration key -> 401 and unchanged snapshots. Campaign, approval and recipient tables remain empty, with no campaign dispatch command.

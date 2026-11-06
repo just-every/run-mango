@@ -1,0 +1,16 @@
+{
+  "mutation": "Remove hosted email trimming before validation",
+  "command": [
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/audience-import/config.js",
+    "signup.spec.ts",
+    "--reporter=line"
+  ],
+  "exit": 1,
+  "expected": "Hosted form rejects the padded valid identity, so its acceptance assertion fails",
+  "restored": true
+}

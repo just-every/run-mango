@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+(node:2643) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/audience-import/signup.spec.ts:6:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out
+tests/audience-import/signup.spec.ts:6:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out
+(node:2643) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+  1) tests/audience-import/signup.spec.ts:6:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 303
+    Received: 400
+
+      39 |     expect(f.outbound).toHaveLength(0);
+      40 |     const [formResult,...results]=await Promise.all([formSignup(padded),signup(padded),signup(mixedCase)]);
+    > 41 |     expect(formResult.status).toBe(303);
+         |                               ^
+      42 |     expect(formResult.headers.get('location')).toBe('/subscribe?submitted=1');
+      43 |     expect(results.every(response=>response.status===202)).toBe(true);expect(f.outbound).toHaveLength(1);
+      44 |     expect((await signup(email)).status).toBe(202);
+        at /workspace/run-mango/tests/audience-import/signup.spec.ts:41:31
+
+    Error Context: ../evidence/7f523b30a6bf/audience-import/signup--CONT-003-CONT-004--2c530-er-reverses-a-later-opt-out/error-context.md
+
+
+  1 failed
+    tests/audience-import/signup.spec.ts:6:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 

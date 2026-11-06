@@ -1,0 +1,40 @@
+{
+  "rows": [
+    {
+      "commit": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+      "parent": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+      "parent_rows": 316,
+      "child_rows": 316,
+      "lost_rows": []
+    },
+    {
+      "commit": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+      "parent": "9e851da7565de6419b237cec2ab880e3ba79b790",
+      "parent_rows": 316,
+      "child_rows": 316,
+      "lost_rows": []
+    },
+    {
+      "commit": "9e851da7565de6419b237cec2ab880e3ba79b790",
+      "parent": "697525917a55c6da6bb8612640b864a258586721",
+      "parent_rows": 316,
+      "child_rows": 316,
+      "lost_rows": []
+    },
+    {
+      "commit": "9e851da7565de6419b237cec2ab880e3ba79b790",
+      "parent": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "parent_rows": 316,
+      "child_rows": 316,
+      "lost_rows": []
+    },
+    {
+      "commit": "697525917a55c6da6bb8612640b864a258586721",
+      "parent": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+      "parent_rows": 316,
+      "child_rows": 316,
+      "lost_rows": []
+    }
+  ],
+  "passed": true
+}

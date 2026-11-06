@@ -1,0 +1,9 @@
+{
+  "parent": "6a0bc82eeebc63536e6e0cbc002b72f32194f447",
+  "parent_status_rows": 316,
+  "candidate_status_rows": 316,
+  "missing_ids": [],
+  "views_equal_main": true,
+  "source_and_test_bytes_equal_proof": true,
+  "added_email_literals": 0
+}

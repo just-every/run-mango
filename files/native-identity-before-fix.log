@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:3338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out
+tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out
+(node:3338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+  1) tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 
+
+    Error: {"error":"invalid_request","issues":{"errors":[],"properties":{"contact":{"errors":[],"properties":{"email":{"errors":["Invalid email address"]}}}}}}
+
+    expect(received).toBeLessThan(expected)
+
+    Expected: < 300
+    Received:   400
+
+       at ../audience-controls/runtime.ts:17
+
+      15 |   }
+      16 |   const response=await call('/auth/bootstrap',{token,displayName:'Controls operator'});expect(response.status).toBe(303);cookie=response.headers.get('set-cookie')!.split(';')[0];
+    > 17 |   async function json(path:string,body?:unknown,method?:string) {const response=await call(path,body,method);const value=await response.json() as any;expect(response.status,JSON.stringify(value)).toBeLessThan(300);return value;}
+         |                                                                                                                                                                                                     ^
+      18 |   return {call,json};
+      19 | }
+      20 | export async function runtime() {const h=await native();return {...h,...await requests(h.f)};}
+        at Object.json (/workspace/run-mango/tests/audience-controls/runtime.ts:17:197)
+        at identityDoors (/workspace/run-mango/tests/audience-import/identity-doors.ts:30:15)
+        at /workspace/run-mango/tests/audience-import/signup.spec.ts:95:5
+
+    Error Context: ../evidence/7f523b30a6bf/audience-import/signup--CONT-003-CONT-004--2c530-er-reverses-a-later-opt-out/error-context.md
+
+
+  1 failed
+    tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 

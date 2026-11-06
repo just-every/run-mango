@@ -1,0 +1,22 @@
+{
+  "parents": [
+    {
+      "parent": "697525917a55c6da6bb8612640b864a258586721",
+      "parent_table_lines": 490,
+      "staged_table_lines": 490,
+      "parent_status_rows": 316,
+      "staged_status_rows": 316,
+      "missing_status_rows": []
+    },
+    {
+      "parent": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+      "parent_table_lines": 490,
+      "staged_table_lines": 490,
+      "parent_status_rows": 316,
+      "staged_status_rows": 316,
+      "missing_status_rows": []
+    }
+  ],
+  "generated_views_equal_origin_main": true,
+  "added_email_literals": 0
+}
