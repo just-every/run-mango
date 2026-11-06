@@ -1,0 +1,22 @@
+[
+  {
+    "mutation": "named-host-request",
+    "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+    "source": "src/core/features/auth/approval-requests.ts",
+    "original_sha256": "fa848b4d45917b0cac2ec0abe72a8e98c1ecf1a4a5a5bf9a3d05d55a737848c9",
+    "exit": 1,
+    "seconds": 41.92,
+    "restored": true,
+    "log": "named-host-request-mutation.txt"
+  },
+  {
+    "mutation": "admin-allowance-authority",
+    "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+    "source": "src/core/features/auth/permissions.ts",
+    "original_sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
+    "exit": 1,
+    "seconds": 42.88,
+    "restored": true,
+    "log": "admin-allowance-authority-mutation.txt"
+  }
+]

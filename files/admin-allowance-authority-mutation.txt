@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+(node:9743) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (41.0s)
+
+
+  1) tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 
+
+    Error: {"error":"role_forbidden","requiredPermission":"campaign.approve"}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 403
+
+       at harness.ts:44
+
+      42 | export async function json(response: Response, status: number) {
+      43 |   const text = await response.text();
+    > 44 |   expect(response.status, text).toBe(status);
+         |                                 ^
+      45 |   return text ? JSON.parse(text) : null;
+      46 | }
+      47 |
+        at json (/home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/harness.ts:44:33)
+        at adminHostAllowance (/home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/content-hosts.ts:35:11)
+        at blockedHostJourney (/home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/content-hosts.ts:265:3)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/content-checks.journeys.ts:80:5
+
+    Error Context: ../evidence/04f25bd000b5/go-live/content-checks.journeys.ts-32575-s-each-SMS-with-its-opt-out/error-context.md
+
+  1 failed
+    tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 

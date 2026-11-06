@@ -1,0 +1,6 @@
+{
+  "command": "gh run view 42158095903 --repo just-every/run-mango --job 127697022064 --log-failed",
+  "exit": 0,
+  "file": "ci-job-127697022064.txt",
+  "public_redactions": "GitHub job environment sections omitted; no credentials or signed URL queries retained"
+}

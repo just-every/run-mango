@@ -1,0 +1,182 @@
+{
+  "tag": "sd-mango-c-f72",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f72",
+  "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+  "base": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+  "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "save": "fe9fe944174a2520965c34f9cf85136ca1dfe8ed",
+  "status": {
+    "MSG-015": {
+      "before": "partial",
+      "after": "partial"
+    }
+  },
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "mechanical": {
+    "views": {
+      "write": "node src/base/contract-docs.mjs write",
+      "write_exit": 0,
+      "check": "node src/base/contract-docs.mjs check",
+      "check_exit": 0,
+      "restored_from": "origin/main",
+      "excluded_from_commit": [
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ]
+    },
+    "lock": {
+      "write": "node scripts/edition-authoring/cli.mjs lock",
+      "write_exit": 0,
+      "check": "node scripts/edition-authoring/cli.mjs check",
+      "check_exit": 0
+    },
+    "ledger": {
+      "command": "none",
+      "exit": 0,
+      "reason": "No migration changed"
+    },
+    "status_rows": {
+      "before_pipe_rows": 490,
+      "after_pipe_rows": 490,
+      "lost_parent_ids": []
+    }
+  },
+  "checks": [
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts roles.journeys.ts",
+      "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+      "exit": 0,
+      "tests_passed": 2,
+      "elapsed_minutes": 3.0,
+      "receipt": "candidate-journeys.txt",
+      "checkout_clean": true
+    },
+    {
+      "command": "cloud_run pnpm run typecheck",
+      "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+      "exit": 0,
+      "receipt": "typecheck.txt"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "receipt": "build.txt",
+      "candidate_source_bytes_unchanged": true
+    }
+  ],
+  "screens": {
+    "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+    "source": "clean candidate content-checks journey",
+    "files": [
+      {
+        "path": "screens/admin-blocked-host-1440.png",
+        "bytes": 24239,
+        "sha256": "07bfc804a1766f5be4f41099a7b8281dd6bbf6c3da683616ba0d84e59cfae64c"
+      },
+      {
+        "path": "screens/admin-blocked-host-390.png",
+        "bytes": 23074,
+        "sha256": "6b3cb4d5b7e01850cb733b87e8a92b661ceebff144fd13da028a9be7abd1a066"
+      },
+      {
+        "path": "screens/admin-allowed-host-1440.png",
+        "bytes": 551231,
+        "sha256": "84a858d5cde3495540e17a2ef124aa018e70f287f9a02736cac1a50601970a6a"
+      },
+      {
+        "path": "screens/admin-allowed-host-390.png",
+        "bytes": 497957,
+        "sha256": "8fca2eb7be69a6ef36fd0f645fac5cd1c87ed55fdefd0de6eb44546a00aa6ee4"
+      },
+      {
+        "path": "screens/admin-host-activity-1440.png",
+        "bytes": 60238,
+        "sha256": "5b6625db26f0c5b22cf924bf6931590b947a51926c2f12e41e4b2b94a9158db7"
+      },
+      {
+        "path": "screens/admin-host-activity-390.png",
+        "bytes": 44094,
+        "sha256": "1340d29e2ac5506092fdf8fe52214d4e9cbc74a71d83445e501aca16139421f6"
+      },
+      {
+        "path": "screens/author-host-request-1440.png",
+        "bytes": 723242,
+        "sha256": "e32f98e4823a652441ca8f580cd184c591f44593aff2f83d6a851bf4ce26ea57"
+      },
+      {
+        "path": "screens/author-host-request-390.png",
+        "bytes": 670514,
+        "sha256": "e63bce90fcff4d4f74c4332f78e20d9fad613039712700349ac889fb50cd0f75"
+      }
+    ]
+  },
+  "mutations": [
+    {
+      "mutation": "named-host-request",
+      "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+      "source": "src/core/features/auth/approval-requests.ts",
+      "original_sha256": "fa848b4d45917b0cac2ec0abe72a8e98c1ecf1a4a5a5bf9a3d05d55a737848c9",
+      "exit": 1,
+      "seconds": 41.92,
+      "restored": true,
+      "log": "named-host-request-mutation.txt"
+    },
+    {
+      "mutation": "admin-allowance-authority",
+      "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+      "source": "src/core/features/auth/permissions.ts",
+      "original_sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
+      "exit": 1,
+      "seconds": 42.88,
+      "restored": true,
+      "log": "admin-allowance-authority-mutation.txt"
+    }
+  ],
+  "ci": {
+    "id": 42158095903,
+    "head_sha": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+    "event": "push",
+    "last_observed_status": "in_progress",
+    "conclusion": "failure",
+    "discovery": "2026-11-06T03:42:12Z",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42158095903",
+    "status": "completed",
+    "accepted_exception": "Only generated ACCEPTANCE.md freshness fails; final verify job depends on that build, and all product shards are skipped. Mac lander regenerates the views before landing.",
+    "failed_jobs": [
+      127697022064,
+      127697100418
+    ],
+    "product_assertion_failures": []
+  },
+  "publication_scan": {
+    "status": "not_run_in_cloud",
+    "owner": "Mac guarded lander"
+  },
+  "landing": {
+    "status": "branch_only",
+    "main_pushed": false,
+    "pull_request": null
+  },
+  "github_api_invocations": 6,
+  "new_test_registrations": 0,
+  "existing_assertions_removed_or_weakened": false,
+  "created_at": "2026-11-06T03:47:22.341238+00:00",
+  "push_verified_remote_head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+  "source_lock_ok": true,
+  "final_product_custody": "READY under the explicit generated-view freshness exception; branch-only, awaiting the Mac guarded lander"
+}

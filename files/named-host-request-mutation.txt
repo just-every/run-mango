@@ -1,0 +1,38 @@
+
+Running 1 test using 1 worker
+
+(node:9305) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (39.8s)
+
+
+  1) tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Blocked hosts in this request: partner.example, author-review.example.test.', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Blocked hosts in this request: partner.example, author-review.example.test.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Blocked hosts in this request: partner.example, author-review.example.test.', { exact: true })
+
+
+       at content-hosts.ts:216
+
+      214 |   await page.getByRole('button',{name:'Request approval',exact:true}).click();
+      215 |   await expect(page.getByText(/Approval requested by Lena Chen/)).toBeVisible();
+    > 216 |   await expect(page.getByText('Blocked hosts in this request: partner.example, author-review.example.test.',{exact:true})).toBeVisible();
+          |                                                                                                                            ^
+      217 |   const requested = await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='campaign.approval-requested' AND entity_id='${campaign.revisionId}'`);
+      218 |   expect(requested).toHaveLength(1);
+      219 |   expect(requested[0].actor_id).toBe('host-author');
+        at blockedHostJourney (/home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/content-hosts.ts:216:124)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f72/run-mango/tests/go-live/content-checks.journeys.ts:80:5
+
+    Error Context: ../evidence/04f25bd000b5/go-live/content-checks.journeys.ts-32575-s-each-SMS-with-its-opt-out/error-context.md
+
+  1 failed
+    tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 

@@ -1,0 +1,30 @@
+
+Running 2 tests using 1 worker
+
+(node:10394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Conversion proof: apply archive
+Conversion proof: read archive
+Conversion proof: start template 151
+Conversion proof: inspect mapped body
+Conversion proof: run mapped checks
+Conversion proof: open mapped preview
+Conversion proof: mapped preview 1440
+Conversion proof: corrected footer
+Conversion proof: start template 152
+  ✓  1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (1.1m)
+Operator access: start native HTTP installation
+(node:10394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: claim owner
+Operator access: confirm teammate
+Operator access: cancel pending invitation
+Operator access: confirm while removal is pending
+Operator access: revoke active sessions
+Flow proof 1440: open
+Flow proof 1440: build
+Flow proof 1440: connect
+Flow proof 1440: saved, inspect reload
+  ✓  2 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (1.9m)
+
+  2 passed (3.0m)

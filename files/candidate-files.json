@@ -1,0 +1,45 @@
+{
+  "head": "a7874eb085aef076f2207b5677b6c480e3de28f5",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "blob": "170192842d5f7c4ae07c222cbd45c80819f82605",
+      "sha256": "125e55e37551ec9d76eae92fed4ec8620c67a70b31d6c0e1a418bc51b6f7098f"
+    },
+    {
+      "path": "sources.lock.json",
+      "blob": "025d0fb01e470cf589882193545e7380c74074f8",
+      "sha256": "96a46570a8a9f3c73f63730ce5143b7854cbd969e502162d22c5fcabc2bddba9"
+    },
+    {
+      "path": "src/core/app/app.ts",
+      "blob": "b31e70d904025c985b3749ca8be987f8fcabf378",
+      "sha256": "d87f8b74edea6796898be6d5ae4707648e409dcaffacebce063ce40e9b900005"
+    },
+    {
+      "path": "src/core/features/auth/approval-requests.ts",
+      "blob": "22e450c593f3e78817e9ffb6abeff01b2dcdc128",
+      "sha256": "fa848b4d45917b0cac2ec0abe72a8e98c1ecf1a4a5a5bf9a3d05d55a737848c9"
+    },
+    {
+      "path": "src/core/features/auth/ui/approval-requests.tsx",
+      "blob": "efd7bac48b7b83807f278f8d0ea8ef4a60e1f487",
+      "sha256": "96927d73f2b57cc53f9dbd201a927ba98672db84d6d1d503bc56a5a033e6fd98"
+    },
+    {
+      "path": "tests/go-live/content-checks.journeys.ts",
+      "blob": "7649032876924b214dc3398e324001b2740bdfe9",
+      "sha256": "af9ef9afbdd1327fd4fd61ca61af11ea50b5d6de9c39aaedd0d086eac6100f89"
+    },
+    {
+      "path": "tests/go-live/content-hosts.ts",
+      "blob": "c46bc3439f67c75ec9155bfe47eeca05efb6e648",
+      "sha256": "172754bad75644881d18953b17b748698b5a0cc4d31f4b5824e3e957f0e7325a"
+    },
+    {
+      "path": "tests/go-live/content-links.ts",
+      "blob": "a23da09b813cbf6099d36e4106af8a21b93e1ad2",
+      "sha256": "7a53e0f18c6710d439c6e4043843cfa016841edb241e345444ef0376466a4642"
+    }
+  ]
+}
