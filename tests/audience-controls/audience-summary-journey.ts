@@ -146,6 +146,8 @@ export async function audienceSummaryJourney(page:Page,info:TestInfo) {
     expect(masked.checks.find((check:any)=>check.kind==='audience.structured-rule').detail).not.toContain('vegetables');
     expect(JSON.stringify(masked)).not.toContain('interest');
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:maskedCookie,body:{revisionId:campaign.revisionId}})).status).toBe(403);
+    expect((await site.call('/api/auth/signout',{method:'POST',cookie:maskedCookie,headers:{Origin:site.runtime.url},body:{}})).status).toBe(204);
+    expect((await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie:maskedCookie})).status).toBe(401);
     for(const suffix of ['', '/review','/scheduled']) {
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}${suffix}`);
       meaning(await page.getByLabel('Saved audience rule',{exact:true}).innerText(),1,'94103');

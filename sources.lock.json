@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "bb16b1dc98f74f86a94212b42620f4322d371b0d92e6f0a5e21a20d184426571",
+      "sha256": "798d9ea46ca4a12f589105f467bfc4857c784fe2adf0616014461f7b9bd341f3",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "2d521cb69ee87732336580c85fb00473dfa68673e90af188104d0f574a82f4a8",
+      "sha256": "f4c9cef44d796d08ea2539dbc2ac39e8c918800295dd07e169688b81d5c95a64",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8329,8 +8329,12 @@
       "sha256": "11676b25e05cd94d1b3595fccf46355b8d0e3d380dfed78fb84a485316ffe180",
       "executable": false
     },
+    "tests/audience-controls/audience-summary-cases.ts": {
+      "sha256": "8a2b95624222946d0da267c48d0f058fb45fb91588cc3afecb59a370d001904a",
+      "executable": false
+    },
     "tests/audience-controls/audience-summary-journey.ts": {
-      "sha256": "ce24b89f25a00fb6ceebccb208646d819f8fe32e31becf12c65d3bdd28f1c280",
+      "sha256": "d8803b1ccb3a81e7b96c89156ebf7151e4787ae004cc16b1a6dcc2a6fa98d084",
       "executable": false
     },
     "tests/audience-controls/contact-profile-flow.ts": {
@@ -8867,6 +8871,10 @@
     },
     "tests/go-live/email-size.flow.ts": {
       "sha256": "32a1f3ff7ce7597043ae550d8aefdb7a978c02a47694423a5eb17f7fd4d1af2c",
+      "executable": false
+    },
+    "tests/go-live/embed-origin.journeys.ts": {
+      "sha256": "f6b843289b32f75c285d936871bec5e923773d6af0276ee7cd5729af9cbc6f1a",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {

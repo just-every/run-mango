@@ -45,9 +45,10 @@ export async function audienceSummaryCases(page:Page,f:Awaited<ReturnType<typeof
     ] as const).map(([field,label,value,comparator,comparison])=>({predicate:{sourceType:'order' as const,field,comparator,value,lookbackDays:90,...(field==='count'?{filters:[{field:'total.shop.amount',comparator:'gt' as const,value:50},{field:'total.shop.currency',comparator:'eq' as const,value:'USD'},{field:'financialStatus',comparator:'eq' as const,value:'paid'},{field:'customer.location.provinceCode',comparator:'eq' as const,value:'CA'}]}:{})},label,comparison})),
     {predicate:{sourceType:'cart',field:'productId',comparator:'eq',value:'synthetic-mango-cart-product',lookbackDays:1},label:'Cart product ID',comparison:/^is$/},
     {predicate:{sourceType:'browsing',field:'productId',comparator:'eq',value:'synthetic-mango-viewed-product',lookbackDays:0},label:'Viewed product ID',comparison:/^is$/},
+    ...(['customer','product','variant','inventory','refund'] as const).map(sourceType=>({predicate:{sourceType,field:'providerSourceId',comparator:'eq' as const,value:`synthetic-mango-${sourceType}`,lookbackDays:14},label:`${sourceType}: providerSourceId`,comparison:/^is$/})),
     ...(['on','before','after','within_last','not_within_last'] as const).map((comparator,index)=>({predicate:contact('property',comparator,index<3?'2026-01-15':30,{property:'summary_date'}),label:'Contact property',comparison:[/^is on$/,/^is before$/,/^is after$/,/^is within the last days$/,/^is not within the last days$/][index],scope:['summary_date']})),
   ];
-  // Two bounded saved drafts cover the editor vocabulary and every comparison,
+  // Bounded saved drafts cover the editor vocabulary and every comparison,
   // including zero and one day, arrays, numeric, boolean and date values.
   for(let offset=0;offset<cases.length;offset+=17) {
     const batch=cases.slice(offset,offset+17),operator=offset===0?'all':'any';
@@ -82,5 +83,15 @@ export async function audienceSummaryCases(page:Page,f:Awaited<ReturnType<typeof
     expect(summary.split(/exclude contacts/i)[1]).toMatch(/Contact name\s+is not\s+"Garden customer 1"/);
     expect(detail.campaign.state).toBe('draft');
   }
+  const nested={version:1,operator:'any',predicates:[contact('id','eq',people[0].id)],groups:[{operator:'all',predicates:[contact('usState','eq','CA'),contact('zip','eq','94103')]}]};
+  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{inclusionRuleJson:JSON.stringify(nested),exclusionRulesJson:'[]'}}),200);
+  const estimate=await json(await site.call('/api/campaign-authoring/audience',{method:'POST',cookie,body:{inclusionRuleJson:JSON.stringify(nested),exclusionRulesJson:'[]',channels:['email']}}),200);
+  expect(estimate).toMatchObject({status:'ok',candidateCount:2,eligibleCount:2,excludedCount:0});
+  await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+  const nestedSummary=await page.getByLabel('Audience conditions summary',{exact:true}).innerText();
+  expect(nestedSummary).toMatch(/matching any\b/i);
+  expect(nestedSummary).toMatch(/\(all of:\s*US state\s+is\s+"CA";\s*US ZIP code\s+is\s+"94103"\)/);
+  expect(nestedSummary).toMatch(/No additional exclusions/);
+  await expect(page.getByLabel('Include group 1 match conditions',{exact:true})).toHaveValue('all');
   console.log(`PROBE AUD-010 condition-matrix: native draft saves and editor -> ${cases.length} condition cases preserve every chosen field, comparison, typed value, scope and lookback`);
 }
