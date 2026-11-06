@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "tag": "sd-mango-c-f115",
+  "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+  "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52",
+  "checks": [
+    {
+      "name": "contract-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:20.151098+00:00",
+      "seconds": 0.222,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "contract-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:20.373421+00:00",
+      "seconds": 0.175,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "restore-views",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:20.548463+00:00",
+      "seconds": 0.007,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:20.555786+00:00",
+      "seconds": 0.37,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:20.925980+00:00",
+      "seconds": 0.287,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:21.213144+00:00",
+      "seconds": 14.702,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "command-contract",
+      "command": [
+        "node",
+        "node_modules/@runeditrun/rer/bin/rer.mjs",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:35.915307+00:00",
+      "seconds": 0.35,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    },
+    {
+      "name": "import-journey",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "/tmp/mango-cloud-playwright.config.mjs",
+        "design-import.spec.ts"
+      ],
+      "exit": 0,
+      "started": "2026-11-06T12:18:36.266064+00:00",
+      "seconds": 51.891,
+      "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+      "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52"
+    }
+  ]
+}

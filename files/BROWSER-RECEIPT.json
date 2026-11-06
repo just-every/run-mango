@@ -1,0 +1,101 @@
+{
+  "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+  "tree": "6af43c2df9dea71ef31c04cdf5ad8b071cfffa52",
+  "assertion_width": 1440,
+  "capture_widths": [
+    1440,
+    390
+  ],
+  "screens": [
+    {
+      "path": "screens/design-input-file-size-refused-1440.png",
+      "bytes": 70126,
+      "sha256": "2b539e2ef8f7758c1a0d922e32d4e79ad31d6df51c62ce63c20ec45a526ae08d"
+    },
+    {
+      "path": "screens/design-input-file-size-refused-390.png",
+      "bytes": 65386,
+      "sha256": "de0d23b609746015403d626712d3ed25babe60938c6acc32c4b63a3728247861"
+    },
+    {
+      "path": "screens/design-input-total-layers-refused-1440.png",
+      "bytes": 69845,
+      "sha256": "5900e6af9f0e52dcd0a61bb1ce2ecde918251404ed914097aee928eaad34ffe8"
+    },
+    {
+      "path": "screens/design-input-total-layers-refused-390.png",
+      "bytes": 65701,
+      "sha256": "40b6e65099144aaa424e37f7ec95481c72af9175420aeb7f42a9cf6c8058964f"
+    },
+    {
+      "path": "screens/design-input-nesting-refused-1440.png",
+      "bytes": 70775,
+      "sha256": "dbdb0a4f49d12945e31270bacff6388dc3b4cd028a5a5ca20390a4102bb0d0fb"
+    },
+    {
+      "path": "screens/design-input-nesting-refused-390.png",
+      "bytes": 65830,
+      "sha256": "4bf7d71b0ba5bf9bb08e6ff7b048cec4b0bb3800d45d19e8621ed45224981ff2"
+    },
+    {
+      "path": "screens/design-input-deep-input-refused-1440.png",
+      "bytes": 70833,
+      "sha256": "9ae1382ca4c78829c2f56c254a8894081327ea1b42881aad1ab08bfc06569a8f"
+    },
+    {
+      "path": "screens/design-input-deep-input-refused-390.png",
+      "bytes": 65917,
+      "sha256": "1a313e08ebab03226db98a4857ed8518f610b9a22e849ab1cf5cd2547f2d5782"
+    },
+    {
+      "path": "screens/design-input-recovered-1440.png",
+      "bytes": 247265,
+      "sha256": "272b1846777ce97524f251b0f884eb3590a75d2cd5886967e06253b54f4e675d"
+    },
+    {
+      "path": "screens/design-input-recovered-390.png",
+      "bytes": 241026,
+      "sha256": "f9faa5e54716b83cb228e6f0f96b0ba1ab37a7d13e8b9a7ef66043063a0d5562"
+    },
+    {
+      "path": "screens/design-refused-reserved-personalization-1440.png",
+      "bytes": 484924,
+      "sha256": "f7e60c3a5fcb77849729cc974cf8fce3088cce70abe9d899c033d61f223ce72e"
+    },
+    {
+      "path": "screens/design-refused-reserved-personalization-390.png",
+      "bytes": 438423,
+      "sha256": "bfd309781edc9aa33ed8f6b23991083a25597035364a2d65509f22de25f1ba23"
+    },
+    {
+      "path": "screens/design-refused-compiled-grammar-1440.png",
+      "bytes": 484565,
+      "sha256": "76843cc17a346deaa1be36d7e0d768c0d4d069e211871b2cb24d990ea33ebbce"
+    },
+    {
+      "path": "screens/design-refused-compiled-grammar-390.png",
+      "bytes": 438953,
+      "sha256": "db7c28328753f37faf0cdf93b81c16ed6b9893b893cac537de2a0bcadd804f62"
+    },
+    {
+      "path": "screens/design-refused-empty-crop-1440.png",
+      "bytes": 485651,
+      "sha256": "3a1c5d81ccd618b73281147340aba719ffd935a82dd9fbe7507161df9ea26905"
+    },
+    {
+      "path": "screens/design-refused-empty-crop-390.png",
+      "bytes": 437200,
+      "sha256": "971dd98cb4741918624f04d668b46143649216f1c0673b9d042dc260959d9b6b"
+    },
+    {
+      "path": "screens/design-import-1440.png",
+      "bytes": 920787,
+      "sha256": "94b667e719b62f1b7334b7b48d050f20123d5f33ae247c38eaedd3b0a41e29ec"
+    },
+    {
+      "path": "screens/design-import-390.png",
+      "bytes": 810305,
+      "sha256": "88b1515d1a38ee249fa5ccb36cfcf140d933e8b0b0b9515428ff64ca500b49d0"
+    }
+  ]
+}

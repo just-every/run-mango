@@ -1,0 +1,14 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+  "run": 42216538706,
+  "job": 127887933785,
+  "command": "node src/base/contract-docs.mjs check",
+  "error": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "exit": 1,
+  "classification": "permitted generated-view freshness failure",
+  "dependent_failure_job": 127888029353,
+  "browser_shards": "skipped after generated-view failure",
+  "local_write_check_exit": 0,
+  "workflow_rerun": false
+}

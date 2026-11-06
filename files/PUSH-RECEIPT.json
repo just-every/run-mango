@@ -1,0 +1,11 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f115",
+  "head": "caef23e2807da9fe7df5a59a63998c6c44fc33f7",
+  "guard": "cloud-push.py",
+  "attempts": 1,
+  "status": "pushed",
+  "force": false,
+  "remote_verified": true,
+  "remote_ref": "refs/heads/cloud/sd-mango-c-f115"
+}
