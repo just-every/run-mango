@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "run": 42151674128,
+  "event": "push",
+  "job": 127676179587,
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "archive_command": "gh run view 42151674128 --repo just-every/run-mango --job 127676179587 --log-failed",
+  "archive_read_exit": 0,
+  "archive_reads": 1,
+  "archive_sha256": "5fe24523ec005b6b5a46f254f2721f01563b57cd28afb8584e0bb2d35e6d5a40",
+  "public_excerpt": "candidate-ci-failure.txt",
+  "classification": "permitted generated-view exception; no real test failure or repair"
+}

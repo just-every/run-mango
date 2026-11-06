@@ -1,0 +1,5 @@
+{"call": 1, "time": 1793932094.628049, "args": ["api", "repos/just-every/run-mango/actions/runs?head_sha=cc6321c2372d631d9607df9af8ad1dd9f7878e84&per_page=100", "--jq", ".workflow_runs[] | {id,name,status,conclusion,head_sha,event,html_url}"]}
+{"call": 2, "time": 1793932746.2651377, "args": ["api", "repos/just-every/run-mango/actions/runs?head_sha=bf6793b03233958a813e75e754b7e6d34b0abb0d&per_page=100", "--jq", ".workflow_runs[] | {id,name,status,conclusion,head_sha,event,html_url}"]}
+{"call": 3, "time": 1793933046.3044782, "args": ["api", "repos/just-every/run-mango/actions/runs?head_sha=bf6793b03233958a813e75e754b7e6d34b0abb0d&per_page=100", "--jq", ".workflow_runs | map({id,name,status,conclusion,head_sha,event,html_url})"]}
+{"call": 4, "time": 1793933346.348325, "args": ["api", "repos/just-every/run-mango/actions/runs/42151674128/jobs?per_page=100", "--jq", ".jobs | map({id,name,status,conclusion,steps:(.steps | map({number,name,status,conclusion}))})"]}
+{"call": 5, "time": 1793933646.3860748, "args": ["run", "view", "42151674128", "--repo", "just-every/run-mango", "--job", "127676179587", "--log-failed"]}

@@ -1,0 +1,24 @@
+{
+  "kind": "One-off lexical review, not the Base publication scanner",
+  "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "initial_lexical_assertion_exit": 1,
+  "matches": [
+    {
+      "token": "last/day",
+      "classification": "JavaScript numeric division in the independent oracle, not prose, a comment or a string"
+    },
+    {
+      "token": "now/day",
+      "classification": "JavaScript numeric division in the independent oracle, not prose, a comment or a string"
+    },
+    {
+      "token": "results/results.journeys.ts",
+      "classification": "Suffix of the existing real repository path tests/campaign-results/results.journeys.ts"
+    },
+    {
+      "token": "results/retention-journey.ts",
+      "classification": "Suffix of the existing real repository path tests/campaign-results/retention-journey.ts"
+    }
+  ],
+  "conclusion": "All lexical matches inspected; no ambiguous bare reference in added prose, comments or strings. Full publication scanner remains with the Mac lander."
+}

@@ -1,0 +1,17 @@
+
+Running 1 test using 1 worker
+
+(node:2241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE SEG-003 acceptance-1 and acceptance-4: authenticated retention and five contact routes -> 5 independently reconciled RFM rows, tied ranks and separate USD and JPY scores
+PROBE SEG-003 acceptance-2: native operator retention table and contact profiles -> all five stages, exact scores and visible methods; browser captures at 1440 and 390
+PROBE SEG-003 acceptance-3: native server reads 200ms across UTC midnight -> every recency increments and Luis changes from new to active
+(node:2241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement (2.5m)
+
+  1 passed (3.1m)

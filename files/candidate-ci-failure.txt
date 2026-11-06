@@ -1,0 +1,4 @@
+Exact failing-step excerpt; CI environment metadata omitted.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T02:39:26.3528088Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T02:39:26.5005995Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T02:39:26.5076711Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f66",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f66",
+  "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "baseline": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "clause": {
+    "id": "SEG-003",
+    "before": "partial",
+    "after": "done",
+    "acceptance_text_changed": false
+  },
+  "counts": {
+    "before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "after": {
+      "done": 21,
+      "partial": 197,
+      "missing": 98
+    }
+  },
+  "registrations": {
+    "focused_results_before": 1,
+    "focused_results_after": 1,
+    "added": 0,
+    "removed": 0,
+    "weakened_assertions": 0
+  },
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+      "head": "44187a13889b36f25e6ed073ca66a455fd853aea",
+      "exit": 0,
+      "result": "1 passed (3.1m)",
+      "file": "results-first-run.txt"
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "result": "1 passed (3.0m)",
+      "file": "results-candidate.txt",
+      "timeout_seconds": 1200,
+      "chromium": "/usr/bin/chromium",
+      "viewport_for_assertions": 1440
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "file": "typecheck-candidate.txt"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "file": "first-party.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "file": "views-write.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "file": "views-check.txt",
+      "note": "Checked generated output before restoring both views from origin/main; candidate views intentionally stale."
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 0,
+      "file": "lock-check.txt"
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+      "head": "19704f857c9c0cea6b206e044deae89ca67f9ebe",
+      "exit": 0,
+      "result": "1 passed (3.0m)",
+      "file": "results-capture-review.txt",
+      "note": "Unpublished capture framing review; subsequent final candidate rerun supersedes this receipt."
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "exit": 1,
+      "file": "views-restored-check.txt",
+      "result": "Expected stale generated views after required restoration from origin/main; lander regenerates them."
+    }
+  ],
+  "mechanical": {
+    "migration_ledger": "none: no migration changed",
+    "status_rows_before": 316,
+    "status_rows_after": 316,
+    "all_parent_row_ids_retained": true,
+    "generated_views_committed": false,
+    "exact_head_regeneration_rechecked": true
+  },
+  "publication_scan": {
+    "status": "deferred to maintained Mac lander",
+    "commit": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null
+  },
+  "provider_boundary": "Synthetic recorded commerce facts; no live commerce-provider qualification claimed.",
+  "ci": {
+    "candidate": {
+      "run": 42151674128,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "url": "https://github.com/just-every/run-mango/actions/runs/42151674128",
+      "diagnosis": "Only generated contract document check fails; final verify aggregation fails as its consequence; all runtime shards are skipped.",
+      "permitted_generated_view_exception": true,
+      "failed_steps": [
+        {
+          "job": 127676179587,
+          "name": "Build and public command checks",
+          "step": "Check generated contract documents"
+        },
+        {
+          "job": 127676252708,
+          "name": "verify",
+          "step": "Require the selected coverage and its proof"
+        }
+      ],
+      "local_reproduction": {
+        "command": "node src/base/contract-docs.mjs check",
+        "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+        "exit": 1,
+        "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+        "file": "views-restored-check.txt"
+      },
+      "runtime_shards_executed": false,
+      "workflow_dispatched_or_rerun": false,
+      "failed_step_receipt": "CI-RECEIPT.json",
+      "archive_read_exit": 0
+    },
+    "main_verify": [
+      42137089578,
+      42135041429
+    ],
+    "main_run_site": 42137089740
+  },
+  "blockers": [],
+  "screenshots": [
+    {
+      "file": "retention-1440.png",
+      "sha256": "258ffbee889dc682d35234fbc0f1361386cf7b86b58d21dd72c326005ad471c7",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d"
+    },
+    {
+      "file": "retention-390.png",
+      "sha256": "1021d5d1836564586ae9ff4acda4b2b6460bd2ceba2a4265bd9fc3b5b098b5a1",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d"
+    },
+    {
+      "file": "contact-rfm-1440.png",
+      "sha256": "3fe4c3b10c4134cae725b801f129edd1c223fbfd7519f416f3cac641482f7e6e",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d"
+    },
+    {
+      "file": "contact-rfm-390.png",
+      "sha256": "461e005d62509234e900196f53cb9ba8e9473603d62800728f2dd2e4cbe9da48",
+      "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d"
+    }
+  ],
+  "product_push": {
+    "exit": 0,
+    "file": "candidate-push.txt",
+    "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+    "branch": "cloud/sd-mango-c-f66",
+    "attempts": 1,
+    "remote_head_verified": true,
+    "remote_refs": [
+      "bf6793b03233958a813e75e754b7e6d34b0abb0d\trefs/heads/cloud/sd-mango-c-f66",
+      "cc6321c2372d631d9607df9af8ad1dd9f7878e84\trefs/heads/main"
+    ]
+  },
+  "source_lock_fresh": true,
+  "main_integration": {
+    "command": "git fetch origin main; git merge --no-commit origin/main",
+    "result": "Already up to date",
+    "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+    "published_history_rewritten": false
+  },
+  "candidate_author_committer_and_trailer_inspection": "All candidate commits and side parents checked; fleet identity only, no co-author trailers.",
+  "acceptance_coverage": {
+    "1": "All five retention rows and contact RFM routes reconcile own-order recency, frequency, separate currency net value and tied midrank quintiles.",
+    "2": "All five initial stages, visible method, operator rows and selected contact panels.",
+    "3": "Native server UTC midnight with 200ms elapsed time: every recency advances, new buyer becomes active; exact-candidate local journey.",
+    "4": "Independent population and stage distribution before and after midnight."
+  },
+  "full_history_clone": true,
+  "packet_secret_review": {
+    "status": "passed",
+    "text_files": 18,
+    "symlinks_selected": 0
+  },
+  "terminal_custody": "READY under the explicitly permitted generated-view exception; guarded landing, ct review and candidate Run site remain pending.",
+  "done_riders": {
+    "1": "PASS locally: R1-R4 public-door outcomes; candidate Verify uses permitted view exception.",
+    "2": "PASS: nonempty independent order facts; qualified and excluded financial cases.",
+    "3": "Permitted generated-view exception; exact-head local journey passed; push runtime shards skipped.",
+    "4": "PASS: final focused journey and four browser captures bound to final head.",
+    "5": "N/A: no receiving Base duty added.",
+    "6": "PASS source, generation and current evidence; views restored for lander; exact-head write and check both zero.",
+    "7": "PASS: acceptance unchanged, every parent Status row preserved.",
+    "8": "N/A: no production authority mutation added or changed.",
+    "9": "PASS: synthetic recorded-commerce boundary explicit; live qualification unclaimed.",
+    "10": "PASS: no policy default introduced.",
+    "11": "PENDING guarded landing, exact-main Run site and COMPLETE full-history scan; none claimed here."
+  },
+  "local_text_review": "text-review.json",
+  "github_invocations": 5
+}
