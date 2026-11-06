@@ -1,0 +1,250 @@
+{
+  "tag": "sd-mango-c-f127",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f127",
+  "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+  "recordedAt": "2026-11-06T15:31:16.782312+00:00",
+  "newProductCommits": 0,
+  "reusedProofCommit": "1bd8b6a7cb9bdea5689e2824a8d3a6219a62aac5",
+  "checks": [
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email [fleet identity] --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "result": "Wrote 0 contract documents."
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "result": "Contract documents are current."
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "result": "No tracked difference."
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js sync-integrations.journeys.ts --workers=1",
+      "exit": 0,
+      "tests": 1,
+      "passed": 1,
+      "duration": "4.1m",
+      "head": "1f7408aa79736babc12783c0b46eb4105d0648ad"
+    }
+  ],
+  "priorExactShaVerify": [
+    {
+      "id": 42237885247,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+      "branch": "cloud/sd-mango-c-f125"
+    },
+    {
+      "id": 42229120427,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+      "branch": "cloud/sd-mango-c-f118"
+    }
+  ],
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "scan": {
+    "status": "not run in cloud; fleet lander owns publication scan",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null
+  },
+  "runSite": {
+    "status": "not established on candidate; main publication is fleet-owned"
+  },
+  "finalMechanical": {
+    "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+    "at": "2026-11-06T15:34:55.511024+00:00",
+    "commands": [
+      {
+        "command": "node src/base/contract-docs.mjs write",
+        "exit": 0,
+        "stdoutBytes": 28,
+        "stdoutSha256": "14cee29b7bd19487e15f4013d4fb85016e022ef21d230676971a6490c88436d2",
+        "stdout": "Wrote 0 contract documents.\n"
+      },
+      {
+        "command": "node src/base/contract-docs.mjs check",
+        "exit": 0,
+        "stdoutBytes": 32,
+        "stdoutSha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab",
+        "stdout": "Contract documents are current.\n"
+      },
+      {
+        "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+        "exit": 0,
+        "stdoutBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": ""
+      },
+      {
+        "command": "node scripts/edition-authoring/cli.mjs lock",
+        "exit": 0,
+        "stdoutBytes": 412112,
+        "stdoutSha256": "89659fc76f965603c3085d46ee8b30b8f1ba890eb2f74d5cdbcde690f74faaf7"
+      },
+      {
+        "command": "node scripts/edition-authoring/cli.mjs check",
+        "exit": 0,
+        "stdoutBytes": 412126,
+        "stdoutSha256": "fd2d6efe36650c713d4b19bc0807ed57700771b8b0210b96d4db28149cdf34e5"
+      }
+    ],
+    "ledger": "none; no migration added or edited",
+    "worktreeClean": true
+  },
+  "mainChecks": {
+    "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+    "Verify": 42217811205,
+    "Run site": 42217811413,
+    "conclusion": "success"
+  },
+  "screens": [
+    {
+      "file": "screens/custom-properties-settings-1440.png",
+      "bytes": 70665,
+      "sha256": "5c49cfe2bbe62a352adc9e6c3ab374b163a58f58709a8c279d49382305682fc4"
+    },
+    {
+      "file": "screens/custom-properties-settings-390.png",
+      "bytes": 68536,
+      "sha256": "a174097b43bd31f91efc05d4a24ebe008a12b211b2913dcf390afcfb908bf8bf"
+    },
+    {
+      "file": "screens/custom-properties-import-mapping-1440.png",
+      "bytes": 81947,
+      "sha256": "b18a1beaf858250786c98e566f9f1fe415d7e15fb440e454cf8b6c290107ab20"
+    },
+    {
+      "file": "screens/custom-properties-import-mapping-390.png",
+      "bytes": 126796,
+      "sha256": "6b1dd4b654a40ae2ade4dc2ba77149c8d467f8140e82072a1a4753376a5f79b8"
+    },
+    {
+      "file": "screens/custom-properties-contact-values-history-1440.png",
+      "bytes": 336771,
+      "sha256": "8a00377d817ad75e11e0aa51f55bcd8ff33c7843d0daa95cf29688ad8b09b71d"
+    },
+    {
+      "file": "screens/custom-properties-contact-values-history-390.png",
+      "bytes": 316214,
+      "sha256": "ef9443216991bfed5469581f284d198e01689b8f83a596d27528fe15a6aa7e0d"
+    },
+    {
+      "file": "screens/custom-properties-typed-controls-1440.png",
+      "bytes": 73992,
+      "sha256": "96155256a6147edb6925dfd2f0a7d524cde78f8eed2548fc8094dc210ee0d180"
+    },
+    {
+      "file": "screens/custom-properties-typed-controls-390.png",
+      "bytes": 63037,
+      "sha256": "4b2ad2f9caa7291017e28439b204334ab0c75cc96cc5c39bd999ab40a7fc994c"
+    },
+    {
+      "file": "screens/custom-properties-typed-readback-1440.png",
+      "bytes": 33457,
+      "sha256": "e5c791328290ff1a22ca430cd48497fea0aaed272fe09db440561bb3191a9860"
+    },
+    {
+      "file": "screens/custom-properties-typed-readback-390.png",
+      "bytes": 24123,
+      "sha256": "13ba9a8c857ab6f05bf0fabe755c217dca961fa9588f67d51810a9db226cc30c"
+    },
+    {
+      "file": "screens/custom-properties-date-segment-1440.png",
+      "bytes": 145783,
+      "sha256": "1c27038e147af8065c4601bcee5bb2f30ffb8b20022ef27ee02ecc5b9e7c4812"
+    },
+    {
+      "file": "screens/custom-properties-date-segment-390.png",
+      "bytes": 150535,
+      "sha256": "a9000c5785731861e4e6e713c704cdffeb9b378d2c8b7258621a54bd0036fbe5"
+    },
+    {
+      "file": "screens/custom-properties-money-preview-1440.png",
+      "bytes": 136930,
+      "sha256": "96399bcd39b0e60736d509f954b408bbd409dedff38a35712570d5e5037e4731"
+    },
+    {
+      "file": "screens/custom-properties-money-preview-390.png",
+      "bytes": 118832,
+      "sha256": "313a28276ca48fed01c2678dd3a1784cabf2b3125aa24abe3b8ee638c7e1b439"
+    }
+  ],
+  "push": {
+    "exit": 0,
+    "attempts": 1,
+    "ref": "refs/heads/cloud/sd-mango-c-f127",
+    "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+    "guard": "cloud-push.py"
+  },
+  "remoteBranchVerified": true,
+  "lastMain": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "mainEqualsCandidate": false,
+  "branchVerify": {
+    "conclusion": null,
+    "event": "push",
+    "head_branch": "cloud/sd-mango-c-f127",
+    "head_sha": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42244382053",
+    "id": 42244382053,
+    "name": "Verify",
+    "status": "in_progress"
+  },
+  "githubApiCalls": 4,
+  "candidateIdentity": {
+    "commits": 2,
+    "authors": "Run Edit Run fleet",
+    "committers": "Run Edit Run fleet",
+    "trailers": "none",
+    "messagesInspected": true,
+    "statusTableDiff": "none",
+    "emailShapedAdditions": 0
+  },
+  "rebase": {
+    "command": "git fetch origin main && git rebase origin/main",
+    "exit": 0,
+    "result": "Already up to date; no history rewritten."
+  },
+  "relevantTestsChangedAfterRun": false
+}
