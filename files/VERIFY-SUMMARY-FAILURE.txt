@@ -1,0 +1,4 @@
+Archive command: gh run view 42136088531 --repo just-every/run-mango --job 127624626744 --log-failed
+Transport exit: 0
+Selected exact failure lines; workflow environment sections excluded.
+verify	Require the selected coverage and its proof	2026-11-06T00:20:49.2383382Z ##[error]Process completed with exit code 1.

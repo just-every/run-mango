@@ -1,0 +1,13 @@
+# sd-mango-c-f63 execution plan
+
+Work only in just-every/run-mango on cloud/sd-mango-c-f63. Preserve the provided base phone journey, integrate current main without losing newer clause judgments, and preserve all existing assertions.
+
+1. Read CONT-010, its current Gap, native import production paths and all registered move-in journeys. Map the six acceptance outcomes to existing evidence. Retain PARTIAL until every outcome, including buyer-scale review, has qualified proof.
+2. Re-run the base's phone-only mixed CSV through preview, apply, resume, authenticated contact readback, stable retry and two report reads. Independently verify canonical phones, invalid rows, exact reasons, nonsubscription and absence of delivery authority.
+3. Extend the registered archive journey with a native CSV flow for canonical existing-contact updates, mixed created and updated and rejected totals, exact same-file replay, per-row unnamed consent and independent recorded-channel restriction cases. Preserve the native contact and restrictions across undo.
+4. Show reviewed totals in the downloadable report using the same count projection as preview. Keep report reads authenticated and side-effect free. Use independently specified expectations, no production-normalizer oracle.
+5. Run the focused registered archive journey and held restriction journey, typecheck, first-party command check, contract write and check, restore generated views from main, and regenerate source lock last. Probe any remaining capacity obligation through its public door and record its actual outcome.
+6. Before the final candidate push, merge current main, retain every parent Status row, check every candidate author and committer and trailer, and push only the named product branch through the fleet guard. Inspect exact-head Verify using the permitted REST budget. Never push main.
+7. Save the actual non-secret results and receipts in this packet, publish it to the separate evidence ref, and report exact product and evidence custody independently. Leave native or external remainders explicit; do not claim DONE from the narrow phone import or qualify live SMS delivery.
+
+Initial acceptance map: point 1 phone-only independent validation is in the provided base journey; point 2 needs canonical update and broader rerun proof; point 3 needs a mixed created and updated and rejected report; point 4 needs independent restriction cases for both recorded channels; point 5 has named archive attestation evidence but needs unnamed per-row consent proof; point 6 has carried archive and held-import undo proof, with the 250,000-row review floor still unproved. The current native review cap is 50,000 rows. No new acceptance sentence or policy default is authorized.

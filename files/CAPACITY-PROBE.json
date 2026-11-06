@@ -1,0 +1,15 @@
+{
+  "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+  "door": "POST /api/audience/import-preview",
+  "rows": 250000,
+  "bytes": 3250005,
+  "status": 400,
+  "body": {
+    "error": "import_preview_failed",
+    "detail": "Audience import is limited to 50000 rows per review."
+  },
+  "elapsedMs": 1037,
+  "contacts": 0,
+  "plans": 0,
+  "providerHandoffs": 0
+}

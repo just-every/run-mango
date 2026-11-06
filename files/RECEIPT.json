@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f63",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f63",
+  "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+  "mainAtIntegration": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "baseRequested": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12",
+  "productPushed": true,
+  "pr": null,
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "clause": {
+    "id": "CONT-010",
+    "before": "partial",
+    "after": "partial",
+    "remaining": "Native 250000-row CSV review and qualified exact-candidate scale receipt; current cap 50000. Carried provider and owner prerequisites remain held."
+  },
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/move-in/playwright.config.js archive.journeys.ts",
+      "exit": 0,
+      "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+      "duration": "6.3 minutes",
+      "registration": "complete archive journey with phone and CSV rules helpers"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/move-in/playwright.config.js held.journeys.ts",
+      "exit": 0,
+      "scope": "relevant import policy and count projection unchanged by final report-only diff"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "phase": "after write, before required restoration"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "phase": "committed candidate",
+      "expected": "ACCEPTANCE.md differs after the mandated main view restoration"
+    }
+  ],
+  "mechanical": "MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then check exit=0; views=node src/base/contract-docs.mjs write then check exit=0, main views restored; ledger=none exit=0",
+  "verify": {
+    "id": 42136088531,
+    "event": "push",
+    "status": "completed",
+    "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+    "conclusion": "failure",
+    "exception": "generated-view-only failure permitted by cloud landing protocol",
+    "failedBuildJob": 127624532574,
+    "summaryJob": 127624626744,
+    "rootCause": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "shards": "skipped after generated-view failure",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42136088531"
+  },
+  "publicationScan": {
+    "status": "not run in cloud; fleet lander required"
+  },
+  "landing": {
+    "status": "not performed",
+    "runSite": "fleet lander required"
+  },
+  "identityInspection": {
+    "allCandidateAuthorsAndCommitters": "Run Edit Run fleet",
+    "allCandidateEmailClass": "fleet",
+    "trailers": "none",
+    "sideParentsIncluded": true
+  },
+  "permanentMoveInRegistrations": {
+    "before": 2,
+    "after": 2,
+    "existingAssertionsRemoved": false,
+    "newBranchOrWidthSkips": false
+  },
+  "migrationLedger": "not applicable; no migration changed",
+  "screens": [
+    1440,
+    390
+  ],
+  "toolchain": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "chromium": "/usr/bin/chromium",
+    "flags": [
+      "--no-sandbox"
+    ]
+  },
+  "updatedAt": "2026-11-06T00:27:02.603876+00:00",
+  "githubCalls": 6
+}

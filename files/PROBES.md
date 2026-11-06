@@ -1,0 +1,9 @@
+# Public-door probes at 7eeba3fc46a79e1557ad720f9249c6e2e581c6a2
+
+PROBE CONT-010 acceptance-1: authenticated mapped phone-only CSV preview, apply and resume -> 12 created, 2 rejected; 12 exact contacts, both channels non-subscribed; 1 actual resume; zero confirmation and marketing and SMS handoffs.
+PROBE CONT-010 acceptance-2: canonical email and formatted phone update followed by identical-file replay -> original native contact identity retained; saved contact, address, consent, observation and history rows unchanged on replay; same job d754721c-8cc9-44a0-8adf-7bc594d857e7.
+PROBE CONT-010 acceptance-3: authenticated report reads twice and operator download -> five source rows reconcile as 1 created, 1 updated, 2 rejected and one skipped duplicate; exact semantic reasons and per-row outcomes retained; downloaded bytes equal native readback.
+PROBE CONT-010 acceptance-4: native imports over existing restrictions in both recorded channels -> 20 independently expected cases preserve unsubscribe or suppression, while opposite channels accept supported confirmed evidence; no delivery authority or handoff.
+PROBE CONT-010 acceptance-5: unnamed CSV with independently confirmed, missing-time and reversed-time records -> 4 contacts and 1 rejected row; only the complete original email evidence subscribes, SMS stays non-subscribed and no source attestation is created. Named archive attestation proof remains in the carried registered journey.
+PROBE CONT-010 acceptance-6 undo: native undo after canonical update and restriction import -> earlier contact restored, new contact removed, exact opt-out and suppression ledgers retained; restriction undo undone.
+PROBE CONT-010 acceptance-6 capacity: POST /api/audience/import-preview with 250000 rows -> HTTP 400, Audience import is limited to 50000 rows per review. Contacts=0, plans=0. Capacity remains unmet; no successful scale receipt is claimed.

@@ -1,0 +1,4 @@
+7eeba3fc46a79e1557ad720f9249c6e2e581c6a2 Explain every reconciled CSV row outcome
+c04aa7f11a71b5c1c639ed93c0f189310852efff Reconcile CSV outcomes and prove consent-safe updates and undo [skip ci]
+6dde3743821de8e3977652ec05c86153c10c648f Check phone import retry and authenticated report custody [skip ci]
+c423633958f57f15d2cfc38efc99b9c4e2be3bc3 Prove phone-only CSV validation and rejected-row readback [skip ci]

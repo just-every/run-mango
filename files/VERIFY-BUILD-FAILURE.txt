@@ -1,0 +1,6 @@
+Archive command: gh run view 42136088531 --repo just-every/run-mango --job 127624532574 --log-failed
+Transport exit: 0
+Selected exact failure lines; workflow environment sections excluded.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T00:20:43.0334261Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T00:20:43.2165089Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T00:20:43.2268826Z ##[error]Process completed with exit code 1.
