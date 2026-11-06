@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:2502) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (3.9m)
+
+  1 passed (4.0m)

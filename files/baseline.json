@@ -1,0 +1,19 @@
+{
+  "repository": "just-every/run-mango",
+  "main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "mainVerify": {
+    "id": 42217811205,
+    "event": "push",
+    "conclusion": "success"
+  },
+  "mainRunSite": {
+    "id": 42217811413,
+    "event": "push",
+    "conclusion": "success"
+  }
+}
