@@ -3,7 +3,7 @@ import { parseCsv } from '../../src/core/features/audience/csv';
 import { openPage, reloadPage } from '../support/navigation';
 
 export async function exerciseCampaignReports(page:Page,request:APIRequestContext,runtime:{url:string;token:string},width:number,info:TestInfo) {
-  const seeded=await request.post(`${runtime.url}/_results/reporting`,{headers:{'X-Test-Token':runtime.token}});expect(seeded.status()).toBe(200);const fixture=await seeded.json();
+  const seeded=await request.post(`${runtime.url}/_results/reporting-engagement`,{headers:{'X-Test-Token':runtime.token}});expect(seeded.status()).toBe(200);const fixture=await seeded.json();
   const click=async(token:string,ray:string,scanner=false)=>{const response=await page.request.get(`${runtime.url}/l/${encodeURIComponent(token)}`,{maxRedirects:0,headers:{'User-Agent':scanner?'Barracuda LinkProtect':'Mozilla/5.0 Orchard reader','CF-Ray':ray}});expect(response.status()).toBe(302);};
   const base=`${runtime.url}/api/campaigns/${fixture.campaignId}`,query=`revisionId=${fixture.revisionId}`;
   const readReport=async(campaignId=fixture.campaignId,revisionId=fixture.revisionId)=>{
