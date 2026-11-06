@@ -1,0 +1,12 @@
+{
+  "configs": {
+    "main": 51,
+    "local-start": 5,
+    "local-start-slow": 7,
+    "newsletter-ui": 1,
+    "campaign-results": 2,
+    "go-live": 22,
+    "move-in": 2
+  },
+  "total": 90
+}

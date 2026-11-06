@@ -1,0 +1,10 @@
+# AUD-010 plan
+
+Tag: sd-mango-c-f107. Repository: just-every/run-mango. Starting main: 01f63103b73722c32e0c6cc13f7b9c2eacb4c59e.
+
+1. Read the clause, Status gap, existing campaign projection and audience journeys. Baseline counts: 20 DONE, 198 PARTIAL, 98 MISSING. Existing segment journey checks builder and review fragments, selection and saved segments; it does not independently reconcile a populated campaign row with its collection response and every part of one nested fixture.
+2. Add a focused native audience-summary journey, invoked by the existing segments spec and existing Verify identity-data selection. Save nested all and any conditions, a numeric comparison and lookback, property scope and custom exclusion. Use independently known fixture membership and editor labels; never use the production formatter to construct expected results.
+3. Compare saved rules, authenticated collection summary and actual campaign row. Edit predicate and exclusion through controls, save, reload, and verify changed meaning. Assert no approval, frozen recipients or dispatch authority. Assertions run at 1440; capture the relevant editor and list once at both 1440 and 390.
+4. Run the registered focused journey, typecheck and first-party command check. Preserve all existing assertions and registrations; add one focused registration within the 200-test limit if the current count permits it.
+5. Update only AUD-010 evidence and honest remaining Gap. Keep PARTIAL: the selected POINTS explicitly omit the complete review, approval-check, scheduled-page and snapshot derivation matrix and other condition cases. No acceptance changes, policy changes, provider qualification or CONT-013 work.
+6. Generate and check contract views, restore them from main, regenerate the source lock last and check it. Verify parent Status rows survive. Commit with fleet identity and hooks; push only cloud/sd-mango-c-f107 through the guard, merging fresh main after a published save. Record exact-SHA CI honestly and publish the complete report packet separately to evidence/sd-mango-c-f107.

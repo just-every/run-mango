@@ -1,0 +1,6 @@
+Build and public command checks	Check generated contract documents	﻿2026-11-06T11:18:01.5016452Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T11:18:01.5016904Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T11:18:01.5040393Z shell: /usr/bin/bash -e {0}
+[Workflow step environment block omitted from public evidence.]
+Build and public command checks	Check generated contract documents	2026-11-06T11:18:01.6587793Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T11:18:01.6680813Z ##[error]Process completed with exit code 1.
