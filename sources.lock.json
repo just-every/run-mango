@@ -8817,6 +8817,10 @@
       "sha256": "2f6b328a713d2345ea52e077dbde108c6fef8ce1400290ea8a7b2fdb240dbb2c",
       "executable": false
     },
+    "tests/go-live/custom-property-types.ts": {
+      "sha256": "72d729b20cd164a0786b0e0cb6b74980491d81e6c0dc9aa8f2399f80cd14002d",
+      "executable": false
+    },
     "tests/go-live/declared-capability.ts": {
       "sha256": "74bc6766ef21cdb7fdb84fa47a97835a4aea134b711a94f6a975c3386c5b90ad",
       "executable": false
