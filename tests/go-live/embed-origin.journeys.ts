@@ -3,6 +3,7 @@ import {writeFile} from 'node:fs/promises';
 import {expect, test} from '@playwright/test';
 import {providerEdge} from './edge';
 import {signupConsentJourney} from './signup-consent-journey';
+import {signupSmsJourney} from './signup-sms-journey';
 import {eventSigner} from './sendgrid-events';
 import {availableTransport, installation, json, sender} from './harness';
 
@@ -103,6 +104,7 @@ test('[FORM-001] configured origins admit signup while unlisted ancestors and re
     }
     await saveOrigins([allowed.url]);
     await signupConsentJourney(page,site,edge,cookie,allowed.url,info);
+    await signupSmsJourney(page,edge,info,embeddingOrigin);
     expect(edge.unexpected).toEqual([]);
   } finally {
     await writeFile(info.outputPath('embed-origin-observations.json'),JSON.stringify(observations,null,2));

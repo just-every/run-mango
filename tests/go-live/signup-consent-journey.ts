@@ -1,3 +1,4 @@
+import {writeFile} from 'node:fs/promises';
 import {expect,type FrameLocator,type Page,type TestInfo} from '@playwright/test';
 import {availableTransport,draftCampaign,json,type Installation} from './harness';
 import type {providerEdge} from './edge';
@@ -8,7 +9,7 @@ export async function signupAuthority(site:Installation) {
     'flow_draft_revisions','woocommerce_flows','woocommerce_flow_enrollments'];
   return {
     records:await Promise.all(tables.map(table=>site.rows(`SELECT * FROM ${table} ORDER BY 1`))),
-    deliveryCommands:(await site.control('/_golive/emissions')).filter((entry:any)=>entry.command.kind==='campaign.dispatch'),
+    deliveryCommands:(await site.control('/_golive/emissions')).filter((entry:any)=>entry.command.kind==='campaign.dispatch'||entry.command.kind.startsWith('flow.')),
   };
 }
 
@@ -16,6 +17,7 @@ export async function signupAuthority(site:Installation) {
 export async function signupConsentJourney(page:Page,site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,
   cookie:string,embedOrigin:string,info:TestInfo) {
   const description=await json(await site.call('/subscribe/info'),200);
+  expect(description.sms).toBeUndefined();
   const emails=Array.from({length:4},(_,index)=>`synthetic-mango-${610+index}${String.fromCharCode(64)}example.test`);
   const clock=await site.control('/_golive/clock');
   const campaign=await draftCampaign(site,cookie,'Signup permission boundary',emails,new Date(clock.now+3600000));
@@ -37,10 +39,13 @@ export async function signupConsentJourney(page:Page,site:Installation,edge:Awai
     const open=()=>page.goto(carrier==='hosted'?site.runtime.url+'/subscribe':embedOrigin);
     const form:Page|FrameLocator=carrier==='hosted'?page:page.frameLocator('iframe');
     await open();
+    await expect(form.getByRole('combobox',{name:/Channel/})).toHaveCount(0);
     await expect(form.getByRole('checkbox')).not.toBeChecked();
     await form.getByLabel('Email address').fill(emails[index*2]);
     const before=await captureState();
     await form.getByRole('button',{name:'Request confirmation'}).click();
+    expect(await captureState()).toEqual(before);
+    expect((await json(await site.call('/subscribe/sms',{method:'POST',body:{}}),503)).error).toBe('sms_unavailable');
     expect(await captureState()).toEqual(before);
     // Browser validation and the public server both require affirmative consent.
     const refusal=await json(await site.call('/subscribe',{method:'POST',headers:{'CF-Connecting-IP':'192.0.2.180'},
@@ -50,11 +55,13 @@ export async function signupConsentJourney(page:Page,site:Installation,edge:Awai
     expect((await json(await site.call('/subscribe',{method:'POST',headers:{'CF-Connecting-IP':'192.0.2.180'},
       body:{email:'synthetic-mango-invalid',consent:true,disclosure:description.disclosure}}),400)).error).toBe('invalid_signup');
     expect(await captureState()).toEqual(before);
+    receipts.push({carrier,case:'refused-capture',before,after:await captureState()});
     for(const [offset,outcome] of ['confirm','expire'].entries()) {
       const email=emails[index*2+offset];
       if(offset)await open();
       await availableTransport(site);
       await form.getByLabel('Email address').fill(email);
+      await expect(form.getByRole('checkbox')).toHaveAccessibleName(`${description.consentText} (required)`);
       await form.getByRole('checkbox').check();
       const started=(await site.control('/_golive/clock')).now;
       const submitted=page.waitForResponse(response=>response.url()===site.runtime.url+'/subscribe'&&response.request().method()==='POST');
@@ -63,11 +70,11 @@ export async function signupConsentJourney(page:Page,site:Installation,edge:Awai
       await expect(form.getByRole('status')).toContainText('Request received');
       const ended=(await site.control('/_golive/clock')).now;
       const [evidence]=await site.rows(`SELECT c.email_status,e.channel,e.brand_or_legal_sender,e.message_category,
-        e.frequency_disclosure,e.capture_source,e.capture_method,e.consent_text,e.consent_version,e.occurred_at,
+        e.frequency_disclosure,e.destination_jurisdiction,e.capture_source,e.capture_method,e.consent_text,e.consent_version,e.occurred_at,
         e.confirmation_required,f.expires_at,f.confirmed_at FROM contacts c JOIN consent_evidence e ON e.contact_id=c.id
         JOIN consent_confirmations f ON f.consent_evidence_id=e.id WHERE c.email='${email}'`);
       expect(evidence).toMatchObject({email_status:'pending',channel:'email',brand_or_legal_sender:description.sender,
-        message_category:'newsletter',frequency_disclosure:description.frequencyDisclosure,capture_source:site.runtime.url+'/subscribe',
+        message_category:'newsletter',frequency_disclosure:description.frequencyDisclosure,destination_jurisdiction:'Not provided',capture_source:site.runtime.url+'/subscribe',
         capture_method:'hosted-signup-form',consent_text:description.consentText,consent_version:'newsletter-signup-v1',
         confirmation_required:1,confirmed_at:null});
       // Capture time comes from D1's second-resolution clock, independently bracketed.
@@ -117,6 +124,8 @@ export async function signupConsentJourney(page:Page,site:Installation,edge:Awai
   }
   expect(edge.sends).toHaveLength(initialMail+4);
   expect(edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe'])).toEqual([]);
-  expect(await signupAuthority(site)).toEqual(authority);
-  await info.attach('signup-consent-observations',{body:JSON.stringify(receipts,null,2),contentType:'application/json'});
+  const after=await signupAuthority(site);
+  expect(after).toEqual(authority);
+  receipts.push({case:'delivery-authority',beforeCounts:authority.records.map(rows=>rows.length),afterCounts:after.records.map(rows=>rows.length),deliveryCommands:after.deliveryCommands.length});
+  await writeFile(info.outputPath('signup-consent-observations.json'),JSON.stringify(receipts,null,2));
 }

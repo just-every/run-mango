@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b433959534ac7927f6d2b34b37eb4dddd9ffa2e862454a7782cbb71ea02f5cae",
+      "sha256": "b89fbba67953b6dfb2d47a7eac1038f18f949937cad9fb434659d12a02041d9f",
       "executable": false
     },
     "DEMO.md": {
@@ -8862,7 +8862,7 @@
       "executable": false
     },
     "tests/go-live/embed-origin.journeys.ts": {
-      "sha256": "e0ccfcc867325d54edcc5d915aa1774d0e3d453ca07e925f27c1737b9cbc44a7",
+      "sha256": "5d4cf1e12f08d193d964063a118b1211fd5c994ed78d9aaccb05c696497568d7",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
@@ -9061,8 +9061,16 @@
       "sha256": "348c92d2e71e6b47be920d8e0b30fe69dd6f93a59e8d6c9eaa4cdd9d7b22f41f",
       "executable": false
     },
+    "tests/go-live/signup-consent-journey.ts": {
+      "sha256": "b9e90b441c3247450d5d0fa24e00b847bc24bbaa11d01984d300b88d8762a11d",
+      "executable": false
+    },
     "tests/go-live/signup-refusal-screens.ts": {
       "sha256": "378e5691c331a9f940647a988fb4d885c38f48d723ddaeda0355e2abc02e1b46",
+      "executable": false
+    },
+    "tests/go-live/signup-sms-journey.ts": {
+      "sha256": "9ea84fe52a0345b473ee10ff9066473f725ee0387f2aba23740243491535811b",
       "executable": false
     },
     "tests/go-live/sms-bindings.ts": {
