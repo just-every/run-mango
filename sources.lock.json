@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "97838046205b2d1579bb7a62e4cdcbeedf74e23c36f9de83422d19150b3a230e",
+      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "103e938f65f655477598cf98252612176141450b056f796f0e4ebf992547b7b3",
+      "sha256": "2d521cb69ee87732336580c85fb00473dfa68673e90af188104d0f574a82f4a8",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8531,6 +8531,10 @@
     },
     "tests/campaign-authoring/reusable-block-journey.ts": {
       "sha256": "d62074ba7d51511f57b63dd76a99bc449a560b20665005089d711159bd7082ca",
+      "executable": false
+    },
+    "tests/campaign-authoring/step-deadline.spec.ts": {
+      "sha256": "9354f1eae4f682cb22e43afa70acfd7782f4cb3580ffbd9dcf218774e656c328",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
