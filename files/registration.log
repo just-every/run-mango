@@ -1,0 +1,3 @@
+Listing tests:
+  delivery.journeys.ts:10:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation
+Total: 1 test in 1 file

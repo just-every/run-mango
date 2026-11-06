@@ -1,0 +1,264 @@
+{
+  "tag": "sd-mango-c-f121",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f121",
+  "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+  "base": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "claim": {
+    "clause": "DELIV-009",
+    "status": "PARTIAL",
+    "points": [],
+    "selected_slice": "Acceptance 2, Settings-connected Resend silence"
+  },
+  "product_push": {
+    "status": "success",
+    "attempts": 1,
+    "log": "push-final.log"
+  },
+  "ci": {
+    "run_id": 42233607156,
+    "workflow": "Verify",
+    "event": "push",
+    "head_sha": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42233607156",
+    "discovered_at": "2026-11-06T14:25:02Z",
+    "checked_at": "2026-11-06T14:40:45.070398+00:00",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42233607156"
+  },
+  "run_site": {
+    "status": "not_triggered_on_cloud_branch",
+    "main_custody": "fleet lander"
+  },
+  "publication_scan": {
+    "status": "not_run_in_cloud",
+    "commit": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "custody": "fleet lander"
+  },
+  "tests": {
+    "registration": "tests/go-live/delivery.journeys.ts:10",
+    "name": "[MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation",
+    "helper": "tests/go-live/sending-silence-journey.ts#sendingSilenceJourney",
+    "registrations_before": 3,
+    "registrations_after": 3,
+    "candidate_local": {
+      "exit": 0,
+      "duration": "4.4m",
+      "log": "journey-before-commit.log"
+    },
+    "exact_sha": {
+      "status": "passed",
+      "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+      "exit": 0,
+      "duration": "4.3m",
+      "node": "22.20.0",
+      "log": "journey.log",
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js delivery.journeys.ts --grep 'an owner connects delivery'"
+    },
+    "previous_exact_sha": {
+      "status": "passed",
+      "head": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+      "exit": 0,
+      "duration": "4.3m",
+      "log": "journey.log",
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js delivery.journeys.ts --grep 'an owner connects delivery'"
+    },
+    "connections_reproduction": {
+      "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+      "job": "shards (connections)",
+      "command": "node scripts/verification/ci.mjs connections",
+      "test": "tests/go-live/custom-event-journey.ts:40, proveCustomEvents, integration read allowance",
+      "exit": 0,
+      "ci_failure": "Expected > 0 rate-limited responses; received 0",
+      "log": "connections-reproduce.log",
+      "node": "22.20.0"
+    },
+    "main_comparison": {
+      "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+      "command": "node scripts/verification/ci.mjs connections",
+      "members": [
+        {
+          "name": "go-live",
+          "stage": "go-live",
+          "files": [
+            "sync-integrations.journeys.ts"
+          ]
+        }
+      ],
+      "test": "tests/go-live/sync-integrations.journeys.ts",
+      "exit": 0,
+      "node": "22.20.0",
+      "log": "main-connections.log"
+    }
+  },
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer build (through cloud_run)",
+      "exit": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party (through cloud_run)",
+      "exit": 0,
+      "log": "command-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views-check.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock-check.log"
+    },
+    {
+      "command": "pnpm exec wrangler d1 migrations apply mango-local --local --config wrangler.toml",
+      "exit": 0,
+      "log": "migration-upgrade.log"
+    },
+    {
+      "command": "pnpm exec wrangler d1 migrations list mango-local --local --config wrangler.toml",
+      "exit": 0,
+      "log": "migration-ledger.log"
+    },
+    {
+      "command": "git diff --cached --quiet -- CONTRACT.md",
+      "exit": 0
+    },
+    {
+      "command": "git diff origin/main...HEAD -- CONTRACT.md",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "node /tmp/mango-upgrade-proof.mjs",
+      "head": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+      "exit": 0,
+      "receipt": "migration-populated-upgrade.json",
+      "source": "migration-populated-upgrade.mjs"
+    }
+  ],
+  "identity": {
+    "all_candidate_commits_checked": true,
+    "candidate_commits": 2,
+    "authors": "Run Edit Run fleet",
+    "committers": "Run Edit Run fleet",
+    "email": "fleet@runeditrun.com",
+    "trailers": []
+  },
+  "environment": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "chromium": "/usr/bin/chromium",
+    "sandbox_argument": "--no-sandbox",
+    "clock": "accelerated elapsed time in native fixture, not a real-day hosted observation",
+    "final_node": "22.20.0"
+  },
+  "pr": null,
+  "created_at": "2026-11-06T14:14:05.757573+00:00",
+  "ci_history": [
+    {
+      "run_id": 42231880118,
+      "workflow": "Verify",
+      "event": "push",
+      "head_sha": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/just-every/run-mango/actions/runs/42231880118",
+      "discovered_at": "2026-11-06T14:12:48Z",
+      "checked_at": "2026-11-06T14:18:11.509131+00:00",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42231880118"
+    }
+  ],
+  "repair": {
+    "round": 1,
+    "original_head": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+    "failed_run": 42231880118,
+    "failed_job": 127939620718,
+    "reproduction": "VERIFY_REPRODUCED.json",
+    "main_comparison": "main-static-result.json",
+    "repair_command": "pnpm run integration:sync",
+    "fixed_files": [
+      "management/integration/deployment-spec.json",
+      "sources.lock.json"
+    ],
+    "static_repair": {
+      "command": "node scripts/verification/ci.mjs static",
+      "node": "22.20.0",
+      "exit": 0,
+      "log": "static-repair.log"
+    },
+    "runtime_and_journey_bytes_changed": false
+  },
+  "github_calls_used": 10,
+  "final_local_checks_at": "2026-11-06T14:33:04.533711+00:00",
+  "mechanical": {
+    "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+    "lock": {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    "views": {
+      "commands": [
+        "node src/base/contract-docs.mjs write",
+        "node src/base/contract-docs.mjs check"
+      ],
+      "exit": 0,
+      "restored_from": "origin/main"
+    },
+    "ledger": {
+      "command": "pnpm exec wrangler d1 migrations list mango-local --local --config wrangler.toml",
+      "exit": 0
+    }
+  },
+  "failure_archive": {
+    "command": "gh run view 42233607156 --repo just-every/run-mango --log-failed",
+    "exit": 0,
+    "log": "verify-final-failed.log"
+  },
+  "decision": {
+    "status": "BLOCKED",
+    "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+    "reason": "Exact-SHA Verify failure in existing integration allowance assertion did not reproduce: candidate connections shard passed and same test passed on main. Required repair rule forbids a guessed fix. GitHub budget exhausted.",
+    "run": 42233607156,
+    "job": "shards (connections)",
+    "job_id": null,
+    "candidate_reproduction": "connections-reproduce.json",
+    "main_comparison": "main-connections-result.json"
+  },
+  "finished_local_at": "2026-11-06T14:58:20.595505+00:00"
+}

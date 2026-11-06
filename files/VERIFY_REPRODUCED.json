@@ -1,0 +1,15 @@
+{
+  "head": "1d5101e0fb7e297211e2abafdb84cb010f81224d",
+  "job": "127939620718",
+  "command": "node scripts/verification/ci.mjs static",
+  "test": "integration:check",
+  "exit": 1,
+  "failure": "Stale management/integration/deployment-spec.json; rebuild then run pnpm integration:sync.",
+  "environment": {
+    "CI": "true",
+    "WRANGLER_SEND_METRICS": "false",
+    "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+    "node": "22.20.0",
+    "MANGO_TEST_WORK_DIR": "/home/agent/rer-consolidation/work/sd-mango-c-f121/reproduce"
+  }
+}

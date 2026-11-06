@@ -1,0 +1,27 @@
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+
+ ⛅️ wrangler 4.129.1 (update available 4.158.0)
+───────────────────────────────────────────────
+Resource location: local 
+
+Use --remote if you want to access the remote instance.
+
+Migrations to be applied:
+┌────────────────────────────────┐
+│ name                           │
+├────────────────────────────────┤
+│ 0104_sending_event_silence.sql │
+└────────────────────────────────┘
+? About to apply 1 migration(s)
+Your database may not be available to serve requests during the migration, continue?
+🤖 Using fallback value in non-interactive context: yes
+🌀 Executing on local database mango-local (00000000-0000-0000-0000-000000000000) from .wrangler/state/v3/d1:
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+🚣 5 commands executed successfully.
+┌────────────────────────────────┬────────┐
+│ name                           │ status │
+├────────────────────────────────┼────────┤
+│ 0104_sending_event_silence.sql │ ✅     │
+└────────────────────────────────┴────────┘

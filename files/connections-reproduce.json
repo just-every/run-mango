@@ -1,0 +1,10 @@
+{
+  "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+  "job": "shards (connections)",
+  "command": "node scripts/verification/ci.mjs connections",
+  "test": "tests/go-live/custom-event-journey.ts:40, proveCustomEvents, integration read allowance",
+  "exit": 0,
+  "ci_failure": "Expected > 0 rate-limited responses; received 0",
+  "log": "connections-reproduce.log",
+  "node": "22.20.0"
+}

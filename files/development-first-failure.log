@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+(node:2198) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/delivery.journeys.ts:10:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation (2.1m)
+
+
+  1) tests/go-live/delivery.journeys.ts:10:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation 
+
+    Error: {"status":"blocked","blockers":[{"kind":"message.email-sender","status":"blocked","detail":"The inbox check has expired. Send a new check from Settings.","blocking":true},{"kind":"message.email-authentication","status":"blocked","detail":"SPF, DKIM, DMARC, and visible From-domain alignment must all pass.","blocking":true}]}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 409
+
+       at harness.ts:44
+
+      42 | export async function json(response: Response, status: number) {
+      43 |   const text = await response.text();
+    > 44 |   expect(response.status, text).toBe(status);
+         |                                 ^
+      45 |   return text ? JSON.parse(text) : null;
+      46 | }
+      47 |
+        at json (/home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/harness.ts:44:33)
+        at sendingSilenceJourney (/home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/sending-silence-journey.ts:80:28)
+        at resendConnectionJourney (/home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/resend-connection-journey.ts:67:5)
+        at sendingConnectionJourney (/home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/sending-connection-journey.ts:106:5)
+        at walk3 (/home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/delivery.flow.ts:225:3)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f121/run-mango/tests/go-live/delivery.journeys.ts:11:3
+
+    Error Context: ../evidence/9c53998d38d2/go-live/delivery.journeys.ts--MSG--47167-ned-facts-update-reputation/error-context.md
+
+  1 failed
+    tests/go-live/delivery.journeys.ts:10:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation 

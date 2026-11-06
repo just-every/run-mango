@@ -1,0 +1,12 @@
+{
+  "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "command": "node scripts/verification/ci.mjs static",
+  "exit": 0,
+  "environment": {
+    "node": "22.20.0",
+    "CI": "true",
+    "WRANGLER_SEND_METRICS": "false",
+    "PLAYWRIGHT_SKIP_BROWSER_GC": "1"
+  },
+  "log": "main-static.log"
+}

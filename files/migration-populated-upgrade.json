@@ -1,0 +1,12 @@
+{
+  "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+  "migration": "0104_sending_event_silence.sql",
+  "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1",
+  "priorMigrations": 103,
+  "populatedRecipientPreserved": true,
+  "priorColumns": 38,
+  "newFieldsNull": true,
+  "providerMessageIdPreserved": true,
+  "acceptanceAndDeadlinePreserved": true,
+  "exit": 0
+}

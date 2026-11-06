@@ -1,0 +1,17 @@
+{
+  "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "command": "node scripts/verification/ci.mjs connections",
+  "members": [
+    {
+      "name": "go-live",
+      "stage": "go-live",
+      "files": [
+        "sync-integrations.journeys.ts"
+      ]
+    }
+  ],
+  "test": "tests/go-live/sync-integrations.journeys.ts",
+  "exit": 0,
+  "node": "22.20.0",
+  "log": "main-connections.log"
+}

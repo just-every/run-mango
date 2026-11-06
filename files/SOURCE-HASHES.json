@@ -1,0 +1,75 @@
+{
+  "head": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+  "files": [
+    {
+      "path": "RELEASE.json",
+      "bytes": 10961,
+      "sha256": "2d0598cb3e6abe9ac5e2f87eae3dfaad9cdc34bd08f0762db7a006aee0e31a04"
+    },
+    {
+      "path": "management/integration/deployment-spec.json",
+      "bytes": 310423,
+      "sha256": "44472c564974dfcf514d2308d1438af8d3a2e653b51afa2bda7e6b4b8a5fd457"
+    },
+    {
+      "path": "migrations/core/0104_sending_event_silence.sql",
+      "bytes": 475,
+      "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1"
+    },
+    {
+      "path": "sources.lock.json",
+      "bytes": 412455,
+      "sha256": "46cce9bafd4bf502ab3ad88ca5adef22b3a51b75f2026258be14966da0a57c51"
+    },
+    {
+      "path": "src/core/features/lifecycle/schema.ts",
+      "bytes": 10401,
+      "sha256": "68ef74b217a72424df7eb02d0d504c15d4a00114367f649f2519051cfa80ec70"
+    },
+    {
+      "path": "src/core/features/sending/connection-service.ts",
+      "bytes": 10748,
+      "sha256": "3ac9857b7d1ba4aef88e61d17e67b08278ed45b4ad4151313fbca06b2e0a3b34"
+    },
+    {
+      "path": "src/core/features/sending/event-silence.ts",
+      "bytes": 2565,
+      "sha256": "e79f41cad1765953caa55b606781ace685bb5273180f7e5a07539150bd63e451"
+    },
+    {
+      "path": "src/core/features/sending/load-connection.ts",
+      "bytes": 6125,
+      "sha256": "02a5b8a3026aa5debb54a054fc8ee3cb04976515abbb36f8bd8f64cb941b9841"
+    },
+    {
+      "path": "src/core/features/sending/monitor.ts",
+      "bytes": 6614,
+      "sha256": "79cd31e2964228aa0621b0dbef8196964732d30bfe51453cc4c927334bc76352"
+    },
+    {
+      "path": "src/core/features/store/ui/settings-sending.tsx",
+      "bytes": 5528,
+      "sha256": "2eba066f0b1de271578620398d786d10742255e7854823a02fab4eba44b8f633"
+    },
+    {
+      "path": "tests/go-live/resend-connection-journey.ts",
+      "bytes": 12073,
+      "sha256": "edf85c26aa6519723efce29f5b1eed401aa68ae5244f5752ea0c0f83b3ea7b72"
+    },
+    {
+      "path": "tests/go-live/resend-provider-edge.ts",
+      "bytes": 6852,
+      "sha256": "05789db02da202225d6f903976b6b1cbd779b62fe075fc5514f45f08218010f0"
+    },
+    {
+      "path": "tests/go-live/sending-silence-journey.ts",
+      "bytes": 14650,
+      "sha256": "b449121bbffc1c7a4a61e823bf25c9a9bf9a19b2540047706cec73d9651591b4"
+    },
+    {
+      "path": "tests/go-live/worker.ts",
+      "bytes": 14872,
+      "sha256": "4e54e9adbd6035a7807bcf3b4eec23fb0a7b7b6aeb74324b6b00a6444c68b150"
+    }
+  ]
+}

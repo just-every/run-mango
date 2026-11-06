@@ -1,0 +1,15 @@
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f121/main-connections/members/go-live/evidence/90570122043b/verify/go-live-7OFEuh
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T14:51:16.016Z"}
+go-live
+
+Running 1 test using 1 worker
+
+(node:16870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (4.4m)
+
+  1 passed (4.4m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-06T14:51:16.016Z","durationMs":268095,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":268111,"boundary":"coordinator"}
