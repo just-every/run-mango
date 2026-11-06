@@ -18,7 +18,7 @@ A claim is done when every clause behind it is done, missing when every one is m
 | 10 | Every reader said yes. Your list is built on consent, not assumptions. | `CONT-003` partial; `AUD-002` done | partial |
 | 11 | Share your hosted signup page; new readers confirm their address before they get a single letter. | `FORM-001` partial; `CONT-009` partial; `CONT-028` partial; `AUD-002` done | partial |
 | 12 | Mango keeps when and how each reader agreed, and the exact wording they saw. | `CONT-003` partial | partial |
-| 13 | Bring your list as CSV. Opt-outs and suppressions are applied first and never undone by a later import. | `CONT-004` partial; `CONT-006` partial; `CONT-010` partial | partial |
+| 13 | Bring your list as CSV. Opt-outs and suppressions are applied first and never undone by a later import. | `CONT-004` partial; `CONT-006` partial; `CONT-010` done | partial |
 | 14 | Every letter carries a visible unsubscribe link, and an opt-out is recorded before the reader is told it worked. | `MSG-003` partial; `MSG-010` partial; `CONT-004` partial | partial |
 | 15 | What you approve is exactly what goes out. | `CAMP-003` partial; `CAMP-022` partial; `CAMP-004` partial; `CAMP-007` partial | partial |
 | 16 | Mango records who approved the letter and when, against the exact content they saw. | `CAMP-004` partial; `CAMP-005` done | partial |
@@ -34,7 +34,7 @@ A claim is done when every clause behind it is done, missing when every one is m
 | 26 | No forecasts or modelled numbers. An unconfirmed send stays unconfirmed. | `SEND-006` partial; `RESULT-001` partial | partial |
 | 27 | Your list stays yours. Nobody else holds your readers. | `DATA-001` partial; `DATA-002` partial; `MGMT-001` partial | partial |
 | 28 | Your readers, letters and history stay in your own database. | `DATA-001` partial; `DATA-002` partial; `MGMT-001` partial | partial |
-| 29 | Download your audience with its consent history as CSV, ready to import again. | `DATA-001` partial; `DATA-002` partial; `CONT-010` partial | partial |
+| 29 | Download your audience with its consent history as CSV, ready to import again. | `DATA-001` partial; `DATA-002` partial; `CONT-010` done | partial |
 | 30 | The owner gives each operator one of six roles, and approvals and cancellations record who made them. | `OPER-004` partial; `CAMP-004` partial; `CAMP-009` partial | partial |
 | 31 | MIT-licensed source you can customise with your own agents. | `MGMT-002` partial; `AGENT-010` partial | partial |
 | 32 | Set up Mango and send a newsletter people are glad to get. | `OPER-001` partial; `CAMP-002` partial; `AUD-010` partial; `CAMP-020` partial; `CAMP-021` partial; `CAMP-004` partial; `SEND-001` partial | partial |

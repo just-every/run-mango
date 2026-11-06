@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 20 | 198 | 89 | 307 |
+| Core | 22 | 196 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 20 | 198 | 98 | 316 |
+| Full target | 22 | 196 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. CONT-001 was exercised through its registered native signup and identity-door journey from the code and tests at commit `6a0bc82eeebc63536e6e0cbc002b72f32194f447` (6 November 2026); this status candidate retains those source and test bytes. The proof covers canonical identities and does not claim SMS transport or carrier qualification. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -226,7 +226,7 @@ Core · published · **partial** · Rules D-1
 
 #### CONT-001 — Contact identity
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Canonical email and phone identities identify one Mango contact.
 
@@ -235,8 +235,8 @@ Core · published · **partial** · Rules D-2
 2. Phone identities use the documented international canonical form.
 3. Each canonical email or phone identity belongs to at most one contact on capture and import.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import. Missing public-door journey: “Contact identity — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-import/signup.spec.ts` — “[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out”, including `tests/audience-import/identity-doors.ts` — “identityDoors”: acceptance 1, canonical email comparison through hosted JSON and encoded form submissions, manual and scoped API capture, CSV import and authenticated search and detail; acceptance 2, US, UK and Australian canonical phone readback including phone-only CSV import and malformed-number refusal; acceptance 3, one contact per identity in both capture and import orders, duplicate rows and conflicting-owner refusal without identity or consent changes. Revoked credentials cannot write and no campaign approval, recipients or dispatch authority is created. Existing `tests/move-in/archive.journeys.ts` archive evidence is retained. Identity proof makes no SMS handoff: Twilio A2P and US carrier registration, SMS transport and qualification remain held; CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
+**Gap.** None.
 
 #### CONT-002 — Channel status
 
@@ -379,7 +379,7 @@ Core · published · **partial** · From CONT-005, CONT-009 · Rules D-2
 
 #### CONT-010 — Import
 
-Core · published · **partial** · Cites BASE-INPUT-001 · Rules D-2
+Core · published · **done** · Cites BASE-INPUT-001 · Rules D-2
 
 **Requirement.** An operator reviews and imports CSV contact rows independently, preserving canonical identities, consent and restrictions. CONT-024 owns named-source attestation and SCALE-001 owns the review-size floor.
 
@@ -391,8 +391,8 @@ Core · published · **partial** · Cites BASE-INPUT-001 · Rules D-2
 5. A named incumbent export may use incumbent-held consent only under the owner’s once-per-source attestation; an unnamed file remains under the per-row consent rule.
 6. Import undo preserves restrictions and the reviewed capacity meets SCALE-001.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity. Missing public-door journey: “Import — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients”, invoking `tests/move-in/phone-csv-journey.ts` — “phoneCsvJourney” for independently mapped phone-only rows, exact contact readback, two rejected-row report reads, stable retry and signed-out refusals; `tests/move-in/csv-rules-journey.ts` — “csvRulesJourney” for canonical email and phone updates, unchanged same-file replay, mixed created and updated and rejected report totals, unnamed per-row consent, both recorded channels against every incoming state, and undo retaining restrictions; `tests/move-in/incumbent-journey.ts` — “incumbentJourney” for missing and uncertain source attestation, affirmative original-time incumbent consent, retained audit, restore and revocation. `tests/move-in/csv-capacity-journey.ts` — “csvCapacityJourney” exercises bounded review, native row paging, a cross-window restrictive duplicate, exact reconciliation, Start and Resume, retained original custody and erasure replay refusal; its bounded case is invoked by the registered archive journey. Carried archive and held-import evidence remains unchanged. The 250,000-row case of “csvCapacityJourney” passes the full registered archive journey at code commit 49ddd9346369c45a6e5bc8a11230e04835376b06, run “cloud-sd-mango-c-f64-scale-optimized”; every reviewed row and both reports reconcile, native continuation and exact original custody are exercised, and erasure withdraws custody and refuses replay. Recorded phone consent and restriction tests do not qualify SMS delivery; owner-held Twilio A2P and US carrier registration, SMS transport and qualification remain held. CONT-013's SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged, as do provider, device, account, cross-seed and Base prerequisites and the existing rer 0.2.95 adoption and release requirements.
+**Gap.** None.
 
 #### CONT-011 — Merge
 
@@ -581,7 +581,7 @@ Core · published · **partial** · Rules D-1
 2. No forecast presents a benchmark from another store.
 3. Insufficient own history is stated explicitly instead of a displayed range.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.; provider benchmarks with owned history identifiers are also refused without changing existing forecast records, and valid own-history generation succeeds again after those refusals with draft-only authority.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.
 **Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
 
 #### PROP-009 — Proposal states
