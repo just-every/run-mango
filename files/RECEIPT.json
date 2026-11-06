@@ -1,0 +1,166 @@
+{
+  "tag": "sd-mango-c-f59",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f59",
+  "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+  "base": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "integrated_main": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "product_push": {
+    "status": "pushed",
+    "attempts": 1,
+    "log": "product-push.log"
+  },
+  "verify": {
+    "run_id": 42134111303,
+    "event": "push",
+    "head_sha": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42134111303",
+    "exception": "only generated-view freshness and its dependent proof barrier; allowed by task cloud landing contract",
+    "failed_jobs": [
+      127617833116,
+      127617927068
+    ]
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log",
+      "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log",
+      "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock.log"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exit": 0
+    },
+    {
+      "command": "python3 /tmp/fleet-row-check.py",
+      "exit": 0,
+      "log": "row-retention.log"
+    },
+    {
+      "command": "authored changed-text check",
+      "exit": 0,
+      "log": "changed-text-check.log"
+    }
+  ],
+  "migration_ledger": {
+    "status": "not applicable",
+    "reason": "no migration change"
+  },
+  "source_lock": "fresh",
+  "contract_views": "write and check passed; main views restored; no authored generated-view delta",
+  "clause_status": {
+    "SEND-009": {
+      "before": "partial",
+      "after": "partial",
+      "done_delta": 0
+    }
+  },
+  "counts": {
+    "base": {
+      "done": 18,
+      "partial": 200,
+      "missing": 98
+    },
+    "main_and_candidate": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "change_this_task": 0
+  },
+  "test_registrations": {
+    "recovery_before": 1,
+    "recovery_after": 1
+  },
+  "publication_scan": {
+    "status": "not run in cloud",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null,
+    "custodian": "maintained Mac lander"
+  },
+  "run_site": {
+    "status": "pending landing",
+    "candidate_run_id": null,
+    "latest_integrated_main_run_id": 42130882206
+  },
+  "pr": null,
+  "screenshots": [
+    {
+      "file": "outage-paused-pending-probe.png",
+      "sha256": "aa035cd93ebf2a5d0bd3a0bbc5391a8f5f14b5647856e4325574efb498d0c08d",
+      "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+      "run_id": "exec-session-99235"
+    },
+    {
+      "file": "outage-paused-pending-probe-390.png",
+      "sha256": "d61b0042777a884a592dbdc8d4c7a2b9d14d84466416368c1c3facd3c1e8848e",
+      "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+      "run_id": "exec-session-99235"
+    },
+    {
+      "file": "outage-recovered-expired-recipient.png",
+      "sha256": "57dfaaac3847735115b3281bfcd8eadc3f636bd6c0fe9de3559738f063012003",
+      "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+      "run_id": "exec-session-99235"
+    }
+  ],
+  "exact_sha_journey": {
+    "status": "passed",
+    "exit": 0,
+    "outer_subreaper_exit": 0,
+    "test_registrations": 1,
+    "duration": "2.6m",
+    "run_id": "exec-session-99235",
+    "head": "eafc4c80b2263302d6efaba4a03770c6b171fbb6",
+    "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run bash -c pnpm exec playwright test --config tests/go-live/playwright.config.js delivery-recovery.journeys.ts (direct exit captured)",
+    "log": "recovery-confirmed-exit.log",
+    "runner_note": "Prior invocation reported all assertions passing but outer command exit 1; a confirming invocation separately recorded Playwright and subreaper exit 0 without source changes."
+  },
+  "created_at_epoch": 1793923502,
+  "local_runtime_run_id": "exec-session-99235",
+  "authored_delta": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/go-live/delivery-recovery.flow.ts",
+    "tests/go-live/transient-recovery.flow.ts"
+  ],
+  "full_history": true,
+  "candidate_identity_audit": {
+    "exit": 0,
+    "all_side_parents": true,
+    "log": "identity-audit.log"
+  },
+  "github_core_calls_this_task": 6,
+  "product_worktree_clean": true,
+  "handoff": "READY under generated-view-only Verify exception; no landing or full green CI claim"
+}

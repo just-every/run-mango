@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:5158) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE SEND-009 acceptance-1: native 429 handoffs at elapsed 0 and 300000 ms -> observing at 299999 ms, paused at 300000 ms, queued work and replay produce no handoff
+PROBE SEND-009 acceptance-3: public opt-out while paused, then successful authenticated probe -> automatic control handoff once, withdrawn queued recipient skipped without another attempt, replay unchanged
+SEND005 initial installation phase=60399ms total=60399ms
+SEND005 outage probe started phase=160ms total=60559ms
+SEND005 barrier wait phase=154ms total=60713ms
+SEND005 before restart 1 phase=306ms total=61019ms
+SEND005 close 1 phase=187ms total=61206ms
+SEND005 installation 2 phase=23960ms total=85167ms
+SEND005 before restart 2 phase=1172ms total=86339ms
+SEND005 close 2 phase=290ms total=86629ms
+SEND005 installation 3 phase=23057ms total=109686ms
+SEND005 dispatch queued phase=1316ms total=111002ms
+SEND005 dispatch wait phase=71ms total=111073ms
+SEND005 browser clock installed phase=232ms total=111305ms
+PROBE SEND-009 acceptance-4: authenticated 503 probe -> persisted safe error, native paused campaign result and reopened detail agree; desktop and phone captures; queued identity, zero attempts and marketing handoffs unchanged
+SEND005 deadline campaign and browser ready phase=9266ms total=120571ms
+SEND005 late replay queued phase=150ms total=120721ms
+SEND005 late replay wait phase=31ms total=120752ms
+SEND005 expired browser clock advanced phase=12ms total=120764ms
+SEND005 expired browser settled phase=150ms total=120914ms
+SEND005 recovery probe complete phase=112ms total=121026ms
+SEND005 recovery wait phase=17ms total=121043ms
+SEND005 recovery browser clock advanced phase=11ms total=121054ms
+SEND005 recovered browser settled phase=159ms total=121213ms
+SEND005 all assertions complete phase=290ms total=121503ms
+  ✓  1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (2.7m)
+
+  1 passed (2.7m)

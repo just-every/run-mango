@@ -1,0 +1,42 @@
+
+Running 1 test using 1 worker
+
+(node:3019) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE SEND-009 acceptance-1: native 429 handoffs at elapsed 0 and 300000 ms -> observing at 299999 ms, paused at 300000 ms, queued work and replay produce no handoff
+  ✘  1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (1.7m)
+
+
+  1) tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+    -   "accepted",
+    +   "queued",
+        "skipped",
+      ]
+
+    Call Log:
+    - Timeout 60000ms exceeded while waiting on the predicate
+
+       at transient-recovery.flow.ts:76
+
+      74 |   await site.control('/_golive/clock',{advanceMs:outage.next_probe_at-pausedClock.now});
+      75 |   await site.control('/_golive/cron');
+    > 76 |   await expect.poll(async()=> (await outcomes()).map(row=>row.transport_disposition).sort(),{timeout:60000}).toEqual(['accepted','skipped']);
+         |                                                                                                              ^
+      77 |   const recovered=await outcomes();
+      78 |   expect(recovered.find(row=>row.id===barred.id)).toEqual({...barred,transport_disposition:'skipped',skip_reason:'channel-not-subscribed'});
+      79 |   expect(recovered.find(row=>row.id===control.id)).toEqual({...control,transport_disposition:'accepted',attempt_count:3});
+        at transientRecovery (/home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/transient-recovery.flow.ts:76:110)
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/delivery-recovery.flow.ts:47:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/delivery-recovery.journeys.ts:5:3
+
+    Error Context: ../evidence/a1fbc1352f58/go-live/delivery-recovery.journeys-b3e23-duplicating-uncertain-sends/error-context.md
+
+  1 failed
+    tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends 

@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+(node:2569) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (39.5s)
+
+
+  1) tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "paused"
+    Received: "observing"
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+       at transient-recovery.flow.ts:46
+
+      44 |   await site.control('/_golive/clock',{advanceMs:1});
+      45 |   await site.control('/_golive/cron');
+    > 46 |   await expect.poll(async()=> (await site.rows(`SELECT state FROM provider_outages WHERE id='${observing.id}'`))[0].state).toBe('paused');
+         |                                                                                                                            ^
+      47 |   expect(await site.rows(`SELECT paused_at-first_failure_at elapsed FROM provider_outages WHERE id='${observing.id}'`)).toEqual([{elapsed:300000}]);
+      48 |   expect(await site.rows("SELECT reachable,code FROM provider_health WHERE adapter='mail.sender.v1' AND channel='email'"))
+      49 |     .toEqual([{reachable:1,code:'authenticated-read-succeeded'}]);
+        at transientRecovery (/home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/transient-recovery.flow.ts:46:124)
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/delivery-recovery.flow.ts:47:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f59/run-mango/tests/go-live/delivery-recovery.journeys.ts:5:3
+
+    Error Context: ../evidence/a1fbc1352f58/go-live/delivery-recovery.journeys-b3e23-duplicating-uncertain-sends/error-context.md
+
+  1 failed
+    tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends 

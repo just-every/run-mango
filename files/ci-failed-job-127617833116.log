@@ -1,0 +1,12 @@
+Sanitized failed-job archive: environment summaries omitted.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T00:04:40.4050547Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4051140Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4074249Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4074533Z env:
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4074755Z   CI: true
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4074962Z   WRANGLER_SEND_METRICS: false
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4075253Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4075614Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.4076177Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.6031332Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T00:04:40.6146512Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,3 @@
+EVIDENCE_FAILED Git fetch failed exit=128
+
+Diagnosis: an extra local audit fetch tried to transfer missing historical blobs from the full-history partial clone. Git upload-pack disables lazy fetching for that transfer and failed before evidence push. This was a local object-transfer issue, not an HTTP rejection. The report-only audit now walks all report ancestors directly, without copying product history. The actual packet and pushed product head were retained.

@@ -1,0 +1,4 @@
+CONTRACT.md: added email-shaped strings=0, provider-shaped credentials=0
+tests/go-live/delivery-recovery.flow.ts: added email-shaped strings=0, provider-shaped credentials=0
+tests/go-live/transient-recovery.flow.ts: added email-shaped strings=0, provider-shaped credentials=0
+Authored prose inspected for ambiguous bare repository references; only actual source paths and standard MIME strings are present. Full publication scan remains with the maintained lander.
