@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "df49a624322bf269e28085fb2c3ebab37f9c052a8a44b10eaaf271d0e2348e12",
       "executable": false
     },
     "DEMO.md": {
@@ -8533,8 +8533,12 @@
       "sha256": "d62074ba7d51511f57b63dd76a99bc449a560b20665005089d711159bd7082ca",
       "executable": false
     },
+    "tests/campaign-authoring/step-deadline-dispatch-journey.ts": {
+      "sha256": "8a9283d6ecbd6125e976cf6afb9ccfb2465980eacf0b6cf2dd5e8ef93bda12fd",
+      "executable": false
+    },
     "tests/campaign-authoring/step-deadline.spec.ts": {
-      "sha256": "5efbc7bb03d89ba96f28897efc472e7f01646186ab4a9032841499f1f2900257",
+      "sha256": "c3e2ba352c1bd18621643369971f6b4ac65bd480aa83ea851cdb43c8395eee62",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
