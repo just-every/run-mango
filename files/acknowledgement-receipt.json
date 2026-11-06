@@ -1,0 +1,52 @@
+{
+  "head": "05c6069c3958a03972287ffd31324cbd6fa92271",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts --workers=1 --reporter=list,json",
+  "exit": 0,
+  "test": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+  "status": "passed",
+  "duration_ms": 53619,
+  "started_at": "2026-11-06T07:21:57.602Z",
+  "proof": {
+    "startedAt": 1793949795852,
+    "finishedAt": 1793949795852,
+    "replayAt": 1793949915852,
+    "acknowledged": {
+      "status": "acknowledged",
+      "acknowledgement": {
+        "operatorId": "go-live-owner",
+        "acknowledgedAt": "2026-11-06T07:23:15.852Z"
+      }
+    },
+    "findingIdentity": "33469958ea1707dfc2bf7f7b2540dac9ad56e76965fec7f4d008cb2c3c981be1",
+    "refreshedFindingIdentity": "33469958ea1707dfc2bf7f7b2540dac9ad56e76965fec7f4d008cb2c3c981be1",
+    "originalAcknowledgement": {
+      "revisionId": "01M6QVS6XCGMPG7RVA97N6099X",
+      "findingIdentity": "33469958ea1707dfc2bf7f7b2540dac9ad56e76965fec7f4d008cb2c3c981be1"
+    },
+    "originalCheckId": "01M6QVS6XCX026MHRNPQ3S9AK5",
+    "refreshedCheckId": "01M6QVYPPC3TQSV11M6RNGJER7",
+    "acknowledgingOperatorId": "go-live-owner",
+    "replayOperatorId": "synthetic-mango-2",
+    "staleCheckStatus": 409,
+    "audit": [
+      {
+        "id": "01M6QVV1GCNAE5TP5S39X5N7WK",
+        "operation_key": "advisory-acknowledgement:33469958ea1707dfc2bf7f7b2540dac9ad56e76965fec7f4d008cb2c3c981be1",
+        "entity_type": "campaign-revision",
+        "entity_id": "01M6QVS6XCGMPG7RVA97N6099X",
+        "action": "acknowledge-advisory",
+        "actor_type": "operator",
+        "actor_id": "go-live-owner",
+        "detail_json": "{\"campaignId\":\"01M6QVS6XCWQ4JNN9NH83W9NS9\",\"revisionId\":\"01M6QVS6XCGMPG7RVA97N6099X\",\"revisionDigest\":\"a76a779140cb23d10e315f3592653c3fae3796825147c3b7026b237cbaabd7fb\",\"findingIdentity\":\"33469958ea1707dfc2bf7f7b2540dac9ad56e76965fec7f4d008cb2c3c981be1\",\"kind\":\"message.email-subject-length\",\"detail\":\"Email subject is 104 characters. Some inboxes may truncate it; review the opening words.\"}",
+        "occurred_at": 1793949795852,
+        "created_at": 1793949795852
+      }
+    ],
+    "noAuthorityAsserted": true
+  },
+  "relevant_files": {
+    "tests/go-live/content-checks.journeys.ts": "4b4d818dd2eeb0550704baa46e1dce3df084a2a5832a45e1a4886fd9d16de01b",
+    "src/core/features/lifecycle/advisory-acknowledgements.ts": "1957bc47c277f558bb58c829911dc334afdba8d79fb8ed88fb52479bc49996dc",
+    "src/core/features/lifecycle/advisory-snapshot.ts": "c41167c3f0531c8ca80baffa0feb1eb90c20ee14b6ff196d2939cce87dbb9f25"
+  }
+}

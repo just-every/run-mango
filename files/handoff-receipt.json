@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f84",
+  "head": "05c6069c3958a03972287ffd31324cbd6fa92271",
+  "product_push": {
+    "status": "pushed",
+    "attempts": 1,
+    "receipt": "product-push.txt"
+  },
+  "clauses": [
+    {
+      "id": "MSG-007",
+      "before": "partial",
+      "after": "partial",
+      "closed_point": "acceptance 2 email acknowledgment-time and exact native-payload replay retention",
+      "held": [
+        "every-channel proof",
+        "SMS advisory acknowledgment qualification",
+        "complete blocking-finding correction and refusal matrix",
+        "owner Twilio A2P and US carrier registration",
+        "SMS transport and qualification"
+      ]
+    }
+  ],
+  "local_checks": {
+    "focused_journey": 0,
+    "exact_sha_focused_journey": 0,
+    "typecheck": 0,
+    "first_party": 0,
+    "contract_write": 0,
+    "contract_check_before_view_restore": 0,
+    "source_lock": 0,
+    "source_lock_check": 0
+  },
+  "ci": {
+    "run": 42180353381,
+    "event": "push",
+    "head": "05c6069c3958a03972287ffd31324cbd6fa92271",
+    "status": "completed",
+    "conclusion": "failure",
+    "final_observation": "candidate-ci-final.json",
+    "failure_kind": "permitted generated contract view check only",
+    "failed_job": 127768341007,
+    "downstream_verifier_job": 127768412905,
+    "log": "candidate-verify-failure.txt"
+  },
+  "publication_scan": {
+    "status": "not_run",
+    "custodian": "guarded Mac lander"
+  },
+  "landing": {
+    "status": "branch_only",
+    "main_pushed": false,
+    "run_site_candidate": null
+  },
+  "pr": null,
+  "evidence_publication": {
+    "ref": "refs/heads/evidence/sd-mango-c-f84",
+    "separate_from_product": true
+  },
+  "ready_basis": "Explicit generated-view-only exception; all touched local checks pass on exact candidate; generated views left to Mac lander",
+  "github_api_calls": 8
+}

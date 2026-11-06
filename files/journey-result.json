@@ -1,0 +1,191 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "tests/go-live/playwright.config.js",
+      "content-checks.journeys.ts",
+      "--workers=1",
+      "--reporter=list,json"
+    ],
+    "configFile": "/workspace/run-mango/tests/go-live/playwright.config.js",
+    "rootDir": "/workspace/run-mango/tests/go-live",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f84/evidence/7f523b30a6bf/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": [
+          "*.journeys.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f84/evidence/7f523b30a6bf/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/workspace/run-mango/tests/go-live",
+        "snapshotDir": "/workspace/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": "*.journeys.ts",
+        "timeout": 900000,
+        "use": {
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "headless": true,
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "content-checks.journeys.ts",
+      "file": "content-checks.journeys.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 53619,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Conversion proof: apply archive\n"
+                    },
+                    {
+                      "text": "Conversion proof: read archive\n"
+                    },
+                    {
+                      "text": "Conversion proof: start template 151\n"
+                    },
+                    {
+                      "text": "Conversion proof: inspect mapped body\n"
+                    },
+                    {
+                      "text": "Conversion proof: run mapped checks\n"
+                    },
+                    {
+                      "text": "Conversion proof: open mapped preview\n"
+                    },
+                    {
+                      "text": "Conversion proof: mapped preview 1440\n"
+                    },
+                    {
+                      "text": "Conversion proof: corrected footer\n"
+                    },
+                    {
+                      "text": "Conversion proof: start template 152\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T07:21:57.602Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "msg-007-acknowledgement-retention",
+                      "contentType": "application/json",
+                      "body": "ewogICJzdGFydGVkQXQiOiAxNzkzOTQ5Nzk1ODUyLAogICJmaW5pc2hlZEF0IjogMTc5Mzk0OTc5NTg1MiwKICAicmVwbGF5QXQiOiAxNzkzOTQ5OTE1ODUyLAogICJhY2tub3dsZWRnZWQiOiB7CiAgICAic3RhdHVzIjogImFja25vd2xlZGdlZCIsCiAgICAiYWNrbm93bGVkZ2VtZW50IjogewogICAgICAib3BlcmF0b3JJZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgImFja25vd2xlZGdlZEF0IjogIjIwMjYtMTEtMDZUMDc6MjM6MTUuODUyWiIKICAgIH0KICB9LAogICJmaW5kaW5nSWRlbnRpdHkiOiAiMzM0Njk5NThlYTE3MDdkZmMyYmY3ZjdiMjU0MGRhYzlhZDU2ZTc2OTY1ZmVjN2Y0ZDAwOGNiMmMzYzk4MWJlMSIsCiAgInJlZnJlc2hlZEZpbmRpbmdJZGVudGl0eSI6ICIzMzQ2OTk1OGVhMTcwN2RmYzJiZjdmN2IyNTQwZGFjOWFkNTZlNzY5NjVmZWM3ZjRkMDA4Y2IyYzNjOTgxYmUxIiwKICAib3JpZ2luYWxBY2tub3dsZWRnZW1lbnQiOiB7CiAgICAicmV2aXNpb25JZCI6ICIwMU02UVZTNlhDR01QRzdSVkE5N042MDk5WCIsCiAgICAiZmluZGluZ0lkZW50aXR5IjogIjMzNDY5OTU4ZWExNzA3ZGZjMmJmN2Y3YjI1NDBkYWM5YWQ1NmU3Njk2NWZlYzdmNGQwMDhjYjJjM2M5ODFiZTEiCiAgfSwKICAib3JpZ2luYWxDaGVja0lkIjogIjAxTTZRVlM2WENYMDI2TUhSTlBRM1M5QUs1IiwKICAicmVmcmVzaGVkQ2hlY2tJZCI6ICIwMU02UVZZUFBDM1RRU1YxMU02Uk5HSkVSNyIsCiAgImFja25vd2xlZGdpbmdPcGVyYXRvcklkIjogImdvLWxpdmUtb3duZXIiLAogICJyZXBsYXlPcGVyYXRvcklkIjogInN5bnRoZXRpYy1tYW5nby0yIiwKICAic3RhbGVDaGVja1N0YXR1cyI6IDQwOSwKICAiYXVkaXQiOiBbCiAgICB7CiAgICAgICJpZCI6ICIwMU02UVZWMUdDTkFFNVRQNVMzOVg1TjdXSyIsCiAgICAgICJvcGVyYXRpb25fa2V5IjogImFkdmlzb3J5LWFja25vd2xlZGdlbWVudDozMzQ2OTk1OGVhMTcwN2RmYzJiZjdmN2IyNTQwZGFjOWFkNTZlNzY5NjVmZWM3ZjRkMDA4Y2IyYzNjOTgxYmUxIiwKICAgICAgImVudGl0eV90eXBlIjogImNhbXBhaWduLXJldmlzaW9uIiwKICAgICAgImVudGl0eV9pZCI6ICIwMU02UVZTNlhDR01QRzdSVkE5N042MDk5WCIsCiAgICAgICJhY3Rpb24iOiAiYWNrbm93bGVkZ2UtYWR2aXNvcnkiLAogICAgICAiYWN0b3JfdHlwZSI6ICJvcGVyYXRvciIsCiAgICAgICJhY3Rvcl9pZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgImRldGFpbF9qc29uIjogIntcImNhbXBhaWduSWRcIjpcIjAxTTZRVlM2WENXUTRKTk45Tkg4M1c5TlM5XCIsXCJyZXZpc2lvbklkXCI6XCIwMU02UVZTNlhDR01QRzdSVkE5N042MDk5WFwiLFwicmV2aXNpb25EaWdlc3RcIjpcImE3NmE3NzkxNDBjYjIzZDEwZTMxNWYzNTkyNjUzYzNmYWUzNzk2ODI1MTQ3YzNiNzAyNmIyMzdjYmFhYmQ3ZmJcIixcImZpbmRpbmdJZGVudGl0eVwiOlwiMzM0Njk5NThlYTE3MDdkZmMyYmY3ZjdiMjU0MGRhYzlhZDU2ZTc2OTY1ZmVjN2Y0ZDAwOGNiMmMzYzk4MWJlMVwiLFwia2luZFwiOlwibWVzc2FnZS5lbWFpbC1zdWJqZWN0LWxlbmd0aFwiLFwiZGV0YWlsXCI6XCJFbWFpbCBzdWJqZWN0IGlzIDEwNCBjaGFyYWN0ZXJzLiBTb21lIGluYm94ZXMgbWF5IHRydW5jYXRlIGl0OyByZXZpZXcgdGhlIG9wZW5pbmcgd29yZHMuXCJ9IiwKICAgICAgIm9jY3VycmVkX2F0IjogMTc5Mzk0OTc5NTg1MiwKICAgICAgImNyZWF0ZWRfYXQiOiAxNzkzOTQ5Nzk1ODUyCiAgICB9CiAgXSwKICAibm9BdXRob3JpdHlBc3NlcnRlZCI6IHRydWUKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b21ec75a24ddcd7116df-e5d960a12421276b3643",
+          "file": "content-checks.journeys.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T07:21:56.941Z",
+    "duration": 54880.562,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

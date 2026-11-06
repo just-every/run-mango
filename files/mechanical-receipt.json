@@ -1,0 +1,81 @@
+{
+  "head": "05c6069c3958a03972287ffd31324cbd6fa92271",
+  "origin_main": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "status_counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "status_counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "commands": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views-check.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "lock-write.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock-check.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    }
+  ],
+  "migration_ledger": {
+    "command": null,
+    "reason": "No migration changed"
+  },
+  "status_rows": {
+    "parent": 316,
+    "candidate": 316,
+    "missing": []
+  },
+  "candidate_commit_identities": {
+    "commits": 4,
+    "all_fleet": true,
+    "trailers": []
+  },
+  "generated_views_committed": false,
+  "touched_test_registrations_before": 1,
+  "touched_test_registrations_after": 1,
+  "relevant_files": {
+    "tests/go-live/content-checks.journeys.ts": "4b4d818dd2eeb0550704baa46e1dce3df084a2a5832a45e1a4886fd9d16de01b",
+    "src/core/features/lifecycle/advisory-acknowledgements.ts": "1957bc47c277f558bb58c829911dc334afdba8d79fb8ed88fb52479bc49996dc",
+    "src/core/features/lifecycle/advisory-snapshot.ts": "c41167c3f0531c8ca80baffa0feb1eb90c20ee14b6ff196d2939cce87dbb9f25"
+  },
+  "exact_sha_journey": {
+    "exit": 0,
+    "tests": 1,
+    "passed": 1,
+    "duration_ms": 54880.562,
+    "receipt": "acknowledgement-receipt.json",
+    "report": "journey-result.json"
+  },
+  "history_row_check": "history-row-check.json"
+}

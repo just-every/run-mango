@@ -1,0 +1,124 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index 8f16a3b..9f011b3 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4140,7 +4140,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `MSG-004` | SMS permission | published | partial | `src/core/features/sms/transport-guard.ts` | acceptance not yet met: SMS eligibility needs subscribed scope and an approved sender; US registration pending. |
+ | `MSG-005` | SMS opt-out | published | partial | `tests/go-live/content-checks.journeys.ts` · `src/core/features/sms/review-preview.ts` · `src/core/features/sms/content.ts` | Assertions in tests/go-live/sms-review.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Configured program identity; STOP or jurisdiction equivalent; Frequency disclosure; URL never replaces reply opt-out; Compliance text; Segment count; Help contact. Missing public-door journey: “SMS opt-out — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-006` | Links | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts` | Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named. Missing public-door journey: “Links — complete acceptance”, covering the unasserted outcomes above. |
+-| `MSG-007` | Content checks | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” | Old evidence asserts Blocking findings shown; Advisory findings shown; Acknowledgment survives reload; Replay produces one audit entry; Actor. Unasserted: Every channel. Missing public-door journey: “Content checks — complete acceptance”, covering the unasserted outcomes above. |
++| `MSG-007` | Content checks | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” — email advisory actor and installation-clock-bracketed time reconcile with the persisted audit and authenticated review; original actor, time and finding identity survive elapsed time, reload, checks refresh and replay of the captured native acknowledgment payload by a different authenticated operator, with stale check identifiers refused and one audit row and no approval, frozen candidates, recipients or dispatch authority before explicit approval. | Remaining: acceptance 1 every-channel proof; acceptance 2 SMS advisory acknowledgment qualification; acceptances 4–5 complete safety-finding refusal and blocking-finding correction matrix. Existing edited-revision invalidation and email safety refusals remain asserted. Owner Twilio A2P and US carrier registration, SMS transport and qualification remain held; provider, device, account and cross-seed or Base prerequisites remain unchanged. CONT-013’s SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |
+ | `MSG-008` | Personalization | published | partial | `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation” | Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal. Missing public-door journey: “Personalization — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-009` | Email body | published | partial | `tests/campaign-authoring/canonical-save.spec.ts` — “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”; “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree” | Old evidence asserts Stored parser structure; Save stability. Unasserted: Decoded destination checks; Literal quote refusal; Literal angle-bracket refusal; No-break space refusal; Normalization does not repair hiding declarations; Multipart alternative; Equivalent offer in HTML and text; Equivalent links in HTML and text; Unsubscribe link in both parts; Saved preheader delivered; Saved HTML bytes delivered; Only token and tracking substitutions; Admitted tag set; Admitted attribute set; Admitted inline-style set; BUILD-012 size bar; Script refusal; Form refusal; Stylesheet refusal; Class refusal; CSS-function refusal; Responsive block generated only by builder; Responsive block regenerated on save; Check with responsive block; Check without responsive block; Same stored-parse checker for approval; Same stored-parse checker for test send; Same stored-parse checker for delivery; Preview uses shared parse; Preview styles only after checker success; Plain text derives from same parse. Missing public-door journey: “Email body — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-010` | Unsubscribe availability | published | partial | `tests/go-live/opt-out-reasons.journeys.ts` — “[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery” · `src/core/features/audience/unsubscribe-routes.ts` | Old evidence asserts Complete response below two seconds; Shared GET allowance excess; Shared POST allowance excess; Another token at the same client address actually opts out; Confirmation at both widths. Unasserted: Visible confirmation alone prevents approved delivery (the cited journey confirms only after its one-click opt-out). Missing public-door journey: “Unsubscribe availability — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 019440e..8a49ef1 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "25e6a9fca5326f0bc86ec644254a2bfb9206beead55c213224fabc2c7e77ad70",
++      "sha256": "2a3a23094acccaf4d30eb8731173f583926843bad541a769a8a9cb5ccfe77983",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -8778,7 +8778,7 @@
+       "executable": false
+     },
+     "tests/go-live/content-checks.journeys.ts": {
+-      "sha256": "d30843094704a7d2d2add3a048b118cf67f14241e9c41478ca7f100d9a8bf3ec",
++      "sha256": "4b4d818dd2eeb0550704baa46e1dce3df084a2a5832a45e1a4886fd9d16de01b",
+       "executable": false
+     },
+     "tests/go-live/content-hosts.ts": {
+diff --git a/tests/go-live/content-checks.journeys.ts b/tests/go-live/content-checks.journeys.ts
+index b0e99df..ca4e041 100644
+--- a/tests/go-live/content-checks.journeys.ts
++++ b/tests/go-live/content-checks.journeys.ts
+@@ -67,12 +67,83 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
+     expect((await site.call(ackPath(advisory),{method:'POST',body:ackBody(advisory)})).status).toBe(401);
+     await json(await site.call(ackPath(advisory),{method:'POST',cookie,headers:{Origin:'https://foreign.example'},body:ackBody(advisory)}),403);
+     await reloadPage(page);
++    const acknowledgingOperator = await json(await site.call('/api/operator',{cookie}),200);
++    expect(acknowledgingOperator.operator.id).toBe('go-live-owner');
++    const startedAt = (await site.control('/_golive/clock',{advanceMs:60000})).now;
++    const acknowledgementResponse = page.waitForResponse(response =>
++      new URL(response.url()).pathname === ackPath(advisory) && response.request().method() === 'POST');
+     await page.getByRole('button',{name:'Acknowledge advisory',exact:true}).click();
++    const response = await acknowledgementResponse;
++    expect(response.status()).toBe(200);
++    const originalRequest = response.request();
++    const originalAcknowledgement = originalRequest.postDataJSON();
++    expect(originalAcknowledgement).toEqual({revisionId:campaign.revisionId,findingIdentity:advisory.findingIdentity});
++    const acknowledged = await response.json();
++    const finishedAt = (await site.control('/_golive/clock')).now;
++    expect(acknowledged).toMatchObject({status:'acknowledged',acknowledgement:{operatorId:'go-live-owner'}});
++    const acknowledgedAt = Date.parse(acknowledged.acknowledgement.acknowledgedAt);
++    expect(acknowledgedAt).toBeGreaterThanOrEqual(startedAt);
++    expect(acknowledgedAt).toBeLessThanOrEqual(finishedAt);
++    const audit = () => site.rows(`SELECT * FROM lifecycle_audit_entries
++      WHERE action='acknowledge-advisory' AND operation_key='advisory-acknowledgement:${advisory.findingIdentity}'`);
++    const originalAudit = await audit();
++    expect(originalAudit).toEqual([expect.objectContaining({entity_type:'campaign-revision',entity_id:campaign.revisionId,
++      actor_type:'operator',actor_id:'go-live-owner',occurred_at:acknowledgedAt,created_at:acknowledgedAt})]);
++    expect(JSON.parse(originalAudit[0].detail_json)).toMatchObject({campaignId:campaign.campaignId,
++      revisionId:campaign.revisionId,findingIdentity:advisory.findingIdentity,kind:advisory.kind,detail:advisory.detail});
++    const retainedFinding = async () => {
++      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie}),200);
++      const finding = saved.checks.find((check:any) => check.kind === advisory.kind);
++      expect(finding).toMatchObject({findingIdentity:advisory.findingIdentity,acknowledgement:acknowledged.acknowledgement});
++      return finding;
++    };
++    const noAuthority = async () => {
++      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
++      expect(saved.campaign).toMatchObject({state:'draft',activeRevisionId:campaign.revisionId});
++      expect(saved.revision).toMatchObject({state:'draft'});
++      for (const table of ['campaign_approval_requests','campaign_revision_candidates','recipient_steps','step_dispatches']) expect(await site.count(table)).toBe(0);
++      expect((await site.control('/_golive/emissions')).filter((item:any) => item.command.kind === 'campaign.dispatch')).toEqual([]);
++      expect(edge.sends.filter(send => send.body.headers?.['List-Unsubscribe'])).toEqual([]);
++    };
++    const originalFinding = await retainedFinding();
++    await noAuthority();
+     await expect(page.locator('.approval-checks')).toContainText('Acknowledged by');
+-    for (const width of [1440]) {
++    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
++    const replayAt = (await site.control('/_golive/clock',{advanceMs:120000})).now;
++    expect(replayAt).toBeGreaterThan(acknowledgedAt);
++    const replayOperatorId = 'synthetic-mango-2';
++    const replayCookie = await site.open([replayOperatorId,'example.test'].join('@'),replayOperatorId);
++    const replayOperator = await json(await site.call('/api/operator',{cookie:replayCookie}),200);
++    expect(replayOperator.operator.id).toBe(replayOperatorId);
++    expect(replayOperator.operator.id).not.toBe(acknowledged.acknowledgement.operatorId);
++    await reloadPage(page);
++    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
++    // Replay the exact original request as another operator before checks replace their transient row IDs.
++    expect(await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
++    await review();
++    const refreshed = await retainedFinding();
++    expect(refreshed.id).not.toBe(originalFinding.id);
++    // Expired check row IDs cannot grant authority, even with the exact original payload.
++    await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),409);
++    // Another authenticated operator cannot replace the original actor or time.
++    expect(await json(await site.call(ackPath(refreshed),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
++    await reloadPage(page);
++    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
++    await retainedFinding();
++    expect(await audit()).toEqual(originalAudit);
++    await noAuthority();
++    await info.attach('msg-007-acknowledgement-retention',{contentType:'application/json',body:JSON.stringify({
++      startedAt,finishedAt,replayAt,acknowledged,findingIdentity:advisory.findingIdentity,
++      refreshedFindingIdentity:refreshed.findingIdentity,originalAcknowledgement,
++      originalCheckId:originalFinding.id,refreshedCheckId:refreshed.id,
++      acknowledgingOperatorId:acknowledgingOperator.operator.id,replayOperatorId,
++      staleCheckStatus:409,audit:originalAudit,noAuthorityAsserted:true,
++    },null,2)});
++    for (const width of [1440,390]) {
+       await page.setViewportSize({width,height:1000});
+       await page.locator('.approval-checks').screenshot({path:info.outputPath(`acknowledged-advisory-${width}.png`)});
+     }
++    await page.setViewportSize({width:1440,height:1000});
+     await approve(site,cookie,campaign);
+     const records = await site.rows("SELECT actor_id,occurred_at FROM lifecycle_audit_entries WHERE action='acknowledge-advisory'");
+     expect(records).toHaveLength(2);
