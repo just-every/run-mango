@@ -8489,12 +8489,16 @@
       "sha256": "1d34ecd251df7d842c2ca2b11bfca0ed6dc78d78c5d137e760e785c27ad985e1",
       "executable": false
     },
+    "tests/campaign-authoring/design-concurrency-journey.ts": {
+      "sha256": "655278d9bd4eede71c5df3e2cfabd498bef4124473d9e7879bfadd05e9b661c5",
+      "executable": false
+    },
     "tests/campaign-authoring/design-generation.flow.ts": {
       "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "00835a3edef9571ade4de0db160e588b6988f1ddeb6caf73b47f8bc538dc365c",
+      "sha256": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
@@ -8534,7 +8538,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
+      "sha256": "a6f9874007f76250aef953ce20d114651c121bad0f443e83e72410d7018512da",
       "executable": false
     },
     "tests/campaign-results/archive-fixture.ts": {
