@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:2718) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (53.2s)
+
+
+  1) tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        Object {
+    -     "active_revision_id": null,
+    +     "active_revision_id": "01M6QAZMSH1TRTB8BRK068DQAJ",
+          "state": "draft",
+        },
+      ]
+
+       at content-hosts.ts:36
+
+      34 |   const noAuthority = async () => {
+      35 |     expect(await site.rows(`SELECT state,active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`))
+    > 36 |       .toEqual([{state:'draft', active_revision_id:null}]);
+         |        ^
+      37 |     expect(await site.rows(`SELECT state,approved_at,approved_by_operator_id FROM campaign_revisions WHERE id='${campaign.revisionId}'`))
+      38 |       .toEqual([{state:'draft', approved_at:null, approved_by_operator_id:null}]);
+      39 |     expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+        at noAuthority (/home/agent/rer-consolidation/work/sd-mango-c-f67/run-mango/tests/go-live/content-hosts.ts:36:8)
+        at adminHostAllowance (/home/agent/rer-consolidation/work/sd-mango-c-f67/run-mango/tests/go-live/content-hosts.ts:45:3)
+        at blockedHostJourney (/home/agent/rer-consolidation/work/sd-mango-c-f67/run-mango/tests/go-live/content-hosts.ts:160:3)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f67/run-mango/tests/go-live/content-checks.journeys.ts:80:5
+
+    Error Context: ../evidence/3c67d482fdd5/go-live/content-checks.journeys.ts-32575-s-each-SMS-with-its-opt-out/error-context.md
+
+  1 failed
+    tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 

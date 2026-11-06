@@ -1,0 +1,122 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index d9a8149..c2a04a1 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4212,7 +4212,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `CAMP-024` | Shared daily test allowance | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Configured and typed email tests share 100 attempted hand-offs per UTC day, including uncertain outcomes; remaining allowance, whole-request refusal and midnight reset are delivered. Typed destinations and their actor history appear in Activity and its filtered CSV, and erasure retains a redacted receipt. Remaining: typed SMS consent and transport (SMS-001, CONT-019), and full role acceptance (OPER-004). |
+ | `MSG-013` | Contact links (mailto:, tel:, sms:) | target | partial | `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” | Old evidence asserts Multiple addresses blocked; Disallowed parameters blocked; Email subject/body form saved; E.164 phone and SMS body saved; Invalid phone blocked. Unasserted: Ten-digit US and visual separators; Web kind; HTTPS-only image sources. Missing public-door journey: “Contact links (mailto:, tel:, sms:) — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-014` | Allowed link and image hosts | target | partial | `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/portability.spec.ts` | Fresh installations list deployment, conservative social defaults and genuine configured connection hosts with sources. Exact and explicit wildcard matching stays shared; durable operator removals survive catalog sync, review allowances retain source/operator/campaign, and source changes are audited. Existing explicit policies remain explicit. Acceptance remains unmet: Shopify does not store primary/additional storefront or catalog image domains; product/social blocks (BUILD-001), brand kit (BUILD-003), Shopify disconnect and flow activation are absent. The existing store-owned editor help incorrectly describes implicit subdomain matching and is not changed in this writer. Social vocabulary approval is pending. |
+-| `MSG-015` | Allow a blocked host from review | target | partial | `tests/go-live/content-checks.journeys.ts` | Assertions in tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Campaign blocked-host list; Flow blocked-host list; Every affected link; Redirect host list; Manager exact-host allowance; Admin exact-host allowance; Owner exact-host allowance; Explicit subdomain allowance; Review source retained; Campaign/flow retained; Operator retained; Immediate recheck; Append-only activity; Operator field; Host field; Campaign/flow field; Activity view; Operator filter; Action filter; Object filter; Author sees blocked hosts; Author can request named approval; No Author allow control; Author allowance refused; Contact links need no allowance; Remaining safety inspections retained; All three imported outside hosts listed; Allow action for each imported outside host. Missing public-door journey: “Allow a blocked host from review — complete acceptance”, covering the unasserted outcomes above. |
++| `MSG-015` | Allow a blocked host from review | target | partial | `tests/go-live/content-checks.journeys.ts` — “review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out”, through `tests/go-live/content-hosts.ts` — blockedHostJourney and adminHostAllowance: carried Owner, Manager, Author, wildcard and imported three-host paths; Admin exact-host review allowance, immediate link recheck, reload, saved review source and campaign attribution reconciled with filtered native activity, with no approval, recipients or dispatch authority. | Remaining: flow blocked-host listing, activation, allowance and flow attribution; host-specific append-only retention and Activity-screen filter proof; the complete named-host approval-request payload; remaining MSG-006 safety-inspection proof. Existing campaign, wildcard, contact-link and three-imported-host evidence remains carried. FLOW-008 is unbuilt. Provider, device, account and cross-seed or Base prerequisites remain unproved; existing release and account prerequisites and CONT-013’s SPLIT and NEW-1 disposition and original fix-1 hold are unchanged. |
+ | `RESULT-007` | Click map, per-link clicks and clicker lists | target | partial | `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/reporting-journey.ts` | Campaign links show human totals, unique identified clickers, automated requests, a saved-revision click map, matching clicker CSV and exact saved ID cohorts. Gap: repeated positions with one destination share counts; legacy clicks without destination identity remain unassigned; erased click facts are removed rather than retained as anonymous link counts; campaign-wide unique rollups, flow reports and role masking are absent; very large saved cohorts require CSV. |
+ | `RESULT-008` | Recipients per outcome | target | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/recipient-method-journey.ts` · `tests/campaign-results/results.journeys.ts` · `tests/portability.spec.ts` | Message-bound link, one-click and signed SMS reply methods are retained with their first recorded time, shown in the recipient list and CSV and preserved as anonymous counts after erasure. Historical methods remain unknown. Flow messages and role masking remain absent; very large saved cohorts require CSV. |
+ | `SCALE-001` | Capacity for the first buyer | target | partial | `seed.json` · `src/core/features/audience/import-limits.ts` | acceptance not yet met: A generated installation of 250,000 contacts with a year of order and activity events passes the MOVE-012 move-in, an exact review count within 60 seconds, a complete hand-off to the provider edge at the declared rate with no duplicate (SEND-001), and a segment update within SEG-002's time, with wall time and peak memory recorded against seed.json → limits; the per-email size floor is proved under BUILD-012, and the intake floor under FORM-008. |
+diff --git a/tests/go-live/content-checks.journeys.ts b/tests/go-live/content-checks.journeys.ts
+index b0e99df..83dcb1d 100644
+--- a/tests/go-live/content-checks.journeys.ts
++++ b/tests/go-live/content-checks.journeys.ts
+@@ -13,7 +13,7 @@ import { openPage, reloadPage } from '../support/navigation';
+ 
+ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",async ({page}, info) => {
+   const commerce=sourceEdge();
+-  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
++  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:[...imageHosts,'admin-review.example.test']});
+   try {
+     const cookie = await site.open();
+     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
+diff --git a/tests/go-live/content-hosts.ts b/tests/go-live/content-hosts.ts
+index 0974ac7..b5cc7b7 100644
+--- a/tests/go-live/content-hosts.ts
++++ b/tests/go-live/content-hosts.ts
+@@ -13,8 +13,83 @@ export const hostNetwork = {
+   'https://shop.myshop.com/offer': {},
+   'https://myshop.com/offer': {},
+   'https://myshop.com.evil.example/offer': {},
++  'https://admin-review.example.test/offer': {},
+ };
+ 
++async function adminHostAllowance(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
++  const operatorId = 'synthetic-mango-167';
++  const admin = await site.open([operatorId, 'example.test'].join('@'), operatorId);
++  await json(await site.call(`/api/operators/${operatorId}/role`, {method:'PUT', cookie:owner, body:{role:'admin'}}), 200);
++  expect((await json(await site.call('/api/operator', {cookie:admin}), 200)).operator.role).toBe('admin');
++  const host = 'admin-review.example.test', destination = `https://${host}/offer`;
++  const readers = await site.rows("SELECT email FROM contacts WHERE display_name='Garden reader'");
++  expect(readers).toHaveLength(1);
++  const campaign = await draftCampaign(site, admin, 'Synthetic Mango Admin review', [readers[0].email], new Date(now + 7200000));
++  const path = `/api/campaigns/${campaign.campaignId}`;
++  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`, {method:'PATCH', cookie:admin,
++    body:{emailBody:`<p><a href="${destination}">Admin partner offer</a></p>`}}), 200);
++  const before = await json(await site.call(`${path}/review`, {cookie:admin}), 200);
++  expect(before.blockedHosts).toContainEqual({host, links:[destination]});
++  expect((await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200)).hosts).not.toContain(host);
++  const noAuthority = async () => {
++    expect(await site.rows(`SELECT state,active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`))
++      .toEqual([{state:'draft', active_revision_id:campaign.revisionId}]);
++    expect(await site.rows(`SELECT state,approved_at,approved_by_operator_id FROM campaign_revisions WHERE id='${campaign.revisionId}'`))
++      .toEqual([{state:'draft', approved_at:null, approved_by_operator_id:null}]);
++    expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
++    expect(await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
++    expect(await site.rows(`SELECT * FROM step_dispatches WHERE revision_id='${campaign.revisionId}'`)).toEqual([]);
++    expect((await site.control('/_golive/emissions')).filter((entry:any) =>
++      entry.command.kind === 'campaign.dispatch' && entry.command.payload.revisionId === campaign.revisionId)).toEqual([]);
++  };
++  await noAuthority();
++  await page.context().clearCookies();
++  await page.context().addCookies([{name:admin.split('=')[0], value:admin.split('=')[1], url:site.runtime.url}]);
++  await page.setViewportSize({width:1440, height:1000});
++  await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
++  const blocked = page.getByRole('region', {name:`Blocked host ${host}`, exact:true});
++  await expect(blocked).toContainText('Admin partner offer');
++  await expect(blocked.getByLabel(`Host entry for ${host}`)).toHaveValue(host);
++  await expect(blocked.getByRole('button', {name:'Allow this host', exact:true})).toBeVisible();
++  // Capture the same saved review on both screens; the behavioural journey runs at desktop width.
++  for (const width of [1440, 390]) {
++    await page.setViewportSize({width, height:1000});
++    await blocked.screenshot({path:info.outputPath(`admin-blocked-host-${width}.png`)});
++  }
++  await page.setViewportSize({width:1440, height:1000});
++  const allowanceResponse = page.waitForResponse(response => response.url().endsWith(`${path}/link-hosts`) && response.request().method() === 'POST');
++  await blocked.getByRole('button', {name:'Allow this host', exact:true}).click();
++  const response = await allowanceResponse;
++  expect(response.status()).toBe(200);
++  expect(response.request().postDataJSON()).toEqual({host});
++  const allowance = await response.json();
++  expect(allowance.host).toBe(host);
++  expect(allowance.review.kind).toBe('preview');
++  expect(allowance.review.checks.find((check:any) => check.kind === 'message.links')).toMatchObject({blocking:false});
++  expect(allowance.review.checks.find((check:any) => check.kind === 'message.links.resolved')).toMatchObject({blocking:false});
++  await expect(blocked).toHaveCount(0);
++  await reloadPage(page);
++  await expect(blocked).toHaveCount(0);
++  const reloaded = await json(await site.call(`${path}/review`, {cookie:admin}), 200);
++  expect(reloaded.blockedHosts).not.toContainEqual(expect.objectContaining({host}));
++  expect(reloaded.checks.find((check:any) => check.kind === 'message.links.resolved')).toMatchObject({blocking:false});
++  const settings = await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200);
++  expect(settings.hosts).toContain(host);
++  expect(settings.hosts).not.toContain('*.example.test');
++  expect(settings.sources.filter((source:any) => source.host === host && source.source === 'allowed in review'))
++    .toEqual([expect.objectContaining({host, source:'allowed in review', campaignId:campaign.campaignId, operatorId})]);
++  const activity = await json(await site.call(`/api/activity?operator=${operatorId}&action=link-host.allowed&object=${campaign.campaignId}`, {cookie:admin}), 200);
++  expect(activity.entries).toEqual([expect.objectContaining({operatorId, objectId:campaign.campaignId,
++    action:'link-host.allowed', detail:{host, source:'allowed in review', campaignId:campaign.campaignId, operatorId}})]);
++  const [record] = await site.rows(`SELECT actor_id,entity_id,detail_json FROM lifecycle_audit_entries WHERE id='${activity.entries[0].id}'`);
++  expect(record).toEqual({actor_id:operatorId, entity_id:campaign.campaignId, detail_json:JSON.stringify(activity.entries[0].detail)});
++  await noAuthority();
++  for (const width of [1440, 390]) {
++    await page.setViewportSize({width, height:1000});
++    await page.screenshot({path:info.outputPath(`admin-allowed-host-${width}.png`), fullPage:true});
++  }
++}
++
+ export async function blockedHostJourney(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
+   const initial=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);
+   expect(initial.sources).toContainEqual(expect.objectContaining({host:'mango.example.test',source:'Deployment host'}));
+@@ -84,6 +159,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
+     await expect(page.locator('[aria-label="Blocked link hosts"]')).toHaveCount(0);
+     await page.screenshot({path:info.outputPath(`allowed-host-approved-${width}.png`),fullPage:true});
+   }
++  await adminHostAllowance(site, owner, page, info, now);
+   // Exact entries do not authorize subdomains. An explicit wildcard does, without matching a deceptive suffix or its bare domain.
+   const domains = await draftCampaign(site,author,'Shop domain review',['garden-reader@example.test'],new Date(now+7200000));
+   const domainBody = async (destination:string) => json(await site.call(`/api/campaign-revisions/${domains.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:`<p><a href="${destination}">Browse seedlings</a></p>`}}),200);

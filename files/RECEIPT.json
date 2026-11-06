@@ -1,0 +1,113 @@
+{
+  "branch": "cloud/sd-mango-c-f67",
+  "build": {
+    "command": "cloud_run npx -y @runeditrun/rer build",
+    "exit": 0,
+    "scope": "production bytes unchanged from baseline"
+  },
+  "candidate_test_blobs_verified": true,
+  "carried_local_diagnostics": [
+    "LOCAL-FIRST-ASSERTION.log",
+    "LOCAL-INITIAL-PASS.log",
+    "LOCAL-EVIDENCE-PATH-CHECK.log"
+  ],
+  "changed_production_files": [],
+  "ci_api_calls_so_far": 6,
+  "custody": "READY under explicit generated-view freshness exception; product pushed, landing and publication scan pending Mac lander",
+  "dependency_pin_unchanged": "@runeditrun/rer 0.2.85",
+  "first_party": {
+    "command": "node node_modules/@runeditrun/rer/bin/rer.mjs check --profile first-party",
+    "exit": 0
+  },
+  "head": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+  "mechanical": {
+    "ledger": "none, no migration changed",
+    "ledger_exit": 0,
+    "lock_check_command": "node scripts/edition-authoring/cli.mjs check",
+    "lock_check_exit": 0,
+    "lock_command": "node scripts/edition-authoring/cli.mjs lock",
+    "lock_exit": 0,
+    "lock_summary": {
+      "edition": "just-every/mango",
+      "manifest": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
+      "ok": true,
+      "parent": null,
+      "schemaVersion": 1
+    },
+    "views_check": "node src/base/contract-docs.mjs check",
+    "views_exit": 0,
+    "views_restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ],
+    "views_write": "node src/base/contract-docs.mjs write"
+  },
+  "pr": null,
+  "publication_scan": "Mac guarded lander required; cloud branch push does not claim publication scan or landing",
+  "repository": "just-every/run-mango",
+  "source_blobs": {
+    "tests/go-live/content-checks.journeys.ts": "83dcb1d5712739536c85fc5e498b03ecf0e1d4ac",
+    "tests/go-live/content-hosts.ts": "b5cc7b7c3f0d44c4dc0960737f2b25c1f4a0b411"
+  },
+  "status_counts_after": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "status_counts_before": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "target": {
+    "after": "partial",
+    "before": "partial",
+    "closed": "acceptance 2 Admin exact-host campaign review allowance proof",
+    "id": "MSG-015",
+    "remainder": "flow activation and attribution; host retention and Activity screen filters; complete named-host approval request; remaining safety inspection proof"
+  },
+  "test_registrations": {
+    "added": 0,
+    "focused_after": 1,
+    "focused_before": 1,
+    "removed": 0
+  },
+  "touched_journey": {
+    "assertion_width": 1440,
+    "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts",
+    "exit": 0,
+    "log": "JOURNEY.log",
+    "result": "1 passed (1.3m)",
+    "screens": [
+      1440,
+      390
+    ]
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "TYPECHECK.log"
+  },
+  "utc": "2026-11-06T02:34:48.025734+00:00",
+  "verify": {
+    "aggregate_job": 127674643524,
+    "classification": "permitted-generated-view-only-failure",
+    "command": "node src/base/contract-docs.mjs check",
+    "conclusion": "failure",
+    "error": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "event": "push",
+    "exit": 1,
+    "head_sha": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42151173941",
+    "id": 42151173941,
+    "primary_job": 127674559470,
+    "repair_attempts": 0,
+    "reruns": 0,
+    "shards": "skipped after build prerequisite failure",
+    "status": "completed"
+  },
+  "verify_discovered_status": "in_progress",
+  "verify_event": "push",
+  "verify_run_id": 42151173941,
+  "workflow_discovery": "CI-DISCOVERY.json"
+}

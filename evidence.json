@@ -1,0 +1,178 @@
+{
+  "files": [
+    {
+      "blob": "88f84fb4a0744fff7b4768e21aa78fbd74f1c7e1",
+      "bytes": 315,
+      "path": "BASELINE.json",
+      "sha256": "61fbc613cade09662fe51b0918339f17e938a8612b1fbd41719b79d2ec8142b7"
+    },
+    {
+      "blob": "068d3038d1566bd9752a247eb021411ece5d323e",
+      "bytes": 234,
+      "path": "CI-DISCOVERY.json",
+      "sha256": "3d844bfd4da591730f5fa1e692c7bcd8f0aa4f2ae1c09d0052a5f5e0edd69317"
+    },
+    {
+      "blob": "2b10077dc770b5e101c1fc12087608013ed0faf9",
+      "bytes": 832,
+      "path": "CI-FAILED-127674559470.log",
+      "sha256": "f7eebf3296ae2f2d7808a6a6d87e74543bca5cbc6a8d2b33aa8f586736571a4a"
+    },
+    {
+      "blob": "57d71faf2e9be4907bb04df4812b7e906560bf06",
+      "bytes": 1967,
+      "path": "CI-FAILED-127674643524.log",
+      "sha256": "e794f8f548662af37bd14e0b512c5b71134e1287dfb6c358c8287ac8c01f9974"
+    },
+    {
+      "blob": "44cf6fda6889ffd37c0d36f1614403746f6c43a0",
+      "bytes": 874,
+      "path": "CI-JOBS.json",
+      "sha256": "a28d3d1ce270053de3571a3e8eb658f7704168c7373851c4292f28f07291d99a"
+    },
+    {
+      "blob": "bba45a0ef0f8bb4c2fc7278cfd2e5329befa6c60",
+      "bytes": 235,
+      "path": "CI-STATUS.json",
+      "sha256": "7ec9933321ca2d544facbbf6616b507253ff9921e3134e38a7cda93f3892052e"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "FIRST-PARTY.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "8b397759c3490f5d34b737e6b013a75c1929a9a8",
+      "bytes": 170,
+      "path": "IDENTITY.txt",
+      "sha256": "c9f719ac04ee5a87f887bd38a32e08c08cd63abd5a2deb8c3e01856328b8b56d"
+    },
+    {
+      "blob": "f425bf7264bac1d900ecfcc2241f59e3ad12a350",
+      "bytes": 788,
+      "path": "JOURNEY.log",
+      "sha256": "496e63b052890fd9653c7fced84e139142d75a313f2f65d5770170fc28279b4a"
+    },
+    {
+      "blob": "3d343da91a397a9394a15d9780b100b3728ae373",
+      "bytes": 281,
+      "path": "LOCAL-EVIDENCE-PATH-CHECK.log",
+      "sha256": "ad9f12fbdf2e343e9d05b14f32cad407e082f2280a693e0c5c69030f32b25022"
+    },
+    {
+      "blob": "a36f0ee3dbf623ffb036dde4ad16bf9a174a6428",
+      "bytes": 2530,
+      "path": "LOCAL-FIRST-ASSERTION.log",
+      "sha256": "128f426f6575bddd64403abc3bb02f6c7e2bc87159f81dd753610d2df64f6c60"
+    },
+    {
+      "blob": "0d99623ede5e7968af48fd655137631d9a980ade",
+      "bytes": 788,
+      "path": "LOCAL-INITIAL-PASS.log",
+      "sha256": "ee57d388e4c7349a3159637325394b3747643e6feebcdb757fe1197621c18d5a"
+    },
+    {
+      "blob": "1f38f5238dc2384032de6cd60d30391dd2adf0c9",
+      "bytes": 472,
+      "path": "MECHANICAL.json",
+      "sha256": "ba8422419ba2e22242cb9ab512a20fa8019f69db6d57ad1073a90af9cbbc42b3"
+    },
+    {
+      "blob": "157ea27d7dfac90c4492d6ea1f64e9ae312cfc2a",
+      "bytes": 2983,
+      "path": "PLAN.md",
+      "sha256": "e9953724a64f366ff5be8a7ada73c2053afc21fde87aea795ad478150e893657"
+    },
+    {
+      "blob": "00fcd74ee7764f92e1de6024fe6941b6f6684d02",
+      "bytes": 15423,
+      "path": "PRODUCT-DIFF.patch",
+      "sha256": "1e9f1eb055fd4c7fdf64acbc31462b9197acc855fdcf58b39912f8b55f167ab0"
+    },
+    {
+      "blob": "31da9934609f46dbba2d9c64a97ae7791e6d8098",
+      "bytes": 707,
+      "path": "PUSH.log",
+      "sha256": "44ee39121565a09f598265c0d1f6177de22214a17de4278e10a2128504d6f3b3"
+    },
+    {
+      "blob": "529c8a4d6b2bf51017f83524a25c2c9e0f5a4f1b",
+      "bytes": 3824,
+      "path": "RECEIPT.json",
+      "sha256": "ec3516dda82658ea30161054fa45282e6c39076f6e1a191700393b2a0666c1f3"
+    },
+    {
+      "blob": "fb18b04bc59116e3e8032efe9508c83602276cba",
+      "bytes": 73,
+      "path": "REMOTE-HEAD.txt",
+      "sha256": "492f19849b45a21e2141637eab16bbcfd4cb70e2c4424508849dec1adf7de07f"
+    },
+    {
+      "blob": "e637f3619079049b604268fc787f3547c55030f8",
+      "bytes": 8094,
+      "path": "REPORT.md",
+      "sha256": "001a9c8e33024d52c246cb9d72339af9a3a4370de7bf2e7ca1daafa084c6547b"
+    },
+    {
+      "blob": "1d5730a62506e0aa5be8351a6c84e26b6dcbf389",
+      "bytes": 3563,
+      "path": "RIDERS.md",
+      "sha256": "799fa57b8107b8a8256a6a893d69dce88430f0a9131077dfe9eb4c31c00418cc"
+    },
+    {
+      "blob": "e858dee5450ab40f9a0f6d93f881362c6f3f249b",
+      "bytes": 385,
+      "path": "STATUS-ROWS.json",
+      "sha256": "804b2c7cfe308e457d1c00ea342b2585db7cfe206e6ef93b3f134f5bf419536d"
+    },
+    {
+      "blob": "aad7238df5ff72c75d034e25a91c177dfd7bbbe6",
+      "bytes": 207,
+      "path": "TYPECHECK.log",
+      "sha256": "f786e79cd621a07eb8c5fd17ce04de217adba2d230b66c2f4ec307b4c04d31b4"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "VIEWS-CHECK.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "d4d1e60ea7fdc565c576421664992b40e47a816e",
+      "bytes": 28,
+      "path": "VIEWS-WRITE.log",
+      "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+    },
+    {
+      "blob": "0db0f46c3792e56e77dfc6008bce7317d4b54c56",
+      "bytes": 548318,
+      "path": "admin-allowed-host-1440.png",
+      "sha256": "8d2a2613f6b9dbc7e39f06dc339f0746063754af83cf3c8e7ca73c2a6f02c2cf"
+    },
+    {
+      "blob": "c2791d5624d45ceb855a44d06015cbdeef0f4f82",
+      "bytes": 496364,
+      "path": "admin-allowed-host-390.png",
+      "sha256": "b337c7c0f792dca386f0f0917451a9bf8cc2684c1fcfb29c4f577c59f4318abc"
+    },
+    {
+      "blob": "105d31245a7c466ab9a2220621716f0be7faca76",
+      "bytes": 24239,
+      "path": "admin-blocked-host-1440.png",
+      "sha256": "07bfc804a1766f5be4f41099a7b8281dd6bbf6c3da683616ba0d84e59cfae64c"
+    },
+    {
+      "blob": "d149a00f93c7bccf5fd58816a5326b831e0d9f13",
+      "bytes": 23074,
+      "path": "admin-blocked-host-390.png",
+      "sha256": "6b3cb4d5b7e01850cb733b87e8a92b661ceebff144fd13da028a9be7abd1a066"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f67",
+  "product_head": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+  "ref": "refs/heads/evidence/sd-mango-c-f67",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f67"
+}

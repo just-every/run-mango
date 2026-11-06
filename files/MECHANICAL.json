@@ -1,0 +1,12 @@
+{
+  "command": "node scripts/edition-authoring/cli.mjs check",
+  "edition": "just-every/mango",
+  "exit": 0,
+  "head": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+  "ledger": "none",
+  "manifest": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
+  "ok": true,
+  "source_lock_sha256": "ad270c148bb880dcda8b823e32eafe74632b520084743ff6493158bdb50e198a",
+  "views_check": "Contract documents are current.",
+  "views_write": "Wrote 1 contract documents."
+}

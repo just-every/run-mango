@@ -1,0 +1,18 @@
+[
+  {
+    "head": "a1bb0f0fdb93e77c61a285aedfe99773569f123c",
+    "status_rows": 316,
+    "parents_checked": [
+      "6f4641c1e4f0500d4240e1b28b26f9237cb6a65f"
+    ],
+    "retained": true
+  },
+  {
+    "head": "6f4641c1e4f0500d4240e1b28b26f9237cb6a65f",
+    "status_rows": 316,
+    "parents_checked": [
+      "cc6321c2372d631d9607df9af8ad1dd9f7878e84"
+    ],
+    "retained": true
+  }
+]
