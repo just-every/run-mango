@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+(node:6950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: start native HTTP installation
+(node:6950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: claim owner
+Operator access: confirm teammate
+Operator access: cancel pending invitation
+Operator access: confirm while removal is pending
+Operator access: revoke active sessions
+Flow proof 1440: open
+Flow proof 1440: build
+Flow proof 1440: connect
+Flow proof 1440: saved, inspect reload
+  ✘  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (49.7s)
+
+
+  1) tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+     Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md
+
+       at paid-tier-journey.ts:150
+
+      148 |     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
+      149 |     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    > 150 |     expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
+          |             ^
+      151 |     await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-unconfirmed-${width}.png`)});
+      152 |   }
+      153 |   edge.stripe.subscriptions.sub_paid = currentSubscription;
+        at AxeBuilder.analyze (/workspace/run-mango/node_modules/.pnpm/@axe-core+playwright@4.13.0_playwright-core@1.64.1/node_modules/@axe-core/playwright/dist/index.mjs:218:13)
+        at paidTierJourney (/workspace/run-mango/tests/go-live/paid-tier-journey.ts:150:13)
+        at stripeJourney (/workspace/run-mango/tests/go-live/stripe-journey.ts:86:3)
+        at /workspace/run-mango/tests/go-live/roles.journeys.ts:31:5
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f77/evidence/7f523b30a6bf/go-live/roles.journeys.ts--BASE-AC-13077-thors-approvers-and-history/error-context.md
+
+  1 failed
+    tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 

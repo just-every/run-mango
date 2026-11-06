@@ -1,0 +1,13 @@
+{
+  "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "headAfter": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "command": "timeout 1200 pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/design-generation.spec.ts --workers=1 --reporter=list,json",
+  "exit": 0,
+  "durationSeconds": 160,
+  "files": {
+    "src/core/app/app.ts": "0358b726d00353adf7a459077fbe3abfd3f9d5bfeae98c2a4e6cd117cb57a442",
+    "tests/campaign-authoring/design-generation.flow.ts": "37506f989f3c29c71fc623ad0c3f8972a98656d9da54cadb04f6cf70752a572b",
+    "tests/campaign-authoring/design-generation.spec.ts": "6963714d9ca57fdfbd853aece62275537b9d840e78060465f9ca4faec0a486be"
+  },
+  "worktree": []
+}

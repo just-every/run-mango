@@ -1,0 +1,20 @@
+
+Running 1 test using 1 worker
+
+(node:9836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: start native HTTP installation
+(node:9836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: claim owner
+Operator access: confirm teammate
+Operator access: cancel pending invitation
+Operator access: confirm while removal is pending
+Operator access: revoke active sessions
+Flow proof 1440: open
+Flow proof 1440: build
+Flow proof 1440: connect
+Flow proof 1440: saved, inspect reload
+  ✓  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (1.3m)
+
+  1 passed (1.3m)

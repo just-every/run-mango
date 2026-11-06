@@ -1,0 +1,17 @@
+{
+  "parentStatusRows": 316,
+  "stagedStatusRows": 316,
+  "missing": [],
+  "parentPipeRows": 490,
+  "stagedPipeRows": 490,
+  "before": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "after": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  }
+}

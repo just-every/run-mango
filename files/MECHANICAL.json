@@ -1,0 +1,61 @@
+{
+  "steps": [
+    {
+      "name": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.113
+    },
+    {
+      "name": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.136
+    },
+    {
+      "name": "views-restore",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.011
+    },
+    {
+      "name": "lock-write",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.301
+    },
+    {
+      "name": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.363
+    }
+  ],
+  "migrationLedger": "not applicable; no migration changed",
+  "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "afterFinalRebase": true,
+  "worktreeClean": true
+}

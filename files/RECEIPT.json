@@ -1,0 +1,68 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f77",
+  "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "base": "980b25d4b34d19493662d2662ba8f5123c194aef",
+  "checks": [
+    {
+      "name": "registered generation journey",
+      "exit": 0,
+      "receipt": "GENERATION-RECEIPT.json"
+    },
+    {
+      "name": "typecheck on committed candidate",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "TYPECHECK.log"
+    },
+    {
+      "name": "first-party command contract on committed candidate",
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "FIRST-PARTY.log"
+    },
+    {
+      "name": "existing roles journey on candidate source bytes",
+      "exit": 0,
+      "log": "ROLES-RETRY.log"
+    },
+    {
+      "name": "same roles journey on main",
+      "exit": 0,
+      "head": "980b25d4b34d19493662d2662ba8f5123c194aef",
+      "log": "ROLES-MAIN.log"
+    }
+  ],
+  "initialRolesFailure": {
+    "exit": 1,
+    "log": "ROLES-INITIAL.log",
+    "failure": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+    "location": "tests/go-live/paid-tier-journey.ts:150",
+    "repair": "none; unchanged retry and main comparison passed"
+  },
+  "mechanical": "MECHANICAL.json",
+  "artifactCustody": "CUSTODY.json",
+  "identity": "IDENTITY.json",
+  "rowPreservation": "ROWS.json",
+  "push": "PUSH.log",
+  "node": "24.19.0",
+  "pnpm": "10.12.4",
+  "pr": null,
+  "publicationScan": "Mac lander; not run in cloud",
+  "runSite": "not run for candidate; main-only landing duty",
+  "ci": {
+    "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+    "runId": 42173265772,
+    "event": "push",
+    "conclusion": "failure",
+    "classification": "permitted generated-view-only failure with dependent coverage failure; no product-test failure",
+    "buildJobId": 127745841669,
+    "dependentVerifyJobId": 127745911657,
+    "shards": "skipped",
+    "githubApiCalls": 3,
+    "discoveryAndInspectionSpacing": "at least 300 seconds",
+    "reruns": 0,
+    "dispatches": 0,
+    "permittedReady": true
+  }
+}
