@@ -1,0 +1,9 @@
+# sd-mango-c-f87 plan
+
+Scope: DESIGN-011 acceptance 4 retained candidate PNG and LayerDoc session custody. Preserve the requested base at 8c09d1f38d21e0df6fb2d81bf2b3896b9309f625 and all other writers' changes. No visual changes, provider purchases, exported authoring evidence, other clauses or generated view commits.
+
+1. Read the clause, inherited session duty, existing registered journey and provider-edge fixture. The base already exercises independently supplied PNG and LayerDoc bytes, missing-session 401 responses, Author success, reload and unchanged records, spend, provider requests and campaign authority.
+2. Close the remaining session-cache gap: candidate PNG responses must not remain reusable from a fresh browser cache after native sign-out. Extend the same registered journey with native sign-out, replay of its synthetic revoked credential, ordinary browser reads after sign-out, fresh Author sign-in, exact byte comparisons and unchanged domain authority. Add no registration and remove no assertions.
+3. Run the focused registered design-generation spec at 1440, retain its existing 1440 and 390 screen captures, then typecheck and first-party check. Keep real-provider qualification and every omitted acceptance outcome named in the existing Gap; DESIGN-011 remains PARTIAL.
+4. Regenerate contract views and check them, restore both generated views from updated main, regenerate the source lock last and check it. Check parent Status rows and identity, commit and immediately push the named branch using the guard. Before the final candidate, integrate main without rewriting any published commit and rerun checks if relevant bytes change.
+5. Discover exact-head Verify with REST within the ten-call budget and observe it at most once per 300 seconds. Publish full non-secret reports and actual receipts on the separate evidence ref. Leave main landing and publication scanning to the fleet; never claim those gates locally.

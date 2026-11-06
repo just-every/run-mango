@@ -1,0 +1,117 @@
+{
+  "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "branch": "cloud/sd-mango-c-f87",
+  "clause": "DESIGN-011",
+  "before": "partial",
+  "after": "partial",
+  "counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "focused_stats": {
+    "startTime": "2026-11-06T08:05:25.596Z",
+    "duration": 399217.544,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "proof_receipts": [
+    "focused",
+    "typecheck",
+    "first-party",
+    "lock-check"
+  ],
+  "artifact_reads": 9,
+  "revoked_reads": 3,
+  "browser_denied_reads": 3,
+  "mechanical": {
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "lock": {
+      "write": "node scripts/edition-authoring/cli.mjs lock",
+      "write_exit": 0,
+      "check": "node scripts/edition-authoring/cli.mjs check",
+      "check_exit": 0
+    },
+    "views": {
+      "write": "node src/base/contract-docs.mjs write",
+      "write_exit": 0,
+      "check": "node src/base/contract-docs.mjs check",
+      "check_exit": 0,
+      "contract_sha256": "e2add510f6448905bfb591b7d29cc532b982b654f2a7ce99bbbf12a30ac04405",
+      "restored_from": "origin/main",
+      "committed_generated_edits": false
+    },
+    "ledger": {
+      "command": null,
+      "reason": "No migration changed",
+      "exit": 0
+    }
+  },
+  "ci": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42186099177",
+      "id": 42186099177,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "ci_assessment": {
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "run_id": 42186099177,
+    "observed_conclusion": "failure",
+    "root_cause_command": "node src/base/contract-docs.mjs check",
+    "root_cause_exit": 1,
+    "root_cause": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "classification": "Expected generated-view freshness exception; no product assertion failed. Final verify job cascades from build failure; journey shards were skipped.",
+    "logs": [
+      {
+        "run_id": 42186099177,
+        "job_id": 127786740732,
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "42186099177",
+          "--repo",
+          "just-every/run-mango",
+          "--job",
+          "127786740732",
+          "--log-failed"
+        ],
+        "archive_command_exit": 0,
+        "diagnostics": [
+          "Build and public command checks\tCheck generated contract documents\t2026-11-06T08:13:27.9999312Z ACCEPTANCE.md: generated content differs; run contract-docs write.",
+          "Build and public command checks\tCheck generated contract documents\t2026-11-06T08:13:28.0070823Z ##[error]Process completed with exit code 1."
+        ],
+        "environment_listing_included": false
+      },
+      {
+        "run_id": 42186099177,
+        "job_id": 127786826694,
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "42186099177",
+          "--repo",
+          "just-every/run-mango",
+          "--job",
+          "127786826694",
+          "--log-failed"
+        ],
+        "archive_command_exit": 0,
+        "diagnostics": [
+          "verify\tRequire the selected coverage and its proof\t2026-11-06T08:13:33.7030929Z ##[error]Process completed with exit code 1."
+        ],
+        "environment_listing_included": false
+      }
+    ],
+    "ready_under_provided_exception": true,
+    "normal_green_verify_claimed": false
+  }
+}

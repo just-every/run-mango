@@ -1,0 +1,24 @@
+{
+  "name": "focused",
+  "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "command": [
+    "perl",
+    "-e",
+    "alarm 1200; exec @ARGV",
+    "--",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/campaign-authoring/design-generation.spec.ts",
+    "--workers=1",
+    "--reporter=list,json"
+  ],
+  "exit": 0,
+  "started": "2026-11-06T08:05:23.702913+00:00",
+  "ended": "2026-11-06T08:12:04.910863+00:00",
+  "log": "focused.log",
+  "log_sha256": "5677d8f644e92c2d3b7af9d588091761179b94a2e1ac80b31d810275f032e88a"
+}

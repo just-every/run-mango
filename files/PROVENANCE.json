@@ -1,0 +1,26 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f87",
+  "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "remote_head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "observed_at": "2026-11-06T08:14:24.129608+00:00",
+  "main_integrated": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "requested_base": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "product_checkout_clean": true,
+  "candidate_commits": [
+    "d811eaa5cc62066c2d711de34f6d3b434a3dd74d Prove retained design custody across native sign-out",
+    "f8dde56aff55d0c13165fc6a853459994e22ce7b Fence retained design access after native sign-out [skip ci]",
+    "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625 Capture retained design custody at both landing widths",
+    "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5 Merge main while preserving retained design custody [skip ci]",
+    "9530fde8c8eaf079046b8157c0a57bf9e00946b6 Preserve private retained design artifact bytes"
+  ],
+  "source_hashes": {
+    "CONTRACT.md": "e2add510f6448905bfb591b7d29cc532b982b654f2a7ce99bbbf12a30ac04405",
+    "sources.lock.json": "6b233ba7a4e9f1103ab376b80669a4090a2d46b5e1d7c65e1937d5abbf8e6166",
+    "src/core/app/app.ts": "0358b726d00353adf7a459077fbe3abfd3f9d5bfeae98c2a4e6cd117cb57a442",
+    "src/core/features/design-generation/routes.ts": "64a8bdabdd5f699f238f1d2c19e95377b9211336fbf6e430dfa9f156f108823b",
+    "tests/campaign-authoring/design-generation.flow.ts": "e96597451b1516b63b525885e9afb1b9f6557a6a82e935f6643f70e40c28ac0c",
+    "tests/campaign-authoring/design-generation.spec.ts": "4a967d68f5221a4a6e7d3d404b9a379a1837d7a83ad275bb2b209fc7a65385c2",
+    "tests/campaign-authoring/worker.ts": "f675c52ac47cd3f515f77647ea20e5828b4e9c85185c88d7ceae4176fda9b60f"
+  }
+}

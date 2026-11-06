@@ -1,0 +1,66 @@
+{
+  "calls": 5,
+  "limit": 10,
+  "poll_retries": 0,
+  "failed_job_log_reads": 2,
+  "entries": [
+    {
+      "number": 1,
+      "at": 1793951601.602448,
+      "args": [
+        "api",
+        "repos/just-every/run-mango/actions/runs?head_sha=5f740dc8cd6624d68df11cd55e56e317e5f6bc96&per_page=100",
+        "--jq",
+        "[.workflow_runs[]|{id,name,status,conclusion,head_sha,event,html_url}]"
+      ]
+    },
+    {
+      "number": 2,
+      "at": 1793952864.2410505,
+      "args": [
+        "api",
+        "repos/just-every/run-mango/actions/runs?head_sha=d811eaa5cc62066c2d711de34f6d3b434a3dd74d&per_page=100",
+        "--jq",
+        "[.workflow_runs[]|{id,name,status,conclusion,head_sha,event,html_url}]"
+      ]
+    },
+    {
+      "number": 3,
+      "at": 1793952872.888953,
+      "args": [
+        "api",
+        "repos/just-every/run-mango/actions/runs/42186099177/jobs",
+        "--jq",
+        "[.jobs[]|{id,name,status,conclusion,steps:[.steps[]|select(.conclusion==\"failure\")|{name,number,conclusion}]}]"
+      ]
+    },
+    {
+      "number": 4,
+      "at": 1793952886.1042242,
+      "args": [
+        "run",
+        "view",
+        "42186099177",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127786826694",
+        "--log-failed"
+      ]
+    },
+    {
+      "number": 5,
+      "at": 1793952886.124882,
+      "args": [
+        "run",
+        "view",
+        "42186099177",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127786740732",
+        "--log-failed"
+      ]
+    }
+  ]
+}

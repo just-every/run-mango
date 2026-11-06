@@ -1,0 +1,14 @@
+{
+  "name": "lock-check",
+  "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "command": [
+    "node",
+    "scripts/edition-authoring/cli.mjs",
+    "check"
+  ],
+  "exit": 0,
+  "started": "2026-11-06T08:06:33.208723+00:00",
+  "ended": "2026-11-06T08:06:33.898951+00:00",
+  "log": "lock-check.log",
+  "log_sha256": "8f1035a71f548e4d05813bb601919651601c2d6429fbc4aa5e624fc3ea2e6a33"
+}

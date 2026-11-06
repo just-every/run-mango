@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+(node:2658) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged
+  ✘  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact (6.5m)
+
+
+  1) tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+       at campaign-authoring/design-generation.flow.ts:431
+
+      429 |     // retained bytes; revoking a session must not remove the purchased artifacts.
+      430 |     const reopened = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
+    > 431 |     expect(reopened.status()).toBe(200);
+          |                               ^
+      432 |     await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await reopened.json()).token, url: runtime.url }]);
+      433 |     expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator).toMatchObject({ id: operator.id, role: 'author' });
+      434 |     await readArtifacts('fresh-session');
+        at walk2 (/home/agent/rer-consolidation/work/sd-mango-c-f87/run-mango/tests/campaign-authoring/design-generation.flow.ts:431:31)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f87/run-mango/tests/campaign-authoring/design-generation.spec.ts:10:10
+
+    Error Context: ../evidence/ce95e918264d/main/campaign-authoring-design--d94f2-acts-private-and-byte-exact/error-context.md
+
+  Slow test file: tests/campaign-authoring/design-generation.spec.ts (6.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact 
