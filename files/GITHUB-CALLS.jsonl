@@ -1,0 +1,5 @@
+{"utc": "2026-11-06T09:48:27.598823+00:00", "args": ["api", "repos/just-every/run-mango/actions/runs?head_sha=769764d93200000000000000000000000000000000&per_page=100", "--jq", ".workflow_runs[]|{id,name,status,conclusion,head_sha,event,html_url}"]}
+{"utc": "2026-11-06T09:49:00.160451+00:00", "args": ["api", "repos/just-every/run-mango/actions/runs?head_sha=769764d2246aaa4acd548d181e1ae0e610d91c46&per_page=100", "--jq", "{total_count,workflow_runs:[.workflow_runs[]|{id,name,status,conclusion,head_sha,event,html_url}]}"]}
+{"utc": "2026-11-06T09:49:24.856393+00:00", "args": ["api", "repos/just-every/run-mango/actions/runs/42197800956/jobs", "--jq", "{jobs:[.jobs[]|{id,name,status,conclusion,steps:[.steps[]|select(.conclusion==\"failure\")|{name,number,status,conclusion}]}]}"]}
+{"utc": "2026-11-06T09:49:45.249719+00:00", "args": ["run", "view", "42197800956", "--repo", "just-every/run-mango", "--job", "127825379607", "--log-failed"]}
+{"utc": "2026-11-06T09:49:47.336893+00:00", "args": ["run", "view", "42197800956", "--repo", "just-every/run-mango", "--job", "127825474018", "--log-failed"]}

@@ -1,0 +1,1 @@
+{"total_count":1,"workflow_runs":[{"conclusion":"failure","event":"push","head_sha":"769764d2246aaa4acd548d181e1ae0e610d91c46","html_url":"https://github.com/just-every/run-mango/actions/runs/42197800956","id":42197800956,"name":"Verify","status":"completed"}]}

@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "cfe67d5fb388a0b125716534dfc5a40c23be29dc2c5c238a06e6a2401be7a520",
+      "bytes": 492839
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "e73d6116cd68d71489936877354b518bff8539346e3a1baf7274c1c5b7f53ff6",
+      "bytes": 411600
+    },
+    {
+      "path": "tests/go-live/presend-checks.flow.ts",
+      "sha256": "afa75d43b74cd5c7e1e71e21de58da3d0ba8946398be36beb70c1a5ea6292ed3",
+      "bytes": 19768
+    },
+    {
+      "path": "tests/go-live/presend-checks.journeys.ts",
+      "sha256": "5dec5141ea60b468225e63a9b132dc5e011db7373130d957282627cc8de3cb16",
+      "bytes": 416
+    }
+  ]
+}

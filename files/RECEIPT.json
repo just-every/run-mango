@@ -1,0 +1,194 @@
+{
+  "tag": "sd-mango-c-f98",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f98",
+  "head": "769764d2246aaa4acd548d181e1ae0e610d91c46",
+  "recorded_at": "2026-11-06T09:49:00.629123+00:00",
+  "base": "2b23d0d2f1745f771e34d320624ab69cfebb7bcf",
+  "merged_main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "clause": {
+    "id": "CAMP-003",
+    "before": "partial",
+    "after": "partial",
+    "closed": [
+      "selected acceptance 3 native generated mobile presentation",
+      "selected acceptance 3 refused saved body with warning and presentation removed"
+    ],
+    "held": [
+      "full acceptance 1 and 2 exact-revision mode, personalization and compliance-footer matrix",
+      "SMS opt-out matrix and owner registration",
+      "real mail client and provider qualification"
+    ]
+  },
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js presend-checks.journeys.ts --workers=1 --reporter=list",
+      "wrapper": "cloud_run perl -e alarm-1200",
+      "browser": "/usr/bin/chromium --no-sandbox",
+      "exit": 0,
+      "result": "1 passed (3.4m)",
+      "log": "JOURNEY.txt",
+      "assertion_width": 390,
+      "proof_widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "TYPECHECK.txt"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "VIEWS-WRITE.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "VIEWS-CHECK.txt"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "git diff --cached --check",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "at_head": "769764d2246aaa4acd548d181e1ae0e610d91c46",
+      "exit": 1,
+      "expected": true,
+      "log": "CANDIDATE-VIEWS-CHECK.txt",
+      "reason": "main views retained by instruction; local write and check previously passed"
+    }
+  ],
+  "mechanical": {
+    "generated_views": "restored whole from origin/main; zero candidate diff",
+    "migration_ledger": "not applicable; no migration added or edited",
+    "status_rows_in_each_parent": 316,
+    "status_rows_in_candidate": 316,
+    "table_lines_in_each_parent_and_candidate": 490,
+    "dropped_status_ids": [],
+    "source_lock_fresh_on_final_head": true
+  },
+  "tests": {
+    "registered_presend_tests_before": 1,
+    "registered_presend_tests_after": 1,
+    "new_registrations": 0,
+    "removed_assertions": 0,
+    "narrowed_assertions": 0,
+    "deleted_tests": 0
+  },
+  "identity": {
+    "candidate_commits_checked": 2,
+    "all_authors_and_committers": "fleet",
+    "trailers": [],
+    "push": "PUSH.txt"
+  },
+  "source_files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "cfe67d5fb388a0b125716534dfc5a40c23be29dc2c5c238a06e6a2401be7a520",
+      "bytes": 492839
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "e73d6116cd68d71489936877354b518bff8539346e3a1baf7274c1c5b7f53ff6",
+      "bytes": 411600
+    },
+    {
+      "path": "tests/go-live/presend-checks.flow.ts",
+      "sha256": "afa75d43b74cd5c7e1e71e21de58da3d0ba8946398be36beb70c1a5ea6292ed3",
+      "bytes": 19768
+    },
+    {
+      "path": "tests/go-live/presend-checks.journeys.ts",
+      "sha256": "5dec5141ea60b468225e63a9b132dc5e011db7373130d957282627cc8de3cb16",
+      "bytes": 416
+    }
+  ],
+  "ci_discovery": "CI-DISCOVERY.json",
+  "publication_scan": "deferred to maintained Mac lander; unavailable in this cloud",
+  "run_site": "main-only; not run by cloud",
+  "pr": null,
+  "note": "The final journey ran immediately before commit on identical relevant source and test bytes. Digests and committed bytes were compared after commit. An initial CI lookup used an incorrect head SHA and returned no runs; it is not evidence for this candidate.",
+  "ci": {
+    "run_id": 42197800956,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "769764d2246aaa4acd548d181e1ae0e610d91c46",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42197800956",
+    "failed_step": "Check generated contract documents",
+    "build_job": 127825379607,
+    "aggregate_job": 127825474018,
+    "shards": "skipped",
+    "classification": "permitted generated-view freshness exception; actual workflow conclusion remains failure"
+  },
+  "github_cli_invocations": 5,
+  "ci_failure_logs": "actual failed-step archive output with environment blocks omitted; raw originals retained outside selected packet",
+  "screenshots": [
+    {
+      "path": "saved-styles-mobile-1440.png",
+      "bytes": 144641,
+      "sha256": "17620d454104bfe9a181f56d98b25e671af8b29b4d9d285f50d8af1429ac4568"
+    },
+    {
+      "path": "saved-styles-mobile-390.png",
+      "bytes": 112986,
+      "sha256": "ec609546a1900fbfaed988b510dce381e5360b2dca2f0d3515198988f2cb5bce"
+    },
+    {
+      "path": "saved-styles-refused-1440.png",
+      "bytes": 142347,
+      "sha256": "96364287bf9a5839e8bf5d452e05dc215108b258cc13f70dbb09cb1c048da7a9"
+    },
+    {
+      "path": "saved-styles-refused-390.png",
+      "bytes": 111186,
+      "sha256": "77cbf66574e7c080683a01ac4e25074560c2d6bed7ecf42c9d5aa5839598cfe7"
+    },
+    {
+      "path": "saved-styles-refused-mobile-1440.png",
+      "bytes": 151275,
+      "sha256": "12bf7c2c77612233d7ccd5fb302cded4a99b9832c857fb33b13eefff3b0b3f3b"
+    },
+    {
+      "path": "saved-styles-refused-mobile-390.png",
+      "bytes": 126727,
+      "sha256": "ddb639d3649a88a035ff4060dd364afc5000ec405980b69bf4e13754149205b2"
+    },
+    {
+      "path": "saved-styles-valid-1440.png",
+      "bytes": 126580,
+      "sha256": "dd489474fd97c641af966cd8f83791bb426bf1096daedc43cd3f265537256694"
+    },
+    {
+      "path": "saved-styles-valid-390.png",
+      "bytes": 95103,
+      "sha256": "3f1b4cbbb54152c62c90f2a9abdd33a4b1c734cdbb829a20cefae0e5c1608cdd"
+    }
+  ]
+}
