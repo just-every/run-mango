@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "747286fc4d904dd8aa1fae974ea894f1925b82753289dca02e90bf68e081066d",
+      "sha256": "9c4bb8299d7835f752e0466e8a3537570f573f94bbf6f0c93d64895721026a8a",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7180d35eccef54bb7e5497989aea30e7e5b5c4b709c9afe09e36327bf21e6883",
+      "sha256": "b08ca1a1c761a4ebcb10e66d8c54eb2415f2dcb65564e383b0d4d958433245d7",
       "executable": false
     },
     "DEMO.md": {
@@ -1070,7 +1070,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "9944aaf26600931b7f5c9d357e41de65c8ee74b45bb10117304b02a433a7be96",
+      "sha256": "18d51300eb59438ec20a05ef64c90635c3877b50c7990c530718ca6f1e3c0c7a",
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
@@ -3826,7 +3826,7 @@
       "executable": false
     },
     "src/core/features/campaigns/authoring-content.ts": {
-      "sha256": "a470bfd555627c5574e3bc0a197d7a6b4a95b3bd18a101210d99b59540368022",
+      "sha256": "a5c31e91e7eb8787bc9aba3370ff640c39d6ff3bcb0db0468178b63278c4a508",
       "executable": false
     },
     "src/core/features/campaigns/authoring-rules.ts": {
@@ -4054,7 +4054,7 @@
       "executable": false
     },
     "src/core/features/campaigns/routes.ts": {
-      "sha256": "ca20d882a52c692cc591c85f58879a7780521f17f62834af01ac86337fb19d5b",
+      "sha256": "734ddc4adc954667db548c0276ad2a5ae5ba0af92a57ea226b6823a84e5c3b77",
       "executable": false
     },
     "src/core/features/campaigns/saved-email-size.ts": {
@@ -8473,8 +8473,12 @@
       "sha256": "de3c4836ad1b78fe34e41e9f746168d238f2833ce6f13618c0faa96213f2079e",
       "executable": false
     },
+    "tests/campaign-authoring/canonical-content-journey.ts": {
+      "sha256": "888ce6dbb56ed626426bdd50f4f6fd2b7d718531de9e1ac2f7500a6dae4378db",
+      "executable": false
+    },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "f1394e6f7382132c88805404746d708b1808e1b4435127a52b6f5b37689b20cc",
+      "sha256": "8854edc76efc83f3e0c1a23a6883ec51cadf2a162e56e833bbc6607ee42388a2",
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
@@ -9154,7 +9158,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce-edge.ts": {
-      "sha256": "980777414553f392eb0c4d43d1dc864ea296cb40d280506563355c8f80ccca07",
+      "sha256": "ecea572190a91816f6c7b762a51af3165abe31d46ce7370ac0071ced59c5ee97",
       "executable": false
     },
     "tests/go-live/woocommerce-plugin-journey.ts": {
@@ -9162,7 +9166,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "4f52e79737ee441ee5e146bb0a9788365d62ab269897456eb7f58d990df78192",
+      "sha256": "14575ef814ffa2e3cc4f693e24900abe0f8865c441f2ce901d088b878ff3c120",
       "executable": false
     },
     "tests/go-live/worker.ts": {
