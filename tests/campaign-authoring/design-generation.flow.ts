@@ -180,7 +180,7 @@ export const walk1 = async ({ page, request }, testInfo) => {
     expect(fake.requests.length).toBeGreaterThan(0);
   } finally { await runtime.close(); await fake.close(); }
 };
-export const walk2 = async ({ page, request }) => {
+export const walk2 = async ({ page, request }, testInfo) => {
   const candidateImages = { a: candidateImage, b: png(canvas.width, canvas.height, 27) };
   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: candidateImages, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
@@ -397,6 +397,12 @@ export const walk2 = async ({ page, request }) => {
       costCount: beforeArtifactReads.costs.length, purchaseCount: beforeArtifactReads.purchases.length, providerRequestCount: beforeArtifactReads.requests.length,
     }, null, 2) });
     console.log('PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged');
+
+    // Capture the same retained-design screen at both landing widths; assertions remain at 1440.
+    await page.screenshot({ path: testInfo.outputPath('design-provider-custody-1440.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: testInfo.outputPath('design-provider-custody-390.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
 
     await runtime.sql("DELETE FROM operator_product_roles WHERE operator_id = 'authoring-operator'");
     expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator.role).toBe(operator.role);
