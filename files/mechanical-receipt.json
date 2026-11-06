@@ -1,0 +1,75 @@
+{
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "at": "2026-11-06T16:14:32.763231+00:00",
+  "steps": [
+    {
+      "step": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "outputBytes": 28
+    },
+    {
+      "step": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "outputBytes": 32
+    },
+    {
+      "step": "restore-views",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "outputBytes": 0
+    },
+    {
+      "step": "lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "outputBytes": 412456
+    },
+    {
+      "step": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "outputBytes": 412470
+    },
+    {
+      "step": "first-party",
+      "command": [
+        "python3",
+        "/tmp/rer-reap.py",
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "outputBytes": 0
+    }
+  ],
+  "ledger": "No migration edited this round; existing 0104 is exercised by the native journey and its persistent-state restart. No separate migration-ledger check is declared in AGENTS.md."
+}

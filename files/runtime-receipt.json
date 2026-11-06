@@ -1,0 +1,24 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f129",
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js delivery.journeys.ts --grep \"an owner connects delivery\" --workers=1",
+  "exit": 0,
+  "result": "1 passed (4.4m)",
+  "test": "[MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation",
+  "node": "22.20.0",
+  "browser": "/usr/bin/chromium",
+  "widthForAssertions": 1440,
+  "browserProofWidths": [
+    1440,
+    390
+  ],
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0
+  },
+  "newTests": 0,
+  "removedOrWeakenedAssertions": 0,
+  "productEditsThisRound": 0,
+  "at": "2026-11-06T16:16:41.456681+00:00"
+}
