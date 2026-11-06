@@ -67,12 +67,17 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     expect((await site.call(ackPath(advisory),{method:'POST',body:ackBody(advisory)})).status).toBe(401);
     await json(await site.call(ackPath(advisory),{method:'POST',cookie,headers:{Origin:'https://foreign.example'},body:ackBody(advisory)}),403);
     await reloadPage(page);
+    const acknowledgingOperator = await json(await site.call('/api/operator',{cookie}),200);
+    expect(acknowledgingOperator.operator.id).toBe('go-live-owner');
     const startedAt = (await site.control('/_golive/clock',{advanceMs:60000})).now;
     const acknowledgementResponse = page.waitForResponse(response =>
       new URL(response.url()).pathname === ackPath(advisory) && response.request().method() === 'POST');
     await page.getByRole('button',{name:'Acknowledge advisory',exact:true}).click();
     const response = await acknowledgementResponse;
     expect(response.status()).toBe(200);
+    const originalRequest = response.request();
+    const originalAcknowledgement = originalRequest.postDataJSON();
+    expect(originalAcknowledgement).toEqual({revisionId:campaign.revisionId,findingIdentity:advisory.findingIdentity});
     const acknowledged = await response.json();
     const finishedAt = (await site.control('/_golive/clock')).now;
     expect(acknowledged).toMatchObject({status:'acknowledged',acknowledgement:{operatorId:'go-live-owner'}});
@@ -100,7 +105,7 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
       expect((await site.control('/_golive/emissions')).filter((item:any) => item.command.kind === 'campaign.dispatch')).toEqual([]);
       expect(edge.sends.filter(send => send.body.headers?.['List-Unsubscribe'])).toEqual([]);
     };
-    await retainedFinding();
+    const originalFinding = await retainedFinding();
     await noAuthority();
     await expect(page.locator('.approval-checks')).toContainText('Acknowledged by');
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
@@ -114,11 +119,14 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
     // Replay the exact original request as another operator before checks replace their transient row IDs.
-    expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    expect(await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
     await review();
     const refreshed = await retainedFinding();
+    expect(refreshed.id).not.toBe(originalFinding.id);
+    // Expired check row IDs cannot grant authority, even with the exact original payload.
+    await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),409);
     // Another authenticated operator cannot replace the original actor or time.
-    expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    expect(await json(await site.call(ackPath(refreshed),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
     await retainedFinding();
@@ -126,7 +134,10 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await noAuthority();
     await info.attach('msg-007-acknowledgement-retention',{contentType:'application/json',body:JSON.stringify({
       startedAt,finishedAt,replayAt,acknowledged,findingIdentity:advisory.findingIdentity,
-      refreshedFindingIdentity:refreshed.findingIdentity,replayOperatorId,audit:originalAudit,noAuthorityAsserted:true,
+      refreshedFindingIdentity:refreshed.findingIdentity,originalAcknowledgement,
+      originalCheckId:originalFinding.id,refreshedCheckId:refreshed.id,
+      acknowledgingOperatorId:acknowledgingOperator.operator.id,replayOperatorId,
+      staleCheckStatus:409,audit:originalAudit,noAuthorityAsserted:true,
     },null,2)});
     for (const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
