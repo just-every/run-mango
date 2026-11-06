@@ -1,0 +1,10 @@
+{
+  "command": "node scripts/edition-authoring/cli.mjs check",
+  "exit": 0,
+  "ok": true,
+  "edition": "just-every/mango",
+  "schemaVersion": 1,
+  "manifest": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "note": "Check only. No lock write, source update or source acceptance."
+}

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "verified_utc": "2026-11-06T02:23:15.128643+00:00",
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "source_branch": "cloud/sd-mango-c-f29",
+  "tracked_status": "clean",
+  "index_tree": "ccaa3e0bb34191b125bf34c7ab443c1830bb6cef",
+  "commit_tree": "ccaa3e0bb34191b125bf34c7ab443c1830bb6cef",
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "PRs_created": 0,
+  "new_CI_run_ids": [],
+  "supplied_existing_Verify_id": 42071111148,
+  "existing_Verify_polled": false,
+  "product_READY_claim": false,
+  "source_acceptance_changed": false,
+  "holds_changed": false,
+  "source_initial_hashes_unchanged": true,
+  "transport": "separate report-only evidence ref",
+  "cleanup": "Disposable clone/dependencies retained for evidence publication; remove after successful transfer."
+}

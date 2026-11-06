@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "started_utc": "2026-11-06T02:15:44.491382+00:00",
+  "command": "cloud_run env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<task>/proof WRANGLER_SEND_METRICS=false pnpm exec playwright test --config tests/go-live/playwright.config.js woocommerce.journeys.ts --workers=1 --reporter=list",
+  "attempt": 1,
+  "mutation_runs": 0,
+  "full_suite": false,
+  "exit": 0,
+  "completed_utc": "2026-11-06T02:16:44.295910+00:00"
+}

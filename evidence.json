@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "blob": "3dc05824c5c0936429ec5104c9312600b0ab000c",
+      "bytes": 2992,
+      "path": "PLAN.md",
+      "sha256": "7ae73d77b5d0f6857ffd819325211012022513a8c588b947dd2b7a35944903c9"
+    },
+    {
+      "blob": "1a2f11fdf36010ae669f7c524a04a6f4da3ccba3",
+      "bytes": 2457,
+      "path": "REPORT.md",
+      "sha256": "e852e79c4921dab156da5150f35e39ca175b0dd5ddfc774e7ce7259cbd88f769"
+    },
+    {
+      "blob": "3f291c241b604df35fe18e50e64dbf332b2056bc",
+      "bytes": 20693,
+      "path": "VERDICT.md",
+      "sha256": "25529c7f37b32ae60ccf2c3a3a5371c32bca21f067a6e124f79de14faccca8bd"
+    },
+    {
+      "blob": "24a831655184625a952cbc9e7acf989402d003d2",
+      "bytes": 1487,
+      "path": "browser-receipt.json",
+      "sha256": "6e83a62231f08f841baf45565e9dcc5907b84fbb18eff1fc8edd3789d08d5d85"
+    },
+    {
+      "blob": "bb80904353794c4fc7ebca4a51d800718cd7ef80",
+      "bytes": 1319277,
+      "path": "browser/woocommerce-settings-1440.png",
+      "sha256": "d63b8a61384b90414e1eeca66c711205017750e37d5eb414add25e708f44a905"
+    },
+    {
+      "blob": "2177ba7c4c2135a4e3c72831a82a0d301c8ba2f3",
+      "bytes": 3231,
+      "path": "browser/woocommerce-settings-390.png",
+      "sha256": "60ba1a644948d67d3eff7586f37d4d73c3e79b140e6f0241c64c0d58360a2594"
+    },
+    {
+      "blob": "784fe753115c1bd3726947f1a759c10cf598ab12",
+      "bytes": 178277,
+      "path": "browser/woocommerce-store-1440.png",
+      "sha256": "81f094829946b269a70814b4022b747c513cc34dbbdc1a4a7bec705fc2a32f8e"
+    },
+    {
+      "blob": "cf0bccc5c5366a83630ec6be8a3204ccf72aedba",
+      "bytes": 180340,
+      "path": "browser/woocommerce-store-390.png",
+      "sha256": "284b500abce243ba1978cc1bcb9bdd13c74515ef44a96fe8cdfb6c91442164da"
+    },
+    {
+      "blob": "c3964603da5a0941654a24161da832aa7e0b7acf",
+      "bytes": 4775,
+      "path": "commands-receipt.json",
+      "sha256": "10a78aebfb195fbe147a20a516a5275a8345c082272e80b493b1dc09a28efcf5"
+    },
+    {
+      "blob": "fba560db7c48416c914446f2a1e319a79104d105",
+      "bytes": 67,
+      "path": "contract-check.log",
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    },
+    {
+      "blob": "f118ce2dc1c6be3b7991b6066a07ede6fc93f080",
+      "bytes": 798,
+      "path": "contract-receipt.json",
+      "sha256": "8e8010fd27e0fc6647c488b1a65f58499eff4830b45130ac0879ac3ca7e1d319"
+    },
+    {
+      "blob": "ea2422d13203d9ffc85b3e3c6182bbfcba06c4d3",
+      "bytes": 738,
+      "path": "document-reading-receipt.json",
+      "sha256": "f93cbaded064d4d1890980fa9ca808418ee0865b91dddd405328c09c2e2771ac"
+    },
+    {
+      "blob": "42dc8c36d0339e62f04e304a512abf0f9f6ab61b",
+      "bytes": 518,
+      "path": "journey-receipt.json",
+      "sha256": "da9da141c1007f503b22824e82ca30c36ea181d5c5df5c777bcc568a83e1e55a"
+    },
+    {
+      "blob": "e7842cc2deec745213902b26a14cf5b4217817c4",
+      "bytes": 1795,
+      "path": "journey.log",
+      "sha256": "9da5d0424825c888d6e1170396d4f6da3b89b70d510b17c6210bab0990bc0619"
+    },
+    {
+      "blob": "f5e7a5fe919f7b92390da233813ab6590007860a",
+      "bytes": 365,
+      "path": "lock-check-receipt.json",
+      "sha256": "900afc42dfc8f5067d9ec85ebcc661cedc3aceaab93a98506d036a8de017a75f"
+    },
+    {
+      "blob": "0f68a9336a3d32f544e196913f2be6d1077f12ff",
+      "bytes": 743,
+      "path": "raw-source-receipt.json",
+      "sha256": "680fcfa4eb0e5a0f1b19ca43b0f3ab3c990668ec52b7bb55298a8cbad521d81d"
+    },
+    {
+      "blob": "d9c2b42d377798c3550aa32c85e43dd276dd1787",
+      "bytes": 882,
+      "path": "source-receipt.json",
+      "sha256": "686994a345fc25a3aa04ecd9f00a466e45383ed8f35b1938b57844fbc01ce202"
+    },
+    {
+      "blob": "8e75909167e13ca681a72aa6e3bbc7e1e1714c9a",
+      "bytes": 812,
+      "path": "terminal-product-receipt.json",
+      "sha256": "b0a9324a8606901738e685c7d3246ce69567611a1b3e5c6a662655036b98ef9a"
+    },
+    {
+      "blob": "c9eed3c496949f5e715162f1bea60ed14bec91e3",
+      "bytes": 232,
+      "path": "typecheck.log",
+      "sha256": "e241c09e5f7bfaeac78d82af23bc3519c10c52dbe9755e9447248bcb1724713e"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f29",
+  "product_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "ref": "refs/heads/evidence/ct-judge-mango-store002-20261105-1741-sol1",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "ct-judge-mango-store002-20261105-1741-sol1"
+}

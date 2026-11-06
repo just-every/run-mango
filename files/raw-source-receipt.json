@@ -1,0 +1,27 @@
+{
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "retrieved_utc": "2026-11-06T02:19:14.301962+00:00",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "http_status": 200,
+      "bytes": 487754,
+      "sha256": "24c84ddd2082e77fe17b63d5358bc0cfc8a37e2c6dea6dd2a03d6aa962a19486",
+      "matches_clone": true
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "http_status": 200,
+      "bytes": 441909,
+      "sha256": "7b81ed86667361e769122638d63a4066151a1a44ade8791cba538104b327715e",
+      "matches_clone": true
+    },
+    {
+      "path": "AGENTS.md",
+      "http_status": 200,
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "matches_clone": true
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "recorded_utc": "2026-11-06T02:21:53.884402+00:00",
+  "host_node": "24.19.0",
+  "pnpm": "10.12.4",
+  "declared_node": "22.20.0",
+  "note": "The required cloud toolchain retains the newer VM Node. Native application proof used the pinned repository dependencies and workerd, not a different source. Engine warning recorded, checks passed.",
+  "commands": [
+    {
+      "command": "git config --global user.name 'Run Edit Run fleet' && git config --global user.email fleet@runeditrun.com",
+      "exit": 0
+    },
+    {
+      "command": "bash /workspace/rer-cloud-launcher/refresh.sh; supplied decrypted-bundle Git setup",
+      "exit": 0
+    },
+    {
+      "command": "git clone --depth 1 --filter=blob:none --branch cloud/sd-mango-c-f29 https://github.com/just-every/run-mango.git <task>/source; local fleet Git identity",
+      "exit": 0
+    },
+    {
+      "command": "git rev-parse HEAD",
+      "exit": 0,
+      "result": "1bf7a8d6600a93b312693672a230c8a4ccf91c46"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "scope": "disposable local installation only; private setup output excluded"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "result": "Your application is built; build complete exit 0"
+    },
+    {
+      "command": "cloud_run env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<task>/proof WRANGLER_SEND_METRICS=false pnpm exec playwright test --config tests/go-live/playwright.config.js woocommerce.journeys.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "result": "1 passed (58.8s); test 55.7s",
+      "attempts": 1
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "result": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+      "classification": "supplied candidate generated-view exception; no generator write authorized"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "result": "ok=true"
+    },
+    {
+      "command": "Pinned raw.githubusercontent.com reads of CONTRACT.md, ACCEPTANCE.md, AGENTS.md; compare complete bytes to clone",
+      "exit": 0,
+      "result": "All HTTP 200 and byte-identical"
+    },
+    {
+      "command": "Full-byte parsing of CONTRACT.md and ACCEPTANCE.md, compare every requirement and AP and count all Status rows",
+      "exit": 0,
+      "result": "316 clauses in each; all requirements/APs equal; source counts 19/199/98; generated counts 18/200/98"
+    },
+    {
+      "command": "git status --porcelain=v1; git diff --exit-code; git diff --cached --exit-code",
+      "exit": 0,
+      "result": "clean tracked source and index"
+    }
+  ],
+  "not_run": [
+    {
+      "command": "Full suite, baseline and per-point tests",
+      "reason": "Explicit focused read-only original judgment scope; no full suite or baseline authorized."
+    },
+    {
+      "command": "Mutation runs",
+      "reason": "Explicitly prohibited. Historical stale-customer and stale-refund failures remain supplied evidence only."
+    },
+    {
+      "command": "Shopify journey execution",
+      "reason": "Read for retained source context, not relied on as new execution. The requested single WooCommerce journey covers every original STORE-002 outcome."
+    },
+    {
+      "command": "CI API discovery, polling, dispatch, rerun and failed-job archive retrieval",
+      "reason": "Original exact-source commission forbids polling or rerunning push Verify 42071111148. Zero gh calls used."
+    },
+    {
+      "command": "Generator write and source-lock regeneration",
+      "reason": "Product source is read-only. Check commands were run; the authorized lander owns final generation and source lock last."
+    },
+    {
+      "command": "Live WooCommerce, WordPress, SendGrid, Stripe or other provider calls",
+      "reason": "No live account or provider authority. Network edges are synthetic; live qualification is UNMET-EXTERNAL and remains with the connection clauses."
+    },
+    {
+      "command": "Full-history publication scan, main equality, exact-final Verify and exact-main Run site",
+      "reason": "Guarded lander duties; not authorized or accessible to this independent cloud judge. Shallow clone is not a full-history scan."
+    },
+    {
+      "command": "Product commit, push, PR, acceptance pin, hold mutation, admission, release or successor session",
+      "reason": "Explicit read-only commission. Evidence ref transport alone is authorized."
+    }
+  ],
+  "gh_calls": 0,
+  "new_CI_runs": []
+}

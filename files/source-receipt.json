@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-store002-20261105-1741-sol1",
+  "started_utc": "2026-11-06T02:13:09.873699+00:00",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "original_branch": "cloud/sd-mango-c-f29",
+  "product_read_only": true,
+  "files": {
+    "CONTRACT.md": "24c84ddd2082e77fe17b63d5358bc0cfc8a37e2c6dea6dd2a03d6aa962a19486",
+    "ACCEPTANCE.md": "7b81ed86667361e769122638d63a4066151a1a44ade8791cba538104b327715e",
+    "AGENTS.md": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+    "RULINGS.md": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+    "BASELINE.md": "fd937425932d01516ae3c9df672eb8273a6c30b90df453d02f3df1715010a206",
+    "tests/go-live/woocommerce.journeys.ts": "14575ef814ffa2e3cc4f693e24900abe0f8865c441f2ce901d088b878ff3c120"
+  }
+}

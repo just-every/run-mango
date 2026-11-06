@@ -1,0 +1,43 @@
+{
+  "source_head": "1bf7a8d6600a93b312693672a230c8a4ccf91c46",
+  "files": [
+    {
+      "file": "browser/woocommerce-settings-1440.png",
+      "bytes": 1319277,
+      "sha256": "d63b8a61384b90414e1eeca66c711205017750e37d5eb414add25e708f44a905",
+      "width": 1440,
+      "height": 12752,
+      "inspected": true,
+      "observation": "Functional screen visible; no UI design or visual-quality judgment assigned."
+    },
+    {
+      "file": "browser/woocommerce-store-1440.png",
+      "bytes": 178277,
+      "sha256": "81f094829946b269a70814b4022b747c513cc34dbbdc1a4a7bec705fc2a32f8e",
+      "width": 1440,
+      "height": 1543,
+      "inspected": true,
+      "observation": "Functional screen visible; no UI design or visual-quality judgment assigned."
+    },
+    {
+      "file": "browser/woocommerce-settings-390.png",
+      "bytes": 3231,
+      "sha256": "60ba1a644948d67d3eff7586f37d4d73c3e79b140e6f0241c64c0d58360a2594",
+      "width": 390,
+      "height": 1000,
+      "inspected": true,
+      "observation": "Blank capture; phone Settings rendering not established by this artifact."
+    },
+    {
+      "file": "browser/woocommerce-store-390.png",
+      "bytes": 180340,
+      "sha256": "284b500abce243ba1978cc1bcb9bdd13c74515ef44a96fe8cdfb6c91442164da",
+      "width": 390,
+      "height": 2670,
+      "inspected": true,
+      "observation": "Functional screen visible; no UI design or visual-quality judgment assigned."
+    }
+  ],
+  "recaptured": false,
+  "image_edits": false
+}

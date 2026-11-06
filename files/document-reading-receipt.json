@@ -1,0 +1,20 @@
+{
+  "method": "Full-file reading stream; exact duplicate lines across both files emitted once, with original file and line location. Complete originals are SHA256 identified. Nothing is inferred from a later source.",
+  "documents": [
+    {
+      "path": "CONTRACT.md",
+      "lines": 4376,
+      "new_nonempty_lines": 2725,
+      "sha256": "24c84ddd2082e77fe17b63d5358bc0cfc8a37e2c6dea6dd2a03d6aa962a19486"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "lines": 4876,
+      "new_nonempty_lines": 574,
+      "sha256": "7b81ed86667361e769122638d63a4066151a1a44ade8791cba538104b327715e"
+    }
+  ],
+  "stream_sha256": "dbc349014c4c0e67771f62a5eac18bf858a49d7609bd508941cfa4b7d5bfcb92",
+  "stream_lines": 3299,
+  "stream_bytes": 689778
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "contract_clauses": 316,
+  "acceptance_clauses": 316,
+  "all_requirements_and_acceptance_equal": true,
+  "mismatch_clause_ids": [],
+  "contract_status_counts": {
+    "partial": 199,
+    "done": 19,
+    "missing": 98
+  },
+  "store002_requirement": "Repeated source deliveries preserve one commerce fact per source identity while refreshing its contents.",
+  "store002_acceptance": "1. A replayed webhook or repeated scheduled sync updates the existing customer, order, cart, refund or browsing-event source record without creating a duplicate.",
+  "contract_store002_status": "done (candidate proposal)",
+  "generated_store002_status": "partial (stale generated view)",
+  "field_proof_rows": 13,
+  "field_proof_passed": 0,
+  "field_proof_failed": 0,
+  "field_proof_not_run": 13
+}
