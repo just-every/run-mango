@@ -387,6 +387,8 @@ export const walk0 = async ({ page }, info) => {
     ['changed kind with restrictive contact effects', { event: 'spamreport' }],
     ['changed message', { sg_message_id: `${message(bob).messageId}.recvd-5f8c-1-0` }],
     ['changed occurrence time', { timestamp: originalEvent.timestamp + 60 }],
+    ['changed destination with restrictive contact effects', { email: bob, event: 'spamreport' }],
+    ['changed recipient correlation', { ...args(bob) }],
   ] as const) {
     const changed = batch({ ...originalEvent, ...changes });
     // Sign the changed bytes afresh: this reaches the immutable evidence guard,
@@ -394,7 +396,7 @@ export const walk0 = async ({ page }, info) => {
     expect(await post(`reused provider identity: ${name}`, changed, signer.headers(changed))).toBe(500);
     expect(await identityState()).toEqual(originalIdentityState);
   }
-  state.providerIdentity = { identity, expectedEvidence, identicalReplay: 204, conflicts: 4, conflictStatus: 500,
+  state.providerIdentity = { identity, expectedEvidence, identicalReplay: 204, conflicts: 6, conflictStatus: 500,
     originalInbox: originalIdentityState.inbox, originalFact: originalIdentityState.facts, unchangedProjections: true };
   await record('provider-identity.json', state.providerIdentity);
   expect(await post('deferred (bob, uncertain hand-off)', batch(event('deferred', bob, t + 2 * minute, message(bob).messageId, args(bob), { response: '421 try again later', attempt: '1' })))).toBe(204);
