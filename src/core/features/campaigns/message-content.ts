@@ -1,3 +1,5 @@
+import {chooseConditionalContent,type ContentContext,type BranchChoice} from './conditional-content';
+import {htmlToText} from './authoring-content';
 import {catalogBlocks,decodeCatalogBlock,insertCatalogHtml,CatalogUnavailable,type CatalogRenderings} from './catalog-blocks';
 import {analyticsUrl,type AnalyticsContext} from '@/core/features/settings/analytics-policy';
 import {mobileEnvelope,mobileDocument} from './email-mobile';
@@ -43,8 +45,9 @@ export function invalidMessagePersonalisation(revision:Pick<MessageRevision,'ema
 }
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
 export function renderMessageContent(revision: MessageRevision, options: {
-  catalog?:CatalogRenderings; catalogDiagnostics?:boolean; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
+  contentContext?:ContentContext;branchChoice?:BranchChoice|'all';catalog?:CatalogRenderings; catalogDiagnostics?:boolean; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
 }) {
+  if(revision.emailBody.includes('data-mango-condition')){const emailBody=chooseConditionalContent(revision.emailBody,options.contentContext,options.branchChoice);revision={...revision,emailBody,emailText:htmlToText(emailBody)};}
   const chosen=catalogBlocks(revision.emailBody);
   if(chosen.length&&(!options.catalog||chosen.some(row=>!options.catalog![row.key])))throw new CatalogUnavailable();
   const values = options.values ?? {};

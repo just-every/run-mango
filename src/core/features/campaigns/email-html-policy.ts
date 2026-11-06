@@ -1,3 +1,4 @@
+import {decodeCondition,assertConditionalContent} from './conditional-content';
 import {decodeCatalogBlock} from './catalog-blocks';
 import {mobileClass} from './email-mobile';
 import { safeEmailLink } from './contact-links';
@@ -31,6 +32,8 @@ const insecureMedia = (value: string) => { try { const url = new URL(value); ret
 /** `mediaOrigin` is this deployment's own origin, passed only where a draft is saved or previewed.
  * `demoOrigin` is a demo's own origin, whose pages its links may use (demo-links.ts). */
 export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string, demoOrigin?: string) {
+  if(tag==='div'&&name==='data-mango-condition')return Boolean(decodeCondition(value));
+  if(tag==='div'&&name==='data-mango-branch')return value==='match'||value==='otherwise';
   if (tag === 'div' && name === 'data-mango-catalog') return Boolean(decodeCatalogBlock(value));
   if (name === 'title' || (tag === 'img' && name === 'alt')) return !value.includes('{{');
   if (tag === 'a' && name === 'href') return safeEmailLink(value, true, demoOrigin);
@@ -47,6 +50,7 @@ const textOf = (nodes: EmailNode[]): string => nodes.map(node => node.kind === '
 export function inspectEmailHtml(source: string, mediaOrigin?: string, demoOrigin?: string) {
   const parsed = parseEmailHtml(source);
   const issues = new Set<string>([...parsed.malformed, ...parsed.lost]);
+  try{assertConditionalContent(source);}catch(error){issues.add(error instanceof Error?error.message:'Invalid conditional content.');}
   for (const tag of parsed.tags) if (!emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed.`);
   const destinations = new Set<string>(), rejectedLinks = new Set<string>(), images = new Set<string>();
   const anchors: Array<{href: string; label: string}> = [];

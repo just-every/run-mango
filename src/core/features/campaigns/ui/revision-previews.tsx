@@ -1,3 +1,4 @@
+import {conditionalBlocks,type ContentContext,type BranchChoice} from '../conditional-content';
 import {catalogBlocks,type CatalogRenderings} from '../catalog-blocks';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
@@ -23,18 +24,23 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [contact, setContact] = useState<Contact>();
   const [propertyValues,setPropertyValues]=useState<{id:string;values:Record<string,string|undefined>}>(),[propertyError,setPropertyError]=useState('');
   useEffect(()=>{let active=true;setPropertyValues(undefined);setPropertyError('');if(!contact)return;void getJson<{values:Record<string,string|undefined>}>(`/api/contacts/${encodeURIComponent(contact.id)}/personalisation`).then(result=>{if(active)setPropertyValues({id:contact.id,values:result.values});}).catch(()=>{if(active)setPropertyError('Contact property values could not be loaded. Select the contact again.');});return()=>{active=false;};},[contact?.id]);
+  const conditions=useMemo(()=>{try{return conditionalBlocks(revision.emailBody);}catch{return [];}},[revision.emailBody]);
+  const [branch,setBranch]=useState('contact'),[context,setContext]=useState<{id:string;revisionId:string;value:ContentContext}>(),[contextError,setContextError]=useState('');
+  useEffect(()=>{let active=true;setContext(undefined);setContextError('');if(!contact||!conditions.length)return;void getJson<{contentContext:ContentContext}>(`/api/contacts/${encodeURIComponent(contact.id)}/content-context?revisionId=${encodeURIComponent(revision.id)}`).then(result=>{if(active)setContext({id:contact.id,revisionId:revision.id,value:result.contentContext});}).catch(()=>{if(active)setContextError('Conditional contact facts could not be loaded. Select the contact again.');});return()=>{active=false;};},[contact?.id,revision.id,revision.updatedAt,conditions.length]);
+  const contextReady=!contact||!conditions.length||context?.id===contact.id&&context.revisionId===revision.id;
+  const branchChoice:BranchChoice|undefined=branch==='contact'?undefined:{block:Number(branch.split(':')[1]),matches:branch.startsWith('match:')};
   const [loadImages, setLoadImages] = useState(false);
   const needsCatalog=catalogBlocks(revision.emailBody).length>0;
   const [catalog,setCatalog]=useState<{body:string;values:CatalogRenderings}>(),[catalogError,setCatalogError]=useState('');
   useEffect(()=>{let current=true;setCatalogError('');if(!needsCatalog)return;void requestJson<{renderings?:CatalogRenderings}>('/api/catalog/preview',{method:'POST',body:JSON.stringify({emailBody:revision.emailBody})}).then(result=>{if(!current)return;if(result.status!==200||!result.data.renderings){setCatalogError('Current catalog values are unavailable.');return;}setCatalog({body:revision.emailBody,values:result.data.renderings});}).catch(()=>{if(current)setCatalogError('Current catalog values are unavailable.');});return()=>{current=false;};},[revision.id,revision.updatedAt,revision.emailBody]);
   const catalogValues=catalog?.body===revision.emailBody?catalog.values:undefined;
-  const previewRevision=contact&&propertyError?{...revision,emailSubject:'Contact preview unavailable',emailBody:'<p>Contact preview is unavailable because saved values could not be loaded.</p>',emailText:'Contact preview unavailable.',smsBody:'Contact preview unavailable.'}:needsCatalog&&!catalogValues?{...revision,emailBody:'<p>Catalog preview is unavailable until current values are read.</p>',emailText:'Catalog preview unavailable.'}:revision;
+  const previewRevision=contact&&(propertyError||contextError||!contextReady)?{...revision,emailSubject:'Contact preview unavailable',emailBody:'<p>Contact preview is unavailable because saved values could not be loaded.</p>',emailText:'Contact preview unavailable.',smsBody:'Contact preview unavailable.'}:needsCatalog&&!catalogValues?{...revision,emailBody:'<p>Catalog preview is unavailable until current values are read.</p>',emailText:'Catalog preview unavailable.'}:revision;
 
   const rendered = useMemo(() => renderMessageContent({...previewRevision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
-    catalog:catalogValues,analytics:analyticsContext(revision),
+    contentContext:contextReady?context?.value:undefined,branchChoice,catalog:catalogValues,analytics:analyticsContext(revision),
     values: contact ? propertyValues?.id===contact.id?propertyValues.values:contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
-  }), [revision, contact, catalogValues,propertyValues,propertyError]);
+  }), [revision, contact, catalogValues,propertyValues,propertyError,context,contextReady,contextError,branch]);
   const responsive=mobileEnvelope(revision.emailBody);
   const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
@@ -46,6 +52,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const preview = useMemo(() => sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin), [rendered.html, loadImages, issues, mediaOrigin]);
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
+      {contextError?<p role="alert">{contextError}</p>:!contextReady?<p role="status">Reading conditional contact facts…</p>:null}
       {propertyError?<p role="alert">{propertyError}</p>:contact&&propertyValues?.id!==contact.id?<p role="status">Reading contact property values…</p>:null}
       {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+formatDate(Object.values(catalogValues)[0]?.readAt))}</p>:null}
       {showEmail ? <article className="message-preview message-preview--email">
@@ -56,6 +63,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
           <p className="muted-copy">Preheader: {rendered.preheader || 'Not saved'}</p>
           <p className="muted-copy">{contact ? `Contact: ${contact.displayName}${contact.email ? ` (${contact.email})` : ''}` : 'Example: Alex Example'}; missing personalisation values use their saved fallback. Links are inactive. Unsubscribe uses an example URL.</p>
           {preflightTools ? <PreviewContact selected={contact} onSelect={setContact} /> : null}
+          {conditions.length?<label>Preview conditional branch<select value={branch} onChange={event=>setBranch(event.target.value)}><option value="contact">Chosen contact</option>{conditions.flatMap((condition,index)=>[<option key={'match:'+index} value={'match:'+index}>Block {index+1}: matching ({condition.condition.source})</option>,<option key={'otherwise:'+index} value={'otherwise:'+index}>Block {index+1}: otherwise</option>])}</select></label>:null}
           <div className="preview-controls" role="group" aria-label="Email preview width">
             <button type="button" className="secondary-action" aria-pressed={width === 'desktop'} onClick={() => setWidth('desktop')}>Desktop email</button>
             <button type="button" className="secondary-action" aria-pressed={width === 'mobile'} onClick={() => setWidth('mobile')}>Mobile email</button>

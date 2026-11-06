@@ -1,3 +1,4 @@
+import {readContentContext} from '@/core/features/campaigns/conditional-context';
 import {propertyDefinitions} from './properties/read';
 import {validatePropertyFields,editContactProperties} from './properties/write';
 import {PropertyError} from './properties/types';
@@ -30,6 +31,11 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
   const erasure=createContactErasure(database,platform.config.contactHashSalt,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
   const routes = new Hono<{Variables:AuthVariables}>();
 
+  routes.get('/contacts/:id/content-context',async context=>{
+    const query=z.object({revisionId:z.string().min(1).max(200).optional()}).safeParse(context.req.query());if(!query.success)return context.json({error:'invalid_preview_context'},400);
+    const contentContext=await readContentContext(platform,context.req.param('id'),query.data.revisionId);
+    return contentContext?context.json({contentContext}):context.json({error:'contact_not_found'},404);
+  });
   routes.get('/audience', async (context) => context.json({ contacts: await service.list() }));
   routes.get('/contacts/consent',async c=>{const description=await loadSignupDescription(platform);return c.json({...description,mode:await loadOptInMode(database,'manual'),sms:description.sms?{...description.sms,available:true,category:programme(platform).category}:{available:false,detail:platform.config.modules.sms.enabled?'SMS transport is unavailable.':platform.config.modules.sms.detail}});});
   routes.get('/contacts/search', async context => {

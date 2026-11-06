@@ -1,10 +1,11 @@
+import {readConditional,wrapConditional,type ContentCondition} from './conditional-content';
 import {catalogBlocks} from './catalog-blocks';
 import {productGridContent,socialLinksContent,readSocialLinks,readGridProducts} from './email-promo-blocks';
 import {parseFragment,serializeOuter,type DefaultTreeAdapterTypes as Tree} from 'parse5';
 import {applyMobileSettings,mobileEnvelope,mobileClass,type MobileBlock} from './email-mobile';
 export const blockKinds=['text','image','button','columns','spacer','divider','header','footer','product','product-grid','social-links'] as const;
 export type BlockKind=typeof blockKinds[number];
-export type EditorBlock={id:string;html:string;mobile?:Omit<MobileBlock,'block'>};
+export type EditorBlock={id:string;html:string;condition?:ContentCondition;otherwise?:string;mobile?:Omit<MobileBlock,'block'>};
 export const escapeBlock=(value:string)=>value.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export const emailButton=(href:string,label:string)=>`<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:12px;background-color:#000000;border-radius:6px;color:#ffffff;font-size:16px"><a href="${escapeBlock(href)}" style="color:#ffffff;text-decoration:none">${escapeBlock(label)}</a></td></tr></table>`;
 const table=(content:string,padding=16)=>`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:${padding}px;text-align:left;background-color:#ffffff;color:#000000;font-size:16px">${content}</td></tr></table>`;
@@ -36,13 +37,14 @@ export function readEmailBlocks(source:string):EditorBlock[]{
     const setting=blockIndex===undefined?undefined:envelope.settings.find(row=>row.block===blockIndex);
     if(setting)html=html.replace(' class="'+mobileClass(setting.block)+'"','');
     const {block:_block,...mobile}=setting??{block:0};
-    return {id:crypto.randomUUID(),html,...(setting?{mobile}:{})};
+    const conditional=readConditional(parseFragment(html).childNodes[0]);if(conditional)html=conditional.html;
+    return {id:crypto.randomUUID(),html,...(conditional?{condition:conditional.condition,otherwise:conditional.otherwise}:{}),...(setting?{mobile}:{})};
   });
 }
 export function writeEmailBlocks(blocks:EditorBlock[]){
   let index=0;const settings:MobileBlock[]=[];
   for(const block of blocks)if(parseFragment(block.html).childNodes.some(node=>'tagName'in node)){if(block.mobile)settings.push({...block.mobile,block:index});index++;}
-  const html=blocks.map(block=>block.html).join('');return settings.length?applyMobileSettings(html,settings):html;
+  const html=blocks.map(block=>block.condition?wrapConditional(block.html,block.condition,block.otherwise):block.html).join('');return settings.length?applyMobileSettings(html,settings):html;
 }
 export function blockInfo(block:EditorBlock){
   const nodes=descendants(parseFragment(block.html)),cell=nodes.find(node=>node.tagName==='td');

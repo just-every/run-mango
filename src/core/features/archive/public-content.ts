@@ -21,6 +21,7 @@ export function publicBody(source: string, origin: string) {
     if (node.kind === 'text') return escapeHtml(neutralText(node.text));
     if (node.kind !== 'element' || !node.html || !emailTags.has(node.tag)) return '';
     const { tag, attributes } = node;
+    if(attributes.has('data-mango-condition'))return ''; // Contact-specific content is never a public archive copy.
     if (tag === 'a' && attributes.get('href')?.includes('unsubscribe_url')) return '';
     if (tag === 'img') {
       const raw = attributes.get('src') ?? '';

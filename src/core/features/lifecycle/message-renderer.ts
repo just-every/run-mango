@@ -1,3 +1,4 @@
+import {readContentContext} from '@/core/features/campaigns/conditional-context';
 import {liveCatalogValues,CatalogBlocked} from '@/core/features/campaigns/catalog-values';
 import {catalogBlocks,insertCatalogHtml,catalogTextValues,type CatalogRenderings} from '@/core/features/campaigns/catalog-blocks';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
@@ -61,7 +62,7 @@ export async function prepareDeliveryRequest(
   const {trackedLinks,rewritten}=await renderTracking(runtime.platform,{analytics:analyticsContext(envelope.revision),channel:envelope.recipient.channel,enabled:envelope.revision.trackingEnabled,smsBody:envelope.revision.smsBody,links:[...envelope.links,...Object.values(catalog??{}).flatMap(value=>value.items.map(item=>({destinationUrl:item.url})))],sendByAt:envelope.recipient.sendByAt});
   const unsubscribeUrl = `${publicBaseUrl}${confirmationUnsubscribePath(unsubscribe.token)}`;
   const oneClickUrl = `${publicBaseUrl}${oneClickUnsubscribePath(unsubscribe.token)}`;
-  const rendered = renderMessageContent(envelope.revision, {catalog,analytics:analyticsContext(envelope.revision), values: eligibility.contact.personalisation, unsubscribeUrl, rewrittenLinks: rewritten});
+  const rendered = renderMessageContent(envelope.revision, {catalog,contentContext:envelope.revision.emailBody.includes('data-mango-condition')?await readContentContext(runtime.platform,envelope.recipient.contactId,envelope.revision.id,now):undefined,analytics:analyticsContext(envelope.revision), values: eligibility.contact.personalisation, unsubscribeUrl, rewrittenLinks: rewritten});
   const smsApproval=envelope.recipient.channel==='sms'?await runtime.platform.database.$client.prepare('SELECT policy_digest,sender,policy_json FROM sms_approval_policies WHERE revision_id=?').bind(envelope.recipient.revisionId).first<{policy_digest:string;sender:string;policy_json:string}>():undefined;
   if(envelope.recipient.channel==='sms'&&!smsApproval)throw new Error('SMS approval lacks its frozen programme policy; review the revision again.');
   const smsPolicy=smsApproval?smsProgrammeSchema.parse(JSON.parse(smsApproval.policy_json).policy):undefined;

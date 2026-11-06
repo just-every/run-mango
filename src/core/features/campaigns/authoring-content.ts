@@ -1,3 +1,4 @@
+import {assertConditionalContent} from './conditional-content';
 import {decodeCatalogBlock,catalogTextMarker} from './catalog-blocks';
 import {assertMobileAuthority,applyMobileSettings,mobileEnvelope,mobileDocument} from './email-mobile';
 import { escapeHtml, inspectEmailHtml } from './email-html-policy';
@@ -77,6 +78,7 @@ function savedBody(source: string, links: NonNullable<DraftComposition['links']>
 export function normalizeAuthoredContent(composition: DraftComposition): DraftComposition {
   if (composition.emailBody === undefined) return composition;
   assertMobileAuthority(composition.emailBody);
+  assertConditionalContent(composition.emailBody);
   const {emailMobile,...persisted}=composition;
   const source=emailMobile===undefined?composition.emailBody:applyMobileSettings(authoredBody(composition.emailBody),emailMobile);
   let emailBody = savedBody(source, composition.links ?? []);
