@@ -12,6 +12,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 // a DMARC record). Each mail send is recorded exactly as Mango serialized it.
 export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any>; at:number };
 type Answer = { type: number; data: string };
+type StripePrice = {id: string; type: string; active: boolean; unit_amount: number; currency: string; recurring: {interval: string; interval_count: number}};
 
 const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
 const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
@@ -25,7 +26,9 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
   const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
   const domainSetup = {exists: true, creates: 0, dnsPass: true, trackingCname: true, trackingHttps: true};
   // Stripe test-mode shapes for the paid tier: prices, Checkout sessions, subscriptions and customers.
-  const stripe = {outage: false, sessions: [] as {authorization: string; form: URLSearchParams; idempotencyKey: string}[],
+  const stripe = {outage: false, requests: [] as {method: string; path: string}[],
+    prices: {price_synthetic: {id: 'price_synthetic', type: 'recurring', active: true, unit_amount: 1000, currency: 'usd', recurring: {interval: 'month', interval_count: 1}}} as Record<string, StripePrice>,
+    sessions: [] as {authorization: string; form: URLSearchParams; idempotencyKey: string}[],
     subscriptions: {} as Record<string, {status: string; customer: string; metadata: Record<string, string>}>, customers: {} as Record<string, {email: string; name: string}>};
   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
@@ -86,8 +89,10 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+    if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});
-    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/prices/price_synthetic' && request.method === 'GET') return json(response, 200, {id: 'price_synthetic', type: 'recurring', active: true, unit_amount: 1000, currency:'usd', recurring:{interval:'month',interval_count:1}});
+    const priceId = original.pathname.startsWith('/v1/prices/') ? original.pathname.slice('/v1/prices/'.length) : '';
+    if (original.hostname === 'api.stripe.com' && stripe.prices[priceId] && request.method === 'GET') return json(response, 200, stripe.prices[priceId]);
     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/checkout/sessions' && request.method === 'POST') {
       const idempotencyKey=String(request.headers['idempotency-key']);
       let index=stripe.sessions.findIndex(session=>session.idempotencyKey===idempotencyKey);
