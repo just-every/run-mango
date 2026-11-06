@@ -1,0 +1,28 @@
+{
+  "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+  "uniquePlaywrightRegistrations": 74,
+  "stages": {
+    "main": {
+      "uniqueAdditionalRegistrations": 40
+    },
+    "local-start": {
+      "uniqueAdditionalRegistrations": 5
+    },
+    "local-start-slow": {
+      "uniqueAdditionalRegistrations": 2
+    },
+    "newsletter-ui": {
+      "uniqueAdditionalRegistrations": 1
+    },
+    "campaign-results": {
+      "uniqueAdditionalRegistrations": 2
+    },
+    "go-live": {
+      "uniqueAdditionalRegistrations": 22
+    },
+    "move-in": {
+      "uniqueAdditionalRegistrations": 2
+    }
+  },
+  "scope": "All configured Playwright stages, deduplicated by file, source location and project. Assert scripts not counted here. No tests executed by this collection."
+}

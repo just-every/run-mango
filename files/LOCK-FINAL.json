@@ -1,0 +1,9 @@
+{
+  "name": "LOCK-FINAL",
+  "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+  "command": "node scripts/edition-authoring/cli.mjs check",
+  "exit": 0,
+  "startedAt": "2026-11-06T06:56:12.955329+00:00",
+  "endedAt": "2026-11-06T06:56:13.287236+00:00",
+  "elapsedSeconds": 0.332
+}

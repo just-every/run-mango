@@ -1,0 +1,9 @@
+{
+  "name": "FOCUSED",
+  "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+  "command": "timeout 1200 pnpm exec playwright test tests/proposals-decision/missing-sender.spec.ts --workers=1 --reporter=list",
+  "exit": 0,
+  "startedAt": "2026-11-06T06:55:10.809514+00:00",
+  "endedAt": "2026-11-06T06:55:27.274168+00:00",
+  "elapsedSeconds": 16.465
+}

@@ -1,0 +1,32 @@
+{
+  "requiredBase": {
+    "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+    "counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "totalStatusRows": 316,
+    "tableLineCount": 490
+  },
+  "main": {
+    "head": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+    "counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "totalStatusRows": 316,
+    "tableLineCount": 490
+  },
+  "candidate": {
+    "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+    "counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "totalStatusRows": 316,
+    "tableLineCount": 490
+  }
+}

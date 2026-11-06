@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f81",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f81",
+  "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+  "requiredBase": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+  "integratedMain": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "productPush": {
+    "status": "pushed",
+    "attempts": 1,
+    "receipt": "PRODUCT-PUSH.txt"
+  },
+  "checks": [
+    {
+      "name": "FOCUSED",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "timeout 1200 pnpm exec playwright test tests/proposals-decision/missing-sender.spec.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:55:10.809514+00:00",
+      "endedAt": "2026-11-06T06:55:27.274168+00:00",
+      "elapsedSeconds": 16.465
+    },
+    {
+      "name": "TYPECHECK",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:55:12.463983+00:00",
+      "endedAt": "2026-11-06T06:55:32.584899+00:00",
+      "elapsedSeconds": 20.121
+    },
+    {
+      "name": "FIRST-PARTY",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:55:12.417270+00:00",
+      "endedAt": "2026-11-06T06:55:14.200993+00:00",
+      "elapsedSeconds": 1.784
+    },
+    {
+      "name": "LOCK-FINAL",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:56:12.955329+00:00",
+      "endedAt": "2026-11-06T06:56:13.287236+00:00",
+      "elapsedSeconds": 0.332
+    },
+    {
+      "name": "EXPECTED-VIEWS",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "startedAt": "2026-11-06T06:58:22.678183+00:00",
+      "endedAt": "2026-11-06T06:58:22.848986+00:00",
+      "elapsedSeconds": 0.171
+    },
+    {
+      "name": "VIEWS-WRITE-FINAL",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:58:22.877741+00:00",
+      "endedAt": "2026-11-06T06:58:23.058000+00:00",
+      "elapsedSeconds": 0.18
+    },
+    {
+      "name": "VIEWS-CHECK-FINAL",
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "startedAt": "2026-11-06T06:58:23.088148+00:00",
+      "endedAt": "2026-11-06T06:58:23.269387+00:00",
+      "elapsedSeconds": 0.181
+    }
+  ],
+  "mechanical": {
+    "lockCommand": "node scripts/edition-authoring/cli.mjs lock then check",
+    "lockExit": 0,
+    "viewsCommand": "node src/base/contract-docs.mjs write then check",
+    "viewsExit": 0,
+    "viewsRestoredFrom": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+    "generatedViewsCommitted": false,
+    "ledger": "not applicable; no migration changed"
+  },
+  "counts": {
+    "requiredBase": {
+      "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "totalStatusRows": 316,
+      "tableLineCount": 490
+    },
+    "main": {
+      "head": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "totalStatusRows": 316,
+      "tableLineCount": 490
+    },
+    "candidate": {
+      "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "totalStatusRows": 316,
+      "tableLineCount": 490
+    }
+  },
+  "clause": {
+    "id": "CAMP-004",
+    "before": "partial",
+    "after": "partial",
+    "doneClaim": false
+  },
+  "ci": {
+    "runId": 42177593518,
+    "event": "push",
+    "head": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+    "status": "completed",
+    "conclusion": "failure",
+    "failureClass": "expected generated-view freshness only",
+    "failedJobs": [
+      127759596273,
+      127759675905
+    ],
+    "primaryFailure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "dependentFailure": "aggregate coverage requires successful build; shards skipped after generated-view check",
+    "runtimeAssertionsExecutedInCI": false,
+    "dispatches": 0,
+    "reruns": 0
+  },
+  "githubBudget": {
+    "calls": 5,
+    "maximum": 10,
+    "statusDiscoveryCallsForCandidate": 1,
+    "pollingCalls": 0,
+    "failedJobArchiveReads": 2
+  },
+  "publicationScan": {
+    "status": "delegated to guarded Mac lander; not run in cloud",
+    "claimedComplete": false
+  },
+  "probes": [
+    "PROBE CAMP-004 acceptance-5 missing sender: native PATCH with empty sender name and checks -> saved draft, named message.email-identity blocker with two eligible contacts",
+    "PROBE CAMP-004 acceptance-4 missing sender refusal: native approve -> HTTP 409 with all current blockers; campaign, revision, steps and links unchanged; no approval receipt, recipients, dispatch, jobs or marketing handoff",
+    "PROBE CAMP-004 acceptance-5 correction: native PATCH restoring configured sender and checks -> no blockers; campaign remains draft without approval or sending authority"
+  ],
+  "cleanProductIndexAndWorktree": true,
+  "createdAt": "2026-11-06T06:59:28.423531+00:00"
+}

@@ -1,0 +1,7 @@
+Actual failed-job archive output; workflow environment listing omitted from public packet.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T06:56:41.0357613Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T06:56:41.0358084Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T06:56:41.0381340Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-06T06:56:41.0383204Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-06T06:56:41.1954727Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T06:56:41.2038061Z ##[error]Process completed with exit code 1.
