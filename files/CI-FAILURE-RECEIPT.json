@@ -1,0 +1,27 @@
+{
+  "head": "686a91bec82afcbbeba3f54b7dad1b0afa81d7f4",
+  "run": 42192413695,
+  "state": "completed",
+  "conclusion": "failure",
+  "classification": "expected generated view freshness exception; aggregate requires failed build",
+  "log_reads": [
+    {
+      "job": 127807464852,
+      "command": "gh run view 42192413695 --repo just-every/run-mango --job 127807464852 --log-failed",
+      "exit": 0,
+      "observed_failure": [
+        "Build and public command checks\tCheck generated contract documents\t2026-11-06T09:06:03.4296136Z ACCEPTANCE.md: generated content differs; run contract-docs write.",
+        "Build and public command checks\tCheck generated contract documents\t2026-11-06T09:06:03.4383598Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job": 127807548493,
+      "command": "gh run view 42192413695 --repo just-every/run-mango --job 127807548493 --log-failed",
+      "exit": 0,
+      "observed_failure": [
+        "verify\tRequire the selected coverage and its proof\t2026-11-06T09:06:08.3087390Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "api_calls_in_task": 5
+}

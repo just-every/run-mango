@@ -1,0 +1,6 @@
+{
+  "head": "686a91bec82afcbbeba3f54b7dad1b0afa81d7f4",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_NO_FIXTURE_SERVER=1 MANGO_TEST_WORK_DIR=<task work> cloud_run timeout 1200 pnpm exec playwright test tests/campaign-authoring/step-deadline.spec.ts --workers=1 --reporter=list",
+  "exit": 0,
+  "working_tree_clean": true
+}

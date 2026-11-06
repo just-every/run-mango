@@ -1,0 +1,9 @@
+
+Running 1 test using 1 worker
+
+(node:4377) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-010 acceptance-1: authenticated native PATCH with local times and IANA zone, both send-by fields omitted -> ordinary and both DST day-end instants persisted; reopened controls; draft with no approval, recipients or dispatch jobs.
+  ✓  1 tests/campaign-authoring/step-deadline.spec.ts:15:1 › [CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving (32.8s)
+
+  1 passed (33.7s)

@@ -1,0 +1,18 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f93",
+  "head": "686a91bec82afcbbeba3f54b7dad1b0afa81d7f4",
+  "base": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "product_push": "success on attempt 1",
+  "candidate_commit_count": 1,
+  "identity_and_trailer_audit": "Run Edit Run fleet <fleet@runeditrun.com>\nRun Edit Run fleet <fleet@runeditrun.com>\n\n",
+  "status_rows_before": 316,
+  "status_rows_after": 316,
+  "table_rows_before": 490,
+  "table_rows_after": 490,
+  "generated_views_committed": false,
+  "new_email_shaped_strings": 0,
+  "publication_scan": "not run in cloud; maintained Mac lander must scan full history",
+  "main_landing": "not performed",
+  "pr": "none; Verify starts on branch push"
+}

@@ -1,0 +1,60 @@
+{
+  "head": "686a91bec82afcbbeba3f54b7dad1b0afa81d7f4",
+  "checks": [
+    {
+      "name": "views-write",
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "started": "2026-11-06T09:06:30.356407+00:00",
+      "output": "Wrote 1 contract documents.\n"
+    },
+    {
+      "name": "views-check",
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "started": "2026-11-06T09:06:30.569060+00:00",
+      "output": "Contract documents are current.\n"
+    },
+    {
+      "name": "restore-views",
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "started": "2026-11-06T09:06:30.824179+00:00",
+      "output": ""
+    },
+    {
+      "name": "lock",
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "started": "2026-11-06T09:06:30.831998+00:00",
+      "ok": true
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "started": "2026-11-06T09:06:31.225671+00:00",
+      "output": "\u2009WARN\u2009 Unsupported engine: wanted: {\"node\":\"22.20.0\"} (current: {\"node\":\"v24.19.0\",\"pnpm\":\"10.12.4\"})\n\n> mango@0.4.0 typecheck /workspace/run-mango-sd-mango-c-f93\n> tsc --noEmit\n\n"
+    },
+    {
+      "name": "command-contract",
+      "command": "node node_modules/@runeditrun/rer/bin/rer.mjs check --profile first-party",
+      "exit": 0,
+      "started": "2026-11-06T09:06:49.517787+00:00",
+      "output": ""
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exit": 0,
+      "started": "2026-11-06T09:06:49.934816+00:00",
+      "output": ""
+    }
+  ],
+  "ledger": {
+    "command": "none",
+    "exit": 0,
+    "reason": "No migration changes"
+  },
+  "working_tree_clean": true
+}

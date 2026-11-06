@@ -1,0 +1,66 @@
+{
+  "head": "686a91bec82afcbbeba3f54b7dad1b0afa81d7f4",
+  "files": [
+    {
+      "path": "CANDIDATE-CI.json",
+      "bytes": 253,
+      "sha256": "496cc0ba8d4d2b889dcbe370209d5580cfecdfa33c32aa3f476e2d2a5327f692"
+    },
+    {
+      "path": "CI-FAILURE-RECEIPT.json",
+      "bytes": 1137,
+      "sha256": "8dfe5ef27ab24b088bb428315650a33e0ff0fbd39f7814902d0c264c1a57b798"
+    },
+    {
+      "path": "CI-JOBS.json",
+      "bytes": 2569,
+      "sha256": "706fff9542c85df6933d45dd22cf5249632dd58cdc934af363b042f8cc1d4c55"
+    },
+    {
+      "path": "FOCUSED-RECEIPT.json",
+      "bytes": 342,
+      "sha256": "e02fb76005279e3f7a6d5cedec88ee7c5a808b33a4d54d58b8215004ff3751d4"
+    },
+    {
+      "path": "FOCUSED-SPEC.log",
+      "bytes": 636,
+      "sha256": "b78f21d75e52b46698321a5c672f85c307d6bae1d35b02757e28c261b6935890"
+    },
+    {
+      "path": "MAIN-CI.jsonl",
+      "bytes": 1369,
+      "sha256": "177f17378a483189658a2153adcf4fe38f3e16d516d6887b601bab5717f74b1e"
+    },
+    {
+      "path": "MECHANICAL-RECEIPT.json",
+      "bytes": 1807,
+      "sha256": "7d4019cde14b3ce0a6d981ff0183c3ac17984d3ccfebdcf27633c2366577d77e"
+    },
+    {
+      "path": "PLAN.md",
+      "bytes": 2247,
+      "sha256": "8c9626c4501c0ed79ce278e53c2d1ce1e9a64260eb8ca1bed0ebb6352f69eb02"
+    },
+    {
+      "path": "PUBLICATION-CUSTODY.json",
+      "bytes": 736,
+      "sha256": "4c10489e5ffb5a3eb371edccc3ebb5d9593843dfe5118623f592d598d8ff6479"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 9777,
+      "sha256": "5b5595bad8cb1feed1d376dda3e5ddb321bb6ce98dd0483672bd1831c5bcc973"
+    },
+    {
+      "path": "step-deadline-1440.png",
+      "bytes": 508473,
+      "sha256": "094a576b124791f7d6b46a1cdff0ba4e1825685a5520176e26d28a670d0062b0"
+    },
+    {
+      "path": "step-deadline-390.png",
+      "bytes": 456880,
+      "sha256": "0e5fece905bcd3a3b39764d0df11f2ea17e3d730afff0ee3e723a8605e529eaf"
+    }
+  ],
+  "scope": "Explicit non-secret reports, receipts and synthetic browser proof"
+}
