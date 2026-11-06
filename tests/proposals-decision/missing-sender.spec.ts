@@ -83,5 +83,33 @@ test('[CAMP-004] a missing sender name blocks approval without authority and cle
     expect(read.body.links).toEqual(before.links);
     await noAuthority();
     console.log('PROBE CAMP-004 acceptance-5 correction: native PATCH restoring configured sender and checks -> no blockers; campaign remains draft without approval or sending authority');
+
+    // A saved correction clears readiness only; it must never grant authority.
+    for(const [field,label] of [['fromEmail','from email'],['replyToEmail','reply-to email'],['physicalAddress','postal address']] as const) {
+      const original=read.body.revision[field];
+      const empty=await runtime.call(revisionDoor,{[field]:''},true,'PATCH');
+      expect(empty.status).toBe(200);
+      expect(empty.body.revision[field]).toBe('');
+      const unchanged=await persisted();
+      const result=await checks();
+      expect(result.status).toBe(200);
+      expect(result.body.blockers).toContainEqual(expect.objectContaining({
+        kind:'message.email-identity',blocking:true,detail:expect.stringContaining(`missing ${label}`),
+      }));
+      const denied=await runtime.call(`${campaignDoor}/approve`,{revisionId,idempotencyKey:`synthetic-mango-missing-${field}`});
+      expect(denied).toMatchObject({status:409,body:{status:'blocked'}});
+      expect(denied.body.blockers).toEqual(result.body.blockers);
+      for(const suffix of ['', '/review']) {
+        const retained=await runtime.call(`${campaignDoor}${suffix}`);
+        expect(retained.status).toBe(200);
+        expect(retained.body.revision).toMatchObject({state:'draft',[field]:'',approvedAt:null,approvedByOperatorId:null,contentDigest:null});
+        expect(await persisted()).toEqual(unchanged);
+        await noAuthority();
+      }
+      expect((await runtime.call(revisionDoor,{[field]:original},true,'PATCH')).status).toBe(200);
+      expect((await checks()).body.blockers).toEqual([]);
+      await noAuthority();
+      console.log(`PROBE CAMP-004 acceptance-5 missing ${label}: native save and checks -> named blocker; approve -> 409, unchanged draft and no authority; correction -> clear without approving`);
+    }
   } finally {await runtime.close();}
 });

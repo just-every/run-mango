@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e2e7c6da57750f47de6476d70106d6c83740981d9294f14bcb7fcb4e58f20c44",
+      "sha256": "e8d942e99e74e9ffc4d82e75d7e2024fce4630ea3807393fc32938cd99119852",
       "executable": false
     },
     "DEMO.md": {
@@ -9410,7 +9410,7 @@
       "executable": false
     },
     "tests/proposals-decision/missing-sender.spec.ts": {
-      "sha256": "446f6f1b0b1cf2f1075c23c0a7b355b1814ed585d8edcd9e5ed030b83c794243",
+      "sha256": "af1dc34097b7ab482ced0a89331917f276be226b8ff628076368b0de52f8637d",
       "executable": false
     },
     "tests/proposals-decision/runtime.ts": {
