@@ -1,7 +1,7 @@
 const width = 1440;
 import { openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
-import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
+import { test, expect, request as requestClient, type Page, type APIRequestContext } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
@@ -181,7 +181,8 @@ export const walk1 = async ({ page, request }, testInfo) => {
   } finally { await runtime.close(); await fake.close(); }
 };
 export const walk2 = async ({ page, request }) => {
-  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+  const candidateImages = { a: candidateImage, b: png(canvas.width, canvas.height, 27) };
+  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: candidateImages, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
   try {
     const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
@@ -239,7 +240,7 @@ export const walk2 = async ({ page, request }) => {
     const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
     const stored = await candidates();
     expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
-      sha256: createHash('sha256').update(candidateImage).digest('hex'), bytes: candidateImage.byteLength })));
+      sha256: createHash('sha256').update(candidateImages[slot]).digest('hex'), bytes: candidateImages[slot].byteLength })));
     for (const candidate of stored) {
       expect(candidate.createdAt).toBeGreaterThanOrEqual(issuedRun[0].at);
       expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
@@ -259,7 +260,7 @@ export const walk2 = async ({ page, request }) => {
         createdAt: record.createdAt, updatedAt: record.updatedAt, deadlineAt: record.deadlineAt, chosenSlot: record.chosenSlot,
         ...(record.errorCode ? { errorCode: record.errorCode } : {}) });
       expect(status.candidates).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', width: canvas.width, height: canvas.height,
-        bytes: candidateImage.byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
+        bytes: candidateImages[slot].byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
       expect(await candidates()).toEqual(stored);
       return { record, status };
     };
@@ -329,9 +330,76 @@ export const walk2 = async ({ page, request }) => {
     expect(readyRecord.record).toMatchObject({ state: 'ready', chosenSlot: 'b', errorCode: null, providerLayoutId: issuedLayouts[1].id });
     expect(readyRecord.record.updatedAt).toBeGreaterThanOrEqual(issuedLayouts[1].at);
     expect(readyRecord.record.updatedAt).toBeLessThanOrEqual(completionAfter);
+
+    // Arrange the permitted drafting role on the existing native session.
+    const fixtureTime = Date.now();
+    await runtime.sql(`INSERT INTO operators (id, email, display_name, created_at, updated_at)
+      VALUES ('synthetic-mango-771', 'synthetic-mango-771' || char(64) || 'example.test', 'Retained owner', ${fixtureTime}, ${fixtureTime});
+      INSERT INTO oa_operators (id, email, display_name, role, status, created_at)
+      VALUES ('synthetic-mango-771', 'synthetic-mango-771' || char(64) || 'example.test', 'Retained owner', 'owner', 'active', ${fixtureTime});
+      INSERT INTO operator_product_roles (operator_id, role, updated_by, updated_at) VALUES
+      ('synthetic-mango-771', 'owner', 'synthetic-mango-771', ${fixtureTime}),
+      ('authoring-operator', 'author', 'synthetic-mango-771', ${fixtureTime})`);
+    expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator).toMatchObject({ id: operator.id, role: 'author' });
+
+    // Follow the artifact URLs actually offered by this successful native run.
+    // Expected bytes come from the provider edge inputs, independently of storage.
+    const artifacts = [
+      ...readyRecord.status.candidates.map(candidate => ({ url: candidate.imageUrl, type: 'image/png', bytes: Buffer.from(candidateImages[candidate.slot]) })),
+      { url: readyRecord.status.layerDocUrl, type: 'application/json', bytes: Buffer.from(layerDoc) },
+    ];
+    expect(artifacts).toHaveLength(3);
+    const custody = async () => ({
+      runs: await runtime.sql('SELECT * FROM design_jobs ORDER BY id'),
+      candidates: await runtime.sql('SELECT * FROM design_candidates ORDER BY job_id, slot'),
+      costs: await costs(), purchases: [...fake.purchases], requests: structuredClone(fake.requests),
+      campaign: await read(),
+      authority: await (await request.post(runtime.url + '/_authoring/state', { headers: { 'X-Test-Token': runtime.token } })).json(),
+    });
+    const beforeArtifactReads = await custody();
+    expect(beforeArtifactReads.authority).toEqual({ approvals: [], recipients: [], jobs: [] });
+    const artifactReads: { phase: string; url: string; deniedStatus: number; allowedStatus: number; contentType: string; bytes: number; expectedSha256: string; observedSha256: string }[] = [];
+    const readArtifacts = async (phase: string) => {
+      const signedOut = await requestClient.newContext({ storageState: { cookies: [], origins: [] } });
+      try {
+        for (const artifact of artifacts) {
+          expect(artifact.url).toEqual(expect.any(String));
+          const url = new URL(artifact.url, runtime.url).href;
+          const denied = await signedOut.get(url);
+          expect(denied.status()).toBe(401);
+          const deniedBytes = await denied.body();
+          expect(JSON.parse(deniedBytes.toString())).toEqual({ error: 'unauthenticated' });
+          expect(deniedBytes.includes(artifact.bytes)).toBe(false);
+          const allowed = await api.get(url);
+          expect(allowed.status()).toBe(200);
+          expect(allowed.headers()['content-type'].split(';')[0]).toBe(artifact.type);
+          const observed = await allowed.body();
+          expect(observed.equals(artifact.bytes), `Retained ${artifact.type} must preserve the supplied provider bytes`).toBe(true);
+          artifactReads.push({ phase, url: artifact.url, deniedStatus: denied.status(), allowedStatus: allowed.status(),
+            contentType: allowed.headers()['content-type'], bytes: observed.byteLength,
+            expectedSha256: createHash('sha256').update(artifact.bytes).digest('hex'),
+            observedSha256: createHash('sha256').update(observed).digest('hex') });
+        }
+        expect((await signedOut.storageState()).cookies).toEqual([]);
+      } finally { await signedOut.dispose(); }
+    };
+    await readArtifacts('before-reload');
+    expect(await custody()).toEqual(beforeArtifactReads);
     await reloadPage(page);
     expect(await retained()).toEqual(readyRecord);
     expect(await retained()).toEqual(readyRecord);
+    await readArtifacts('after-reload');
+    expect(await custody()).toEqual(beforeArtifactReads);
+    await test.info().attach('design-provider-custody', { contentType: 'application/json', body: JSON.stringify({
+      clause: 'DESIGN-011', point: 'acceptance-4 retained artifact session and byte preservation', operatorId: operator.id, role: 'author',
+      reads: artifactReads, unchanged: ['run rows', 'candidate rows', 'cost facts', 'purchases', 'provider requests', 'campaign', 'approval and recipient authority', 'commands'],
+      runCount: beforeArtifactReads.runs.length, candidateCount: beforeArtifactReads.candidates.length,
+      costCount: beforeArtifactReads.costs.length, purchaseCount: beforeArtifactReads.purchases.length, providerRequestCount: beforeArtifactReads.requests.length,
+    }, null, 2) });
+    console.log('PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged');
+
+    await runtime.sql("DELETE FROM operator_product_roles WHERE operator_id = 'authoring-operator'");
+    expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator.role).toBe(operator.role);
 
     // A new run while a prepared design is on offer: the brief says the designs stay, and they do, under Earlier designs.
     // 12ui names a time to ask again: the run says it is waiting, then continues with the same purchase key.
