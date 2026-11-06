@@ -1,0 +1,37 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "journey": "See journey-receipt.json; exact candidate browser run",
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "sourceEquivalence": "Production files unchanged throughout this round"
+  },
+  "firstParty": {
+    "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0
+  },
+  "testRegistrations": {
+    "before": 89,
+    "after": 90,
+    "added": 1,
+    "deleted": 0,
+    "narrowed": 0,
+    "skipped": 0
+  },
+  "clauses": {
+    "before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "after": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    }
+  },
+  "publicationScan": {
+    "status": "not run in cloud",
+    "owner": "maintained Mac lander"
+  }
+}

@@ -1,0 +1,188 @@
+[
+  {
+    "width": 1440,
+    "case": "allowed",
+    "captured": [
+      {
+        "email_status": "pending",
+        "channel": "email",
+        "capture_source": "http://127.0.0.1:22825/subscribe",
+        "capture_method": "hosted-signup-form",
+        "confirmation_required": 1,
+        "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+        "confirmed_at": null
+      }
+    ],
+    "counts": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    }
+  },
+  {
+    "width": 1440,
+    "case": "unlisted",
+    "before": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "after": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors http://127.0.0.1:46709\". The request has been blocked.\n"
+  },
+  {
+    "width": 1440,
+    "case": "outer-ancestor",
+    "before": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "after": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors http://127.0.0.1:46709\". The request has been blocked.\n"
+  },
+  {
+    "width": 1440,
+    "case": "removed-origin",
+    "before": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "after": {
+      "contacts": 1,
+      "consent": 1,
+      "confirmations": 1,
+      "requests": 1,
+      "mail": 1,
+      "relayMail": 0,
+      "signupPosts": 1
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors 'none'\". The request has been blocked.\n"
+  },
+  {
+    "width": 390,
+    "case": "allowed",
+    "captured": [
+      {
+        "email_status": "pending",
+        "channel": "email",
+        "capture_source": "http://127.0.0.1:22825/subscribe",
+        "capture_method": "hosted-signup-form",
+        "confirmation_required": 1,
+        "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+        "confirmed_at": null
+      }
+    ],
+    "counts": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    }
+  },
+  {
+    "width": 390,
+    "case": "unlisted",
+    "before": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "after": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors http://127.0.0.1:46709\". The request has been blocked.\n"
+  },
+  {
+    "width": 390,
+    "case": "outer-ancestor",
+    "before": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "after": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors http://127.0.0.1:46709\". The request has been blocked.\n"
+  },
+  {
+    "width": 390,
+    "case": "removed-origin",
+    "before": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "after": {
+      "contacts": 2,
+      "consent": 2,
+      "confirmations": 2,
+      "requests": 2,
+      "mail": 2,
+      "relayMail": 0,
+      "signupPosts": 2
+    },
+    "refusal": "Framing 'http://127.0.0.1:22825/' violates the following Content Security Policy directive: \"frame-ancestors 'none'\". The request has been blocked.\n"
+  }
+]

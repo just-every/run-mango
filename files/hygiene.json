@@ -1,0 +1,20 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "commitsAudited": [
+    "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+    "5b25c1b1e94ef89ded01a076e69561fb941c8eb8"
+  ],
+  "authorsAndCommitters": "fleet only",
+  "trailers": [],
+  "generatedViewCommits": 0,
+  "diffCheck": 0,
+  "newEmailLiterals": 0,
+  "newBareRepositoryProseTokens": 0,
+  "syntaxExclusions": {
+    "playwright/test": "scoped package import",
+    "text/html": "standard MIME type",
+    "text/plain": "standard MIME type",
+    "refused/i": "regular expression with flag"
+  },
+  "publicationScan": "not run in cloud; maintained lander owns complete full-history scan"
+}

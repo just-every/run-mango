@@ -1,0 +1,10 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<external work directory> cloud_run timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js embed-origin.journeys.ts --workers=1",
+  "exit": 0,
+  "elapsedSeconds": 26,
+  "widths": [
+    1440,
+    390
+  ]
+}

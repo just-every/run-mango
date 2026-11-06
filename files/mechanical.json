@@ -1,0 +1,21 @@
+{
+  "views": {
+    "write": 0,
+    "check": 0,
+    "restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ]
+  },
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock; node scripts/edition-authoring/cli.mjs check",
+    "exit": 0
+  },
+  "ledger": {
+    "command": "none; no migration changed",
+    "exit": 0
+  },
+  "parentStatusRows": 316,
+  "candidateStatusRows": 316,
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4"
+}

@@ -1,0 +1,9 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "branch": "cloud/sd-mango-c-f110",
+  "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f110",
+  "exit": 0,
+  "attempt": 1,
+  "force": false,
+  "defaultBranchChanged": false
+}

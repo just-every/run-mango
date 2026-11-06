@@ -1,0 +1,7 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "command": "node scripts/edition-authoring/cli.mjs check",
+  "exit": 0,
+  "ok": true,
+  "schemaVersion": 1
+}

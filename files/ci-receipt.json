@@ -1,0 +1,40 @@
+{
+  "head": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+  "runId": 42209116526,
+  "event": "push",
+  "conclusion": "failure",
+  "primaryFailure": {
+    "jobId": 127863155610,
+    "step": "Check generated contract documents",
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "error": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "dependentFailure": {
+    "jobId": 127863251418,
+    "name": "verify",
+    "reason": "Build failure and skipped shards"
+  },
+  "productTestFailures": 0,
+  "productTestsInCI": "skipped after generated-view check",
+  "localGeneratedViewReproduction": {
+    "command": "node src/base/contract-docs.mjs check after restoring main generated views",
+    "exit": 1,
+    "error": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "repairRounds": 0,
+  "reruns": 0,
+  "dispatches": 0,
+  "githubBudgetCalls": 5,
+  "exception": "Permitted generated-view-only failure; lander writes views and reruns gates",
+  "failedLogArchiveReads": [
+    {
+      "jobId": 127863155610,
+      "exit": 0
+    },
+    {
+      "jobId": 127863251418,
+      "exit": 0
+    }
+  ]
+}
