@@ -1,0 +1,90 @@
+{
+  "clause": "DESIGN-007",
+  "acceptance": 6,
+  "campaignId": "01M6R3FAYTHNS89P26805HKV84",
+  "revisionId": "01M6R3FAYVJD5B5SFJX28KMJC1",
+  "concurrentStart": {
+    "status": 409,
+    "error": "design_job_active",
+    "beforeJobCount": 2,
+    "afterJobCount": 2,
+    "unchangedCommands": [
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6R3FB70DE7FSSH2YJNT92XH\"}"
+      },
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6R3FBF8EAQ5QBDHGDA4TP8N\"}"
+      }
+    ],
+    "unchangedCreationCount": 2,
+    "unchangedPurchases": [
+      "draft:a:mango-design-01M6R3FB70DE7FSSH2YJNT92XH-draft-a",
+      "draft:b:mango-design-01M6R3FB70DE7FSSH2YJNT92XH-draft-b",
+      "draft:a:mango-design-01M6R3FBF8EAQ5QBDHGDA4TP8N-draft-a"
+    ]
+  },
+  "laterRun": {
+    "id": "01M6R3FBF8EAQ5QBDHGDA4TP8N",
+    "providerRunId": "crt-7ed90916e7994db7",
+    "state": "drafting",
+    "waiting": {
+      "reason": "provider_quota",
+      "retryAt": 1793958401503
+    }
+  },
+  "earlierRun": {
+    "id": "01M6R3FB70DE7FSSH2YJNT92XH",
+    "providerRunId": "crt-76631e03c0df4fd4",
+    "providerLayoutId": "cnv-0a957cda3de5351e",
+    "state": "ready",
+    "chosenSlot": "b",
+    "candidateSha256": "6bb3226581f62bf3493dd88afdd5b33048220cdb4cd4e1c5c3f1ce4e8370ad11",
+    "layoutPurchase": "mango-design-01M6R3FB70DE7FSSH2YJNT92XH-layout-b"
+  },
+  "costs": [
+    {
+      "id": "design:01M6R3FB70DE7FSSH2YJNT92XH:draft:a",
+      "campaign_id": "01M6R3FAYTHNS89P26805HKV84",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R3FB70DE7FSSH2YJNT92XH:draft:b",
+      "campaign_id": "01M6R3FAYTHNS89P26805HKV84",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R3FB70DE7FSSH2YJNT92XH:layout:b",
+      "campaign_id": "01M6R3FAYTHNS89P26805HKV84",
+      "provider": "12ui",
+      "operation": "design-layout",
+      "model_or_channel": "fast",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R3FBF8EAQ5QBDHGDA4TP8N:draft:a",
+      "campaign_id": "01M6R3FAYTHNS89P26805HKV84",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    }
+  ],
+  "authority": {
+    "campaignState": "draft",
+    "approvals": [],
+    "recipients": [],
+    "dispatch": []
+  },
+  "screenshots": [
+    1440,
+    390
+  ]
+}

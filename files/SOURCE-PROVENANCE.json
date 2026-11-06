@@ -1,0 +1,11 @@
+{
+  "candidate_head": "3111aa72589d1fe1f52244659c87351a8c363afe",
+  "sha256": {
+    "tests/campaign-authoring/design-concurrency-journey.ts": "8539acb1524860fc5bcedbcceff7467f5220fe5545346f72f3aa22cf95641d56",
+    "tests/campaign-authoring/design-generation.spec.ts": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
+    "tests/campaign-authoring/worker.ts": "a6f9874007f76250aef953ce20d114651c121bad0f443e83e72410d7018512da",
+    "tests/support/fake-twelve-ui.ts": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
+    "src/core/features/design-generation/routes.ts": "d24993e69ed5c0c68f0e454a3d26fa5b0f162e62c647a58cd54dd45093bfc4d5",
+    "src/core/features/design-generation/repository.ts": "4344a03b49d5c28bebee0c288d1608e8464ea8cb5aaa9d716d0f1e1e2fb35c5f"
+  }
+}
