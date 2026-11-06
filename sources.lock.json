@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "0f90c6c360df1b7ccc16225832a4933cf859a2e21ace9df2c0388ea3544e32ab",
+      "sha256": "66d9b11620ffbf7491280b39e3d03d86bb027e845e7847e37a3c25ffbe5408ee",
       "executable": false
     },
     "DEMO.md": {
@@ -3706,7 +3706,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
+      "sha256": "a23078be880b8f53ccd8d9d62535083f5a60867c5c3a9cf6a892d3ed9628177a",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -3882,7 +3882,7 @@
       "executable": false
     },
     "src/core/features/campaigns/conditional-blocks.ts": {
-      "sha256": "6d6e7a74a588e49850aacea57b921ff4f925bffb204e090a06c2faded777e362",
+      "sha256": "990f79cc4f4782cbaa909abeef837aaff73530508bf30ce1e285f0d712835eb8",
       "executable": false
     },
     "src/core/features/campaigns/contact-links.ts": {
@@ -5138,7 +5138,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/checks.ts": {
-      "sha256": "ea9acbd099c50c926269d40ce98f244e81dca09c802bfadf362d6d913b340e3d",
+      "sha256": "b05ad2229b1dbd2df68e639e22a728364758d010dfd17a8569d81be0cb1523f1",
       "executable": false
     },
     "src/core/features/lifecycle/delivery-eligibility.ts": {
@@ -8794,7 +8794,7 @@
       "executable": false
     },
     "tests/go-live/conditional-content.journeys.ts": {
-      "sha256": "4afc1a227449889788ecbc3af8dc56590486cea62a3f120bffb33621b59f216b",
+      "sha256": "8621cd596768678bcc8458c01cb1f53b235ebd958cf17c9620c386772f2d41e2",
       "executable": false
     },
     "tests/go-live/contact-links.journeys.ts": {
@@ -9042,7 +9042,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "26a1b91893e0c1c74b65116742a464cae24c4a2449b5bfbd4fe9f5b3ccd08393",
+      "sha256": "2c661b906446528f9d06575195c3091350c6365fd1a36a0f59d59ea3a344843a",
       "executable": false
     },
     "tests/go-live/saved-report-journey.ts": {
