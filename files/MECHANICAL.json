@@ -1,0 +1,26 @@
+{
+  "head": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83",
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock; node scripts/edition-authoring/cli.mjs check",
+    "writeExit": 0,
+    "checkExit": 0,
+    "ok": true,
+    "edition": "just-every/mango",
+    "sourceLockSha256": "f12c5b4b6ea75ea7b5fe68fc9a5ace7b81e11adff75a81a96882c13c33dbead1"
+  },
+  "views": {
+    "writeCommand": "node src/base/contract-docs.mjs write",
+    "checkCommand": "node src/base/contract-docs.mjs check",
+    "writeExit": 0,
+    "checkExit": 0,
+    "writeOutput": "Wrote 1 contract documents.",
+    "checkOutput": "Contract documents are current.",
+    "restoredFrom": "origin/main",
+    "committed": false
+  },
+  "ledger": {
+    "command": null,
+    "reason": "No migration changed",
+    "exit": 0
+  }
+}

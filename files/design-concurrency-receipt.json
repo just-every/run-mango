@@ -1,0 +1,95 @@
+{
+  "clause": "DESIGN-007",
+  "acceptance": 6,
+  "campaignId": "01M6R5T4ZBH0RPFNZV06B0R56G",
+  "revisionId": "01M6R5T4ZBDDVP4EE5826GYZQ0",
+  "concurrentStart": {
+    "status": 409,
+    "error": "design_job_active",
+    "beforeJobCount": 2,
+    "afterJobCount": 2,
+    "unchangedCommands": [
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6R5T549Q61SC0363GPG8SCP\"}"
+      },
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6R5T59CM4BYJ0MM5PFTJ4KZ\"}"
+      }
+    ],
+    "unchangedCreationCount": 2,
+    "unchangedPurchases": [
+      "draft:a:mango-design-01M6R5T549Q61SC0363GPG8SCP-draft-a",
+      "draft:b:mango-design-01M6R5T549Q61SC0363GPG8SCP-draft-b",
+      "draft:a:mango-design-01M6R5T59CM4BYJ0MM5PFTJ4KZ-draft-a"
+    ]
+  },
+  "laterRun": {
+    "id": "01M6R5T59CM4BYJ0MM5PFTJ4KZ",
+    "providerRunId": "crt-5a9ab514786d6563",
+    "state": "drafting",
+    "waiting": {
+      "reason": "provider_quota",
+      "retryAt": 1793960852750
+    }
+  },
+  "earlierRun": {
+    "id": "01M6R5T549Q61SC0363GPG8SCP",
+    "providerRunId": "crt-769445ca2efb3718",
+    "providerLayoutId": "cnv-14800e0449b83519",
+    "preparingState": "preparing",
+    "latestWaitDuringPreparation": {
+      "reason": "provider_quota",
+      "retryAt": 1793960852750
+    },
+    "state": "ready",
+    "chosenSlot": "b",
+    "candidateSha256": "6bb3226581f62bf3493dd88afdd5b33048220cdb4cd4e1c5c3f1ce4e8370ad11",
+    "layoutPurchase": "mango-design-01M6R5T549Q61SC0363GPG8SCP-layout-b"
+  },
+  "costs": [
+    {
+      "id": "design:01M6R5T549Q61SC0363GPG8SCP:draft:a",
+      "campaign_id": "01M6R5T4ZBH0RPFNZV06B0R56G",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R5T549Q61SC0363GPG8SCP:draft:b",
+      "campaign_id": "01M6R5T4ZBH0RPFNZV06B0R56G",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R5T549Q61SC0363GPG8SCP:layout:b",
+      "campaign_id": "01M6R5T4ZBH0RPFNZV06B0R56G",
+      "provider": "12ui",
+      "operation": "design-layout",
+      "model_or_channel": "fast",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6R5T59CM4BYJ0MM5PFTJ4KZ:draft:a",
+      "campaign_id": "01M6R5T4ZBH0RPFNZV06B0R56G",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    }
+  ],
+  "authority": {
+    "campaignState": "draft",
+    "approvals": [],
+    "recipients": [],
+    "dispatch": []
+  },
+  "screenshots": [
+    1440,
+    390
+  ]
+}

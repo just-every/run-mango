@@ -1,0 +1,7 @@
+Run 42201652665, push event, exact SHA 1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83
+Job 127838204999: Build and public command checks
+Command: node src/base/contract-docs.mjs check
+Observed failure: ACCEPTANCE.md: generated content differs; run contract-docs write.
+Exit: 1
+Downstream test shards skipped; final verify job failed its build dependency.
+Disposition: expected generated-view-only exception; lander regenerates views and runs exact-SHA Verify again. No rerun requested.

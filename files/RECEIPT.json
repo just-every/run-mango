@@ -1,0 +1,206 @@
+{
+  "tag": "sd-mango-c-f102",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f102",
+  "head": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83",
+  "recordedAt": "2026-11-06T10:18:54.059025+00:00",
+  "mainAtFinalFetch": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "tests": [
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_NO_FIXTURE_SERVER=1 cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/design-generation.spec.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "result": "1 passed (4.0m)",
+      "registeredTestsBefore": 1,
+      "registeredTestsAfter": 1,
+      "head": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "codeAndCommandContractChangedSinceRun": false
+    }
+  ],
+  "runtime": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "browser": "/usr/bin/chromium",
+    "provider": "local network-edge fake only",
+    "newProductionCode": false
+  },
+  "screenshotInspection": {
+    "widths": [
+      1440,
+      390
+    ],
+    "result": "Latest run retains provider wait; earlier run B is ready with its own controls; saved draft body and draft state visible. Existing layout and controls unchanged.",
+    "newIconOnlyControls": 0
+  },
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "changedClauses": [
+    {
+      "id": "DESIGN-007",
+      "before": "partial",
+      "after": "partial",
+      "closed": "Acceptance 6 native start refusal and earlier offered design preparation during provider wait",
+      "remaining": "Acceptance 1-5 complete bounds, retries, reasons and scheduled recovery; real-provider timing, availability and qualification unclaimed"
+    }
+  ],
+  "publicationScan": {
+    "status": "not run in cloud",
+    "owner": "maintained Mac lander"
+  },
+  "files": [
+    {
+      "name": "design-generation-final.log",
+      "bytes": 810,
+      "sha256": "451cce71b061cb5af088718129eaefb6abd3b4c27ce201a00d190150ca1395cd"
+    },
+    {
+      "name": "typecheck.log",
+      "bytes": 208,
+      "sha256": "163282eff16ccb1d78867d1f8e6d3f82d0d0c2d7635fe9a64eb01a10406a7f74"
+    },
+    {
+      "name": "design-concurrency-receipt.json",
+      "bytes": 2673,
+      "sha256": "5c56e2f961e15d7c7ca463ccf0156939e41942ee1cb5ed3c58128eb0188e25c7"
+    },
+    {
+      "name": "design-concurrency-1440.png",
+      "bytes": 708198,
+      "sha256": "a9c082cca2fd4a4a8b26d0b1babc4e90d9bae8137bf6bd518949fca1dd5dfdc7"
+    },
+    {
+      "name": "design-concurrency-390.png",
+      "bytes": 567921,
+      "sha256": "e906547da2a33808923302264e6c483f804915e2d46751d81b771918fd1eb5b8"
+    },
+    {
+      "name": "MECHANICAL.json",
+      "bytes": 798,
+      "sha256": "6d4be4f6906abef7eefd28fd2a2dbf885a637514137b08aa278afb9cdf4a21b1"
+    },
+    {
+      "name": "status-row-receipt.json",
+      "bytes": 359,
+      "sha256": "2b361ebc554fd144296e66b0e723c39e10bb33fc25e1b781a411d22cae61842c"
+    },
+    {
+      "name": "identity-receipt.json",
+      "bytes": 369,
+      "sha256": "7652d329f0046cb50fc1c043669511ef32d5d37c66526beb84871e554cccfc83"
+    }
+  ],
+  "push": {
+    "guard": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f102",
+    "exit": 0,
+    "attempts": 1,
+    "head": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83",
+    "published": true,
+    "mainPushed": false
+  },
+  "ci": {
+    "candidate": {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42201652665",
+      "id": 42201652665,
+      "name": "Verify",
+      "status": "completed"
+    },
+    "jobs": [
+      {
+        "conclusion": "success",
+        "failedSteps": [],
+        "id": 127838133834,
+        "name": "plan",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failedSteps": [
+          {
+            "conclusion": "failure",
+            "name": "Check generated contract documents"
+          }
+        ],
+        "id": 127838204999,
+        "name": "Build and public command checks",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failedSteps": [],
+        "id": 127838206932,
+        "name": "light",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failedSteps": [
+          {
+            "conclusion": "failure",
+            "name": "Require the selected coverage and its proof"
+          }
+        ],
+        "id": 127838304065,
+        "name": "verify",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failedSteps": [],
+        "id": 127838305723,
+        "name": "shards (${{ matrix.name }})",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failedSteps": [],
+        "id": 127838305786,
+        "name": "nightly-proof",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failedSteps": [],
+        "id": 127838306309,
+        "name": "full-push-proof",
+        "status": "completed"
+      }
+    ],
+    "disposition": "Expected generated-view-only failure; permitted by task. Local focused test and typecheck pass. Guarded lander must regenerate views and rerun exact-SHA Verify before landing.",
+    "main": {
+      "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+      "verify": 42195975560,
+      "verifyConclusion": "success",
+      "runSite": 42195975538,
+      "runSiteConclusion": "success"
+    },
+    "predecessor": {
+      "head": "3111aa72589d1fe1f52244659c87351a8c363afe",
+      "verify": 42195812650,
+      "conclusion": "failure",
+      "cause": "Expected generated ACCEPTANCE.md freshness only"
+    },
+    "githubCallsUsed": 7,
+    "githubCallBudget": 10,
+    "pollsRepeatedWithin300Seconds": false
+  },
+  "terminal": "READY under generated-view-only exception, no DONE promotion"
+}

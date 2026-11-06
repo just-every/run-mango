@@ -1,0 +1,89 @@
+{
+  "candidate": {
+    "conclusion": "failure",
+    "event": "push",
+    "head_sha": "1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42201652665",
+    "id": 42201652665,
+    "name": "Verify",
+    "status": "completed"
+  },
+  "jobs": [
+    {
+      "conclusion": "success",
+      "failedSteps": [],
+      "id": 127838133834,
+      "name": "plan",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failedSteps": [
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents"
+        }
+      ],
+      "id": 127838204999,
+      "name": "Build and public command checks",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failedSteps": [],
+      "id": 127838206932,
+      "name": "light",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failedSteps": [
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof"
+        }
+      ],
+      "id": 127838304065,
+      "name": "verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failedSteps": [],
+      "id": 127838305723,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failedSteps": [],
+      "id": 127838305786,
+      "name": "nightly-proof",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failedSteps": [],
+      "id": 127838306309,
+      "name": "full-push-proof",
+      "status": "completed"
+    }
+  ],
+  "disposition": "Expected generated-view-only failure; permitted by task. Local focused test and typecheck pass. Guarded lander must regenerate views and rerun exact-SHA Verify before landing.",
+  "main": {
+    "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "verify": 42195975560,
+    "verifyConclusion": "success",
+    "runSite": 42195975538,
+    "runSiteConclusion": "success"
+  },
+  "predecessor": {
+    "head": "3111aa72589d1fe1f52244659c87351a8c363afe",
+    "verify": 42195812650,
+    "conclusion": "failure",
+    "cause": "Expected generated ACCEPTANCE.md freshness only"
+  },
+  "githubCallsUsed": 7,
+  "githubCallBudget": 10,
+  "pollsRepeatedWithin300Seconds": false
+}
