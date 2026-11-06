@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4706c5c37fc573be66dda14a11fb92eb1f9b86d0264bd2a89576953764506fdb",
+      "sha256": "4d509c77c77848f57664d698a03c4e468ec21ef96f722903c597cfeef27560dd",
       "executable": false
     },
     "DEMO.md": {
@@ -8490,7 +8490,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-concurrency-journey.ts": {
-      "sha256": "8539acb1524860fc5bcedbcceff7467f5220fe5545346f72f3aa22cf95641d56",
+      "sha256": "9fab165f8c8cf0516eaeef83538ca3d53b98d1517c58c8b7b5203fb4c4d9de56",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
@@ -9514,7 +9514,7 @@
       "executable": false
     },
     "tests/support/fake-twelve-ui.ts": {
-      "sha256": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
+      "sha256": "f77fa41f12deb2d8c9c895483dfbba7255aaaff399d06394b205753fbb5c9925",
       "executable": false
     },
     "tests/support/fixture-app.ts": {

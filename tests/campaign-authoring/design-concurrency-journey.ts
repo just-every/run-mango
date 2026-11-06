@@ -104,14 +104,29 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
       .getByRole('button', { name: 'Use this design', exact: true });
     await expect(choice).toBeEnabled();
     expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toEqual([]);
+    const conversion = fake.holdNext('POST /api/v1/convert');
     const choosing = page.waitForResponse(response => response.request().method() === 'POST' && response.url() === `${runtime.url}/api/design-jobs/${earlier.id}/choose`, { timeout: 30000 });
     await choice.click();
     const chosen = await choosing;
     expect(chosen.status()).toBe(200);
     expect(chosen.request().postDataJSON()).toEqual({ slot: 'b' });
     expect((await chosen.json()).job).toMatchObject({ id: earlier.id, state: 'preparing', chosenSlot: 'b' });
-    // Reload clears the automatic-open continuation and shows both native runs.
-    await reloadPage(page);
+    let preparing;
+    try {
+      await expect.poll(() => fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert').length,
+        { timeout: 30000 }).toBe(1);
+      await conversion.requested;
+      // The earlier layout request is unanswered while the newer run retains its
+      // own declared wait. Reload must render both identities in that state.
+      await reloadPage(page);
+      preparing = await status();
+      expect(preparing.job).toEqual(waiting);
+      expect(preparing.earlier).toEqual([expect.objectContaining({ id: earlier.id, state: 'preparing', chosenSlot: 'b' })]);
+      await expect(latestPanel.getByRole('alert')).toContainText('12ui asked Mango to wait');
+      await expect(earlierPanel.getByRole('status')).toContainText('Preparing design B');
+      await expect(page.getByRole('button', { name: 'Design with 12ui', exact: true })).toBeDisabled();
+      expect(await detail()).toEqual(draftBefore);
+    } finally { conversion.release(); }
     await expect(earlierPanel.getByRole('button', { name: 'Use design B in the email', exact: true })).toBeVisible({ timeout: 45000 });
     const settled = await status();
     expect(settled.job).toEqual(waiting);
@@ -158,6 +173,7 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
         unchangedPurchases: purchasesBefore },
       laterRun: { id: later.id, providerRunId: providerIds[1], state: settled.job.state, waiting: settled.job.waiting },
       earlierRun: { id: earlier.id, providerRunId: earlierProvider.id, providerLayoutId: issuedLayout[0].id,
+        preparingState: preparing.earlier[0].state, latestWaitDuringPreparation: preparing.job.waiting,
         state: settled.earlier[0].state, chosenSlot: 'b', candidateSha256: converts[0].fileSha256,
         layoutPurchase: converts[0].idempotencyKey },
       costs: await costs(), authority: { campaignState: draftBefore.campaign.state, approvals: [], recipients: [], dispatch: [] },
