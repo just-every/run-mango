@@ -13,10 +13,10 @@
       "sha256": "030182c41df299fbc3a6ece5eaa1fad3a2ec51796386eb1f1f0645a07c418e4d"
     },
     {
-      "blob": "674b379e3a002409afa39502a758acbd2cf122f1",
-      "bytes": 24424,
+      "blob": "f147cccf61dc4525d7fa1c73acde8568a48b6676",
+      "bytes": 24805,
       "path": "REPORT.md",
-      "sha256": "1a3e5f3e4f13579c316af6b51ff535c5edb26217cf9eabe877a3f1472d513b82"
+      "sha256": "ec2f8b771b0d893fb72c775eec407103fdc79f9b60e72098fa9c8990660b29b8"
     },
     {
       "blob": "9f6e4ebd7d94e9c8cc8fac93034915f164ae44b3",
@@ -85,6 +85,18 @@
       "sha256": "7a5579fda1b8a46f328460eaa2c3161ba78e14cf5a6357b3510c89d2840536ff"
     },
     {
+      "blob": "fc086b2141ae32cbc0e2bba6955783a3fef5ef1b",
+      "bytes": 4740,
+      "path": "evidence-publication.log",
+      "sha256": "996acc6dd1c6bf1c206ef9d9cb02f9dba0d1b70677fca6aa0bbf5a9423793fd9"
+    },
+    {
+      "blob": "669366aa7fb2ba0c82c0dd7a88f59931e6b31c98",
+      "bytes": 4694,
+      "path": "evidence-return-receipt.json",
+      "sha256": "42a690e72a2c39eded9e0174618ebc44e3d10a4a86dcba2d863d2a34bf37918b"
+    },
+    {
       "blob": "a7d59ad9b5b730366d48517d053a421f4907a536",
       "bytes": 9554,
       "path": "inspection-receipt.json",
@@ -97,16 +109,16 @@
       "sha256": "72634e8eefb460a22ca7db16c6f50dd9a9d31e419eac592b2ff724244cceb02b"
     },
     {
-      "blob": "2406e4f5d1c561bfa74eb5154cf60c6c7597e597",
-      "bytes": 3991,
+      "blob": "77938a1beb6468e72544730b151299a2d7ebb6ab",
+      "bytes": 4362,
       "path": "packet-review-receipt.json",
-      "sha256": "0a3b14e5d3b6b1e04c3bb1c0c5ab21e355bbd9b549fd37de3a92a52d93263141"
+      "sha256": "c791ded395ae631d950d2b15b90a4d6b0f7b8076c16ada7af45963b8bb537640"
     },
     {
-      "blob": "b50f6524e07628c126f2b218c93c65aafa70c01f",
-      "bytes": 543,
+      "blob": "7500af49d05d609f05c0bc13f0335a9b8f4ed9da",
+      "bytes": 846,
       "path": "product-custody-receipt.json",
-      "sha256": "cfc68899322a0b7ce0fa669c2e43614b9099412d4e6e53a93497eb7f68462c64"
+      "sha256": "68c40535437ae66430818996b43d4d74b3453a8502536912dd847bad16d67c9e"
     },
     {
       "blob": "2129fbbd2188383cb881ebf30408429e2a61c417",

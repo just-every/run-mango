@@ -1,14 +1,14 @@
 {
   "schema": 1,
-  "utc": "2026-11-06T02:17:55.210129+00:00",
+  "utc": "2026-11-06T02:19:47.881806+00:00",
   "task": "ct-judge-mango-oper003-20261105-1615-sol1",
   "repository": "just-every/run-mango",
   "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
   "selected_files": [
     {
       "path": "REPORT.md",
-      "bytes": 24424,
-      "sha256": "1a3e5f3e4f13579c316af6b51ff535c5edb26217cf9eabe877a3f1472d513b82"
+      "bytes": 24805,
+      "sha256": "ec2f8b771b0d893fb72c775eec407103fdc79f9b60e72098fa9c8990660b29b8"
     },
     {
       "path": "VERDICT.md",
@@ -52,8 +52,8 @@
     },
     {
       "path": "product-custody-receipt.json",
-      "bytes": 543,
-      "sha256": "cfc68899322a0b7ce0fa669c2e43614b9099412d4e6e53a93497eb7f68462c64"
+      "bytes": 846,
+      "sha256": "68c40535437ae66430818996b43d4d74b3453a8502536912dd847bad16d67c9e"
     },
     {
       "path": "setup.log",
@@ -114,11 +114,22 @@
       "path": "captures/roles-retained-activity-390.png",
       "bytes": 37986,
       "sha256": "6135e0a676df43f8f3e6e840e36f066f6aabcc7325c08034aca6f1817ae87fa5"
+    },
+    {
+      "path": "evidence-publication.log",
+      "bytes": 4740,
+      "sha256": "996acc6dd1c6bf1c206ef9d9cb02f9dba0d1b70677fca6aa0bbf5a9423793fd9"
+    },
+    {
+      "path": "evidence-return-receipt.json",
+      "bytes": 4694,
+      "sha256": "42a690e72a2c39eded9e0174618ebc44e3d10a4a86dcba2d863d2a34bf37918b"
     }
   ],
   "symlinks": false,
   "injected_value_matches": 0,
   "credential_shape_matches": 0,
   "scope": "Explicit packet files only; not a product publication scan or full-history NEW 0 receipt.",
-  "report_only_ref": "refs/heads/evidence/ct-judge-mango-oper003-20261105-1615-sol1"
+  "report_only_ref": "refs/heads/evidence/ct-judge-mango-oper003-20261105-1615-sol1",
+  "initial_evidence_hash_return_verified": true
 }

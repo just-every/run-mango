@@ -12,5 +12,10 @@
   "ci_calls": 0,
   "awarded_delta": 0,
   "accepted_source": [],
-  "disposable_clone_cleanup": "after evidence transport and validation; separate final cleanup receipt will be kept outside the clone"
+  "disposable_clone_cleanup": "after evidence transport and validation; separate final cleanup receipt will be kept outside the clone",
+  "post_initial_evidence_utc": "2026-11-06T02:19:47.784636+00:00",
+  "post_initial_evidence_head": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "post_initial_evidence_status": "",
+  "initial_evidence_publication": "4e9cfce90ce0d1992a0baae4a1740cf4469241bf",
+  "initial_evidence_return_verified": true
 }

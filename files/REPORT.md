@@ -8,6 +8,8 @@ Historical push Verify 42058352662 failed only generated-view freshness and deri
 
 The packet contains the full plan, full verdict, original frozen rubric, actual command receipts and complete selected non-secret command logs, source and contract comparison receipts, inspection receipt, browser receipt and the six actual retained-attribution captures. The disposable checkout and its dependencies are to be deleted after evidence publication and integrity verification. The evidence ref carries reports only and cannot signal product READY, acceptance or landing.
 
+The initial report-only publication and successful manifest/hash readback are retained in evidence-publication.log and evidence-return-receipt.json. Those receipts identify the initial evidence snapshot; the final terminal EVIDENCE line identifies the complete final packet, which also contains those receipts. Neither receipt establishes any product publication or landing gate.
+
 ## Full plan
 
 # Independent OPER-003 judgment plan
