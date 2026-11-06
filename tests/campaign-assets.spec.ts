@@ -46,6 +46,9 @@ test('[CAMP-012] an uploaded image is stored once by content hash and served pub
   expect(served.headers.get('cache-control')).toContain('immutable');
   expect(served.headers.get('set-cookie')).toBeNull();
   expect(served.headers.get('content-security-policy')).toBe("default-src 'none'; sandbox");
+  await page.goto(asset.url);
+  await expect.poll(() => page.locator('img').evaluate(image => ({ width: (image as HTMLImageElement).naturalWidth, height: (image as HTMLImageElement).naturalHeight })))
+    .toEqual({ width: 4, height: 3 });
   const head = await fetch(asset.url, { method: 'HEAD' });
   expect(head.status).toBe(200);
   expect(head.headers.get('content-type')).toBe('image/png');
@@ -88,7 +91,8 @@ test('[CAMP-012] an uploaded image is stored once by content hash and served pub
     await page.goto(stored.url);
     await expect.poll(() => page.locator('img').evaluate(image => ({ width: (image as HTMLImageElement).naturalWidth, height: (image as HTMLImageElement).naturalHeight })))
       .toEqual({ width: fixture.width, height: fixture.height });
-    const repeated = await upload(bytes, fixture.declaredType);
+    // Correcting the declaration must retain the same original and immutable asset.
+    const repeated = await upload(bytes, fixture.contentType);
     expect(repeated.status).toBe(200);
     expect((await repeated.json()).asset).toEqual(stored);
     expect(await assetCount()).toBe(count + 1);

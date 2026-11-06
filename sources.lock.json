@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d",
+      "sha256": "11cb83894be237c93c6929f8c115de469d54ce4d0d2d2270d0cc79e3b0f1207f",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "2b166ce76031d1550432effdafb98d1fde979d376bfa93d23813ba60b980acc1",
+      "sha256": "990daff31890eb62068a2f28f96946fdc955f34d5360b7501f31bdceb6f88e50",
       "executable": false
     },
     "DEMO.md": {
@@ -8442,7 +8442,7 @@
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
-      "sha256": "6d5c24191c413a0b0fb164c2f3645b0131d34ab112fa3807385b001766c6d010",
+      "sha256": "c375fb09b064204d79ee5650a0f7ce5203a6c917a49908ef82eed2b6db559b10",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {
