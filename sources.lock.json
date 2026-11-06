@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "69e99e874279a7c49c9c9b6fbf4e4c13ff270e1da4b59b59bd65d55bd428bcd2",
       "executable": false
     },
     "DEMO.md": {
@@ -8943,6 +8943,10 @@
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
       "sha256": "aceefc34f274c1127727208e99cbe3e466035acdbe81d266ef99a36a707e8841",
+      "executable": false
+    },
+    "tests/go-live/ordinary-images.journeys.ts": {
+      "sha256": "56ededf5a4ff3bb904c75e78319f4c027319805fd37d4ca051e95e457d37dd06",
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
