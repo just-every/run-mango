@@ -90,6 +90,12 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
     expect(await costs()).toEqual(costsBefore);
 
     await openPage(page, `${runtime.url}/app/campaigns/${campaignId}/review`);
+    // The streamed panels can precede the rich editor's hydration recovery in a
+    // different browser time zone. Wait for the saved body to mount before
+    // clicking a control that recovery can replace, as in the existing journey.
+    const mountedBody = () => page.getByLabel('Email body', { exact: true }).evaluate(element =>
+      element instanceof HTMLTextAreaElement ? element.value : element.textContent);
+    await expect.poll(mountedBody).toContain('Keep this saved draft.');
     const latestPanel = page.getByRole('region', { name: 'Design with 12ui', exact: true });
     const earlierPanel = page.locator('details').filter({ hasText: 'Earlier designs' }).getByRole('region');
     await expect(latestPanel.getByRole('alert')).toContainText('12ui asked Mango to wait');
@@ -98,7 +104,7 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
       .getByRole('button', { name: 'Use this design', exact: true });
     await expect(choice).toBeEnabled();
     expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toEqual([]);
-    const choosing = page.waitForResponse(response => response.request().method() === 'POST' && response.url() === `${runtime.url}/api/design-jobs/${earlier.id}/choose`);
+    const choosing = page.waitForResponse(response => response.request().method() === 'POST' && response.url() === `${runtime.url}/api/design-jobs/${earlier.id}/choose`, { timeout: 30000 });
     await choice.click();
     const chosen = await choosing;
     expect(chosen.status()).toBe(200);
