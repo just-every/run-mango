@@ -187,6 +187,11 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect(catalogRemoval).toEqual([expect.objectContaining({action: 'link-host.source-removed', actorType: 'system', operatorId: 'link-host-sources', detail: {host: catalogHost, source: 'WooCommerce catalog'}})]);
     // Repeated public reads and checks cannot resurrect the disconnected allowance.
     await inspectHosts();
+    const removalReadback = await json(await site.call('/api/activity?action=link-host.source-removed', {cookie}), 200);
+    expect(removalReadback.entries.filter((entry: any) => entry.objectId === catalogHost)).toEqual(catalogRemoval);
+    const operatorSettings = await site.rows('SELECT hosts FROM link_host_settings WHERE id=1');
+    expect(operatorSettings[0].hosts.split(',')).toContain(operatorHost);
+    expect(operatorSettings[0].hosts.split(',')).not.toContain(catalogHost);
     expect(await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='product' ORDER BY provider_source_id`)).toEqual(catalogRows);
     expect((await json(await site.call('/api/settings/link-hosts', {cookie}), 200)).hosts).not.toContain(catalogHost);
     await page.setViewportSize({width: 1440, height: 1000});
