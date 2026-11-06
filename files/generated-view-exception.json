@@ -1,0 +1,31 @@
+{
+  "head": "12dec3e3f4c65910ffdec642c3718ec8c3a8edd2",
+  "steps": [
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "ACCEPTANCE.md: generated content differs; run contract-docs write.\n"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "stdout": "Wrote 1 contract documents.\n"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "stdout": "Contract documents are current.\n"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "stdout": ""
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "classification": "Expected generated-view freshness only; lander regenerates views"
+}

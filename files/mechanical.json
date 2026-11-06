@@ -1,0 +1,34 @@
+{
+  "head": "12dec3e3f4c65910ffdec642c3718ec8c3a8edd2",
+  "steps": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "stdout": "Wrote 1 contract documents.\n"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "stdout": "Contract documents are current.\n"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "stdout": ""
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "ledger": {
+    "command": "none",
+    "exit": 0,
+    "reason": "No migration changes"
+  },
+  "lock_sha256": "34c968f481dae8510343e9eca1c64ef738c363e770b4650ea9da8ee278ffbdb6"
+}

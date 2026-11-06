@@ -1,0 +1,111 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index d9a8149..8f16a3b 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4079,7 +4079,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `CONT-006` | Email suppression | published | partial | `tests/go-live/delivery.journeys.ts` — “[CONT-006][SEND-006] signed unmatched destination suppression is durable before acknowledgement and replay creates no delivery” · `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/sync-integrations.journeys.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Soft-bounce recorded and visible; Consecutive soft-bounce policy suppresses; Confirmed delivery resets consecutive soft-bounce count; Incomplete provider webhook setup blocks approval; Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.; Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.. Soft-bounce progression and reset assertions are in tests/go-live/opt-out-reasons.journeys.ts outside the old Evidence set. Missing public-door journey: “Email suppression — complete acceptance”, covering the unasserted outcomes above. |
+ | `CONT-007` | SMS compliance replies | published | partial | `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: Signed SMS replies: STOP family opts out before acknowledgment, HELP and START never subscribe; proved on the Mobile Message adapter, Twilio pending (SMS-001). |
+ | `CONT-008` | Contact history | published | done | `tests/audience-controls/segments.spec.ts` — “[CONT-008] [CONT-017] a contact profile combines identities, properties, segments and original source, consent, suppression, eligibility, delivery and operator facts with masked role views”; `tests/audience-controls/contact-profile-flow.ts`; independently recorded original times and sources for every seeded timeline family, including browsing, confirmation, dispatch exclusions, failures, automated clicks, SMS ledgers, merges, properties and imported activity; older paged events with matching rendered source labels; unrelated-contact and private-payload exclusion plus signed-out refusal and masked Support and Analyst views. Browser proof at 1440 and 390. |  |
+-| `CONT-009` | Confirmation | published | partial | `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”; “CONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies”; “CONT-004/006/009 later optout blocks confirmation and uncertain confirmation delivery is never automatically repeated” | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Confirming request time read back; Pending channel cannot receive marketing; When confirmation is not required, recorded consent under CONT-003 subscribes the channel directly.; Reading and HEAD do not consume confirmation token; Suppression guard cannot be bypassed; Inactive identity cannot be confirmed; Operator-recorded SMS exact authenticated reply. Missing public-door journey: “Confirmation — complete acceptance”, covering the unasserted outcomes above. |
++| `CONT-009` | Confirmation | published | partial | `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”; “CONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies”; “CONT-004/006/009 later optout blocks confirmation and uncertain confirmation delivery is never automatically repeated” · `tests/go-live/shared-kiosk.journeys.ts` — “[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation”, invoking `tests/go-live/resubscribe.flow.ts`: hosted-email confirmation request time is bracketed at the affirmative native POST with the test runner’s real wall clock after capture, reconciled with authenticated consent and persisted confirmation and history times, and retained after independently later repeated GET and POST | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: SMS confirming request time read back; Pending channel cannot receive marketing; When confirmation is not required, recorded consent under CONT-003 subscribes the channel directly.; Reading and HEAD do not consume confirmation token; Suppression guard cannot be bypassed; Inactive identity cannot be confirmed; Operator-recorded SMS exact authenticated reply. Missing public-door journey: “Confirmation — complete acceptance”, covering the unasserted outcomes above. SMS timestamp and full authenticated-reply qualification remain held on owner Twilio A2P and US carrier registration, SMS transport and qualification; provider, device, account and cross-seed or Base prerequisites remain unchanged. CONT-013’s SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |
+ | `CONT-028` | Guarded consent capture | published | partial | `tests/go-live/delivery.journeys.ts` · `tests/go-live/opt-out-reasons.journeys.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Public eligibility, profile changes, consent evidence, capture metadata, history and pending status commit together, or a currently barred destination gains none of the new consent records.; A surviving unsubscribe or erasure restriction may recreate an unsubscribed profile containing only new post-opt-out request evidence, without restoring history; confirmation mail stays within CONT-027’s shared allowance.; Surviving suppression blocks fresh capture eligibility; Confirmation preparation finishes before the authoritative handoff check; suppression, a later opt-out or an already committed confirmation prevents handoff when present at that check.; The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition.. Missing public-door journey: “Guarded consent capture — complete acceptance”, covering the unasserted outcomes above. |
+ | `CONT-010` | Import | published | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely” | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity. Missing public-door journey: “Import — complete acceptance”, covering the unasserted outcomes above. |
+ | `CONT-011` | Merge | published | done | `tests/audience-controls/segments.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes”; `tests/audience-controls/merge.flow.ts` |  |
+diff --git a/sources.lock.json b/sources.lock.json
+index 26ff5ea..44c0c47 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
++      "sha256": "25e6a9fca5326f0bc86ec644254a2bfb9206beead55c213224fabc2c7e77ad70",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -9006,7 +9006,7 @@
+       "executable": false
+     },
+     "tests/go-live/resubscribe.flow.ts": {
+-      "sha256": "b9c4beee16d23a5291873f9b76fa49818027c2d92f470f2d21b86f90c57ce3fe",
++      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
+       "executable": false
+     },
+     "tests/go-live/review-loyalty-journey.ts": {
+diff --git a/tests/go-live/resubscribe.flow.ts b/tests/go-live/resubscribe.flow.ts
+index 44f7ce0..74fac13 100644
+--- a/tests/go-live/resubscribe.flow.ts
++++ b/tests/go-live/resubscribe.flow.ts
+@@ -74,24 +74,67 @@ export const walk0 = async({page:operator,browser},info)=>{
+       await screenshots(page,info,`resubscribe-${mode}-confirmation`);
+       expect(await contactDetail(site,id)).toEqual(pending);
+       await expectEmailStatus(site,email,'unsubscribed');
++      let confirmationStartedAt=0;
++      await page.route(link,async route=>{
++        expect(route.request().method()).toBe('POST');
++        expect(new URLSearchParams(route.request().postData()??'').get('confirm')).toBe('true');
++        confirmationStartedAt=Date.now();
++        await route.continue();
++      });
+       const confirming=page.waitForResponse(response=>response.url()===link&&response.request().method()==='POST');
+       await page.getByRole('button',{name:'Confirm subscription',exact:true}).click();
+-      expect((await confirming).status()).toBe(200);
++      const confirmationResponse=await confirming;
++      await confirmationResponse.finished();
++      const confirmationFinishedAt=Date.now();
++      await page.unroute(link);
++      expect(confirmationResponse.status()).toBe(200);
+       await expect(page.getByRole('heading',{name:'Subscription confirmed',exact:true})).toBeVisible();
+       await screenshots(page,info,`resubscribe-${mode}-success`);
+       await expectEmailStatus(site,email,'subscribed');
+       const confirmed=await contactDetail(site,id),afterGrowth=await growth(site);
+       expect(confirmed.history.filter((event:any)=>event.kind==='resubscribed')).toHaveLength(1);
+-      expect(confirmed.consent.find((item:any)=>item.id===evidence.id)).toMatchObject({confirmationIp:ip,confirmedAt:expect.any(String)});
++      const confirmedEvidence=confirmed.consent.find((item:any)=>item.id===evidence.id);
++      expect(confirmedEvidence).toMatchObject({confirmationIp:ip,occurredAt:evidence.occurredAt,confirmedAt:expect.any(String)});
++      const confirmedAt=Date.parse(confirmedEvidence.confirmedAt);
++      expect(confirmationStartedAt).toBeGreaterThan(Date.parse(evidence.occurredAt));
++      expect(confirmedAt).toBeGreaterThanOrEqual(confirmationStartedAt);
++      expect(confirmedAt).toBeLessThanOrEqual(confirmationFinishedAt);
++      expect(Date.parse(confirmed.contact.emailStatusAt)).toBe(confirmedAt);
++      const confirmationRecords=()=>site.rows(`SELECT e.occurred_at AS captured_at,e.confirmed_at AS consent_at,
++        c.confirmed_at AS confirmation_at,h.kind,h.occurred_at AS history_at
++        FROM consent_evidence e JOIN consent_confirmations c ON c.consent_evidence_id=e.id
++        JOIN contact_history h ON h.id IN (e.id||'_confirmed',e.id||'_resubscribed')
++        WHERE e.id='${evidence.id}' ORDER BY h.kind`);
++      const recordedConfirmation=await confirmationRecords();
++      expect(recordedConfirmation).toEqual(['consent-confirmed','resubscribed'].map(kind=>({
++        captured_at:Date.parse(evidence.occurredAt),consent_at:confirmedAt,confirmation_at:confirmedAt,kind,history_at:confirmedAt,
++      })));
++      for(const suffix of ['confirmed','resubscribed']) {
++        const history=confirmed.history.filter((event:any)=>event.id===`${evidence.id}_${suffix}`);
++        expect(history).toHaveLength(1);
++        expect(Date.parse(history[0].occurredAt)).toBe(confirmedAt);
++      }
+       expect(afterGrowth.rows).toContainEqual(expect.objectContaining({kind:'resubscribe',channel:'email',method,
+         source:evidence.captureSource,consentText:description.consentText,count:1,net:1}));
+       const beforeTotal=beforeGrowth.channels.find((row:any)=>row.channel==='email').closing;
+       expect(afterGrowth.channels.find((row:any)=>row.channel==='email').closing).toBe(beforeTotal+1);
+-      expect((await fetch(link)).status).toBe(410);
+-      expect((await confirm(link)).status).toBe(410);
++      const replays:Array<{startedAt:number;getStatus:number;postStatus:number}>=[];
++      for(let replay=0;replay<2;replay++) {
++        const startedAt=Date.now();
++        expect(startedAt).toBeGreaterThan(confirmedAt);
++        const getStatus=(await fetch(link)).status,postStatus=(await confirm(link)).status;
++        expect(getStatus).toBe(410);
++        expect(postStatus).toBe(410);
++        expect(await confirmationRecords()).toEqual(recordedConfirmation);
++        replays.push({startedAt,getStatus,postStatus});
++      }
+       expect(await contactDetail(site,id)).toEqual(confirmed);
+       expect((await growth(site)).channels).toEqual(afterGrowth.channels);
+       expect(await messagesFor(site,email)).toHaveLength(2);
++      await info.attach(`confirmation-time-${mode}`,{contentType:'application/json',body:JSON.stringify({
++        mode,capturedAt:Date.parse(evidence.occurredAt),confirmationStartedAt,confirmationFinishedAt,
++        confirmedAt,recordedConfirmation,replays,
++      },null,2)});
+ 
+       await openPage(operator,`${site.runtime.url}/app/audience/${id}`);
+       const history=operator.locator('section[aria-labelledby="timeline-title"]');

@@ -1,0 +1,104 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f71",
+  "head": "12dec3e3f4c65910ffdec642c3718ec8c3a8edd2",
+  "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "base": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "pushed": true,
+  "push_attempts": 1,
+  "verify_run": 42156774407,
+  "verify_status": "completed",
+  "source_hashes": {
+    "tests/go-live/resubscribe.flow.ts": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
+    "tests/go-live/shared-kiosk.journeys.ts": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
+    "tests/go-live/resubscribe-support.ts": "ecb7bf7d8d32b0b93ccdfe522245cdfed04b56d0d64bbe5b2936ac1c209572b9",
+    "src/core/features/audience/public-routes.ts": "3bde825632cec4530bc520d23eb5876edca3faa305feaee20d45b57d597a5833",
+    "src/core/features/audience/repository.ts": "86f680b8ad69c24b453ed2b31ef9fa19489d2e77f5050f922e9d56e55d70396a",
+    "CONTRACT.md": "25e6a9fca5326f0bc86ec644254a2bfb9206beead55c213224fabc2c7e77ad70",
+    "sources.lock.json": "34c968f481dae8510343e9eca1c64ef738c363e770b4650ea9da8ee278ffbdb6"
+  },
+  "local_checks": {
+    "setup": 0,
+    "build": 0,
+    "typecheck": 0,
+    "first_party": 0,
+    "registered_journey": 0,
+    "exact_committed_journey": 0
+  },
+  "registration_change": 0,
+  "status_before": "partial",
+  "status_after": "partial",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "exact_journey_stats": {
+    "startTime": "2026-11-06T03:28:49.105Z",
+    "duration": 70750.598,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "source_hashes_after_journey": {
+    "tests/go-live/resubscribe.flow.ts": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
+    "tests/go-live/shared-kiosk.journeys.ts": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
+    "tests/go-live/resubscribe-support.ts": "ecb7bf7d8d32b0b93ccdfe522245cdfed04b56d0d64bbe5b2936ac1c209572b9",
+    "src/core/features/audience/public-routes.ts": "3bde825632cec4530bc520d23eb5876edca3faa305feaee20d45b57d597a5833",
+    "src/core/features/audience/repository.ts": "86f680b8ad69c24b453ed2b31ef9fa19489d2e77f5050f922e9d56e55d70396a",
+    "CONTRACT.md": "25e6a9fca5326f0bc86ec644254a2bfb9206beead55c213224fabc2c7e77ad70",
+    "sources.lock.json": "34c968f481dae8510343e9eca1c64ef738c363e770b4650ea9da8ee278ffbdb6"
+  },
+  "product_clean_after_journey": true,
+  "recorded_at": "2026-11-06T03:31:13.553606+00:00",
+  "commands": {
+    "setup": {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0
+    },
+    "build": {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0
+    },
+    "typecheck": {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    "first_party": {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    "journey": {
+      "command": "cloud_run timeout 1200 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --workers=1 --reporter=list,json",
+      "exit": 0
+    }
+  },
+  "not_run": {
+    "live_sms": "Owner Twilio A2P and US carrier registration, transport and qualification held",
+    "publication_scan": "Mac lander custody",
+    "candidate_run_site": "Runs on main after landing",
+    "browser_390": "No product UI change"
+  },
+  "verify_conclusion": "failure",
+  "verify_url": "https://github.com/just-every/run-mango/actions/runs/42156774407",
+  "ready_basis": "Explicit generated-view-only failure exception",
+  "ci_failures": [
+    {
+      "job": 127692748783,
+      "step": "Check generated contract documents",
+      "error": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+    },
+    {
+      "job": 127692825851,
+      "step": "Require the selected coverage and its proof",
+      "cause": "Build failed; test shards skipped"
+    }
+  ],
+  "github_calls": 6
+}

@@ -1,0 +1,5 @@
+Run 42156774407; build job 127692748783.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T03:28:58.2110896Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T03:28:58.3693498Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T03:28:58.3776242Z ##[error]Process completed with exit code 1.
+Summary job 127692825851 failed because BUILD was failure; shards were skipped.
