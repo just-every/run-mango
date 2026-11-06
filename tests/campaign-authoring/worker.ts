@@ -44,6 +44,10 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await services.audienceService.recordChannelOptOut({channel:'email',destination:'opted-out@example.test',occurredAt:new Date(),reason:'test-optout'});
       return Response.json({token:session.token});
     }
+    if(path==='/_authoring/session'&&request.method==='POST') {
+      const session=await testIdentity(platform).createTestSession('authoring-operator');
+      return Response.json({token:session.token});
+    }
     if(path==='/_authoring/source') {
       await bindings.DB.prepare('CREATE TABLE IF NOT EXISTS task_authoring_commerce (id TEXT)').run();
       await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Recorded test source'}]);

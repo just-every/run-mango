@@ -427,8 +427,8 @@ export const walk2 = async ({ page, request }, testInfo) => {
     } finally { await replay.dispose(); }
     // A new native session for the same permitted Author still reads the same
     // retained bytes; revoking a session must not remove the purchased artifacts.
-    const reopened = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
-    expect(reopened.status()).toBe(200);
+    const reopened = await request.post(runtime.url + '/_authoring/session', { headers: { 'X-Test-Token': runtime.token } });
+    expect(reopened.status(), await reopened.text()).toBe(200);
     await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await reopened.json()).token, url: runtime.url }]);
     expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator).toMatchObject({ id: operator.id, role: 'author' });
     await readArtifacts('fresh-session');
