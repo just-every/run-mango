@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 21 | 197 | 89 | 307 |
+| Core | 22 | 196 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 21 | 197 | 98 | 316 |
+| Full target | 22 | 196 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-001 was exercised through its registered native segment and mixed-channel review journeys from the code and tests at commit `650e7ab7e6f6aaccc2d6f625a915dc6d71103df8` (5 November 2026); this status candidate retains those source and test bytes. Native SMS snapshot evidence establishes review counts without claiming live transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -786,7 +786,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-022 — Canonical saved email bytes
 
-Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
+Core · published · **done** · From CAMP-003 · Rules D-1, D-3
 
 **Requirement.** One canonical saved body is the authority for preview, checking and exact-revision approval.
 
@@ -798,8 +798,8 @@ Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
 5. Leading newlines in preformatted controls and unclosed plaintext settle without growing or moving the footer; a form that has not settled after sixteen rounds is refused rather than saved unstably.
 6. All newly saved drafts, including older drafts saved through other field edits, use this canonical form; plain text comes from the same parse.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”; “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”
-**Gap.** Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse. Missing public-door journey: “Canonical saved email bytes — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”; “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it” · `tests/campaign-authoring/canonical-content-journey.ts` — invoked by the second named canonical-save journey: acceptance 1 exact create and repeated-save HTML, one postal and unsubscribe footer and destination-bearing text; acceptance 2 scripting-off noscript children and fixed-point resaves; acceptance 3 kept attribute values, inline styles and tokens, unrepaired comments and refused markup, accepted noncanonical syntax; acceptance 4 discarded closing-tag attributes, with duplicate and misplaced-tag coverage in the first named journey; acceptance 5 leading newlines, stable plaintext, settling raw-text control and named excessive-nesting refusal with unchanged populated authority; acceptance 6 historical name-only and subject-only saves, independent HTML, text and link expectations, and repeated authenticated reads in the second named journey.
+**Gap.** None.
 
 #### CAMP-004 — Approval checks
 
