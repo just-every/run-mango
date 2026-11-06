@@ -10,7 +10,11 @@ import {openPage, reloadPage} from '../support/navigation';
 // time are controlled. Deadlines are persisted by ordinary authenticated saves.
 export async function stepDeadlineDispatchJourney(browser: Browser, info: TestInfo) {
   for (const channel of ['email', 'sms'] as const) {
+    const started=Date.now();
+    const progress=(phase:string)=>console.log(`Deadline ${channel}: ${phase}; elapsed=${Date.now()-started}ms`);
+    progress('starting installation');
     const edge = await providerEdge(), site = await installation(edge, eventSigner(), {sms:channel==='sms', reuseEmptySchema:true});
+    progress('installation ready');
     const context = await browser.newContext({viewport:{width:1440,height:1000}});
     try {
       // Freeze at the next Brisbane noon so SMS eligibility is independent of
@@ -50,6 +54,7 @@ export async function stepDeadlineDispatchJourney(browser: Browser, info: TestIn
           await confirmSmsReply(site,edge);
         }
       }
+      progress('contacts confirmed');
       const now = clock.now, due = now+3600000, deadline = due+60000;
       const make = async (number:number, starts:number[], ends:number[]) => {
         const draft = await draftCampaign(site,cookie,'synthetic-mango-'+number,emails,new Date(starts[0]));
@@ -68,6 +73,7 @@ export async function stepDeadlineDispatchJourney(browser: Browser, info: TestIn
       const delayed = await make(622,[due+30*60000],[due+31*60000]);
       const paused = await make(623,[due+40*60000],[due+41*60000]);
       await json(await site.call(`/api/campaigns/${paused.campaignId}/pause`,{method:'POST',cookie}),200);
+      progress('campaigns approved');
       const rows = await site.rows(`SELECT r.id,r.destination FROM recipient_steps r JOIN campaign_steps s ON s.id=r.step_id WHERE r.revision_id='${partial.revisionId}' AND s.sequence=1 ORDER BY r.created_at,r.rowid`);
       expect(rows).toHaveLength(emails.length);
       if (channel === 'email') {edge.loseResponseFor(rows[1].destination);edge.behavior.delayMarketingResponses(2000);}
@@ -86,6 +92,7 @@ export async function stepDeadlineDispatchJourney(browser: Browser, info: TestIn
         await to(due+10000);
       }
       await expect.poll(async()=>(await site.control('/_golive/barrier',{action:'status'}))?.waiting,{timeout:60000}).toBe(true);
+      progress('partial handoff barrier reached');
       const sentCount = channel==='email'?2:1;
       expect(marketing()).toHaveLength(sentCount);
       await expect.poll(async()=>(await site.rows(`SELECT transport_disposition FROM recipient_steps WHERE id='${rows[0].id}'`))[0].transport_disposition,{timeout:60000}).toBe('accepted');
@@ -142,6 +149,7 @@ export async function stepDeadlineDispatchJourney(browser: Browser, info: TestIn
       await expect(page.locator('[data-disposition=skipped] dd')).toHaveText(['1',String(emails.length)]);
       await page.screenshot({fullPage:true,path:info.outputPath(`deadline-results-${channel}-1440.png`)});
       await page.setViewportSize({width:390,height:844}); await reloadPage(page);
+      await page.locator('[data-disposition=skipped] dd').first().waitFor();
       await page.screenshot({fullPage:true,path:info.outputPath(`deadline-results-${channel}-390.png`)});
       expect(marketing()).toHaveLength(sentCount);
       expect(edge.unexpected).toEqual([]);

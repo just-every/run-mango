@@ -4174,7 +4174,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/composition-step-fields.tsx": {
-      "sha256": "15014605b1d0b45ccb1fc9c6ccc7468cef38cbea49dcc5a7be2897b05c2dbe22",
+      "sha256": "01f7e99ef7cb71950254bab4c6d0c098429f4a376a024d5fd48101457e82f82c",
       "executable": false
     },
     "src/core/features/campaigns/ui/data.ts": {
@@ -8546,11 +8546,11 @@
       "executable": false
     },
     "tests/campaign-authoring/step-deadline-dispatch-journey.ts": {
-      "sha256": "8a9283d6ecbd6125e976cf6afb9ccfb2465980eacf0b6cf2dd5e8ef93bda12fd",
+      "sha256": "7ad10f832c9004f97276ae424a029f1bb715e2273ec8a24c088db5e1ef3f7b18",
       "executable": false
     },
     "tests/campaign-authoring/step-deadline.spec.ts": {
-      "sha256": "30a2b6edbb92406bd0a7c80ce6400581afb76c1a98cb586d24822d509e638b13",
+      "sha256": "4e95493db7ebcb20f7885a53aa19093a8a719f143397ec85c230cf86c1ae06aa",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {

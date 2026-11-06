@@ -79,6 +79,7 @@ test('[CAMP-010] native deadline defaults and expired dispatch stay safe through
     // without granting approval or submitting the editor's explicit deadlines.
     await page.setViewportSize({width:390,height:844});
     await reloadPage(page);
+    await page.getByRole('heading', {name:'Edit draft', exact:true}).waitFor();
     await page.evaluate(() => window.scrollTo(0,0));
     await page.screenshot({fullPage:true, path:info.outputPath('step-deadline-390.png')});
     await read();
@@ -157,9 +158,11 @@ test('[CAMP-010] native deadline defaults and expired dispatch stay safe through
           expect(savedResponse.request().postDataJSON().steps[0].scheduledAt).toBe(scheduledAt);
           expect(savedResponse.status(),await savedResponse.text()).toBe(200);
           await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+          await expect(page.getByText('Unsaved changes. Save before approving.',{exact:true})).toHaveCount(0);
           await reloadPage(page);
         };
         await page.getByLabel('Local send date and time',{exact:true}).first().fill('2032-01-15T01:30');
+        await expect(page.getByLabel('Local send date and time',{exact:true}).first()).toHaveValue('2032-01-15T01:30');
         await expect(page.getByLabel('Local send-by date and time',{exact:true}).first()).toHaveValue(days[0].overrideLocal);
         await save('2032-01-15T06:30:00.000Z');
         matrixExpected[0].scheduledAt='2032-01-15T06:30:00.000Z';
@@ -177,9 +180,9 @@ test('[CAMP-010] native deadline defaults and expired dispatch stay safe through
     }
     console.log('PROBE CAMP-010 acceptance-1 additional doors: complete-create and PATCH, email and SMS, local and UTC-only inputs -> independently specified ordinary and DST local-day-end deadlines; no approval, recipients or dispatch jobs.');
     console.log('PROBE CAMP-010 acceptance-1: authenticated native PATCH with local times and IANA zone, both send-by fields omitted -> ordinary and both DST day-end instants persisted; reopened controls; draft with no approval, recipients or dispatch jobs.');
-    await stepDeadlineDispatchJourney(browser, info);
   } finally {
     await context.close();
     await runtime.close();
   }
+  await stepDeadlineDispatchJourney(browser, info);
 });
