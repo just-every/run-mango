@@ -1,0 +1,194 @@
+
+Running 1 test using 1 worker
+
+(node:4937) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged
+  ✓  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact (3.0m)
+
+  1 passed (3.0m)
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "tests/campaign-authoring/design-generation.spec.ts",
+      "--workers=1",
+      "--reporter=list,json"
+    ],
+    "configFile": "/workspace/run-mango/playwright.config.js",
+    "rootDir": "/workspace/run-mango/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f82/evidence/7f523b30a6bf/main",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/run-mango/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f82/evidence/7f523b30a6bf/main",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/workspace/run-mango/tests",
+        "snapshotDir": "/workspace/run-mango/tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "baseURL": "http://127.0.0.1:10204",
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "campaign-authoring/design-generation.spec.ts",
+      "file": "campaign-authoring/design-generation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/workspace/run-mango/tests/campaign-authoring/design-generation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 180832,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T07:04:50.400Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/workspace/run-mango/tests/campaign-authoring/design-generation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "design-provider-custody",
+                      "contentType": "application/json",
+                      "body": "ewogICJjbGF1c2UiOiAiREVTSUdOLTAxMSIsCiAgInBvaW50IjogImFjY2VwdGFuY2UtNCByZXRhaW5lZCBhcnRpZmFjdCBzZXNzaW9uIGFuZCBieXRlIHByZXNlcnZhdGlvbiIsCiAgIm9wZXJhdG9ySWQiOiAiYXV0aG9yaW5nLW9wZXJhdG9yIiwKICAicm9sZSI6ICJhdXRob3IiLAogICJyZWFkcyI6IFsKICAgIHsKICAgICAgInBoYXNlIjogImJlZm9yZS1yZWxvYWQiLAogICAgICAidXJsIjogIi9hcGkvZGVzaWduLWpvYnMvMDFNNlFUVzVZQk5XNjQyUUNQUTkxS1ZaRTAvY2FuZGlkYXRlcy9hL2ltYWdlIiwKICAgICAgImRlbmllZFN0YXR1cyI6IDQwMSwKICAgICAgImFsbG93ZWRTdGF0dXMiOiAyMDAsCiAgICAgICJjb250ZW50VHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAiYnl0ZXMiOiAyNTY0MiwKICAgICAgImV4cGVjdGVkU2hhMjU2IjogImQ3Y2NhM2ZhOTVhNDE3MzE0NWJhYTRlZjRhYmUyMjg0ZmYwMmMxZTYyMmZmMjkzNWU0NWYwYzZhMzhhNmI5N2EiLAogICAgICAib2JzZXJ2ZWRTaGEyNTYiOiAiZDdjY2EzZmE5NWE0MTczMTQ1YmFhNGVmNGFiZTIyODRmZjAyYzFlNjIyZmYyOTM1ZTQ1ZjBjNmEzOGE2Yjk3YSIKICAgIH0sCiAgICB7CiAgICAgICJwaGFzZSI6ICJiZWZvcmUtcmVsb2FkIiwKICAgICAgInVybCI6ICIvYXBpL2Rlc2lnbi1qb2JzLzAxTTZRVFc1WUJOVzY0MlFDUFE5MUtWWkUwL2NhbmRpZGF0ZXMvYi9pbWFnZSIsCiAgICAgICJkZW5pZWRTdGF0dXMiOiA0MDEsCiAgICAgICJhbGxvd2VkU3RhdHVzIjogMjAwLAogICAgICAiY29udGVudFR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgImJ5dGVzIjogMjU2NDIsCiAgICAgICJleHBlY3RlZFNoYTI1NiI6ICJkZWNhMjI2NGI3YjBlNTY3NmE1NDJlNjVmYzkyMTZlNDdlODIzYzdmNjJiNzI3YmNmODAxYjZiNDE0MmVkNTRhIiwKICAgICAgIm9ic2VydmVkU2hhMjU2IjogImRlY2EyMjY0YjdiMGU1Njc2YTU0MmU2NWZjOTIxNmU0N2U4MjNjN2Y2MmI3MjdiY2Y4MDFiNmI0MTQyZWQ1NGEiCiAgICB9LAogICAgewogICAgICAicGhhc2UiOiAiYmVmb3JlLXJlbG9hZCIsCiAgICAgICJ1cmwiOiAiL2FwaS9kZXNpZ24tam9icy8wMU02UVRXNVlCTlc2NDJRQ1BROTFLVlpFMC9sYXllcmRvYyIsCiAgICAgICJkZW5pZWRTdGF0dXMiOiA0MDEsCiAgICAgICJhbGxvd2VkU3RhdHVzIjogMjAwLAogICAgICAiY29udGVudFR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIsCiAgICAgICJieXRlcyI6IDIxMzUzLAogICAgICAiZXhwZWN0ZWRTaGEyNTYiOiAiYjdjY2E5Nzg4Yzg4YzY4Nzg4NjU1NDVhM2U5YWZjZjYxOGM2NzFjNzY0NmJlMWNkYWU5YzgwNzc2MTc2NGI2NiIsCiAgICAgICJvYnNlcnZlZFNoYTI1NiI6ICJiN2NjYTk3ODhjODhjNjg3ODg2NTU0NWEzZTlhZmNmNjE4YzY3MWM3NjQ2YmUxY2RhZTljODA3NzYxNzY0YjY2IgogICAgfSwKICAgIHsKICAgICAgInBoYXNlIjogImFmdGVyLXJlbG9hZCIsCiAgICAgICJ1cmwiOiAiL2FwaS9kZXNpZ24tam9icy8wMU02UVRXNVlCTlc2NDJRQ1BROTFLVlpFMC9jYW5kaWRhdGVzL2EvaW1hZ2UiLAogICAgICAiZGVuaWVkU3RhdHVzIjogNDAxLAogICAgICAiYWxsb3dlZFN0YXR1cyI6IDIwMCwKICAgICAgImNvbnRlbnRUeXBlIjogImltYWdlL3BuZyIsCiAgICAgICJieXRlcyI6IDI1NjQyLAogICAgICAiZXhwZWN0ZWRTaGEyNTYiOiAiZDdjY2EzZmE5NWE0MTczMTQ1YmFhNGVmNGFiZTIyODRmZjAyYzFlNjIyZmYyOTM1ZTQ1ZjBjNmEzOGE2Yjk3YSIsCiAgICAgICJvYnNlcnZlZFNoYTI1NiI6ICJkN2NjYTNmYTk1YTQxNzMxNDViYWE0ZWY0YWJlMjI4NGZmMDJjMWU2MjJmZjI5MzVlNDVmMGM2YTM4YTZiOTdhIgogICAgfSwKICAgIHsKICAgICAgInBoYXNlIjogImFmdGVyLXJlbG9hZCIsCiAgICAgICJ1cmwiOiAiL2FwaS9kZXNpZ24tam9icy8wMU02UVRXNVlCTlc2NDJRQ1BROTFLVlpFMC9jYW5kaWRhdGVzL2IvaW1hZ2UiLAogICAgICAiZGVuaWVkU3RhdHVzIjogNDAxLAogICAgICAiYWxsb3dlZFN0YXR1cyI6IDIwMCwKICAgICAgImNvbnRlbnRUeXBlIjogImltYWdlL3BuZyIsCiAgICAgICJieXRlcyI6IDI1NjQyLAogICAgICAiZXhwZWN0ZWRTaGEyNTYiOiAiZGVjYTIyNjRiN2IwZTU2NzZhNTQyZTY1ZmM5MjE2ZTQ3ZTgyM2M3ZjYyYjcyN2JjZjgwMWI2YjQxNDJlZDU0YSIsCiAgICAgICJvYnNlcnZlZFNoYTI1NiI6ICJkZWNhMjI2NGI3YjBlNTY3NmE1NDJlNjVmYzkyMTZlNDdlODIzYzdmNjJiNzI3YmNmODAxYjZiNDE0MmVkNTRhIgogICAgfSwKICAgIHsKICAgICAgInBoYXNlIjogImFmdGVyLXJlbG9hZCIsCiAgICAgICJ1cmwiOiAiL2FwaS9kZXNpZ24tam9icy8wMU02UVRXNVlCTlc2NDJRQ1BROTFLVlpFMC9sYXllcmRvYyIsCiAgICAgICJkZW5pZWRTdGF0dXMiOiA0MDEsCiAgICAgICJhbGxvd2VkU3RhdHVzIjogMjAwLAogICAgICAiY29udGVudFR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIsCiAgICAgICJieXRlcyI6IDIxMzUzLAogICAgICAiZXhwZWN0ZWRTaGEyNTYiOiAiYjdjY2E5Nzg4Yzg4YzY4Nzg4NjU1NDVhM2U5YWZjZjYxOGM2NzFjNzY0NmJlMWNkYWU5YzgwNzc2MTc2NGI2NiIsCiAgICAgICJvYnNlcnZlZFNoYTI1NiI6ICJiN2NjYTk3ODhjODhjNjg3ODg2NTU0NWEzZTlhZmNmNjE4YzY3MWM3NjQ2YmUxY2RhZTljODA3NzYxNzY0YjY2IgogICAgfQogIF0sCiAgInVuY2hhbmdlZCI6IFsKICAgICJydW4gcm93cyIsCiAgICAiY2FuZGlkYXRlIHJvd3MiLAogICAgImNvc3QgZmFjdHMiLAogICAgInB1cmNoYXNlcyIsCiAgICAicHJvdmlkZXIgcmVxdWVzdHMiLAogICAgImNhbXBhaWduIiwKICAgICJhcHByb3ZhbCBhbmQgcmVjaXBpZW50IGF1dGhvcml0eSIsCiAgICAiY29tbWFuZHMiCiAgXSwKICAicnVuQ291bnQiOiAxLAogICJjYW5kaWRhdGVDb3VudCI6IDIsCiAgImNvc3RDb3VudCI6IDQsCiAgInB1cmNoYXNlQ291bnQiOiA0LAogICJwcm92aWRlclJlcXVlc3RDb3VudCI6IDE1Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd49334c3e46907dbf47-f6378dbfdada18d6f6fe",
+          "file": "campaign-authoring/design-generation.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T07:04:49.617Z",
+    "duration": 181911.962,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

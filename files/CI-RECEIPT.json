@@ -1,0 +1,47 @@
+{
+  "runId": 42178900287,
+  "conclusion": "failure",
+  "head_sha": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42178900287",
+  "status": "completed",
+  "rootFailure": "generated contract document freshness only",
+  "rootJobId": 127763699851,
+  "dependentJobId": 127763781008,
+  "testShards": "skipped after generated-view failure",
+  "allowedException": true,
+  "repairRounds": 0,
+  "reruns": 0,
+  "dispatches": 0,
+  "githubBudgetInvocations": 7,
+  "failedLogCommands": [
+    {
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42178900287",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127763699851",
+        "--log-failed"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42178900287",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127763781008",
+        "--log-failed"
+      ],
+      "exit": 0
+    }
+  ],
+  "logSanitization": "runner environment metadata omitted; commands and failure diagnostics retained"
+}

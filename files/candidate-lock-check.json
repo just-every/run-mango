@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "scripts/edition-authoring/cli.mjs",
+    "check"
+  ],
+  "exit": 0,
+  "seconds": 0.261,
+  "at": "2026-11-06T07:05:34.843966+00:00",
+  "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "mergePending": false,
+  "log": "candidate-lock-check.log"
+}

@@ -1,0 +1,12 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f82",
+  "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "main": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "originalBase": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "changes": "CONTRACT.md                                        |  2 +-\n sources.lock.json                                  |  8 +--\n src/core/app/app.ts                                |  6 +-\n tests/campaign-authoring/design-generation.flow.ts | 84 ++++++++++++++++++++--\n tests/campaign-authoring/design-generation.spec.ts |  2 +-\n 5 files changed, 89 insertions(+), 13 deletions(-)",
+  "commits": "8c09d1f Capture retained design custody at both landing widths\n7de50fe Merge main while preserving retained design custody [skip ci]\n9530fde Preserve private retained design artifact bytes",
+  "generatedViewsMatchMain": true,
+  "registrationDelta": 0,
+  "typecheckRelevantBytesUnchangedSinceRecordedRun": true
+}

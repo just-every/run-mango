@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "scripts/edition-authoring/cli.mjs",
+    "check"
+  ],
+  "exit": 0,
+  "seconds": 0.271,
+  "at": "2026-11-06T07:04:31.824179+00:00",
+  "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+  "mergePending": false,
+  "log": "lock-check.log"
+}

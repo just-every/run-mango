@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f82",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f82",
+  "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "checks": [
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "tests/campaign-authoring/design-generation.spec.ts",
+        "--workers=1",
+        "--reporter=list,json"
+      ],
+      "exit": 0,
+      "seconds": 182.633,
+      "at": "2026-11-06T07:07:51.562651+00:00",
+      "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+      "mergePending": false,
+      "log": "candidate-generation.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.261,
+      "at": "2026-11-06T07:05:34.843966+00:00",
+      "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+      "mergePending": false,
+      "log": "candidate-lock-check.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 15.546,
+      "at": "2026-11-06T07:04:12.617575+00:00",
+      "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+      "mergePending": false,
+      "log": "candidate-typecheck.log"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 1,
+      "seconds": 0.158,
+      "at": "2026-11-06T07:05:35.028580+00:00",
+      "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+      "mergePending": false,
+      "log": "candidate-view-check.log"
+    },
+    {
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "seconds": 1.379,
+      "at": "2026-11-06T07:06:50.272357+00:00",
+      "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+      "mergePending": false,
+      "log": "exact-first-party.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 16.404,
+      "at": "2026-11-06T07:07:05.202109+00:00",
+      "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+      "mergePending": false,
+      "log": "exact-typecheck.log"
+    },
+    {
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "seconds": 1.502,
+      "at": "2026-11-06T06:59:46.019216+00:00",
+      "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+      "mergePending": true,
+      "log": "first-party.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "tests/campaign-authoring/design-generation.spec.ts",
+        "--workers=1",
+        "--reporter=list,json"
+      ],
+      "exit": 0,
+      "seconds": 179.431,
+      "at": "2026-11-06T07:02:32.039962+00:00",
+      "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+      "mergePending": true,
+      "log": "generation.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.271,
+      "at": "2026-11-06T07:04:31.824179+00:00",
+      "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+      "mergePending": false,
+      "log": "lock-check.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "seconds": 0.281,
+      "at": "2026-11-06T07:04:31.524675+00:00",
+      "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+      "mergePending": false,
+      "log": "lock-write.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 15.077,
+      "at": "2026-11-06T06:59:59.647804+00:00",
+      "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+      "mergePending": true,
+      "log": "typecheck.log"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.153,
+      "at": "2026-11-06T07:04:31.210077+00:00",
+      "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+      "mergePending": false,
+      "log": "views-check.log"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "seconds": 0.161,
+      "at": "2026-11-06T07:04:31.028134+00:00",
+      "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+      "mergePending": false,
+      "log": "views-write.log"
+    }
+  ],
+  "custodyReceipt": "custody.json",
+  "screens": [
+    {
+      "file": "design-provider-custody-1440.png",
+      "sha256": "b661857f75ed9e7451f446a0d9cece52f1db6365b6bd6ed08ba639710d29f1dd"
+    },
+    {
+      "file": "design-provider-custody-390.png",
+      "sha256": "f20474c9da52b12c6c150edd2510db6fc1ae735176a71d22e5741456ace01218"
+    }
+  ],
+  "status": "selected point locally proved; product pushed; generated-view-only CI exception confirmed",
+  "migrationLedger": "not applicable: no migrations changed",
+  "publicationScan": "not run in cloud; guarded lander owns complete publication scan",
+  "registrationDelta": 0,
+  "productRemoteHead": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "publicationStatus": "separate evidence publication follows",
+  "ci": {
+    "runId": 42178900287,
+    "conclusion": "failure",
+    "head_sha": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42178900287",
+    "status": "completed",
+    "rootFailure": "generated contract document freshness only",
+    "rootJobId": 127763699851,
+    "dependentJobId": 127763781008,
+    "testShards": "skipped after generated-view failure",
+    "allowedException": true,
+    "repairRounds": 0,
+    "reruns": 0,
+    "dispatches": 0,
+    "githubBudgetInvocations": 7,
+    "failedLogCommands": [
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "42178900287",
+          "--repo",
+          "just-every/run-mango",
+          "--job",
+          "127763699851",
+          "--log-failed"
+        ],
+        "exit": 0
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "42178900287",
+          "--repo",
+          "just-every/run-mango",
+          "--job",
+          "127763781008",
+          "--log-failed"
+        ],
+        "exit": 0
+      }
+    ],
+    "logSanitization": "runner environment metadata omitted; commands and failure diagnostics retained"
+  }
+}

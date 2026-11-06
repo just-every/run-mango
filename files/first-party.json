@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npx",
+    "-y",
+    "@runeditrun/rer",
+    "check",
+    "--profile",
+    "first-party"
+  ],
+  "exit": 0,
+  "seconds": 1.502,
+  "at": "2026-11-06T06:59:46.019216+00:00",
+  "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "mergePending": true,
+  "log": "first-party.log"
+}

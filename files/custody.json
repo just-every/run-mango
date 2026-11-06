@@ -1,0 +1,83 @@
+{
+  "clause": "DESIGN-011",
+  "point": "acceptance-4 retained artifact session and byte preservation",
+  "operatorId": "authoring-operator",
+  "role": "author",
+  "reads": [
+    {
+      "phase": "before-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/candidates/a/image",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "image/png",
+      "bytes": 25642,
+      "expectedSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a",
+      "observedSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+    },
+    {
+      "phase": "before-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/candidates/b/image",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "image/png",
+      "bytes": 25642,
+      "expectedSha256": "deca2264b7b0e5676a542e65fc9216e47e823c7f62b727bcf801b6b4142ed54a",
+      "observedSha256": "deca2264b7b0e5676a542e65fc9216e47e823c7f62b727bcf801b6b4142ed54a"
+    },
+    {
+      "phase": "before-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/layerdoc",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "application/json",
+      "bytes": 21353,
+      "expectedSha256": "b7cca9788c88c6878865545a3e9afcf618c671c7646be1cdae9c807761764b66",
+      "observedSha256": "b7cca9788c88c6878865545a3e9afcf618c671c7646be1cdae9c807761764b66"
+    },
+    {
+      "phase": "after-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/candidates/a/image",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "image/png",
+      "bytes": 25642,
+      "expectedSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a",
+      "observedSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+    },
+    {
+      "phase": "after-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/candidates/b/image",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "image/png",
+      "bytes": 25642,
+      "expectedSha256": "deca2264b7b0e5676a542e65fc9216e47e823c7f62b727bcf801b6b4142ed54a",
+      "observedSha256": "deca2264b7b0e5676a542e65fc9216e47e823c7f62b727bcf801b6b4142ed54a"
+    },
+    {
+      "phase": "after-reload",
+      "url": "/api/design-jobs/01M6QTW5YBNW642QCPQ91KVZE0/layerdoc",
+      "deniedStatus": 401,
+      "allowedStatus": 200,
+      "contentType": "application/json",
+      "bytes": 21353,
+      "expectedSha256": "b7cca9788c88c6878865545a3e9afcf618c671c7646be1cdae9c807761764b66",
+      "observedSha256": "b7cca9788c88c6878865545a3e9afcf618c671c7646be1cdae9c807761764b66"
+    }
+  ],
+  "unchanged": [
+    "run rows",
+    "candidate rows",
+    "cost facts",
+    "purchases",
+    "provider requests",
+    "campaign",
+    "approval and recipient authority",
+    "commands"
+  ],
+  "runCount": 1,
+  "candidateCount": 2,
+  "costCount": 4,
+  "purchaseCount": 4,
+  "providerRequestCount": 15
+}

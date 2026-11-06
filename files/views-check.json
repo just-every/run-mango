@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "src/base/contract-docs.mjs",
+    "check"
+  ],
+  "exit": 0,
+  "seconds": 0.153,
+  "at": "2026-11-06T07:04:31.210077+00:00",
+  "head": "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+  "mergePending": false,
+  "log": "views-check.log"
+}

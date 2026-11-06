@@ -1,0 +1,13 @@
+{
+  "command": [
+    "pnpm",
+    "run",
+    "typecheck"
+  ],
+  "exit": 0,
+  "seconds": 15.077,
+  "at": "2026-11-06T06:59:59.647804+00:00",
+  "head": "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+  "mergePending": true,
+  "log": "typecheck.log"
+}

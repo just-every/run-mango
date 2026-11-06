@@ -1,0 +1,19 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/campaign-authoring/design-generation.spec.ts",
+    "--workers=1",
+    "--reporter=list,json"
+  ],
+  "exit": 0,
+  "seconds": 182.633,
+  "at": "2026-11-06T07:07:51.562651+00:00",
+  "head": "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+  "mergePending": false,
+  "log": "candidate-generation.log"
+}
