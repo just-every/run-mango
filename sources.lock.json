@@ -9206,11 +9206,11 @@
       "executable": false
     },
     "tests/local-start/sender-setup.flow.ts": {
-      "sha256": "620a44e903c1006f3833fb6656f071433a104628dee700d78b4dd3472e631acd",
+      "sha256": "3cb3692e66ae80e28f8b40500d8bc9591ab6f54e78c3fd9c65ec649001f37297",
       "executable": false
     },
     "tests/local-start/sender-setup.journey.ts": {
-      "sha256": "b17fee10e69656181dff8b4b3a694d46d6b95ee7faf2e18002578106b9cc7209",
+      "sha256": "440c316f5c84e35f365001af849f53ab6dd31092d8363308e8acbc669e7d6552",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {

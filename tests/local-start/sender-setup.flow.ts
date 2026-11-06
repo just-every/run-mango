@@ -13,6 +13,11 @@ export async function senderSetupJourney(browser: Browser, runtime: {checkout: s
     expect((await stat(join(runtime.checkout,'.dev.vars'))).mode & 0o777).toBe(0o600);
     expect((await page.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
     await openGate(context,runtime.url);
+    // The private development key opens local sign-in; configuration still
+    // requires the native operator session established below.
+    for (const path of ['/api/settings/sender','/api/settings/providers']) {
+      expect((await page.request.get(runtime.url+path)).status()).toBe(401);
+    }
     await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
