@@ -1,3 +1,4 @@
+import {mobileEnvelope,mobileDocument} from '../../src/core/features/campaigns/email-mobile';
 import {expect,type Page} from '@playwright/test';
 import {json,type Installation} from '../go-live/harness';
 import {reloadPage} from '../support/navigation';
@@ -18,7 +19,8 @@ export async function conditionalSourcesJourney(page:Page,site:Installation,cook
   const escape=(s:string)=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
   const block=(source:string,key:string,value:string|boolean,yes:string,no:string)=>`<div data-mango-condition="${escape(JSON.stringify({source,key,comparator:'eq',value}))}"><div data-mango-branch="match"><p>${yes}</p></div><div data-mango-branch="otherwise">${no?'<p>'+no+'</p>':''}</div></div>`;
   const revision=await read();
-  const body=revision.emailBody+block('topic','newsletter',true,'Newsletter growing tips','')+block('predicted-stage','predicted_stage','champion','Champion garden preview','First season garden notes')+block('event','properties.reward','seeds','Order bonus: seed packet','Browse seed packets');
+  const envelope=mobileEnvelope(revision.emailBody);
+  const body=mobileDocument(envelope.body+block('topic','newsletter',true,'Newsletter growing tips','')+block('predicted-stage','predicted_stage','champion','Champion garden preview','First season garden notes')+block('event','properties.reward','seeds','Order bonus: seed packet','Browse seed packets'),envelope.style);
   await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:body}}),200);
   const vip=await json(await site.call(`/api/contacts/${vipId}/content-context?revisionId=${draft.revisionId}`,{cookie}),200);
   expect(vip.contentContext.event.properties.reward).toBe('seeds');

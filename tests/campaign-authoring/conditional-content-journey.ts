@@ -32,6 +32,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     await page.getByRole('combobox',{name:'Show block',exact:true}).selectOption('conditional');
     await page.getByLabel('Condition key',{exact:true}).fill(segment.id);
     await page.getByRole('textbox',{name:'Otherwise text',exact:true}).fill('Explore the garden collection');
+    await page.getByLabel('Mobile font size',{exact:true}).fill('22');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     mark('saved conditional block');
     const saved=(await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200)).revision;
@@ -51,6 +52,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      if(width===390)expect(await html.getByText('VIP early access to the garden',{exact:true}).evaluate(node=>getComputedStyle(node).fontSize)).toBe('22px');
       await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`conditional-editor-${width}.png`)});
       await previews.screenshot({path:info.outputPath(`conditional-preview-${width}.png`)});
     }

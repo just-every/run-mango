@@ -1,6 +1,6 @@
 import {parseFragment,serialize,serializeOuter,type DefaultTreeAdapterTypes as Tree} from 'parse5';
 import {z} from 'zod';
-import {mobileEnvelope,mobileDocument} from './email-mobile';
+import {mobileEnvelope,mobileDocument,mobileClass} from './email-mobile';
 import {fieldValue,matchesComparator} from '@/core/features/audience/rule-values';
 
 export const contentConditionSchema=z.object({source:z.enum(['segment','property','topic','predicted-stage','event']),key:z.string().trim().min(1).max(160),comparator:z.enum(['eq','neq','contains','gt','gte','lt','lte']),value:z.union([z.string().max(2000),z.number().finite(),z.boolean()])}).strict();
@@ -36,6 +36,14 @@ export function chooseConditionalContent(source:string,context?:ContentContext,c
   const visit=(parent:Tree.ParentNode)=>{for(const node of parent.childNodes){if(!('tagName'in node))continue;
     const conditional=readConditional(node);
     if(conditional){const block=index++,matches=choice==='all'?true:choice?.block===block?choice.matches:conditionMatches(conditional.condition,context);const body=parseFragment(choice==='all'?conditional.html+conditional.otherwise:matches?conditional.html:conditional.otherwise);node.childNodes=body.childNodes;for(const child of node.childNodes)child.parentNode=node;node.attrs=node.attrs.filter(a=>a.name!=='data-mango-condition');}
+    if(conditional){
+      const ownClass=attribute(node,'class'),setting=envelope.settings.find(row=>mobileClass(row.block)===ownClass);
+      if(setting){
+        const cells=(parent:Tree.ParentNode):Tree.Element[]=>parent.childNodes.flatMap(child=>'tagName'in child?[child,...cells(child)]:[]);
+        const children=cells(node),target=setting.contentCell?children.find(child=>child.tagName==='td')??children[0]:children[0];
+        if(target&&!attribute(target,'class')){target.attrs.push({name:'class',value:ownClass!});node.attrs=node.attrs.filter(a=>a.name!=='class');}
+      }
+    }
     visit(node);
   }};visit(fragment);return mobileDocument(serialize(fragment),envelope.style);
 }
