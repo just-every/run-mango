@@ -1,0 +1,14 @@
+62a3621e2f17facaa076ff1a88afa9e7ee34f810
+3e90426fd0326ec945dc152959e34021f2e2cdcf
+a6ff098f6cdf8b356b76105c726c2561f6051a8d
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+Count campaign people once across tracked links and email steps
+
+ sources.lock.json                                  | 10 ++--
+ src/core/features/insights/campaign-engagement.ts  | 14 +++++-
+ .../features/insights/ui/campaign-engagement.tsx   |  6 +++
+ tests/campaign-results/reporting-fixture.ts        | 37 +++++++++++---
+ tests/campaign-results/reporting-journey.ts        | 58 ++++++++++++++++++----
+ tests/campaign-results/results.journeys.ts         |  2 +-
+ 6 files changed, 103 insertions(+), 24 deletions(-)

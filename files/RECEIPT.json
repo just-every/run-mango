@@ -1,0 +1,141 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f120",
+  "head": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+  "base": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "commands": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "contract-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "contract-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "source-lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "source-check.log"
+    }
+  ],
+  "initial_journey": {
+    "command": "timeout 1200 pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts --workers=1",
+    "exit": 0,
+    "tests_passed": 1,
+    "log": "results-journey.log"
+  },
+  "candidate_journey": {
+    "head": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+    "command": "timeout 1200 pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts --workers=1",
+    "exit": 0,
+    "tests_passed": 1,
+    "duration": "2.8m",
+    "log": "exact-sha-results-journey.log",
+    "assertion_width": 1440,
+    "proof_widths": [
+      1440,
+      390
+    ]
+  },
+  "ci": {
+    "id": 42229362900,
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": null,
+    "observed_at": "2026-11-06T13:55:33.188981+00:00",
+    "note": "No repeated polling before the 300-second interval. Cloud handoff leaves final CI and landing to fleet."
+  },
+  "contract_counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "contract_counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "status_change": "RESULT-007 partial -> partial",
+  "publication_scan": {
+    "commit": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "status": "Mac lander pending; not required for cloud branch push"
+  },
+  "new_test_registrations": 0,
+  "removed_test_registrations": 0,
+  "assertions_weakened": false,
+  "contract_diff_empty": true,
+  "new_email_literals": 0,
+  "product_push": {
+    "attempts": 1,
+    "status": "success"
+  },
+  "proof_widths": [
+    1440,
+    390
+  ],
+  "browser_inspection": {
+    "at": "2026-11-06T13:57:52.057135+00:00",
+    "widths": [
+      1440,
+      390
+    ],
+    "observed": "Human clicks 8, Unique people 2 and Automated requests 3 are visible below navigation; desktop per-link rows and saved click map reconcile; phone layout fits viewport.",
+    "artifacts": [
+      {
+        "path": "links-1440.png",
+        "sha256": "39da22398155e7cbb606553713be3c64fd5d42716bfba3793cd881de234555ae"
+      },
+      {
+        "path": "links-390.png",
+        "sha256": "3d0448efa02c5f46a7c2d4e138625f5437ee10e577fd5b07fc553c420b659ee3"
+      }
+    ]
+  },
+  "local_gates": "passed",
+  "mechanical": {
+    "lock": {
+      "write": "node scripts/edition-authoring/cli.mjs lock",
+      "check": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    "views": {
+      "write": "node src/base/contract-docs.mjs write",
+      "check": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "restored_from": "origin/main",
+      "committed": false
+    },
+    "ledger": {
+      "command": null,
+      "reason": "no migration change",
+      "exit": 0
+    }
+  },
+  "finalized_at": "2026-11-06T13:58:19.970305+00:00",
+  "remote_refs_verified_at": "2026-11-06T13:59:07.668105+00:00",
+  "remote_refs": {
+    "refs/heads/cloud/sd-mango-c-f120": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+    "refs/heads/main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d"
+  },
+  "github_api_calls": 2
+}
