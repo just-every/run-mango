@@ -58,17 +58,20 @@ export async function csvRulesJourney(page:Page,info:TestInfo) {
     const input:ImportInput={files:[{name:'synthetic-mango-update.csv',preset:'csv-non-subscribed',csv:[
       'email,phone,first name',`  ${email(201).toUpperCase()}  ,+61 (491) 570-201,Updated`,
       `${email(202)},${phone(202)},Created`,'not-an-address,,Rejected email',',invalid,Rejected phone',
+      `${email(201)},${phone(201)},Updated`,
     ].join('\n')}]};
     const update=await apply(site,cookie,input);
-    expect(update.preview.counts).toMatchObject({input:4,created:1,updated:1,rejected:2});
+    expect(update.preview.counts).toMatchObject({input:5,created:1,updated:1,rejected:2});
     expect(await site.count('contacts')).toBe(2);
     const updated=await detail(site,cookie,email(201));
     expect(updated.contact).toMatchObject({id:original.contact.id,email:email(201),displayName:'Updated',emailStatus:'non-subscribed',smsStatus:'non-subscribed'});
     expect(updated.phones).toMatchObject([{phoneE164:phone(201),contactId:original.contact.id}]);
     expect(updated.phones).toHaveLength(1);expect(updated.emails).toHaveLength(1);
-    const reconciliation=await report(site,cookie,update.job.id,[4,1,1,2,0]);
+    const reconciliation=await report(site,cookie,update.job.id,[5,1,1,2,1]);
     expect(reconciliation).toContain('| synthetic-mango-update.csv | 4 | non-subscribed | Email must be a valid address. |');
     expect(reconciliation).toContain('| synthetic-mango-update.csv | 5 | non-subscribed | Phone numbers must be supplied in E.164 form, including the country calling code. |');
+    const rowOutcomes=reconciliation.split('\n').filter(line=>line.startsWith('| synthetic-mango-update.csv |')).map(line=>line.split('|').at(-2)?.trim());
+    expect(rowOutcomes).toEqual(['updated','created','rejected','rejected','skipped']);
     const before=await saved(site),retried=await apply(site,cookie,input);
     expect(retried.job.id).toBe(update.job.id);expect(await saved(site)).toEqual(before);
     const undone=await json(await site.call(`/api/audience/imports/${update.job.id}/undo`,{method:'POST',cookie,body:{}}),200);
