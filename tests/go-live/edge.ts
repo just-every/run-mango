@@ -1,3 +1,4 @@
+import {fixtureLinkResponse} from './fixture-links';
 import {providerBehavior} from './provider-behavior';
 import {marketingAdmission} from './marketing-admission';
 import {smsProviderEdge} from './sms-provider-edge';
@@ -36,7 +37,6 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
     dkim2: { valid: true, type: 'cname', host: 's2._domainkey.example.test', data: 's2.domainkey.u99.wl.sendgrid.net' } } };
   const zone: Record<string, Answer[]> = {
     'mango-test.myshopify.com': [{type:1,data:'203.0.113.10'}],
-    'shop.example.test':[{type:1,data:'203.0.113.10'}],
     'send.example.test':[{type:16,data:quoted('v=spf1 ip4:192.0.2.1 -all')}],
     'resend._domainkey.example.test':[{type:16,data:quoted(`v=DKIM1; k=rsa; p=${keys[0]}`)}],
     'em123.example.test': [{ type: 5, data: 'u99.wl.sendgrid.net.' }],
@@ -80,7 +80,6 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
     if(await resend.handle(original,request,response))return;
     const linked = options.links?.[original.href];
     if(linked && request.method==='HEAD') {response.writeHead(linked.status ?? (linked.location ? 302 : 200), linked.location ? {Location:linked.location} : {});response.end();return;}
-    if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
     if(original.hostname==='mango-test.myshopify.com' && options.commerce) {
       if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}
       return json(response,200,options.commerce(JSON.parse(await body(request))));
@@ -88,6 +87,12 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
     if (original.hostname === 'links.example.test' && request.method === 'HEAD') {response.writeHead(domainSetup.trackingHttps ? 200 : 503); response.end(); return;}
     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
+    const fixture = fixtureLinkResponse(original, request.method ?? 'GET');
+    if (fixture) {
+      response.writeHead(fixture.status, Object.fromEntries(fixture.headers));
+      response.end(Buffer.from(await fixture.arrayBuffer()));
+      return;
+    }
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
     if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});

@@ -1,3 +1,4 @@
+import {sendingEventsSilent} from './event-silence';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import type {Platform} from '@/core/shared/platform';
 import {effectiveRole} from '../auth/product-roles';
@@ -28,7 +29,10 @@ export async function monitorSendingConnection(platform:Platform,row:{generation
     // A transient or indeterminate read blocks approval; it never certifies health.
     if(!code)code='sending-health-unknown';
   }
-  await db.prepare('UPDATE sending_connection SET last_error=?,delivery_proved_at=CASE WHEN ? IS NULL THEN delivery_proved_at ELSE NULL END WHERE id=1 AND generation=? AND state=\'connected\'').bind(code??null,code??null,row.generation).run();
+  if(!code&&row.account_id==='resend'&&await sendingEventsSilent(platform,row.generation,now))code='delivery-events-silent';
+  // Keep the proven diagnostic during silence; only current signed marketing
+  // can clear this cause. Capabilities remain fenced while the cause is set.
+  await db.prepare('UPDATE sending_connection SET last_error=?,delivery_proved_at=CASE WHEN ? IS NULL OR ?=\'delivery-events-silent\' THEN delivery_proved_at ELSE NULL END WHERE id=1 AND generation=? AND state=\'connected\'').bind(code??null,code??null,code??null,row.generation).run();
   if(!code||code==='sending-health-unknown')return;
   const targets=(await db.prepare(`SELECT n.id,n.email FROM oa_operators n JOIN operators p ON p.id=n.id LEFT JOIN operator_product_roles r ON r.operator_id=n.id WHERE n.status='active' AND ${effectiveRole} IN ('owner','admin')`).all<{id:string;email:string}>()).results;
   for(const operator of targets){

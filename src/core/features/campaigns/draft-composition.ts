@@ -2,7 +2,7 @@ import {mobileSettingsSchema} from './email-mobile';
 import { completeInclusionRuleSchema, completeExclusionRuleSchema } from '@/core/features/lifecycle/rules';
 import { z } from 'zod';
 import {parseAnalyticsPolicy} from '@/core/features/settings/analytics-policy';
-import { resolveLocalInstant } from '@/core/features/lifecycle/schedule';
+import { localDayEnd, resolveLocalInstant } from '@/core/features/lifecycle/schedule';
 
 const channel = z.enum(['email', 'sms']);
 const resolvedInstant = z.string().datetime({ offset: true });
@@ -39,7 +39,9 @@ const draftStep = z
       return instant ?? '';
     };
     const scheduledAt = resolve(step.localScheduledAt, step.scheduledAt, 'localScheduledAt');
-    const sendByAt = resolve(step.localSendByAt ?? (step.localScheduledAt && !step.sendByAt ? step.localScheduledAt.slice(0,10) + 'T23:59' : undefined), step.sendByAt, 'localSendByAt');
+    const defaultDeadline = !step.sendByAt && !step.localSendByAt && scheduledAt
+      ? localDayEnd(new Date(scheduledAt), step.timezone) : undefined;
+    const sendByAt = resolve(step.localSendByAt ?? defaultDeadline, step.sendByAt, 'localSendByAt');
     if (Date.parse(sendByAt) <= Date.parse(scheduledAt)) context.addIssue({code:'custom', message:'Send-by must be after the resolved send instant.'});
     return {channel:step.channel, timezone:step.timezone, scheduledAt, sendByAt, whyThisTime:step.whyThisTime};
   });

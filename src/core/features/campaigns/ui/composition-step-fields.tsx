@@ -19,7 +19,9 @@ export function CompositionStepFields({steps, setSteps}: {steps:DraftComposition
       update(index,{localScheduledAt:local,scheduledAt:resolved.status==='resolved'?resolved.instant:'',localSendByAt:end,sendByAt:endResolved.status==='resolved'?endResolved.instant:''});
     }
   };
-  return <fieldset className="composition-fieldset"><legend>Selected channel steps (required for approval)</legend>
+  // The document can hydrate before this streamed editor subtree. Native edits
+  // must wait until this component has attached its change handlers.
+  return <fieldset className="composition-fieldset" disabled={!hydrated}><legend>Selected channel steps (required for approval)</legend>
     {steps.map((step,index)=> {
       const local = step.localScheduledAt ?? localDateTime(step.scheduledAt,step.timezone), deadline = step.localSendByAt ?? localDateTime(step.sendByAt,step.timezone);
       const resolution = resolveLocalInstant(local,step.timezone), end = resolveLocalInstant(deadline,step.timezone);

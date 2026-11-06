@@ -1,12 +1,20 @@
 import { lazy, useEffect } from 'react';
-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from '@tanstack/react-router';
 import stylesheet from '../core/app/client/styles.css?url';
 import {MangoEditor, editorLeaf} from '@/core/features/editor/client';
 import { fontLinks } from '../core/features/site/font-head';
 import { trackPointerFocus } from '../core/app/client/lib/pointer-focus';
+import { TimeZoneProvider, useHydrated } from '../core/app/client/lib/time-zone';
+function DocumentHydration() {
+ const hydrated = useHydrated();
+ const app = useRouterState({select: state => state.location.pathname === '/app' || state.location.pathname.startsWith('/app/')});
+ // App documents publish readiness inside their streamed content, after its commit.
+ useEffect(() => {if (hydrated && !app) document.documentElement.dataset.mangoHydrated = 'true';}, [hydrated, app]);
+ return null;
+}
 function Document() {
- useEffect(() => {document.documentElement.dataset.mangoHydrated = 'true'; return trackPointerFocus();}, []);
- return <html lang="en"><head><HeadContent /></head><body><Outlet /><MangoEditor /><Scripts /></body></html>;
+ useEffect(() => trackPointerFocus(), []);
+ return <html lang="en"><head><HeadContent /></head><body><TimeZoneProvider><Outlet /><MangoEditor /><DocumentHydration /></TimeZoneProvider><Scripts /></body></html>;
 }
 export const Route = createRootRoute({
  head: () => ({

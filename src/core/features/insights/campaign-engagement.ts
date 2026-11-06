@@ -4,6 +4,7 @@ import { assertCampaignReportReadable } from './campaign-recipient-query';
 
 type AuthoredLink = { id: string; sequence: number; label: string; destination_url: string };
 type ClickCounts = { destination_url: string | null; clicks: number; unique_clicks: number; automated: number };
+type CampaignCounts = Omit<ClickCounts, 'destination_url'>;
 
 /** Call only behind the native private API/session and erasure middleware.
  * The current sender issues one token per destination, so repeated authored
@@ -14,7 +15,7 @@ export async function campaignEngagement(database: Database, campaignId: string,
   const revision = await client.prepare('SELECT id FROM campaign_revisions WHERE id=? AND campaign_id=?')
     .bind(revisionId, campaignId).first();
   if (!revision) return null;
-  const [authored, counts] = await Promise.all([
+  const [authored, counts, campaign] = await Promise.all([
     client.prepare('SELECT id,sequence,label,destination_url FROM campaign_revision_links WHERE revision_id=? ORDER BY sequence,id')
       .bind(revisionId).all<AuthoredLink>(),
     client.prepare(`SELECT f.destination_url,
@@ -24,6 +25,15 @@ export async function campaignEngagement(database: Database, campaignId: string,
       FROM link_click_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id LEFT JOIN contacts c ON c.id=r.contact_id
       WHERE r.campaign_id=? AND r.revision_id=? GROUP BY f.destination_url`)
       .bind(campaignId, revisionId).all<ClickCounts>(),
+    // Count people across destinations and recipient steps, rather than adding
+    // per-link people or borrowing the performance report's recipient-step metric.
+    client.prepare(`SELECT
+      SUM(CASE WHEN f.automated=0 THEN 1 ELSE 0 END) clicks,
+      COUNT(DISTINCT CASE WHEN f.automated=0 THEN c.id END) unique_clicks,
+      SUM(CASE WHEN f.automated=1 THEN 1 ELSE 0 END) automated
+      FROM link_click_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id LEFT JOIN contacts c ON c.id=r.contact_id
+      WHERE r.campaign_id=? AND r.revision_id=?`)
+      .bind(campaignId, revisionId).first<CampaignCounts>(),
   ]);
   const groups = new Map<string, AuthoredLink[]>();
   for (const link of authored.results) groups.set(link.destination_url, [...groups.get(link.destination_url) ?? [], link]);
@@ -40,6 +50,8 @@ export async function campaignEngagement(database: Database, campaignId: string,
   });
   const legacy = counts.results.find(row => row.destination_url === null);
   return { campaignId, revisionId, grouping: 'destination' as const, links,
+    totalClicks: Number(campaign?.clicks ?? 0), uniqueClicks: Number(campaign?.unique_clicks ?? 0),
+    automatedRequests: Number(campaign?.automated ?? 0),
     legacyUnattributedClicks: Number(legacy?.clicks ?? 0), legacyAutomatedRequests: Number(legacy?.automated ?? 0),
     coverage: legacy ? 'Some historical clicks have no recorded link identity and are excluded from per-link counts.' : 'Every recorded click has a known destination.',
   };
