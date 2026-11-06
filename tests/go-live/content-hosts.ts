@@ -21,6 +21,7 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   const operatorId = 'synthetic-mango-167';
   const admin = await site.open([operatorId, 'example.test'].join('@'), operatorId);
   await json(await site.call(`/api/operators/${operatorId}/role`, {method:'PUT', cookie:owner, body:{role:'admin'}}), 200);
+  await site.runtime.sql(`UPDATE oa_operators SET display_name='Synthetic Mango Admin' WHERE id='${operatorId}' RETURNING id`);
   expect((await json(await site.call('/api/operator', {cookie:admin}), 200)).operator.role).toBe('admin');
   const host = 'admin-review.example.test', destination = `https://${host}/offer`;
   const readers = await site.rows("SELECT email FROM contacts WHERE display_name='Garden reader'");
@@ -80,7 +81,7 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   expect(settings.sources.filter((source:any) => source.host === host && source.source === 'allowed in review'))
     .toEqual([expect.objectContaining({host, source:'allowed in review', campaignId:campaign.campaignId, operatorId})]);
   const activity = await json(await site.call(`/api/activity?operator=${operatorId}&action=link-host.allowed&object=${campaign.campaignId}`, {cookie:admin}), 200);
-  expect(activity.entries).toEqual([expect.objectContaining({operatorId, objectId:campaign.campaignId,
+  expect(activity.entries).toEqual([expect.objectContaining({operatorId, operatorName:'Synthetic Mango Admin', objectId:campaign.campaignId,
     action:'link-host.allowed', detail:{host, source:'allowed in review', campaignId:campaign.campaignId, operatorId}})]);
   const [record] = await site.rows(`SELECT actor_id,entity_id,detail_json FROM lifecycle_audit_entries WHERE id='${activity.entries[0].id}'`);
   expect(record).toEqual({actor_id:operatorId, entity_id:campaign.campaignId, detail_json:JSON.stringify(activity.entries[0].detail)});
@@ -151,6 +152,7 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   expect((await apply()).entries).toEqual(retained.entries);
   await expect(entries.locator('tbody tr')).toHaveCount(2);
   await expect(entries).toContainText(host);
+  await expect(entries).toContainText('Synthetic Mango Admin');
   for (const [label,wrong,right] of [['Operator','go-live-owner',operatorId],['Action','link-host.removed','link-host.allowed'],['Object',campaign.revisionId,campaign.campaignId]]) {
     await filters.getByLabel(label, {exact:true}).fill(wrong);
     expect((await apply()).entries).toEqual([]);
@@ -161,6 +163,7 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   }
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height:1000});
+    if (width === 390) await page.getByRole('region',{name:'Activity log table',exact:true}).evaluate(element=>{element.scrollLeft=element.scrollWidth;});
     await page.screenshot({path:info.outputPath(`admin-host-activity-${width}.png`), fullPage:true});
   }
 }
@@ -215,6 +218,8 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   expect(requested).toHaveLength(1);
   expect(requested[0].actor_id).toBe('host-author');
   expect(JSON.parse(requested[0].detail_json)).toEqual({campaignId:campaign.campaignId,revisionId:campaign.revisionId,blockedHosts:requestedHosts});
+  await json(await site.call(`${path}/request-approval`,{method:'POST',cookie:author,body:{revisionId:campaign.revisionId,blockedHosts:[{host:'forged-review.example.test'}]}}),400);
+  await json(await site.call(`${path}/request-approval`,{method:'POST',cookie:author,body:{revisionId:freshReview.revisionId}}),409);
   await json(await site.call(`${path}/request-approval`,{method:'POST',cookie:author,body:{revisionId:campaign.revisionId}}),200);
   expect(await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='campaign.approval-requested' AND entity_id='${campaign.revisionId}'`)).toEqual(requested);
   expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
