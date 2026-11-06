@@ -5,6 +5,7 @@ import {fieldValue,matchesComparator} from '@/core/features/audience/rule-values
 
 export const contentConditionSchema=z.object({source:z.enum(['segment','property','topic','predicted-stage','event']),key:z.string().trim().min(1).max(160),comparator:z.enum(['eq','neq','contains','gt','gte','lt','lte']),value:z.union([z.string().max(2000),z.number().finite(),z.boolean()])}).strict();
 export type ContentCondition=z.infer<typeof contentConditionSchema>;
+export class ConditionalContentError extends Error {}
 export type ContentContext={properties:Record<string,unknown>;segments:string[];knownSegments:string[];unavailableSegments:string[];topics:string[];event?:Record<string,unknown>};
 export type BranchChoice={block:number;matches:boolean};
 const attribute=(node:Tree.Element,name:string)=>node.attrs.find(a=>a.name===name)?.value;
@@ -18,7 +19,7 @@ export function readConditional(node:Tree.ChildNode) {
   const raw=attribute(node,'data-mango-condition');if(raw===undefined)return undefined;
   const branches=node.childNodes.filter((n):n is Tree.Element=>'tagName'in n);
   const condition=decodeCondition(raw);
-  if(!condition||node.tagName!=='div'||branches.length!==2||branches[0].tagName!=='div'||branches[1].tagName!=='div'||attribute(branches[0],'data-mango-branch')!=='match'||attribute(branches[1],'data-mango-branch')!=='otherwise'||node.childNodes.some(n=>!('tagName'in n)&&(!('value'in n)||n.value.trim())))throw new Error('Invalid conditional block. Use its matching and otherwise branches.');
+  if(!condition||node.tagName!=='div'||branches.length!==2||branches[0].tagName!=='div'||branches[1].tagName!=='div'||attribute(branches[0],'data-mango-branch')!=='match'||attribute(branches[1],'data-mango-branch')!=='otherwise'||node.childNodes.some(n=>!('tagName'in n)&&(!('value'in n)||n.value.trim())))throw new ConditionalContentError('Invalid conditional block. Use its matching and otherwise branches.');
   return {condition,html:serialize(branches[0]),otherwise:serialize(branches[1])};
 }
 export function conditionMatches(condition:ContentCondition,context?:ContentContext) {
@@ -47,8 +48,8 @@ export function assertConditionalContent(source:string) {
   const fragment=parseFragment(mobileEnvelope(source).body);
   const visit=(parent:Tree.ParentNode,inCondition=false)=>{for(const node of parent.childNodes)if('tagName'in node){
     const raw=attribute(node,'data-mango-condition'),branch=attribute(node,'data-mango-branch');
-    if(raw!==undefined){if(inCondition)throw new Error('Conditional blocks cannot be nested.');readConditional(node);if(serializeOuter(node).includes('{{physical_address}}')||serializeOuter(node).includes('{{unsubscribe_url}}'))throw new Error('Postal address and unsubscribe content must remain outside conditional blocks.');}
-    if(branch!==undefined&&(!inCondition||!['match','otherwise'].includes(branch)))throw new Error('A branch must belong to a conditional block.');
+    if(raw!==undefined){if(inCondition)throw new ConditionalContentError('Conditional blocks cannot be nested.');readConditional(node);if(serializeOuter(node).includes('{{physical_address}}')||serializeOuter(node).includes('{{unsubscribe_url}}'))throw new ConditionalContentError('Postal address and unsubscribe content must remain outside conditional blocks.');}
+    if(branch!==undefined&&(!inCondition||!['match','otherwise'].includes(branch)))throw new ConditionalContentError('A branch must belong to a conditional block.');
     visit(node,inCondition||raw!==undefined);
   }};visit(fragment);
 }

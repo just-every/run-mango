@@ -1,3 +1,4 @@
+import {ConditionalContentError} from './conditional-content';
 import {CatalogUnavailable} from './catalog-blocks';
 import {ReusableBlockError} from './reusable-block-model';
 import {MobileEmailError} from './email-mobile';
@@ -29,7 +30,7 @@ const settled = async <T,>(save: Promise<T>) => {
     if (error instanceof EmailTooLargeError) return {refused:{error:'email_too_large',detail:error.message,fields:{emailBody:error.message},size:error.size}};
     if (error instanceof MobileEmailError) return {refused:{error:"invalid_mobile_email",detail:error.message}};
     if (error instanceof UnsettledEmailBodyError) return { refused: { error: 'invalid_email_body', detail: error.message } };
-    if(error instanceof Error&&/conditional|Conditional|branch|Postal address and unsubscribe/.test(error.message))return {refused:{error:'invalid_conditional_content',detail:error.message,fields:{emailBody:error.message}}};
+    if(error instanceof ConditionalContentError)return {refused:{error:'invalid_conditional_content',detail:error.message,fields:{emailBody:error.message}}};
     throw error;
   }
 };

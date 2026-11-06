@@ -10,7 +10,7 @@ export type MessageRevision = {
   utmPolicyJson?:string|null; name?:string; id?:string;
   emailSubject: string; emailBody: string; emailText: string; preheader: string; smsBody: string; physicalAddress: string;
 };
-export const messageRendererVersion = 'mango-message-v2';
+export const messageRendererVersion = 'mango-message-v3';
 function personalisationValue(values: Record<string, string | null | undefined>, key: string | undefined) {
   return key && Object.hasOwn(values, key) && typeof values[key] === 'string' ? values[key] : undefined;
 }

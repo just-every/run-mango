@@ -1,3 +1,4 @@
+import {readTypedProperty} from '@/core/features/audience/properties/read';
 import type {Platform} from '@/core/shared/platform';
 import {readContactProfile} from '@/core/features/audience/contact-profile';
 import {createAudienceRepository} from '@/core/features/audience/repository';
@@ -18,5 +19,5 @@ export async function readContentContext(platform:Platform,contactId:string,revi
   const event=revisionId?await db.prepare(`SELECT s.payload FROM source_records s JOIN proposals p ON EXISTS (SELECT 1 FROM json_each(p.trigger_events_json) e WHERE e.value=s.id)
     JOIN campaigns c ON c.proposal_id=p.id JOIN campaign_revisions r ON r.campaign_id=c.id
     WHERE json_array_length(p.trigger_events_json)=1 AND r.id=? AND s.contact_id=? AND s.occurred_at<=? LIMIT 1`).bind(revisionId,contactId,now.getTime()).first<{payload:string}>():undefined;
-  return {properties:profile.properties,knownSegments:known.results.map(s=>s.id),segments:profile.segments.filter(s=>s.state==='member').map(s=>s.id),unavailableSegments:profile.segments.filter(s=>s.state==='unavailable').map(s=>s.id),topics:email?.consents.map(c=>c.category)??[],...(event?{event:asRecord(event.payload)}:{})};
+  return {properties:Object.fromEntries(profile.definitions.map(d=>[d.key,readTypedProperty(d,profile.properties).value])),knownSegments:known.results.map(s=>s.id),segments:profile.segments.filter(s=>s.state==='member').map(s=>s.id),unavailableSegments:profile.segments.filter(s=>s.state==='unavailable').map(s=>s.id),topics:email?.consents.map(c=>c.category)??[],...(event?{event:asRecord(event.payload)}:{})};
 }

@@ -3878,11 +3878,11 @@
       "executable": false
     },
     "src/core/features/campaigns/conditional-content.ts": {
-      "sha256": "120727e48a1a9e5becb23d97e381da1b7c4a810e2698dceb99ea5f462d48abac",
+      "sha256": "f0317bc62380f3267cfe645ec9eabc27bae4f37fa4184ebb1405e650a925230a",
       "executable": false
     },
     "src/core/features/campaigns/conditional-context.ts": {
-      "sha256": "44466fc5559cc82eac743d546a162994a3efffcbc1e625adf17a3b8600fa8280",
+      "sha256": "ed2355bf977df1ce05da6d081f401fcacd6e04253d6710d0f0e2e2785419e206",
       "executable": false
     },
     "src/core/features/campaigns/contact-links.ts": {
@@ -3994,7 +3994,7 @@
       "executable": false
     },
     "src/core/features/campaigns/message-content.ts": {
-      "sha256": "586559d4b62c69ae68a4b3547a94aba487fc85e21e0e4634ca8d314c66311f99",
+      "sha256": "abab270f76b9ff9b1631ed21853a176902677f22555e058e37f37aa64cf1a4aa",
       "executable": false
     },
     "src/core/features/campaigns/message-links.ts": {
@@ -4062,7 +4062,7 @@
       "executable": false
     },
     "src/core/features/campaigns/routes.ts": {
-      "sha256": "044ea6670779871bed474f5f9921395cef5a688a97cdd726b6c21ef6b623eb14",
+      "sha256": "8205f71226703257344016b4ef7400e084beb52341e3c506dfdde57202538ecb",
       "executable": false
     },
     "src/core/features/campaigns/saved-email-size.ts": {
