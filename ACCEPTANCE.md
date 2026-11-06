@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 20 | 198 | 89 | 307 |
+| Core | 21 | 197 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 20 | 198 | 98 | 316 |
+| Full target | 21 | 197 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-001 was exercised through its registered native segment and mixed-channel review journeys from the code and tests at commit `650e7ab7e6f6aaccc2d6f625a915dc6d71103df8` (5 November 2026); this status candidate retains those source and test bytes. Native SMS snapshot evidence establishes review counts without claiming live transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -138,15 +138,15 @@ Core · published · **partial** · Rules D-1
 
 #### STORE-002 — Source identity
 
-Core · published · **partial** · Cites BASE-OPS-003 · Rules D-1
+Core · published · **done** · Cites BASE-OPS-003 · Rules D-1
 
 **Requirement.** Repeated source deliveries preserve one commerce fact per source identity while refreshing its contents.
 
 **Acceptance.**
 1. A replayed webhook or repeated scheduled sync updates the existing customer, order, cart, refund or browsing-event source record without creating a duplicate.
 
-**Evidence.** `tests/shopify/connection.spec.ts` — “[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry”; “signed carts preserve string identity, multiple lines and ordering; conflicting delivery, tenant and topics cannot mutate source facts”; “signed pixel collector binds actual proxy customer, rejects forged identity/catalog/purposes/replays and keeps quiet replay and withdrawal truthful”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Customer and refund replay update existing contents without duplicates. Missing public-door journey: “Source identity — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”: changed customer and refund provider reads, signed notifications and replay retain one original source row, stored record and contact identities and occurrence times; refresh payloads and one refund projection without changing consent; order replay and repeated cart and browsing sync preserve original facts. `tests/shopify/connection.spec.ts` — “[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry”.
+**Gap.** None.
 
 #### STORE-003 — Freshness
 

@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "cd2dd0c0203891ddd024d4fc4ad7cdc3959c9a8c010c84489da91adddfdd3dca",
+      "sha256": "cb3ae68500df34c9ca2470d87595952a2ec49f5355bfd2d28b7540dce643b075",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "569809464de95c16600728582fe71cbd26f0db9cb6ab3d937d5c7de511355e9d",
+      "sha256": "98a6e97f8ccb1fa09c70cce6640d981ae3a10b8d30e1c91be19d9a495ca55307",
       "executable": false
     },
     "DEMO.md": {
@@ -9158,7 +9158,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "8ccfd07a93b8953c418c6dd54325052183a30740d10ceb6ee86ceebb96c8ee7c",
+      "sha256": "14575ef814ffa2e3cc4f693e24900abe0f8865c441f2ce901d088b878ff3c120",
       "executable": false
     },
     "tests/go-live/worker.ts": {
