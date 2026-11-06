@@ -1,0 +1,11 @@
+{
+  "head": "c171453c8ded27238971b3397999d672edc1055b",
+  "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js sync-integrations.journeys.ts --workers=1",
+  "exit": 0,
+  "browser": "/usr/bin/chromium",
+  "assertionWidth": 1440,
+  "screens": [
+    1440,
+    390
+  ]
+}

@@ -1,0 +1,17 @@
+{"conclusion":"success","id":127996232849,"name":"plan","status":"completed","steps":[]}
+{"conclusion":"success","id":127996311983,"name":"Build and public command checks","status":"completed","steps":[]}
+{"conclusion":"skipped","id":127996314791,"name":"light","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956198,"name":"shards (reports)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956226,"name":"shards (retained-data)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956227,"name":"shards (connections)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956234,"name":"shards (phone)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956298,"name":"shards (native)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956300,"name":"shards (identity-data)","status":"completed","steps":[]}
+{"conclusion":"failure","id":127996956317,"name":"shards (campaigns)","status":"completed","steps":[{"conclusion":"failure","name":"Run this shard"}]}
+{"conclusion":"success","id":127996956340,"name":"shards (retained-authoring)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956409,"name":"shards (delivery)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956411,"name":"shards (authoring)","status":"completed","steps":[]}
+{"conclusion":"success","id":127996956562,"name":"shards (move-in)","status":"completed","steps":[]}
+{"conclusion":"failure","id":128001325972,"name":"verify","status":"completed","steps":[{"conclusion":"failure","name":"Require the selected coverage and its proof"}]}
+{"conclusion":"skipped","id":128001327160,"name":"full-push-proof","status":"completed","steps":[]}
+{"conclusion":"skipped","id":128001327438,"name":"nightly-proof","status":"completed","steps":[]}

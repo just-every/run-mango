@@ -1,0 +1,27 @@
+{
+  "head": "c171453c8ded27238971b3397999d672edc1055b",
+  "job": 127996956317,
+  "command": "node scripts/verification/ci.mjs campaigns",
+  "environment": {
+    "CI": "true",
+    "SHARD": "campaigns",
+    "node": "22.20.0",
+    "WRANGLER_SEND_METRICS": "false",
+    "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+    "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium",
+    "MANGO_VERIFY_MEMBERS": [
+      {
+        "name": "go-live",
+        "stage": "go-live",
+        "files": [
+          "go-live.journeys.ts",
+          "contact-links.journeys.ts",
+          "presend-checks.journeys.ts",
+          "typed-tests.journeys.ts"
+        ]
+      }
+    ]
+  },
+  "test": "tests/go-live/presend-checks.journeys.ts: [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+  "exit": 0
+}

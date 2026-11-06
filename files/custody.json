@@ -1,0 +1,21 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f128",
+  "head": "c171453c8ded27238971b3397999d672edc1055b",
+  "main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "commits": [
+    "c171453c8ded27238971b3397999d672edc1055b Run Edit Run fleet <fleet@runeditrun.com> | Run Edit Run fleet <fleet@runeditrun.com> | Verify persisted property types and consent after desktop edits",
+    "fd8c68517f8166092a1de48d11eb1eeb7c6c9d03 Run Edit Run fleet <fleet@runeditrun.com> | Run Edit Run fleet <fleet@runeditrun.com> | Prove separate desktop and phone property saves [skip ci]",
+    "1f7408aa79736babc12783c0b46eb4105d0648ad Run Edit Run fleet <fleet@runeditrun.com> | Run Edit Run fleet <fleet@runeditrun.com> | Include custom property type proof in the edition source lock",
+    "1bd8b6a7cb9bdea5689e2824a8d3a6219a62aac5 Run Edit Run fleet <fleet@runeditrun.com> | Run Edit Run fleet <fleet@runeditrun.com> | Prove native custom property type round trips and refusals [skip ci]"
+  ],
+  "productTreeClean": true,
+  "contractDiff": "",
+  "scan": {
+    "commit": "c171453c8ded27238971b3397999d672edc1055b",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "reason": "Cloud branch push route delegates the publication scan to the maintained fleet lander."
+  }
+}

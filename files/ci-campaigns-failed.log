@@ -1,0 +1,139 @@
+shards (campaigns)	Run this shard	﻿2026-11-06T16:02:14.5450031Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5450486Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5470226Z shell: /usr/bin/bash -e {0}
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5470498Z env:
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5470696Z   CI: true
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5470911Z   WRANGLER_SEND_METRICS: false
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5471202Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5471578Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5471976Z   SHARD: campaigns
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5472822Z   MANGO_VERIFY_MEMBERS: [
+shards (campaigns)	Run this shard	  {
+shards (campaigns)	Run this shard	    "name": "go-live",
+shards (campaigns)	Run this shard	    "stage": "go-live",
+shards (campaigns)	Run this shard	    "files": [
+shards (campaigns)	Run this shard	      "go-live.journeys.ts",
+shards (campaigns)	Run this shard	      "contact-links.journeys.ts",
+shards (campaigns)	Run this shard	      "presend-checks.journeys.ts",
+shards (campaigns)	Run this shard	      "typed-tests.journeys.ts"
+shards (campaigns)	Run this shard	    ]
+shards (campaigns)	Run this shard	  }
+shards (campaigns)	Run this shard	]
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5473860Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/campaigns
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5474274Z ##[endgroup]
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.5778664Z VERIFY_MEMBER go-live
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.6342255Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.6347102Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/campaigns/members/go-live/evidence/4b3746152534/verify/go-live-Z7Kb9m
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.6564108Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T16:02:14.634Z"}
+shards (campaigns)	Run this shard	2026-11-06T16:02:14.6625325Z go-live
+shards (campaigns)	Run this shard	2026-11-06T16:02:18.5896168Z 
+shards (campaigns)	Run this shard	2026-11-06T16:02:18.5897087Z Running 4 tests using 2 workers
+shards (campaigns)	Run this shard	2026-11-06T16:02:18.5912228Z 
+shards (campaigns)	Run this shard	2026-11-06T16:02:45.8653122Z Source CSV beehiiv: upload
+shards (campaigns)	Run this shard	2026-11-06T16:02:53.8064873Z Source CSV beehiiv: attest
+shards (campaigns)	Run this shard	2026-11-06T16:02:54.7271032Z Source CSV beehiiv: review
+shards (campaigns)	Run this shard	2026-11-06T16:02:58.3821823Z Source CSV beehiiv: applied
+shards (campaigns)	Run this shard	2026-11-06T16:02:58.6029526Z Source CSV omnisend: upload
+shards (campaigns)	Run this shard	2026-11-06T16:02:59.5409419Z Source CSV omnisend: attest
+shards (campaigns)	Run this shard	2026-11-06T16:03:00.2010208Z Source CSV omnisend: review
+shards (campaigns)	Run this shard	2026-11-06T16:03:03.0266963Z Source CSV omnisend: applied
+shards (campaigns)	Run this shard	2026-11-06T16:03:03.6023411Z Source CSV customerio: upload
+shards (campaigns)	Run this shard	2026-11-06T16:03:04.3959898Z Source CSV customerio: attest
+shards (campaigns)	Run this shard	2026-11-06T16:03:05.0645944Z Source CSV customerio: review
+shards (campaigns)	Run this shard	2026-11-06T16:03:08.3409311Z Source CSV customerio: applied
+shards (campaigns)	Run this shard	2026-11-06T16:03:08.5342046Z Source API activecampaign: read
+shards (campaigns)	Run this shard	2026-11-06T16:03:09.9478563Z Source API activecampaign: review
+shards (campaigns)	Run this shard	2026-11-06T16:03:11.8529977Z activecampaign: membership consent
+shards (campaigns)	Run this shard	2026-11-06T16:03:12.7574713Z activecampaign: topic-only campaign
+shards (campaigns)	Run this shard	2026-11-06T16:03:12.8803903Z activecampaign: topic-only checks
+shards (campaigns)	Run this shard	2026-11-06T16:03:12.9661241Z activecampaign: draft API
+shards (campaigns)	Run this shard	2026-11-06T16:03:13.0317130Z activecampaign: draft UI
+shards (campaigns)	Run this shard	2026-11-06T16:03:13.7226180Z activecampaign: draft hydrated
+shards (campaigns)	Run this shard	2026-11-06T16:03:14.5627904Z Source API klaviyo: read
+shards (campaigns)	Run this shard	2026-11-06T16:03:16.0179136Z Source API klaviyo: review
+shards (campaigns)	Run this shard	2026-11-06T16:03:18.3507266Z klaviyo: membership consent
+shards (campaigns)	Run this shard	2026-11-06T16:03:19.6381661Z klaviyo: topic-only campaign
+shards (campaigns)	Run this shard	2026-11-06T16:03:19.7286274Z klaviyo: topic-only checks
+shards (campaigns)	Run this shard	2026-11-06T16:03:19.7960301Z klaviyo: draft API
+shards (campaigns)	Run this shard	2026-11-06T16:03:19.8637697Z klaviyo: draft UI
+shards (campaigns)	Run this shard	2026-11-06T16:03:20.1529256Z klaviyo: draft hydrated
+shards (campaigns)	Run this shard	2026-11-06T16:03:41.1787702Z   ✓  2 tests/go-live/contact-links.journeys.ts:11:1 › [DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking (1.4m)
+shards (campaigns)	Run this shard	2026-11-06T16:07:58.5374593Z   ✘  3 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (4.3m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:55.5187533Z   ✓  1 tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (6.6m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.6938733Z   ✓  4 tests/go-live/typed-tests.journeys.ts:10:1 › [CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowance and recorded destinations (59.0s)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7589034Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7597692Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7620881Z   1) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7622161Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7624172Z     Error: {"status":"blocked","blockers":[{"kind":"message.links.resolved","status":"blocked","detail":"Blocked transmitted links: https://shop.example.test/market (Link host shop.example.test could not be resolved and checked.)","blocking":true,"blockedHosts":[]}]}
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7626042Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7626300Z     expect(received).toBe(expected) // Object.is equality
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7626578Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7626681Z     Expected: 200
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7626916Z     Received: 409
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7627048Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7627151Z        at harness.ts:44
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7627301Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7627562Z       42 | export async function json(response: Response, status: number) {
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7628050Z       43 |   const text = await response.text();
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7629003Z     > 44 |   expect(response.status, text).toBe(status);
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7629602Z          |                                 ^
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7629967Z       45 |   return text ? JSON.parse(text) : null;
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7630312Z       46 | }
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7630676Z       47 |
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7631171Z         at json ([REDACTED]/tests/go-live/harness.ts:44:33)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7631991Z         at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:79:5)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7632778Z         at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7633147Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7634311Z     Error Context: ../../_temp/mango-verification/campaigns/members/go-live/evidence/4b3746152534/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/error-context.md
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7635215Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7635515Z   Slow test file: tests/go-live/go-live.journeys.ts (6.6m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7636179Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7636676Z   1 failed
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7637630Z     tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.7638599Z   3 passed (6.7m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8640170Z Verification failed: go-live: exit 1, signal none.
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8640794Z Command: pnpm
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8641342Z Last output (up to 40 lines):
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8641901Z klaviyo: topic-only campaign
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8642456Z klaviyo: topic-only checks
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8642981Z klaviyo: draft API
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8643489Z klaviyo: draft UI
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8644020Z klaviyo: draft hydrated
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8646275Z   ✓  2 tests/go-live/contact-links.journeys.ts:11:1 › [DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking (1.4m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8649076Z   ✘  3 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (4.3m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8651356Z   ✓  1 tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (6.6m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8653107Z   ✓  4 tests/go-live/typed-tests.journeys.ts:10:1 › [CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowance and recorded destinations (59.0s)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8653806Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8653814Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8654636Z   1) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8655354Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8656520Z     Error: {"status":"blocked","blockers":[{"kind":"message.links.resolved","status":"blocked","detail":"Blocked transmitted links: https://shop.example.test/market (Link host shop.example.test could not be resolved and checked.)","blocking":true,"blockedHosts":[]}]}
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8657883Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8658089Z     expect(received).toBe(expected) // Object.is equality
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8658652Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8658762Z     Expected: 200
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8659056Z     Received: 409
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8659196Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8659303Z        at harness.ts:44
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8659481Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8659746Z       42 | export async function json(response: Response, status: number) {
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8660239Z       43 |   const text = await response.text();
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8660672Z     > 44 |   expect(response.status, text).toBe(status);
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8661057Z          |                                 ^
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8661405Z       45 |   return text ? JSON.parse(text) : null;
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8661764Z       46 | }
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8661979Z       47 |
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8662285Z         at json ([REDACTED]/tests/go-live/harness.ts:44:33)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8662761Z         at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:79:5)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8663290Z         at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8663589Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8664369Z     Error Context: ../../_temp/mango-verification/campaigns/members/go-live/evidence/4b3746152534/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/error-context.md
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8665127Z 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8665334Z   Slow test file: tests/go-live/go-live.journeys.ts (6.6m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8665979Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8666508Z   1 failed
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8667614Z     tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8669300Z   3 passed (6.7m)
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8670374Z Log: /home/runner/work/_temp/mango-verification/campaigns/members/go-live/evidence/4b3746152534/verify/go-live-Z7Kb9m/go-live/install.log
+shards (campaigns)	Run this shard	2026-11-06T16:08:58.8744351Z ##[error]Process completed with exit code 1.

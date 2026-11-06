@@ -1,0 +1,26 @@
+{
+  "head": "c171453c8ded27238971b3397999d672edc1055b",
+  "run": 42248291450,
+  "job": 127996956317,
+  "test": "tests/go-live/presend-checks.journeys.ts# [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+  "ciFailure": "Expected HTTP 200, received HTTP 409; message.links.resolved: Link host shop.example.test could not be resolved and checked.",
+  "reproduction": {
+    "command": "node scripts/verification/ci.mjs campaigns",
+    "exit": 0,
+    "testsPassed": 4
+  },
+  "mainComparison": {
+    "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+    "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js presend-checks.journeys.ts --workers=2",
+    "environment": {
+      "CI": "true",
+      "SHARD": "campaigns",
+      "node": "22.20.0",
+      "WRANGLER_SEND_METRICS": "false",
+      "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+      "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium"
+    },
+    "exit": 0
+  },
+  "disposition": "BLOCKED: exact-SHA Verify failure did not reproduce; no speculative repair permitted by the brief."
+}

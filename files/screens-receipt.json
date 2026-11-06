@@ -1,0 +1,75 @@
+{
+  "head": "c171453c8ded27238971b3397999d672edc1055b",
+  "screens": [
+    {
+      "path": "screens/custom-properties-contact-values-history-1440.png",
+      "sha256": "6acbf275f48a5c466774ae2b12b5c781f7b64ab1144b353b982e88e1d207b10a",
+      "bytes": 337680
+    },
+    {
+      "path": "screens/custom-properties-contact-values-history-390.png",
+      "sha256": "2b5c93af41e8e5162a6ddf24014374896e6b76f5746b481e903f261b8d889898",
+      "bytes": 316441
+    },
+    {
+      "path": "screens/custom-properties-date-segment-1440.png",
+      "sha256": "97a7144a7ae7336192eeaf4166654ce5626430ad1377d714555484b659272b05",
+      "bytes": 145068
+    },
+    {
+      "path": "screens/custom-properties-date-segment-390.png",
+      "sha256": "72a49c95d4d5c8e4f9afb48e3acd9584aa6a429bdbb42429d24ed6d6560579e1",
+      "bytes": 149515
+    },
+    {
+      "path": "screens/custom-properties-import-mapping-1440.png",
+      "sha256": "b18a1beaf858250786c98e566f9f1fe415d7e15fb440e454cf8b6c290107ab20",
+      "bytes": 81947
+    },
+    {
+      "path": "screens/custom-properties-import-mapping-390.png",
+      "sha256": "6b1dd4b654a40ae2ade4dc2ba77149c8d467f8140e82072a1a4753376a5f79b8",
+      "bytes": 126796
+    },
+    {
+      "path": "screens/custom-properties-money-preview-1440.png",
+      "sha256": "c56e0c3443f4e618834ef708152a04226d34899f8274ce55b74925a22864bece",
+      "bytes": 136929
+    },
+    {
+      "path": "screens/custom-properties-money-preview-390.png",
+      "sha256": "afe62c7831370ace73f6745ce104fb67029425d9f1a89bcfc53a715d9069ce34",
+      "bytes": 119377
+    },
+    {
+      "path": "screens/custom-properties-settings-1440.png",
+      "sha256": "5c49cfe2bbe62a352adc9e6c3ab374b163a58f58709a8c279d49382305682fc4",
+      "bytes": 70665
+    },
+    {
+      "path": "screens/custom-properties-settings-390.png",
+      "sha256": "a174097b43bd31f91efc05d4a24ebe008a12b211b2913dcf390afcfb908bf8bf",
+      "bytes": 68536
+    },
+    {
+      "path": "screens/custom-properties-typed-controls-1440.png",
+      "sha256": "a8370a44100f2ce6be20823fdde12ba875bf41e9b81697a78a3967dbb9ee619a",
+      "bytes": 78884
+    },
+    {
+      "path": "screens/custom-properties-typed-controls-390.png",
+      "sha256": "e46b8622fceca80098cb602800cc9f5e125be9623c853e7121e44e73d4d6bead",
+      "bytes": 67479
+    },
+    {
+      "path": "screens/custom-properties-typed-readback-1440.png",
+      "sha256": "e5c791328290ff1a22ca430cd48497fea0aaed272fe09db440561bb3191a9860",
+      "bytes": 33457
+    },
+    {
+      "path": "screens/custom-properties-typed-readback-390.png",
+      "sha256": "13ba9a8c857ab6f05bf0fabe755c217dca961fa9588f67d51810a9db226cc30c",
+      "bytes": 24123
+    }
+  ]
+}
