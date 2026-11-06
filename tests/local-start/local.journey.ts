@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { finishSetup } from './finish-setup.mjs';
 import { freshCopy } from './fresh-copy.mjs';
 import { openGate } from './dev-gate.mjs';
+import type { SenderStatus } from '../../src/core/features/settings/types';
 let runtime: Awaited<ReturnType<typeof freshCopy>>;
 test.beforeAll(async()=>{test.setTimeout(600000);runtime=await freshCopy();});
 test.afterAll(async()=>{await runtime?.close();});
@@ -17,6 +18,23 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
+    const readUnreadyConfiguration = async () => {
+      const senderResponse=await page.request.get(runtime.url+'/api/settings/sender');
+      expect(senderResponse.status()).toBe(200);
+      const sender: SenderStatus=await senderResponse.json();
+      expect(sender.validation).toMatchObject({state:'unavailable',ready:false});
+      expect(sender.readiness.filter(item=>['domain','dns','receipt','authentication'].includes(item.key)))
+        .toEqual(['domain','dns','receipt','authentication'].map(key=>expect.objectContaining({key,state:'unavailable'})));
+      const providersResponse=await page.request.get(runtime.url+'/api/settings/providers');
+      expect(providersResponse.status()).toBe(200);
+      const {providers}=await providersResponse.json();
+      expect(providers).toEqual([expect.objectContaining({id:'mail',configured:false,status:'unavailable'})]);
+      return sender;
+    };
+    // Configuration remains readable with the native owner session before setup admits documents.
+    const initialSender=await readUnreadyConfiguration();
+    expect(initialSender.identity.displayName).toBe('');
+    expect(initialSender.identity.physicalAddress).toBe('');
     for (const path of ['/app','/app/campaigns','/app/settings','/app/audience']) {
       const response=await page.request.get(runtime.url+path,{maxRedirects:0});
       expect(response.status()).toBe(303); expect(response.headers().location).toBe('/setup');
@@ -38,14 +56,16 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-    for (const viewportWidth of [1440]) {
+    await expect(page.getByRole('heading',{name:'Set up your sender identity'})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    // Assertions run at 1440; the phone capture is browser evidence of the same screen.
+    for (const viewportWidth of [1440,390]) {
       await page.setViewportSize({width:viewportWidth,height:900});
-      await expect(page.getByRole('heading',{name:'Set up your sender identity'})).toBeVisible();
-      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       const capture=test.info().outputPath(`setup-${viewportWidth}.png`);
       await page.screenshot({path:capture,fullPage:true});
       await test.info().attach(`setup-${viewportWidth}`,{path:capture,contentType:'image/png'});
     }
+    await page.setViewportSize({width,height:900});
     let senderWrites=0;
     page.on('request',request=>{if(new URL(request.url()).pathname==='/api/settings/sender'&&request.method()==='PUT')senderWrites++;});
     await page.getByRole('button',{name:'Save sender details',exact:true}).click();
@@ -71,6 +91,18 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await expect(page).toHaveURL(runtime.url+'/app');
     // A reload reads the persisted sender identity and preserves access.
     await page.reload(); await expect(page).toHaveURL(runtime.url+'/app');
+    const savedSender=await readUnreadyConfiguration();
+    expect(savedSender.identity).toMatchObject({displayName:'Mango Test Newsletter',
+      physicalAddress:'123 Test Street, Brisbane QLD 4000, Australia'});
+    expect(savedSender.canSendCheck).toBe(false);
+    expect(savedSender.evidence).toMatchObject({provider:{state:'unknown'},dns:{state:'unknown'},observation:{state:'missing'}});
+    for (const viewportWidth of [1440,390]) {
+      await page.setViewportSize({width:viewportWidth,height:900});
+      const capture=test.info().outputPath(`configured-app-${viewportWidth}.png`);
+      await page.screenshot({path:capture,fullPage:true});
+      await test.info().attach(`configured-app-${viewportWidth}`,{path:capture,contentType:'image/png'});
+    }
+    await page.setViewportSize({width,height:900});
     await page.goto(runtime.url+'/app/campaigns');
     expect((await (await page.request.get(runtime.url+'/api/campaigns')).json()).campaigns).toEqual([]);
     await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();
