@@ -1,0 +1,10 @@
+Run 42231419426, head 8f2dea6d0ab8620f9037094acba21fd4f1f9b180, push, failure.
+Failed job: 127938752849 shards (reports).
+Exact command: SHARD=reports node scripts/verification/ci.mjs "$SHARD".
+CI Node: 22.20.0.
+Failing test: tests/campaign-results/results.journeys.ts#inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement.
+Failure: Error: apiRequestContext.get: read ECONNRESET
+Location: tests/campaign-results/reporting-journey.ts:7:96, click-route GET against the local native runtime.
+Authoring shard passed; no source in the reports pack is changed by this candidate.
+The failed-job archive was read once using gh run view 42231419426 --repo just-every/run-mango --job 127938752849 --log-failed.
+Raw workflow environment headers and fixture link tokens are excluded from this excerpt.

@@ -1,0 +1,11 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+  "run": 42231419426,
+  "failed_job": 127938752849,
+  "action": "rerun-failed-jobs",
+  "requested_at": "2026-11-06T14:31:57.326256+00:00",
+  "HTTP": 201,
+  "reason": "Native click-route GET returned ECONNRESET in unchanged reports code; the candidate replay passed the failing results journey.",
+  "count": 1
+}

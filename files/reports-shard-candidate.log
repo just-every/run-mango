@@ -1,0 +1,45 @@
+VERIFY_MEMBER campaign-results
+VERIFY_SCHEDULE {"selection":"campaign-results","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f119/ci-repro-candidate/members/campaign-results/evidence/7f523b30a6bf/verify/campaign-results-F5GZOP
+VERIFY_STAGE {"name":"campaign-results","event":"start","at":"2026-11-06T14:27:06.590Z"}
+campaign-results
+
+Running 2 tests using 2 workers
+
+(node:8622) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement (3.0m)
+(node:8622) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export (3.3m)
+
+  2 passed (4.1m)
+VERIFY_STAGE {"name":"campaign-results","status":"PASS","startedAt":"2026-11-06T14:27:06.590Z","durationMs":246490,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":246507,"boundary":"coordinator"}
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f119/ci-repro-candidate/members/go-live/evidence/7f523b30a6bf/verify/go-live-PHzfst
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T14:31:13.158Z"}
+go-live
+
+Running 3 tests using 2 workers
+
+(node:10956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10957) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/opt-out-reasons.journeys.ts:11:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery (51.7s)
+  ✓  3 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.4m)
+  ✓  2 tests/go-live/managed-mail.journeys.ts:4:1 › [SEND-001][SEND-008][OPER-001] managed access mail and owner marketing mail preserve handoff and reconciliation authority (3.1m)
+
+  3 passed (3.1m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-06T14:31:13.158Z","durationMs":188100,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":188116,"boundary":"coordinator"}

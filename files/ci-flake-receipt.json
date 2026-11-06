@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "head": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+  "initial_run": 42231419426,
+  "initial_failed_job": 127938752849,
+  "initial_failure": "Error: apiRequestContext.get: read ECONNRESET",
+  "location": "tests/campaign-results/reporting-journey.ts:7:96",
+  "classification": "native runtime transport interruption in unchanged reports code",
+  "authoring_job": 127938753139,
+  "authoring_conclusion": "success",
+  "candidate_failing_results_journey": "passed during exact reports-shard replay",
+  "candidate_full_shard": {
+    "command": "SHARD=reports node scripts/verification/ci.mjs \"$SHARD\"",
+    "head": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+    "node": "22.20.0",
+    "exit": 0,
+    "passed": 5,
+    "failed": 0,
+    "members": {
+      "campaign-results": {
+        "passed": 2,
+        "durationMs": 246490
+      },
+      "go-live": {
+        "passed": 3,
+        "durationMs": 188100
+      }
+    },
+    "CI_failure_reproduced": false
+  },
+  "main_comparison": {
+    "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+    "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts --workers=2 --reporter=list",
+    "node": "22.20.0",
+    "runner": "same Linux VM and system Chromium as candidate replay",
+    "exit": 0,
+    "passed": 1,
+    "failed": 0,
+    "duration_minutes": 2.9,
+    "CI_failure_reproduced": false
+  },
+  "failed_job_reruns_requested": 1,
+  "rerun_receipt": "ci-rerun-request.json",
+  "product_edits_for_ci": [],
+  "api_calls_task_side": 10,
+  "latest_ci": {
+    "conclusion": "success",
+    "event": "push",
+    "head_sha": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42231419426",
+    "id": 42231419426,
+    "name": "Verify",
+    "run_attempt": 2,
+    "status": "completed"
+  },
+  "final_outcome": "Same exact-SHA push Verify successful on attempt 2 after the single permitted failed-job rerun."
+}

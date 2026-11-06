@@ -78,13 +78,14 @@
     "status": "not run in cloud; fleet lander gate"
   },
   "ci": {
-    "conclusion": null,
+    "conclusion": "success",
     "event": "push",
     "head_sha": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
     "html_url": "https://github.com/just-every/run-mango/actions/runs/42231419426",
     "id": 42231419426,
     "name": "Verify",
-    "status": "in_progress"
+    "run_attempt": 2,
+    "status": "completed"
   },
   "probes": {
     "DESIGN-013 acceptance-1": "actual file import with independent brief: only Red pears beside a cobalt vase highlighted; authored and saved HTML retain both alt values with zero marks",
@@ -107,10 +108,12 @@
   "candidate_commits": 1,
   "identity_and_trailers": "All candidate commits, including side parents, inspected: fleet author and committer; no trailers.",
   "final_worktree_clean": true,
-  "api_calls_task_side": 4,
+  "api_calls_task_side": 10,
   "cleanup": {
     "browser_and_worker_processes": "none remain from test runs",
     "stopped_runtime_scratch": "removed after receipts and screenshots were retained",
     "clone": "retained until evidence publication and CI handoff"
-  }
+  },
+  "CI_recovery": "One permitted failed-job rerun for ECONNRESET; no product edit. Exact reports shard replay passed five tests on the candidate; the failing results journey passed on main.",
+  "handoff": "READY branch=cloud/sd-mango-c-f119 head=8f2dea6d0ab8620f9037094acba21fd4f1f9b180"
 }
