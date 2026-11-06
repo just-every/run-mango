@@ -7,7 +7,7 @@ export async function conditionalPrivacyJourney(site:Installation,cookie:string,
   await json(await site.call('/api/operators/synthetic-mango-504/role',{method:'PUT',cookie,body:{role:'analyst'}}),200);
   const path=`/api/contacts/${vipId}/content-context?revisionId=${draft.revisionId}`;
   expect((await site.call(path,{cookie:reader})).status).toBe(403);
-  await json(await site.call('/api/auth/signout',{method:'POST',cookie:reader}),200);
+  await json(await site.call('/api/auth/signout',{method:'POST',cookie:reader,headers:{Origin:site.runtime.url}}),204);
   expect((await site.call(path,{cookie:reader})).status).toBe(401);
   await expect.poll(async()=>(await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200)).campaign.state).toBe('completed');
   const published=await json(await site.call(`/api/campaigns/${draft.campaignId}/publications`,{method:'POST',cookie,body:{revisionId:draft.revisionId}}),201);
