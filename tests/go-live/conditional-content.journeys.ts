@@ -42,7 +42,7 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await add('Spring is here at the market.');
     console.log('step 2');
     await add(vipOnly);
-    const conditional=page.locator('fieldset').filter({hasText:'Conditional display'});
+    const conditional=page.getByRole('group',{name:'Conditional display',exact:true});
     await conditional.getByRole('combobox',{name:'Property',exact:true}).selectOption('synthetic_mango_tier');
     await conditional.getByRole('textbox',{name:'Value',exact:true}).fill('vip');
     await conditional.getByRole('button',{name:'Show only to this condition',exact:true}).click();
@@ -51,7 +51,7 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await conditional.getByRole('button',{name:'Add otherwise block',exact:true}).click();
     await page.getByRole('button',{name:/^Block 3:/}).click();
     await page.getByRole('textbox',{name:'Block text',exact:true}).fill(otherwise);
-    await expect(page.locator('fieldset').filter({hasText:'Conditional display'})).toContainText('do not match');
+    await expect(page.getByRole('group',{name:'Conditional display',exact:true})).toContainText('do not match');
     console.log('step 4');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
     await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
