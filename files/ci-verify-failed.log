@@ -1,0 +1,16 @@
+Failure log excerpt; job environment block omitted.
+verify	Require the selected coverage and its proof	﻿2026-11-06T00:18:44.9186492Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9187686Z [36;1mset -euo pipefail[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9188659Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9190136Z [36;1mcase "$PUSH_PROOF:$NIGHTLY_PROOF" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9191399Z [36;1m  *failure*|*cancelled*) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9192463Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9193349Z [36;1mcase "$COVERAGE" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9194832Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9196884Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9199750Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9202239Z [36;1m  *) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9203253Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9610849Z shell: /usr/bin/bash -e {0}
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9618042Z ##[endgroup]
+verify	Require the selected coverage and its proof	2026-11-06T00:18:44.9796443Z ##[error]Process completed with exit code 1.

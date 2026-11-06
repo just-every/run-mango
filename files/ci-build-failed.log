@@ -1,0 +1,7 @@
+Failure log excerpt; job environment block omitted.
+Build and public command checks	Check generated contract documents	﻿2026-11-06T00:18:38.0908776Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T00:18:38.0909225Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T00:18:38.0932583Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-06T00:18:38.0935010Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-06T00:18:38.2468333Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T00:18:38.2557144Z ##[error]Process completed with exit code 1.

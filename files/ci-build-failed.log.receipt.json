@@ -1,0 +1,16 @@
+{
+  "command": [
+    "gh",
+    "run",
+    "view",
+    "42135834985",
+    "--repo",
+    "just-every/run-mango",
+    "--job",
+    "127623659853",
+    "--log-failed"
+  ],
+  "exit": 0,
+  "run": 42135834985,
+  "job": 127623659853
+}

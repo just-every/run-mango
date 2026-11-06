@@ -27,7 +27,7 @@ No DONE flip or judge request is made.
 | --- | --- |
 | 1 | FAIL for the full clause: completed-erasure image removal, gone response and approval refusal are unproved; acceptance 1's selected upload behavior has native proof. |
 | 2 | PASS for changed proof: independently encoded complete fixture files, real persisted rows and objects, public bytes and browser decoding; existing unsafe-upload refusals change no storage. |
-| 3 | Pending exact-candidate Verify; the existing retained-authoring pack registers this spec. |
+| 3 | Exact-candidate push Verify 42135834985 failed only generated ACCEPTANCE.md freshness; build-dependent jobs skipped, so the suite did not run in CI. All five registered tests passed locally on the exact SHA. The cloud handoff exception applies, but no full-clause DONE claim is made. |
 | 4 | Final checks and their source provenance are recorded in RECEIPT.json. |
 | 5 | PASS by inspection: CAMP-012 explicitly cites the Base public endpoint, upload, transfer, erasure and privacy duties. |
 | 6 | PARTIAL Gap retains all missing erasure outcomes and the held disposition; no fabricated DONE or judgment provenance. Generated views are checked locally and restored from main for landing. |
@@ -66,3 +66,13 @@ MECHANICAL lock=`node scripts/edition-authoring/cli.mjs lock` then `node scripts
 ## Final product result
 
 The exact-head campaign-assets run passed all five registered tests in 4.2 minutes on `929a790d89209ad7ae776f448bcb6d9af1a9a085`; typecheck, first-party checks, contract generation and lock checks also passed. The cloud branch was pushed successfully and read back at the same full SHA. The immediate exact-head Actions query returned no runs yet; the repository has a push Verify entry for this branch. No duplicate dispatch, rerun or PR is created. Subsequent observed CI state, if available, is recorded in RECEIPT.json and candidate-ci.json. The final required cloud handoff does not claim landing, scan completion or Run site success.
+
+The first complete report-only evidence publication was fetched back through the supplied evidence verifier: all 37 selected file blobs, lengths, SHA-256 values and the manifest matched, and product branch and head remained unchanged. This transport receipt is evidence-verification-first.json and is separate from product acceptance or landing.
+
+## Exact-SHA Actions result and handoff
+
+Push Verify **42135834985** completed with conclusion **failure** on `929a790d89209ad7ae776f448bcb6d9af1a9a085`. Failed build job **127623659853** reports only `ACCEPTANCE.md: generated content differs; run contract-docs write.` at `node src/base/contract-docs.mjs check`. The dependent verification job **127623762395** fails because BUILD is failure and SHARDS skipped; no product assertion failed in CI. Both failed jobs’ log archives were read exactly once using the required gh command, with exit 0. The generated-view-only failure was also reproduced locally at the exact SHA, exit 1; no product repair, workflow edit, generated-view commit, dispatch or rerun was made. Seven task GitHub CLI invocations were used, with the second discovery no sooner than 300 seconds after the first.
+
+This is the cloud handoff exception explicitly authorized in the brief. READY identifies pushed product custody, with the Mac lander still responsible for generating the views, its exact-head Verify, full-history publication scan and post-landing Run site. It is not a claim that this branch’s Verify passed, that CAMP-012 is DONE, or that the existing contact-image erasure defect is repaired.
+
+Final lane entry: sd-mango-c-f61 CAMP-012 PARTIAL to PARTIAL; selected positive format upload proof complete, same-original deduplication across declarations and PNG decoding added; full SHA 929a790d89209ad7ae776f448bcb6d9af1a9a085; push Verify 42135834985 fails only expected generated views. Main counts retained at 20 DONE, 198 PARTIAL, 98 MISSING. Acceptance 3 and the CONT-013 hold remain.

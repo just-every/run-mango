@@ -1,0 +1,13 @@
+{
+  "name": "expected-stale-views",
+  "command": [
+    "node",
+    "src/base/contract-docs.mjs",
+    "check"
+  ],
+  "head": "929a790d89209ad7ae776f448bcb6d9af1a9a085",
+  "started": "2026-11-06T00:24:12.777568+00:00",
+  "finished": "2026-11-06T00:24:13.120318+00:00",
+  "exit": 1,
+  "log": "views-restored-check.log"
+}
