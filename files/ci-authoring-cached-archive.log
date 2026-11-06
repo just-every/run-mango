@@ -1,0 +1,169 @@
+2026-11-06T00:43:29.1004282Z VERIFY_MEMBER main
+2026-11-06T00:43:29.1584997Z VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+2026-11-06T00:43:29.1590729Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/authoring/members/main/evidence/4b3746152534/verify/main-TZYNSU
+2026-11-06T00:43:29.1798308Z VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-06T00:43:29.159Z"}
+2026-11-06T00:43:29.1861105Z main
+2026-11-06T00:43:31.2447619Z 
+2026-11-06T00:43:31.2448433Z Running 3 tests using 2 workers
+2026-11-06T00:43:31.2464591Z 
+2026-11-06T00:44:09.0883399Z PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+2026-11-06T00:44:09.4661416Z PROBE CAMP-020 counts: candidates=1 eligible=1 excluded=0 emailSteps=2
+2026-11-06T00:44:09.9793131Z PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+2026-11-06T00:44:10.7213054Z PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+2026-11-06T00:44:12.7513455Z PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+2026-11-06T00:44:13.3863207Z PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+2026-11-06T00:44:15.5824379Z PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+2026-11-06T00:44:16.7261845Z PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+2026-11-06T00:44:18.6546031Z PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+2026-11-06T00:44:19.6396778Z PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+2026-11-06T00:44:21.0182055Z PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+2026-11-06T00:44:22.0057237Z Full promotion proof: start; elapsed=0ms
+2026-11-06T00:44:44.0861914Z Full promotion proof: runtime ready; elapsed=22080ms
+2026-11-06T00:44:55.0113462Z Full promotion proof: build six products; elapsed=33005ms
+2026-11-06T00:45:02.4226151Z Full promotion proof: build social links; elapsed=40417ms
+2026-11-06T00:45:06.1900305Z Full promotion proof: save draft; elapsed=44184ms
+2026-11-06T00:45:07.2453221Z Full promotion proof: reload saved draft; elapsed=45239ms
+2026-11-06T00:45:10.8551710Z Full promotion proof: round trip complete; elapsed=48845ms
+2026-11-06T00:45:11.0401909Z Full promotion proof: screen proofs; elapsed=49034ms
+2026-11-06T00:45:15.9335119Z Full promotion proof: render complete email; elapsed=53927ms
+2026-11-06T00:45:17.0073704Z Full promotion proof: approve and dispatch; elapsed=55000ms
+2026-11-06T00:45:18.4274205Z Full promotional email: storedCharacters=32117; sentBytes=33768; shownBytes=33768; limit=102400
+2026-11-06T00:45:39.4173140Z Chosen size: runtime ready; elapsed=20599ms
+2026-11-06T00:45:42.1776624Z Chosen size: catalog synced; elapsed=23361ms
+2026-11-06T00:45:52.2374297Z Chosen size: builder ready; elapsed=33420ms
+2026-11-06T00:45:53.9902941Z Chosen size: columns built; elapsed=35175ms
+2026-11-06T00:45:56.0006775Z Chosen size: six products picked; elapsed=37185ms
+2026-11-06T00:45:57.4286146Z Chosen size: saved six products; elapsed=38613ms
+2026-11-06T00:46:00.7608526Z Chosen size: visible bound; elapsed=41945ms
+2026-11-06T00:46:21.5173020Z Chosen size: hidden bound; elapsed=62701ms
+2026-11-06T00:46:26.7337290Z Chosen six-item promotion: storedCharacters=27799; bound=31814; edgeBytes=31814
+2026-11-06T00:46:29.5446545Z Chosen size journey elapsed=70729ms
+2026-11-06T00:46:30.8977810Z Catalog guard: six roles and anonymous pass exact denials without edge reads
+2026-11-06T00:46:32.6473067Z Catalog guard: malformed payloads preserve the exact stored revision
+2026-11-06T00:46:44.5489227Z Catalog guard: escaped opaque values and unsafe destinations pass
+2026-11-06T00:46:44.5491415Z Catalog guard journey elapsed=14992ms; native imported history and MOVE-011 conversion do not create catalog choices; imported and flow authoring remain gaps
+2026-11-06T00:46:44.5492882Z Combined catalog journey elapsed=85733ms
+2026-11-06T00:46:44.9336272Z   ✓  2 tests/campaign-authoring/browser.spec.ts:6:1 › [CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft (3.2m)
+2026-11-06T00:47:15.1755707Z   ✓  3 tests/campaign-authoring/design-import.spec.ts:22:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px (30.2s)
+2026-11-06T00:47:17.2805945Z   ✘  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal (3.8m)
+2026-11-06T00:47:17.3058693Z 
+2026-11-06T00:47:17.3062382Z 
+2026-11-06T00:47:17.3085950Z   1) tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 
+2026-11-06T00:47:17.3087799Z 
+2026-11-06T00:47:17.3088360Z     Error: locator.scrollIntoViewIfNeeded: Element is not attached to the DOM
+2026-11-06T00:47:17.3089145Z     Call log:
+2026-11-06T00:47:17.3089670Z       - attempting scroll into view action
+2026-11-06T00:47:17.3090077Z         - waiting for element to be stable
+2026-11-06T00:47:17.3090287Z 
+2026-11-06T00:47:17.3090295Z 
+2026-11-06T00:47:17.3090504Z        at campaign-authoring/design-generation.flow.ts:412
+2026-11-06T00:47:17.3090768Z 
+2026-11-06T00:47:17.3090969Z       410 |     expect(converts()).toHaveLength(convertsBefore);
+2026-11-06T00:47:17.3092352Z       411 |     expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore);
+2026-11-06T00:47:17.3093405Z     > 412 |     await run.scrollIntoViewIfNeeded();
+2026-11-06T00:47:17.3094274Z           |               ^
+2026-11-06T00:47:17.3095569Z       413 |     await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing.png'), fullPage: true });
+2026-11-06T00:47:17.3096934Z       414 |     await page.setViewportSize({ width: 390, height: 844 });
+2026-11-06T00:47:17.3097560Z       415 |     await run.scrollIntoViewIfNeeded();
+2026-11-06T00:47:17.3098101Z         at walk2 ([REDACTED]/tests/campaign-authoring/design-generation.flow.ts:412:15)
+2026-11-06T00:47:17.3098727Z         at [REDACTED]/tests/campaign-authoring/design-generation.spec.ts:10:10
+2026-11-06T00:47:17.3099042Z 
+2026-11-06T00:47:17.3099756Z     Error Context: ../../_temp/mango-verification/authoring/members/main/evidence/4b3746152534/main/campaign-authoring-design--bfe9c-and-expose-provider-refusal/error-context.md
+2026-11-06T00:47:17.3100465Z 
+2026-11-06T00:47:17.3100568Z   1 failed
+2026-11-06T00:47:17.3102155Z     tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 
+2026-11-06T00:47:17.3103407Z   2 passed (3.8m)
+2026-11-06T00:47:17.4089061Z Verification failed: main: exit 1, signal none.
+2026-11-06T00:47:17.4089594Z Command: pnpm
+2026-11-06T00:47:17.4089907Z Last output (up to 40 lines):
+2026-11-06T00:47:17.4090365Z Chosen size: saved six products; elapsed=38613ms
+2026-11-06T00:47:17.4090857Z Chosen size: visible bound; elapsed=41945ms
+2026-11-06T00:47:17.4091614Z Chosen size: hidden bound; elapsed=62701ms
+2026-11-06T00:47:17.4092335Z Chosen six-item promotion: storedCharacters=27799; bound=31814; edgeBytes=31814
+2026-11-06T00:47:17.4092968Z Chosen size journey elapsed=70729ms
+2026-11-06T00:47:17.4093621Z Catalog guard: six roles and anonymous pass exact denials without edge reads
+2026-11-06T00:47:17.4094387Z Catalog guard: malformed payloads preserve the exact stored revision
+2026-11-06T00:47:17.4095123Z Catalog guard: escaped opaque values and unsafe destinations pass
+2026-11-06T00:47:17.4096410Z Catalog guard journey elapsed=14992ms; native imported history and MOVE-011 conversion do not create catalog choices; imported and flow authoring remain gaps
+2026-11-06T00:47:17.4097398Z Combined catalog journey elapsed=85733ms
+2026-11-06T00:47:17.4099252Z   ✓  2 tests/campaign-authoring/browser.spec.ts:6:1 › [CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft (3.2m)
+2026-11-06T00:47:17.4101902Z   ✓  3 tests/campaign-authoring/design-import.spec.ts:22:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px (30.2s)
+2026-11-06T00:47:17.4104186Z   ✘  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal (3.8m)
+2026-11-06T00:47:17.4105281Z 
+2026-11-06T00:47:17.4105298Z 
+2026-11-06T00:47:17.4106515Z   1) tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 
+2026-11-06T00:47:17.4107530Z 
+2026-11-06T00:47:17.4107841Z     Error: locator.scrollIntoViewIfNeeded: Element is not attached to the DOM
+2026-11-06T00:47:17.4108380Z     Call log:
+2026-11-06T00:47:17.4108872Z       - attempting scroll into view action
+2026-11-06T00:47:17.4109599Z         - waiting for element to be stable
+2026-11-06T00:47:17.4109951Z 
+2026-11-06T00:47:17.4109963Z 
+2026-11-06T00:47:17.4110318Z        at campaign-authoring/design-generation.flow.ts:412
+2026-11-06T00:47:17.4110681Z 
+2026-11-06T00:47:17.4110908Z       410 |     expect(converts()).toHaveLength(convertsBefore);
+2026-11-06T00:47:17.4112335Z       411 |     expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore);
+2026-11-06T00:47:17.4112949Z     > 412 |     await run.scrollIntoViewIfNeeded();
+2026-11-06T00:47:17.4113276Z           |               ^
+2026-11-06T00:47:17.4113882Z       413 |     await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing.png'), fullPage: true });
+2026-11-06T00:47:17.4114582Z       414 |     await page.setViewportSize({ width: 390, height: 844 });
+2026-11-06T00:47:17.4115013Z       415 |     await run.scrollIntoViewIfNeeded();
+2026-11-06T00:47:17.4115546Z         at walk2 ([REDACTED]/tests/campaign-authoring/design-generation.flow.ts:412:15)
+2026-11-06T00:47:17.4116145Z         at [REDACTED]/tests/campaign-authoring/design-generation.spec.ts:10:10
+2026-11-06T00:47:17.4116463Z 
+2026-11-06T00:47:17.4117176Z     Error Context: ../../_temp/mango-verification/authoring/members/main/evidence/4b3746152534/main/campaign-authoring-design--bfe9c-and-expose-provider-refusal/error-context.md
+2026-11-06T00:47:17.4118663Z 
+2026-11-06T00:47:17.4118783Z   1 failed
+2026-11-06T00:47:17.4120032Z     tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 
+2026-11-06T00:47:17.4120991Z   2 passed (3.8m)
+2026-11-06T00:47:17.4122061Z Log: /home/runner/work/_temp/mango-verification/authoring/members/main/evidence/4b3746152534/verify/main-TZYNSU/main/install.log
+2026-11-06T00:47:17.4138641Z VERIFY_MEMBER go-live
+2026-11-06T00:47:17.4725534Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+2026-11-06T00:47:17.4730415Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/authoring/members/go-live/evidence/4b3746152534/verify/go-live-VDBVrH
+2026-11-06T00:47:17.4942934Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T00:47:17.473Z"}
+2026-11-06T00:47:17.5006813Z go-live
+2026-11-06T00:47:19.6914541Z 
+2026-11-06T00:47:19.6915335Z Running 4 tests using 2 workers
+2026-11-06T00:47:19.6932735Z 
+2026-11-06T00:48:17.7342549Z Conversion proof: apply archive
+2026-11-06T00:48:19.4687078Z Conversion proof: read archive
+2026-11-06T00:48:19.5857611Z Conversion proof: start template 151
+2026-11-06T00:48:19.7115436Z Conversion proof: inspect mapped body
+2026-11-06T00:48:19.7151629Z Conversion proof: run mapped checks
+2026-11-06T00:48:19.7791386Z Conversion proof: open mapped preview
+2026-11-06T00:48:20.2783112Z Conversion proof: mapped preview 1440
+2026-11-06T00:48:21.2382341Z Conversion proof: corrected footer
+2026-11-06T00:48:21.2402437Z Conversion proof: start template 152
+2026-11-06T00:48:32.8071682Z   ✓  2 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (1.2m)
+2026-11-06T00:50:35.9886523Z   ✓  1 tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery (3.3m)
+2026-11-06T00:51:02.2969832Z NATIVE_CRON_PUNCTUALITY {"driver":"Configured wall-clock driver; Vite does not initiate Cron Triggers; not hosted acceptance","ticks":[{"scheduledAt":"2026-11-06T00:50:00.000Z","enteredAt":"2026-11-06T00:50:00.000Z","finishedAt":"2026-11-06T00:50:00.067Z"},{"scheduledAt":"2026-11-06T00:51:00.000Z","enteredAt":"2026-11-06T00:51:00.001Z","finishedAt":"2026-11-06T00:51:00.065Z"}],"scheduledAt":"2026-11-06T00:51:02.000Z","startedAt":"2026-11-06T00:51:02.022Z","latenessMs":22}
+2026-11-06T00:51:22.8052707Z Built source phase runtime ready elapsed=4761ms
+2026-11-06T00:51:22.8372711Z Built source phase owner ready elapsed=4793ms
+2026-11-06T00:51:22.9695857Z Built source phase WooCommerce connected elapsed=4926ms
+2026-11-06T00:51:23.0438679Z Built source phase customer queued elapsed=5000ms
+2026-11-06T00:51:23.2303244Z Built source phase customer synced elapsed=5185ms
+2026-11-06T00:51:23.2718272Z Built source phase product queued elapsed=5228ms
+2026-11-06T00:51:23.4575197Z Built source phase product synced elapsed=5414ms
+2026-11-06T00:51:23.4942367Z Built source phase order queued elapsed=5451ms
+2026-11-06T00:51:23.6826197Z Built source phase order synced elapsed=5638ms
+2026-11-06T00:51:23.7178516Z Built source phase refund queued elapsed=5674ms
+2026-11-06T00:51:23.9064952Z Built source phase refund synced elapsed=5863ms
+2026-11-06T00:51:23.9522456Z Built source phase cart queued elapsed=5908ms
+2026-11-06T00:51:24.1320371Z Built source phase cart synced elapsed=6085ms
+2026-11-06T00:51:24.3404830Z Store facts phase browsing synced elapsed=211ms
+2026-11-06T00:51:24.3709449Z Store facts phase Stripe connected elapsed=240ms
+2026-11-06T00:51:24.4336558Z Store facts phase customer received elapsed=304ms
+2026-11-06T00:51:24.4666705Z Store facts phase payment received elapsed=336ms
+2026-11-06T00:51:24.5081810Z Store facts phase checkout-session received elapsed=378ms
+2026-11-06T00:51:24.5466716Z Store facts phase subscription received elapsed=417ms
+2026-11-06T00:51:24.5856400Z Store facts phase refund received elapsed=456ms
+2026-11-06T00:51:30.2970688Z Source export read elapsed=5711ms
+2026-11-06T00:51:30.2972025Z Store facts phase export read elapsed=6167ms
+2026-11-06T00:51:30.4443495Z Built store source proof: WooCommerce=6 Stripe=5; one shared contact; all identifiers, connections and edge occurrence times read through the owner export
+2026-11-06T00:51:30.8546561Z   ✓  4 tests/go-live/woocommerce.journeys.ts:11:1 › [INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery (54.6s)
+2026-11-06T00:51:51.8084210Z   ✓  3 tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth (3.3m)
+2026-11-06T00:51:51.8603379Z 
+2026-11-06T00:51:51.8606743Z   4 passed (4.6m)
+2026-11-06T00:51:51.9516155Z VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-06T00:47:17.473Z","durationMs":274475,"exitCode":0,"signal":null,"event":"end"}
+2026-11-06T00:51:51.9537322Z VERIFY_TOTAL {"status":"PASS","durationMs":274493,"boundary":"coordinator"}
+2026-11-06T00:51:51.9629138Z ##[error]Process completed with exit code 1.

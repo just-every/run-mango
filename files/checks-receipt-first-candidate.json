@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f36-fix1",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f36-fix1",
+  "head": "d61b592e46e79c10eeb64a1672961c167a9fcb87",
+  "base": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "original_lineage": "1ddaedc4c0e068eef003690336e2eab720ade1d2",
+  "checks": [
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run env MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium WRANGLER_SEND_METRICS=false pnpm exec playwright test tests/campaign-authoring/design-generation.spec.ts --workers=1 --trace=on",
+      "exit": 0,
+      "passed": 1,
+      "duration": "3.0m",
+      "log": "native-journey-first-candidate.log"
+    },
+    {
+      "command": "cloud_run pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "contract-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check (generated views)",
+      "exit": 0,
+      "log": "contract-check-generated.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check (views restored whole from origin/main)",
+      "exit": 0,
+      "log": "contract-check-restored.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "source-lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "source-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+      "exit": 0,
+      "log": "source-verify-base.log"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "execution_binding": "Local checks executed on the changed working tree before the first commit/push. Tested product, journey and unchanged support bytes match this candidate exactly; only the generated source lock was written afterward. Exact-SHA hosted Verify is recorded separately. No claim of a local full-suite or full-clause run.",
+  "toolchain": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "chromium": "/usr/bin/chromium",
+    "chromium_args": [
+      "--no-sandbox"
+    ]
+  },
+  "files": [
+    {
+      "path": "src/core/features/design-generation/ui/run-notices.tsx",
+      "sha256": "ad547ded9076aa0b0e971d95bef8ea3a4acc8272ee9b0b33c61743eaf0fbeb1d",
+      "bytes": 4314,
+      "matches_candidate": true
+    },
+    {
+      "path": "tests/campaign-authoring/design-generation.flow.ts",
+      "sha256": "483f80ff761cd7868501a7fc7c65653136c78fdbe8fc4f63b6b3f70e1699f332",
+      "bytes": 30436,
+      "matches_candidate": true
+    },
+    {
+      "path": "tests/campaign-authoring/design-generation.spec.ts",
+      "sha256": "00835a3edef9571ade4de0db160e588b6988f1ddeb6caf73b47f8bc538dc365c",
+      "bytes": 765,
+      "matches_candidate": true
+    },
+    {
+      "path": "tests/support/fake-twelve-ui.ts",
+      "sha256": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
+      "bytes": 9669,
+      "matches_candidate": true
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
+      "bytes": 489381,
+      "matches_candidate": true
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "sha256": "d08e551ab2d69f883a2355c871f146fe6c1878fc072ae4145064802bc8f042ab",
+      "bytes": 443948,
+      "matches_candidate": true
+    },
+    {
+      "path": "docs/CLAIMS.md",
+      "sha256": "3f43d07b6f29cf13407eff177512d09a6dcf11c9959c36a541c3edfb5e58f645",
+      "bytes": 5222,
+      "matches_candidate": true
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "394208627bfafeb62a9ba86aef07c7192ad1e835fbada8dbb665918d7d73650e",
+      "bytes": 411248,
+      "matches_candidate": true
+    }
+  ],
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "clause_changes": [],
+  "design002": "partial",
+  "A1": "frozen MET; not re-probed",
+  "A3": "frozen MET",
+  "A2": "narrow failed-drawing estimate correction; independent re-gate required",
+  "live_provider_calls": 0,
+  "test_registration_changes": 0,
+  "contract_changes": false,
+  "view_changes": false,
+  "screenshots": [
+    "failed-drawing-1440.png",
+    "failed-drawing-390.png"
+  ],
+  "public_trace_policy": "The native trace remains outside the selected public packet because it includes ephemeral synthetic runtime/session traffic. Public packet includes the actual pass log, assertions patch, byte-binding receipt and screenshots; no runtime state or secrets selected.",
+  "visual_review": {
+    "1440": "estimate visible between the failed-drawing notice and retained candidates; latest and earlier runs remain distinct",
+    "390": "estimate wraps within the existing card above the retained candidate actions; no clipping observed",
+    "screenshots_changed_state_once_each": true,
+    "existing_estimate_style": "muted-copy, 13px font-size and line-height 1.45 in src/core/app/client/styles/page.css:26; reused without CSS edits"
+  },
+  "historical_log_note": "First-candidate native pass log is native-journey-first-candidate.log. Shared contract/source logs are the latest actual runs after the screenshot-only follow-up; historical source/contract exit statuses are preserved here without claiming those shared logs were not refreshed."
+}

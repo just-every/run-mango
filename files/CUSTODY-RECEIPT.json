@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "tag": "sd-mango-c-f36-fix1",
+  "branch": "cloud/sd-mango-c-f36-fix1",
+  "head": "78e546c4cab69678976d89404228336ac8a1a001",
+  "product_pushed": true,
+  "product_push_attempts": 1,
+  "product_push_log": "product-push-final.log",
+  "identity_audit": "identity-audit.log",
+  "bundle": {
+    "path": "/home/agent/rer-consolidation/work/sd-mango-c-f36-fix1/candidate.bundle",
+    "sha256": "4f3de137e80fd6f12c13d34b5b0118b554b18f0af0d316d039575aabdcdd4d3e",
+    "verified": true
+  },
+  "cleanup": "Dependencies removed after completed local work; disposable clone removal remains scheduled immediately after evidence publication.",
+  "readiness": "READY",
+  "remote_product_head_confirmed": "78e546c4cab69678976d89404228336ac8a1a001",
+  "product_commits": [
+    "d61b592e46e79c10eeb64a1672961c167a9fcb87",
+    "78e546c4cab69678976d89404228336ac8a1a001"
+  ],
+  "product_pushes": [
+    {
+      "head": "d61b592e46e79c10eeb64a1672961c167a9fcb87",
+      "log": "product-push.log",
+      "attempts": 1
+    },
+    {
+      "head": "78e546c4cab69678976d89404228336ac8a1a001",
+      "log": "product-push-final.log",
+      "attempts": 1
+    }
+  ],
+  "node_modules_removed": true,
+  "owned_browsers_and_servers": "Both cloud_run native executions exited 0 after closing their browser contexts and native runtimes; the subreaper returned, so their descendants were reaped.",
+  "verify_run_id": 42140459473,
+  "verify_status": "completed",
+  "verify_conclusion": "success",
+  "generated_view_exception_used": false,
+  "evidence_transport": "pending publication; separate from product readiness"
+}

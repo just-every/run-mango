@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "tag": "sd-mango-c-f36-fix1",
+  "github_invocations_used": 10,
+  "github_invocation_budget": 10,
+  "runs": [
+    {
+      "id": 42138649162,
+      "head": "d61b592e46e79c10eeb64a1672961c167a9fcb87",
+      "url": "https://github.com/just-every/run-mango/actions/runs/42138649162",
+      "status": "completed",
+      "conclusion": "failure",
+      "build": "success",
+      "generated_views": "passed; generated-view exception does not apply",
+      "failures": [
+        {
+          "job": 127633698067,
+          "name": "shards (authoring)",
+          "assertion": "locator.scrollIntoViewIfNeeded: Element is not attached to the DOM at design-generation.flow.ts:412. New estimate assertions preceding the screenshot passed. Removed both unnecessary pre-full-page-screenshot scroll calls; all assertions retained.",
+          "log": "ci-authoring-cached-archive.log"
+        },
+        {
+          "job": 127633698144,
+          "name": "shards (campaigns)",
+          "assertion": "tests/go-live/presend-checks.journeys.ts -> email-size.flow.ts:79: approve expected HTTP 200, received 409 with shop.example.test unresolved link-host, sender-provider/DNS and SPF/DKIM/DMARC blockers. Outside the leased correction.",
+          "log": "ci-campaigns-failed.log"
+        },
+        {
+          "job": 127637256144,
+          "name": "verify",
+          "assertion": "SHARDS=failure; aggregate coverage proof failed",
+          "log": "ci-verify-failed.log"
+        }
+      ],
+      "archive_reads": [
+        {
+          "command": "gh run view 42138649162 --repo just-every/run-mango --job 127633698067 --log-failed",
+          "exit": 1,
+          "error": "failed to get run log: zip: not a valid zip file",
+          "http_status": "unknown (not supplied by gh)",
+          "retried": false,
+          "recovery": "The successful sibling archive reads left a valid complete run ZIP in the local gh cache. Extracted authoring Run this shard text locally without another request; setup/environment blocks excluded."
+        },
+        {
+          "command": "gh run view 42138649162 --repo just-every/run-mango --job 127633698144 --log-failed",
+          "exit": 0
+        },
+        {
+          "command": "gh run view 42138649162 --repo just-every/run-mango --job 127637256144 --log-failed",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "id": 42140459473,
+      "head_sha": "78e546c4cab69678976d89404228336ac8a1a001",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42140459473"
+    }
+  ],
+  "api_calls": [
+    {
+      "call": 1,
+      "kind": "discovery",
+      "result": "incorrect SHA; no runs; no evidence"
+    },
+    {
+      "call": 2,
+      "kind": "exact-SHA discovery",
+      "result": "in_progress"
+    },
+    {
+      "call": 3,
+      "kind": "status poll after 300 seconds",
+      "result": "in_progress"
+    },
+    {
+      "call": 4,
+      "kind": "status poll after 300 seconds",
+      "result": "completed/failure"
+    },
+    {
+      "call": 5,
+      "kind": "completed-run jobs diagnostics"
+    },
+    {
+      "call": 6,
+      "kind": "authoring failed-job archive, once"
+    },
+    {
+      "call": 7,
+      "kind": "campaigns failed-job archive, once"
+    },
+    {
+      "call": 8,
+      "kind": "verify failed-job archive, once"
+    },
+    {
+      "call": 9,
+      "kind": "final exact-SHA discovery after ten minutes",
+      "result": "in_progress",
+      "run_id": 42140459473
+    },
+    {
+      "call": 10,
+      "kind": "final exact-SHA status after 300 seconds",
+      "result": "completed/success",
+      "run_id": 42140459473
+    }
+  ],
+  "final_candidate": {
+    "head": "78e546c4cab69678976d89404228336ac8a1a001",
+    "run_id": 42140459473,
+    "status": "completed",
+    "conclusion": "success",
+    "readiness": "READY",
+    "generated_view_exception_used": false
+  },
+  "no_ci_dispatch_or_rerun": true,
+  "terminal_result": "Exact-SHA Verify completed/success; first candidate failure corrected and superseded by append-only product follow-up. DESIGN-002 remains PARTIAL and all independent lane gates remain."
+}
