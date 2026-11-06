@@ -1,0 +1,27 @@
+{
+  "source": "dcc08a05da68b051a956f210d57886bf7b4075fd",
+  "kind": "Independent functional browser walkthrough; no visual-quality judgment",
+  "startedAt": "2026-11-06T02:09:48.638Z",
+  "command": "cloud_run node ../browser-proof.mjs",
+  "checks": [
+    "Unsaved edits leave both saved previews unchanged",
+    "All independent name, subject, email body, sender identities, SMS body and replacement destination choices survive native save and browser reload",
+    "Saved email and SMS previews show the chosen saved content and identities at 1440",
+    "Authenticated campaign and review readback and native D1 match the saved choices; proposal provenance is unchanged; approvals, recipients, dispatches and queued product jobs remain empty",
+    "Capture diagnostic: scroll saved email iframe into the viewport before full-page capture; saved heading is visible at both widths"
+  ],
+  "screens": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "path": "browser-proof-1440.png"
+    },
+    {
+      "width": 390,
+      "height": 1000,
+      "path": "browser-proof-390.png"
+    }
+  ],
+  "exit": 0,
+  "finishedAt": "2026-11-06T02:11:01.545Z"
+}

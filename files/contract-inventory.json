@@ -1,0 +1,26 @@
+{
+  "pin": "dcc08a05da68b051a956f210d57886bf7b4075fd",
+  "contract_bytes": 487652,
+  "acceptance_bytes": 442685,
+  "contract_sha256": "104e16090e9f7787fcfd1a5c1c6d976c9ad59a2fedf0552ea468c8c0b0f8b122",
+  "acceptance_sha256": "adc994db02ce2fe6cd6c5ca7b2c2e944f40845cfb48c5f1d336a049d5caaa0c8",
+  "clause_count": 316,
+  "acceptance_point_count": 1284,
+  "source_status_counts": {
+    "partial": 199,
+    "done": 19,
+    "missing": 98
+  },
+  "generated_view_status_counts": {
+    "partial": 200,
+    "done": 18,
+    "missing": 98
+  },
+  "prop004_source_status": {
+    "id": "PROP-004",
+    "status": "done",
+    "evidence": "`tests/proposals-decision/content-editing.spec.ts` \u2014 \u201c[PROP-004] adopted email and SMS content, sender identities and destinations remain editable without sending authority\u201d: native generation and adoption; independently chosen campaign name, email subject and body, email sender name, From, Reply-to, postal address, SMS body and sender, and replacement destinations; repeated authenticated campaign and review readback and persisted revisions and links; native editor save and reload with saved email and SMS previews at 1440 and screen captures at 1440 and 390; original proposal evidence retained and no approval, recipients or dispatch authority. Synthetic provider edges establish draft editing only, not real AI, commerce, SMS transport, Twilio A2P or US carrier qualification.",
+    "gap": ""
+  },
+  "all_status_and_gap_rows_hashed": "d839883afb3d473d09fc686b5c81a5384f1011708c008d9a736d6511fba40063"
+}

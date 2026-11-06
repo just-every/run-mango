@@ -1,0 +1,8 @@
+{
+  "source": "dcc08a05da68b051a956f210d57886bf7b4075fd",
+  "command": "cloud_run env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_NO_FIXTURE_SERVER=1 MANGO_TEST_WORK_DIR=<external-runtime> pnpm exec playwright test --config playwright.config.js tests/proposals-decision/decision-routes.spec.ts tests/proposals-decision/content-editing.spec.ts --workers=1 --reporter=list",
+  "exit": 0,
+  "completed_at": "2026-11-06T02:06:24.182425+00:00",
+  "mutations": false,
+  "retries": 0
+}

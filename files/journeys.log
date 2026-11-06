@@ -1,0 +1,21 @@
+
+Running 2 tests using 1 worker
+
+(node:1989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-004 acceptance-1 email body: generate, adopt, PATCH and repeated campaign and review GET -> chosen saved HTML and text, unchanged name and subject
+PROBE PROP-004 acceptance-3 email sender: authenticated PATCH and repeated campaign and review GET -> chosen sender name, From, Reply-to and postal address match persisted revision
+PROBE PROP-004 acceptance-3 destination links: authenticated PATCH and repeated campaign and review GET -> replacement destination and label only, stable persisted link row
+PROBE PROP-004 draft safety: unauthenticated PATCH refused; authorized edits and reads -> unchanged original proposal evidence, draft only, no approval, recipients, dispatch rows or commands
+PROBE PROP-004 acceptance-1 name and subject: generated dual-channel proposal, native editor save and repeated GET -> independently chosen name and subject persisted
+PROBE PROP-004 acceptance-2 SMS body: generate and adopt, edit SMS message and save -> chosen SMS body persists across reload and repeated campaign and review reads
+PROBE PROP-004 acceptance-3 SMS sender: native editor save -> GARDEN persists in revision and saved SMS preview; no approval, recipients, dispatch or jobs
+PROBE PROP-004 acceptance-4 saved previews: before save original SMS remains; after save and reload chosen SMS body and sender plus saved email subject and body render at 1440; screens captured at 1440 and 390
+  ✓  1 tests/proposals-decision/content-editing.spec.ts:5:1 › [PROP-004] adopted email and SMS content, sender identities and destinations remain editable without sending authority (1.5m)
+(node:1989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes (20.1s)
+
+  2 passed (2.1m)

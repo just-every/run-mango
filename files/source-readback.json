@@ -1,0 +1,23 @@
+{
+  "pin": "dcc08a05da68b051a956f210d57886bf7b4075fd",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "104e16090e9f7787fcfd1a5c1c6d976c9ad59a2fedf0552ea468c8c0b0f8b122",
+      "bytes": 487652,
+      "raw_fetch": "success"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "sha256": "adc994db02ce2fe6cd6c5ca7b2c2e944f40845cfb48c5f1d336a049d5caaa0c8",
+      "bytes": 442685,
+      "raw_fetch": "success"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "bytes": 9726,
+      "raw_fetch": "success"
+    }
+  ]
+}

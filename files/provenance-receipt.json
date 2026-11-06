@@ -1,0 +1,138 @@
+{
+  "checked_at": "2026-11-06T02:12:05.241716+00:00",
+  "head": "dcc08a05da68b051a956f210d57886bf7b4075fd",
+  "source_branch": "cloud/sd-mango-c-f33",
+  "tracked_diff_exit": 0,
+  "staged_diff_exit": 0,
+  "porcelain": "",
+  "product_commits": 0,
+  "product_pushes": 0,
+  "product_pr": null,
+  "ci_api_calls": 0,
+  "source_raw_files_equal_clone": true,
+  "status_differences": [
+    {
+      "id": "PROP-004",
+      "generated": "partial",
+      "source": "done"
+    }
+  ],
+  "generated_counts": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "source_candidate_counts": {
+    "done": 19,
+    "partial": 199,
+    "missing": 98
+  },
+  "awarded_count_delta": 0,
+  "files_at_check": [
+    {
+      "file": "PLAN.md",
+      "bytes": 1394,
+      "sha256": "74c0f350a28c056814a33494aef0f1d7ec3a2777a77c7411da8e518661755b88"
+    },
+    {
+      "file": "source-readback.json",
+      "bytes": 605,
+      "sha256": "3df3a07378fbf502eee604d9f17aa18ed8d93e494022b0c97c88c892ea2c1044"
+    },
+    {
+      "file": "registered-proposal-content-1440.png",
+      "bytes": 770547,
+      "sha256": "cb809799c53aa2b9ed5a963014d8d51eb62287857f9f2a6850fbbeb67c07a475"
+    },
+    {
+      "file": "browser-proof-390.png",
+      "bytes": 803908,
+      "sha256": "165eaa9d831a0568aac7dd68381d6aeec26786da14fa3f15d9735f04379f27c6"
+    },
+    {
+      "file": "journeys.log",
+      "bytes": 2452,
+      "sha256": "ed424f7f62c456d255918db0038459a6333e87adae2b71dfab665a32fb1469da"
+    },
+    {
+      "file": "typecheck.log",
+      "bytes": 234,
+      "sha256": "4472af433ac7cb7c6b143859bf9dbe3eece232f51115efedc59a7ed89e25924d"
+    },
+    {
+      "file": "setup-receipt.json",
+      "bytes": 205,
+      "sha256": "74f7919abb1715f9c05f7c4215d29954bc83e726e383b9d0dad90dcadd2b6e1e"
+    },
+    {
+      "file": "initial-browser-proof-390.png",
+      "bytes": 796247,
+      "sha256": "dc92d666c2a7848c53914416e3a921f7318d1f59948475d92ed3d48d93f11d61"
+    },
+    {
+      "file": "browser-proof.mjs",
+      "bytes": 9197,
+      "sha256": "a41d579be34e9dedbc4aa05fb1b7721646a431d0656719983b917f44edea94f3"
+    },
+    {
+      "file": "browser.log",
+      "bytes": 91,
+      "sha256": "864304edc25ad64259e05b402f66567a95078066109a49d05bccab477f150964"
+    },
+    {
+      "file": "initial-browser.log",
+      "bytes": 91,
+      "sha256": "864304edc25ad64259e05b402f66567a95078066109a49d05bccab477f150964"
+    },
+    {
+      "file": "source-lock-check.log",
+      "bytes": 411597,
+      "sha256": "51dd0b78ac6e90a704d2321256f4e04ad71fefb080d5c6e0d812ca723867fde3"
+    },
+    {
+      "file": "contract-inventory.json",
+      "bytes": 1548,
+      "sha256": "ad1dc935546222295a1a81dac24ee08e8618ddf323d2bd496d2f939fbc35a137"
+    },
+    {
+      "file": "journey-receipt.json",
+      "bytes": 485,
+      "sha256": "aad82b79b85ea2038ce7916a0c3bb167fdd0c1d7fb2a5ea4721a4ebc700237ec"
+    },
+    {
+      "file": "initial-browser-proof-1440.png",
+      "bytes": 871424,
+      "sha256": "5baff48b9fafc20892d763bfdfe8b5df5bb1e7272f327de8d41ce05abe41daef"
+    },
+    {
+      "file": "initial-browser-receipt.json",
+      "bytes": 1281,
+      "sha256": "09f60bb6301cd2237ad4d3686aad0c2c63686992f51037121304c0a780c7a6a8"
+    },
+    {
+      "file": "browser-proof-1440.png",
+      "bytes": 876377,
+      "sha256": "9a8dc4bd587b3e00bd1fa4a5a27b8e2f0d8def5886d038708cc3e98290a9f66f"
+    },
+    {
+      "file": "check-receipt.json",
+      "bytes": 392,
+      "sha256": "b4bc5fac00d9299d603def2aeb07bbfc69dc3c9c30e12975e17d14cda31d8cd1"
+    },
+    {
+      "file": "registered-proposal-content-390.png",
+      "bytes": 708274,
+      "sha256": "5ef500e00b00f7159fd9b72bac652b0a94321566063e8976c8f2fac64fe20ab7"
+    },
+    {
+      "file": "browser-receipt.json",
+      "bytes": 1150,
+      "sha256": "06606c8717a78fc9457c11703813cafa10ef9d7ec40d3c73035e8b3f12118d03"
+    },
+    {
+      "file": "contract-check.log",
+      "bytes": 67,
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    }
+  ]
+}
