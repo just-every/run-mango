@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "69c91a9f6cddee7849efbbf8bf69ddad62eee03b1e721b2a0ebaf866ef8dacb0",
+      "sha256": "0c1e8bc012b03f51d60b7864a33dacd10505a52f4ae0fefad129c60b3f70cf91",
       "executable": false
     },
     "DEMO.md": {
@@ -2822,7 +2822,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "0358b726d00353adf7a459077fbe3abfd3f9d5bfeae98c2a4e6cd117cb57a442",
+      "sha256": "ad113441a5e6e3e0580cc6588e978bbd347bba851ac8ad432cb728536c1ad915",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3678,7 +3678,7 @@
       "executable": false
     },
     "src/core/features/auth/approval-requests.ts": {
-      "sha256": "0a712edb21f4a3c44da26d5d4a0350fb2c0938aae8eaf6ace01f44970aed0590",
+      "sha256": "fa848b4d45917b0cac2ec0abe72a8e98c1ecf1a4a5a5bf9a3d05d55a737848c9",
       "executable": false
     },
     "src/core/features/auth/base-policy.d.ts": {
@@ -3746,7 +3746,7 @@
       "executable": false
     },
     "src/core/features/auth/ui/approval-requests.tsx": {
-      "sha256": "83c64b353fcfbe1d0605bceb0c63a6fac429f4cda0487a896b156f2d605a0cfd",
+      "sha256": "96927d73f2b57cc53f9dbd201a927ba98672db84d6d1d503bc56a5a033e6fd98",
       "executable": false
     },
     "src/core/features/auth/ui/contact-support.tsx": {
@@ -8826,15 +8826,15 @@
       "executable": false
     },
     "tests/go-live/content-checks.journeys.ts": {
-      "sha256": "95a0b2a1c67be79185d48141ae0daa47c80b603baabe66825b8b769d2b17a2d4",
+      "sha256": "6d91125f51ef5146896e1fd78b49959325fa9c2865c44d5bbf620292a0aef4ac",
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "90001f1b5831b6e57f110ff5d94b37ebb1d2019514db7d22c4961dbf5d520d0e",
+      "sha256": "c2d15599668555fa3b325115fb068d59abe760f0fc00003451db2bcfd8013a7d",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
-      "sha256": "4c40564cd885b6fbbae374422e5046a651f3e8efa07ed374fd5b43abab54ccfe",
+      "sha256": "fd7158aa81a9bf39d68dee67725f6e9a7e1ba17ba9e8fab115048302922e65f8",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {
