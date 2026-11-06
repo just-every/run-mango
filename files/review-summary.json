@@ -1,0 +1,48 @@
+{
+  "reviewed_source": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "source_branch": "cloud/sd-mango-c-f17",
+  "tag": "ct-judge-mango-camp016-20261105-1105-sol1",
+  "verdict": "CAMP-016 ACCEPT ON LANDING",
+  "rubric_rows": 18,
+  "judgment_met_rows": 16,
+  "pending_rows": [
+    "R10: DONE-RIDERS 3",
+    "R18: DONE-RIDERS 11"
+  ],
+  "new_findings": 0,
+  "awarded_count_change": 0,
+  "historical_counts": {
+    "before": [
+      17,
+      201,
+      98
+    ],
+    "candidate": [
+      18,
+      200,
+      98
+    ]
+  },
+  "fresh_main_counts": [
+    20,
+    198,
+    98
+  ],
+  "conditional_landing_counts": [
+    21,
+    197,
+    98
+  ],
+  "ci_run": {
+    "id": 42011668056,
+    "event": "push",
+    "conclusion": "failure",
+    "runtime_shards": "skipped",
+    "basis": "inline immutable request/affected gate; no CI API query"
+  },
+  "same_existing_gate_lander_and_holds_preserved": true,
+  "product_changes": false,
+  "actual_model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "written_at": "2026-11-06T02:01:48Z"
+}

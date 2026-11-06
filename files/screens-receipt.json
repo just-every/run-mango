@@ -1,0 +1,27 @@
+{
+  "width": 1440,
+  "source": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "phone_proof": "Existing 390 proof supplied inline; unchanged rendering verified by original-main-diff.txt and source-comparison.json. No new 390 run or UI change.",
+  "files": [
+    {
+      "path": "screens/followup-create-1440.png",
+      "sha256": "22dae65a6b9e6bfd75a9ec4d9316a057f1503e2fe7178b21862d25494e248feb",
+      "bytes": 332798
+    },
+    {
+      "path": "screens/followup-review-1440.png",
+      "sha256": "97a7e8b3477c63473811a39cbc02a205aba7dc14c92d210d4d198659faee216a",
+      "bytes": 495881
+    },
+    {
+      "path": "screens/followup-estimate-review-1440.png",
+      "sha256": "59ad38a74def7c290a86397d4690c7d0636c52177084cfa2aa9f9b4a3a4dd112",
+      "bytes": 469941
+    },
+    {
+      "path": "screens/followup-estimate-choice-1440.png",
+      "sha256": "271d9700d468ada84ffe534d6927aa33e089af0b0d8a547e97ed3d3037d84b4d",
+      "bytes": 86123
+    }
+  ]
+}

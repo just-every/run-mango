@@ -1,0 +1,125 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index f9c3d9c..9285a66 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4048,13 +4048,13 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every
+ 
+ ## Status
+ 
+-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes.
++Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CAMP-016 was exercised through its registered native results journey from the code and tests at commit `7c18077adca5d384175aef90fe090b6925aac513` (5 November 2026); this status candidate retains those source and test bytes.
+ 
+ | Clauses | Done | Partial | Missing | Total |
+ | --- | ---: | ---: | ---: | ---: |
+ | Published | 12 | 98 | 0 | 110 |
+-| Target and push further | 5 | 103 | 98 | 206 |
+-| All | 17 | 201 | 98 | 316 |
++| Target and push further | 6 | 102 | 98 | 206 |
++| All | 18 | 200 | 98 | 316 |
+ 
+ | Clause | Title | Kind | Status | Evidence | Gap |
+ | --- | --- | --- | --- | --- | --- |
+@@ -4205,7 +4205,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `CAMP-013` | Recipient-local send time | target | missing |  | not implemented |
+ | `CAMP-014` | Pause and resume | target | partial | `tests/go-live/multistep.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440” | The 1440 pause/resume journey asserts fencing of new hand-offs within 30 seconds, retained handed-off dispositions, resumption of remaining recipients with current consent and deadlines, once-only eligible steps, and pause/resume actor history. Missing public-door journey: “Pause and resume — complete acceptance at 390”, including the same pause/resume flow and retained outcomes in a phone browser. No 390 execution is recorded in the old evidence. |
+ | `CAMP-015` | Marketing calendar | target | missing |  | not implemented |
+-| `CAMP-016` | Follow-up to non-engaged recipients | target | partial | `tests/campaign-results/results.journeys.ts` — “[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440” · `tests/portability.spec.ts` | Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: “Follow-up to non-engaged recipients — complete acceptance”, covering the unasserted outcomes above. |
++| `CAMP-016` | Follow-up to non-engaged recipients | target | done | `tests/campaign-results/results.journeys.ts` — “[CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement”, invoking `tests/campaign-results/followup.flow.ts`: linked draft, chosen 48-hour delay and new subject; explicitly labeled non-opener estimate; exact native audience intersections identify scanner-only and non-clicking readers, exclude human clickers and unrelated contacts, and apply current unsubscribe, suppression and frequency restrictions; independent approval refusal and unchanged source revision. `tests/portability.spec.ts`: linked follow-up survives export and restore. |  |
+ | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
+ | `CAMP-018` | Duplicate a campaign | target | partial | `tests/campaign-authoring/browser.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Duplication from every campaign state; Copy-of name; New independent draft; Copied channels; Copied audience rule; Copied content bytes; Copied sender; Copied preheader; Copied tracking choice; Copied step settings; No copied schedule; No copied approval; No copied snapshot; No copied test; No copied result; Current settings checked; Current consent checked; Current audience checked; Source revision unchanged; Source results unchanged. Assertions in tests/campaign-authoring/reuse-journey.ts are outside the old Evidence cell. Missing public-door journey: “Duplicate a campaign — complete acceptance”, covering the unasserted outcomes above. |
+ | `CAMP-019` | Test send to typed addresses | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance and whole-request quota refusal are visible; configured and typed attempts share 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset. Authors see configured destinations only and cannot send typed tests; assigned Managers can send typed tests. Activity includes destinations, actor/time, action/object filters and CSV, with erased destinations redacted while receipts remain. Remaining: typed SMS consent and transport (SMS-001, CONT-019), and full role acceptance (OPER-004). |
+diff --git a/sources.lock.json b/sources.lock.json
+index 2ac9df4..b76c8b3 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "2aa824015964cd0202ed166758f2b12d3ccc8efb97c459f0bb0d7f20d142fa28",
++      "sha256": "5c5cb753223b7e852010a883aebdc8d563db15e0f6b12f35f520581838f14b4c",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -8578,11 +8578,11 @@
+       "executable": false
+     },
+     "tests/campaign-results/followup-fixture.ts": {
+-      "sha256": "25b0b7ac91275ff70d01e66fb0a0e2680b2baa7c44ee2fed54e598608e3e7bdb",
++      "sha256": "a0b556ed847c0fde00e160e2e88088a9f59dfc971789573883ebe1a8a1fd6d3b",
+       "executable": false
+     },
+     "tests/campaign-results/followup.flow.ts": {
+-      "sha256": "ff6474214de2ed0047057c3d79e9d38e522d7502cde76e6d6d41f079c7395795",
++      "sha256": "fae00bcb525839685b33aeb961fd7ebf3b7cdf1163f334fd899b242a0af7e6ed",
+       "executable": false
+     },
+     "tests/campaign-results/overview-fixture.ts": {
+diff --git a/tests/campaign-results/followup-fixture.ts b/tests/campaign-results/followup-fixture.ts
+index d43b5a4..0451f4f 100644
+--- a/tests/campaign-results/followup-fixture.ts
++++ b/tests/campaign-results/followup-fixture.ts
+@@ -7,7 +7,7 @@ export async function seedFollowup(db:D1Database,platform:Platform) {
+   await seedCampaign(db,id,'completed');await seedCampaign(db,'studio-recent-send','completed');
+   await db.prepare('UPDATE campaign_revisions SET name=?,email_subject=?,sender_name=?,message_category=? WHERE id=?').bind('The October studio letter','New ceramics from the studio',platform.config.mailSender.displayName,'newsletter',`${id}-revision`).run();
+   await db.prepare('UPDATE campaign_steps SET scheduled_at=?,send_by_at=? WHERE revision_id=?').bind(sent,sent+3600000,`${id}-revision`).run();
+-  const people=['clicker','scanner','reader','unsubscribed','suppressed','frequent'];
++  const people=['clicker','scanner','reader','unsubscribed','suppressed','frequent','unrelated'];
+   const database=createDatabase(db),recipientIds:Record<string,string>={};
+   for(const person of people) {
+     const contactId=`followup-${person}`,email=`${contactId}@example.test`,status=person==='unsubscribed'||person==='suppressed'?person:'subscribed';
+@@ -16,11 +16,13 @@ export async function seedFollowup(db:D1Database,platform:Platform) {
+     await database.insert(contactEmailAddresses).values({id:contactId+'-address',contactId,email,channelStatus:status,channelStatusAt:new Date(now-86400000),createdAt:new Date(now),updatedAt:new Date(now)});
+     await db.prepare('DELETE FROM consent_evidence WHERE id=?').bind(contactId+'-consent').run();
+     await database.insert(consentEvidence).values({id:contactId+'-consent',contactId,channel:'email',destination:email,brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly studio letters',destinationJurisdiction:'US',captureMethod:'hosted-signup-form',captureSource:'Studio newsletter',consentText:'Send me studio newsletters.',consentVersion:'v1',occurredAt:new Date(now-86400000),confirmationRequired:true,confirmedAt:new Date(now-86000000),createdAt:new Date(now-86400000),updatedAt:new Date(now-86000000)});
+-    recipientIds[person]=await recipient(db,id,1,'accepted',null,{contactId,destination:email,handedOffAt:new Date(sent),providerAcceptedAt:new Date(sent),handoffStartedAt:new Date(sent),createdAt:new Date(sent),updatedAt:new Date(sent)});
++    if(person!=='unrelated')recipientIds[person]=await recipient(db,id,1,'accepted',null,{contactId,destination:email,handedOffAt:new Date(sent),providerAcceptedAt:new Date(sent),handoffStartedAt:new Date(sent),createdAt:new Date(sent),updatedAt:new Date(sent)});
+   }
+   await recipient(db,'studio-recent-send',1,'accepted',null,{contactId:'followup-frequent',destination:'followup-frequent@example.test',handedOffAt:new Date(now-3600000),providerAcceptedAt:new Date(now-3600000)});
+   for(const person of ['clicker','scanner'])await db.prepare('INSERT INTO link_click_facts(id,recipient_step_id,request_digest,destination_url,occurred_at,automated,created_at) VALUES(?,?,?,?,?,?,?)').bind(crypto.randomUUID(),recipientIds[person],person,'https://studio.example.test',sent+3600000,Number(person==='scanner'),now).run();
+-  return {campaignId:id,sent,expectedCandidateIds:people.filter(p=>p!=='clicker').map(p=>`followup-${p}`),expectedEligibleIds:['followup-scanner','followup-reader']};
++  return {campaignId:id,sent,contactIds:people.map(person=>`followup-${person}`),
++    expectedCandidateIds:['followup-scanner','followup-reader','followup-unsubscribed','followup-suppressed','followup-frequent'],
++    expectedEligibleIds:['followup-scanner','followup-reader']};
+ }
+ 
+ /** Historical sent-message pixel records use the production token preparer. */
+diff --git a/tests/campaign-results/followup.flow.ts b/tests/campaign-results/followup.flow.ts
+index 08de13f..f718f9b 100644
+--- a/tests/campaign-results/followup.flow.ts
++++ b/tests/campaign-results/followup.flow.ts
+@@ -22,6 +22,34 @@ export const walk0 = async({page,request})=>{
+   const actual=await post('/api/campaign-authoring/audience',{inclusionRuleJson:review.revision.inclusionRuleJson,exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email']});
+   expect(actual.ok(),await actual.text()).toBe(true);const audience=await actual.json();expect(audience.candidateCount).toBe(fixture.expectedCandidateIds.length);expect(audience.eligibleCount).toBe(fixture.expectedEligibleIds.length);
+   expect(audience.exclusions).toEqual(expect.arrayContaining([{reason:'email-unsubscribed',count:1},{reason:'email-suppressed',count:1},{reason:'frequency-window',count:1}]));
++  // Identify membership through the same native review door, independently of
++  // aggregate totals: each saved cohort is intersected with one known contact.
++  const savedRule=JSON.parse(review.revision.inclusionRuleJson);
++  const candidateIds:string[]=[],eligibleIds:string[]=[];
++  for(const contactId of fixture.contactIds as string[]) {
++    const identity={sourceType:'contact',field:'id',comparator:'eq',value:contactId};
++    const response=await post('/api/campaign-authoring/audience',{
++      inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[identity],groups:[savedRule]}),
++      exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email'],
++    });
++    expect(response.ok(),await response.text()).toBe(true);
++    const member=await response.json();
++    expect(member.status,contactId).toBe('ok');
++    expect(member.candidateCount,`${contactId} original non-clicker membership`).toBe(Number(fixture.expectedCandidateIds.includes(contactId)));
++    expect(member.eligibleCount,`${contactId} current review eligibility`).toBe(Number(fixture.expectedEligibleIds.includes(contactId)));
++    if(member.candidateCount===1)candidateIds.push(contactId);
++    if(member.eligibleCount===1)eligibleIds.push(contactId);
++  }
++  expect(candidateIds.sort()).toEqual([...fixture.expectedCandidateIds].sort());
++  expect(eligibleIds.sort()).toEqual([...fixture.expectedEligibleIds].sort());
++  // The unrelated negative control exists and could receive ordinary email;
++  // only absence from the original campaign keeps it out of this follow-up.
++  const unrelated=await post('/api/campaign-authoring/audience',{
++    inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'id',comparator:'eq',value:'followup-unrelated'}]}),
++    exclusionRulesJson:'[]',channels:['email'],
++  });
++  expect(unrelated.ok(),await unrelated.text()).toBe(true);
++  expect(await unrelated.json()).toMatchObject({status:'ok',candidateCount:1,eligibleCount:1});
+   const approval=await post(`/api/campaigns/${created}/approve`,{revisionId:review.revision.id,idempotencyKey:crypto.randomUUID()});expect(approval.status()).toBe(409);expect((await approval.json()).status).toBe('blocked');
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);await page.screenshot({path:test.info().outputPath(`followup-review-${width}.png`),fullPage:true});
+   const copied=await post(`/api/campaigns/${created}/duplicate`,{});expect(copied.status()).toBe(201);const copy=await copied.json();

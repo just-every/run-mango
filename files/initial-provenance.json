@@ -1,0 +1,12 @@
+{
+  "source": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "source_branch": "cloud/sd-mango-c-f17",
+  "declared_repository": "just-every/run-mango",
+  "fresh_main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "original_main": "33112b06882e646adb3cc79e42af4a7dd9d4550a",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "product_write_authority": false,
+  "ci_api_calls": 0,
+  "rubric_sha256": "280e0f31a5c3dfcb203e8d70d01af8bf57e8210b071190feeb0397272a741105"
+}

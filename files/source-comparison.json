@@ -1,0 +1,51 @@
+{
+  "original_main": "33112b06882e646adb3cc79e42af4a7dd9d4550a",
+  "exact_source": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "changed_paths": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/campaign-results/followup-fixture.ts",
+    "tests/campaign-results/followup.flow.ts"
+  ],
+  "production_changed": false,
+  "registered_caller_equal": true,
+  "raw_pin": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "raw_matches_clone": true
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "5c5cb753223b7e852010a883aebdc8d563db15e0f6b12f35f520581838f14b4c",
+      "raw_matches_clone": true
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "sha256": "d247e209a9a4674b822403a6a45b94438e6acded11720d45ac868bc774ef53d4",
+      "raw_matches_clone": true
+    }
+  ],
+  "comparisons": {
+    "original_main": {
+      "sha": "33112b06882e646adb3cc79e42af4a7dd9d4550a",
+      "counts": {
+        "done": 17,
+        "partial": 201,
+        "missing": 98
+      },
+      "total": 316,
+      "camp016": "| `CAMP-016` | Follow-up to non-engaged recipients | target | partial | `tests/campaign-results/results.journeys.ts` \u2014 \u201c[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440\u201d \u00b7 `tests/portability.spec.ts` | Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: \u201cFollow-up to non-engaged recipients \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+    },
+    "fresh_main": {
+      "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+      "counts": {
+        "done": 20,
+        "partial": 198,
+        "missing": 98
+      },
+      "total": 316,
+      "camp016": "| `CAMP-016` | Follow-up to non-engaged recipients | target | partial | `tests/campaign-results/results.journeys.ts` \u2014 \u201c[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440\u201d \u00b7 `tests/portability.spec.ts` | Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: \u201cFollow-up to non-engaged recipients \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+    }
+  }
+}

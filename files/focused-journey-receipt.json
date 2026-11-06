@@ -1,0 +1,17 @@
+{
+  "name": "focused-journey",
+  "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/campaign-results/playwright.config.js \"(^|/)results\\\\.journeys\\\\.ts$\" --workers=1 --reporter=list",
+  "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+  "started_at": "2026-11-06T01:55:53.585591+00:00",
+  "finished_at": "2026-11-06T01:58:34.720829+00:00",
+  "elapsed_seconds": 161.135,
+  "exit_code": 0,
+  "log": "focused-journey.log",
+  "chromium": "/usr/bin/chromium",
+  "launch_args_from_repository": [
+    "--use-mock-keychain",
+    "--password-store=basic",
+    "--no-sandbox"
+  ]
+}

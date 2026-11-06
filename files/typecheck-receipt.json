@@ -1,0 +1,17 @@
+{
+  "name": "typecheck",
+  "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "command": "cloud_run timeout 600 pnpm run typecheck",
+  "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+  "started_at": "2026-11-06T01:55:54.967828+00:00",
+  "finished_at": "2026-11-06T01:56:14.779722+00:00",
+  "elapsed_seconds": 19.812,
+  "exit_code": 0,
+  "log": "typecheck.log",
+  "chromium": "/usr/bin/chromium",
+  "launch_args_from_repository": [
+    "--use-mock-keychain",
+    "--password-store=basic",
+    "--no-sandbox"
+  ]
+}

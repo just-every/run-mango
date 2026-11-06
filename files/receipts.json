@@ -1,0 +1,88 @@
+{
+  "source": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+  "setup": {
+    "command": "cloud_run timeout 1200 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+    "exit_code": 0,
+    "note": "Disposable local setup, no production deployment or provider credentials loaded. Private setup log intentionally not selected for publication."
+  },
+  "commands": [
+    {
+      "name": "focused-journey",
+      "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+      "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/campaign-results/playwright.config.js \"(^|/)results\\\\.journeys\\\\.ts$\" --workers=1 --reporter=list",
+      "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+      "started_at": "2026-11-06T01:55:53.585591+00:00",
+      "finished_at": "2026-11-06T01:58:34.720829+00:00",
+      "elapsed_seconds": 161.135,
+      "exit_code": 0,
+      "log": "focused-journey.log",
+      "chromium": "/usr/bin/chromium",
+      "launch_args_from_repository": [
+        "--use-mock-keychain",
+        "--password-store=basic",
+        "--no-sandbox"
+      ]
+    },
+    {
+      "name": "typecheck",
+      "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+      "command": "cloud_run timeout 600 pnpm run typecheck",
+      "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+      "started_at": "2026-11-06T01:55:54.967828+00:00",
+      "finished_at": "2026-11-06T01:56:14.779722+00:00",
+      "elapsed_seconds": 19.812,
+      "exit_code": 0,
+      "log": "typecheck.log",
+      "chromium": "/usr/bin/chromium",
+      "launch_args_from_repository": [
+        "--use-mock-keychain",
+        "--password-store=basic",
+        "--no-sandbox"
+      ]
+    },
+    {
+      "name": "generated-check",
+      "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+      "command": "cloud_run timeout 60 node src/base/contract-docs.mjs check",
+      "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+      "started_at": "2026-11-06T01:58:06.473956+00:00",
+      "finished_at": "2026-11-06T01:58:07.496978+00:00",
+      "elapsed_seconds": 1.023,
+      "exit_code": 1,
+      "log": "generated-check.log",
+      "chromium": "/usr/bin/chromium",
+      "launch_args_from_repository": [
+        "--use-mock-keychain",
+        "--password-store=basic",
+        "--no-sandbox"
+      ]
+    },
+    {
+      "name": "source-lock-check",
+      "source_head": "c0765d418c759eb0431a255fc8ff0464681ae9a1",
+      "command": "cloud_run timeout 60 node scripts/edition-authoring/cli.mjs check",
+      "shell_prelude": ". /tmp/rer-cloud-toolchain.sh",
+      "started_at": "2026-11-06T01:58:07.533829+00:00",
+      "finished_at": "2026-11-06T01:58:08.763680+00:00",
+      "elapsed_seconds": 1.23,
+      "exit_code": 0,
+      "log": "source-lock-check.log",
+      "chromium": "/usr/bin/chromium",
+      "launch_args_from_repository": [
+        "--use-mock-keychain",
+        "--password-store=basic",
+        "--no-sandbox"
+      ]
+    }
+  ],
+  "runtime_attempts": 1,
+  "full_suite_runs": 0,
+  "baseline_runs": 0,
+  "mutations_applied": 0,
+  "ci_polls_dispatches_reruns": 0,
+  "github_api_calls": 0,
+  "node": "24.19.0",
+  "pnpm": "10.12.4",
+  "rer_package": "0.2.85",
+  "toolchain_note": "Provided cloud shim keeps installed Node 24.19.0, which meets repository minimum 22.20.0; setup uses repository rer dependency. AGENTS legacy prose mentions 0.2.76; package.json pins 0.2.85."
+}
