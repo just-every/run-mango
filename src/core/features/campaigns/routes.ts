@@ -22,7 +22,7 @@ import { draftCompositionSchema } from './draft-composition';
 import type { createCampaignService } from './service';
 
 const identifier = z.object({ id: z.string().min(1) });
-/** A body that never settles into a form that saves to itself is refused by name (CAMP-022); no such body is known. */
+/** A body that exceeds the settling limit is refused by name (CAMP-022). */
 const settled = async <T,>(save: Promise<T>) => {
   try { return { saved: await save }; } catch (error) {
     if (error instanceof CatalogUnavailable) return {refused:{error:'catalog_unavailable',detail:error.message,fields:{emailBody:error.message}}};
