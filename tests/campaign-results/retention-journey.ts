@@ -2,10 +2,63 @@ import { expect, type Page, type APIRequestContext, type TestInfo } from '@playw
 import AxeBuilder from '@axe-core/playwright';
 import { openPage } from '../support/navigation';
 import type { RetentionFixture } from './retention-fixture';
+import { localSessionCookieName } from '../support/local-session';
 
 export async function exerciseRetention(page:Page,request:APIRequestContext,runtime:{url:string;token:string},width:number,info:TestInfo) {
+  const before=Date.parse('2031-10-05T23:59:59.900Z');
+  const setClock=async(at:number|null)=>{
+    const response=await request.post(`${runtime.url}/_results/retention-time`,{headers:{'X-Test-Token':runtime.token},data:{at}});
+    expect(response.status(),await response.text()).toBe(200);
+    if(at!==null)expect((await response.json()).now).toBe(at);
+  };
+  await setClock(before);
+  try {
+    // Issue the native operator session under the same server clock, rather
+    // than extending a real-time session beyond its ordinary expiry.
+    const session=await request.post(`${runtime.url}/_results/open`,{headers:{'X-Test-Token':runtime.token}});
+    expect(session.status()).toBe(200);
+    await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:(await session.json()).token,domain:'127.0.0.1',path:'/'}]);
+    const fixture=await inspectRetention(page,request,runtime,width,info,before);
+    const after=before+200;
+    await setClock(after);
+    const response=await page.request.get(`${runtime.url}/api/insights/retention`);
+    expect(response.status()).toBe(200);
+    const report=await response.json();
+    // The same recorded purchases cross midnight by only 200 milliseconds.
+    // A rolling 24-hour age or a cached stage cannot satisfy this read.
+    const expected=rfmExpectations(fixture,after);
+    expect(report.asOf).toBe(new Date(after).toISOString());
+    expect(report.scoringDay).toBe('2031-10-06');
+    expect(report.rfm).toEqual(expected.rows);
+    expect(report.stages).toEqual(expected.stages);
+    expect(expected.rows.find(row=>row.contactId==='retention-luis')).toMatchObject({recencyDays:30,stage:'active'});
+    for(const person of expected.rows) {
+      const detail=await page.request.get(`${runtime.url}/api/contacts/${person.contactId}/rfm`);
+      expect(detail.status()).toBe(200);expect((await detail.json()).scores).toEqual(person);
+    }
+    await openPage(page,`${runtime.url}/app/insights`);
+    await assertRfmTable(page,expected.rows);
+    await openPage(page,`${runtime.url}/app/audience/retention-luis`);
+    await assertContactRfm(page,expected.rows.find(row=>row.contactId==='retention-luis')!);
+    console.log('PROBE SEG-003 acceptance-3: native server reads 200ms across UTC midnight -> every recency increments and Luis changes from new to active');
+  } finally {
+    await setClock(null);
+    await page.setViewportSize({width,height:1000});
+  }
+}
+
+async function inspectRetention(page:Page,request:APIRequestContext,runtime:{url:string;token:string},width:number,info:TestInfo,now:number) {
   const seeded=await request.post(`${runtime.url}/_results/retention`,{headers:{'X-Test-Token':runtime.token}});expect(seeded.status(),await seeded.text()).toBe(200);const fixture:RetentionFixture=await seeded.json();
   const response=await page.request.get(`${runtime.url}/api/insights/retention`);expect(response.status()).toBe(200);const report=await response.json();
+  const population=rfmExpectations(fixture,now);
+  expect(fixture.now).toBe(now);
+  expect(report.asOf).toBe(new Date(now).toISOString());
+  expect(report.rfm).toEqual(population.rows);
+  expect(report.stages).toEqual(population.stages);
+  for(const person of population.rows) {
+    const detail=await page.request.get(`${runtime.url}/api/contacts/${person.contactId}/rfm`);
+    expect(detail.status()).toBe(200);expect((await detail.json()).scores).toEqual(person);
+  }
   const byCustomer=new Map<string,typeof fixture.orders>();for(const order of fixture.orders)byCustomer.set(order.contactId,[...byCustomer.get(order.contactId)??[],order]);
   const repeat=[...byCustomer.values()].filter(orders=>orders.length>1).length;
   expect(report.customers).toBe(byCustomer.size);expect(report.repeatPurchaseRate).toBe(repeat/byCustomer.size);expect(report.medianDaysBetweenOrders).toBe(40);
@@ -28,6 +81,7 @@ export async function exerciseRetention(page:Page,request:APIRequestContext,runt
   await openPage(page,`${runtime.url}/app/insights`);await expect(page.getByRole('heading',{name:'Customer retention',exact:true})).toBeVisible();
   await expect(page.getByRole('table',{name:'First-order cohorts'}).locator('tbody tr')).toHaveCount(report.cohorts.length);
   await expect(page.getByRole('table',{name:'Customer RFM scores'})).toContainText('Iris Dawson');await expect(page.getByRole('table',{name:'Customer RFM scores'})).toContainText('JPY 10,000');await expect(page.getByText('80.0% (4/5)',{exact:true})).toBeVisible();
+  await assertRfmTable(page,population.rows);
   await assertValueTable(page,'Customer value by acquisition source',expected.sources);
   await assertValueTable(page,'Customer value by signup form',expected.forms);
   await assertAffinityTables(page,expected.affinity);
@@ -35,6 +89,76 @@ export async function exerciseRetention(page:Page,request:APIRequestContext,runt
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
   await page.locator('#retention-title').scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`retention-${width}.png`)});
   await openPage(page,`${runtime.url}/app/audience/retention-iris`);await expect(page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true})).toBeVisible();await expect(page.getByText('Recency score 5/5 · Frequency score 5/5',{exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);await page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`contact-rfm-${width}.png`)});
+  for(const contactId of ['retention-iris','retention-maya']) {
+    await openPage(page,`${runtime.url}/app/audience/${contactId}`);
+    await assertContactRfm(page,population.rows.find(row=>row.contactId===contactId)!);
+  }
+  // Assertions run at 1440; capture the same built screens at phone width as
+  // browser proof without registering a second copy of the journey.
+  await page.setViewportSize({width:390,height:844});
+  await openPage(page,`${runtime.url}/app/insights`);
+  await page.locator('#retention-title').scrollIntoViewIfNeeded();
+  await page.screenshot({path:info.outputPath('retention-390.png')});
+  await openPage(page,`${runtime.url}/app/audience/retention-maya`);
+  await page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:info.outputPath('contact-rfm-390.png')});
+  await page.setViewportSize({width,height:1000});
+  console.log(`PROBE SEG-003 acceptance-1 and acceptance-4: authenticated retention and five contact routes -> ${population.rows.length} independently reconciled RFM rows, tied ranks and separate USD and JPY scores`);
+  console.log('PROBE SEG-003 acceptance-2: native operator retention table and contact profiles -> all five stages, exact scores and visible methods; browser captures at 1440 and 390');
+  return fixture;
+}
+
+// Count how many values are strictly below or tied with each observation. This
+// pairwise calculation deliberately does not copy production's sorted-run
+// scoring algorithm or import any production scoring helpers.
+function rfmExpectations(fixture:RetentionFixture,now:number) {
+  const day=86400000;
+  const facts=fixture.customers.map(customer=>{
+    const orders=fixture.orders.filter(order=>order.contactId===customer.contactId);
+    const first=Math.min(...orders.map(order=>order.purchasedAt)),last=Math.max(...orders.map(order=>order.purchasedAt));
+    const currencies=[...new Set(orders.map(order=>order.currency))].sort();
+    return {...customer,first,last,orders:orders.length,recency:Math.floor(now/day)-Math.floor(last/day),
+      money:currencies.map(currency=>({currency,amount:orders.filter(order=>order.currency===currency).reduce((sum,order)=>sum+BigInt(order.grossMinor)-BigInt(order.refundedMinor),0n)}))};
+  });
+  const rank=(value:number|bigint,values:(number|bigint)[],recent=false)=>{
+    const below=values.filter(other=>other<value).length,equal=values.filter(other=>other===value).length;
+    const fraction=values.length===1?0.5:(below+(equal-1)/2)/(values.length-1);
+    const band=[0.2,0.4,0.6,0.8].filter(boundary=>fraction>=boundary).length+1;
+    return recent?6-band:band;
+  };
+  const rows=facts.map(person=>{
+    const recencyScore=rank(person.recency,facts.map(other=>other.recency),true);
+    const frequencyScore=rank(person.orders,facts.map(other=>other.orders));
+    const stage=person.recency>=180?'lapsed':person.recency>=90?'at-risk':person.orders===1&&Math.floor(now/day)-Math.floor(person.first/day)<30?'new':recencyScore>=4&&frequencyScore>=4?'champion':'active';
+    return {contactId:person.contactId,displayName:person.displayName,firstOrderAt:new Date(person.first).toISOString(),lastOrderAt:new Date(person.last).toISOString(),
+      orders:person.orders,recencyDays:person.recency,recencyScore,frequencyScore,stage,
+      monetaryByCurrency:person.money.map(({currency,amount})=>({currency,amountMinor:Number(amount),score:rank(amount,facts.flatMap(other=>other.money.filter(value=>value.currency===currency).map(value=>value.amount)))}))};
+  }).sort((a,b)=>a.contactId.localeCompare(b.contactId));
+  const stages={new:0,active:0,'at-risk':0,lapsed:0,champion:0};
+  for(const row of rows)stages[row.stage as keyof typeof stages]++;
+  return {rows,stages};
+}
+type RfmRow=ReturnType<typeof rfmExpectations>['rows'][number];
+function displayedMoney(currency:string,amountMinor:number) {
+  const digits=new Intl.NumberFormat('en',{style:'currency',currency}).resolvedOptions().maximumFractionDigits!;
+  return `${currency} ${(amountMinor/10**digits).toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
+}
+async function assertRfmTable(page:Page,expected:RfmRow[]) {
+  const table=page.getByRole('table',{name:'Customer RFM scores',exact:true});
+  await expect(table.locator('tbody tr')).toHaveCount(expected.length);
+  for(const person of expected) {
+    const row=table.getByRole('row').filter({has:page.getByRole('link',{name:person.displayName,exact:true})});
+    await expect(row.locator('td[data-label="Stage"]')).toHaveText(person.stage);
+    await expect(row.locator('td[data-label="Recency"]')).toHaveText(`${person.recencyDays} days / ${person.recencyScore}`);
+    await expect(row.locator('td[data-label="Frequency"]')).toHaveText(`${person.orders} / ${person.frequencyScore}`);
+    await expect(row.locator('td[data-label="Monetary"] > div')).toHaveText(person.monetaryByCurrency.map(value=>`${displayedMoney(value.currency,value.amountMinor)} / ${value.score}`));
+  }
+}
+async function assertContactRfm(page:Page,person:RfmRow) {
+  const panel=page.locator('section').filter({has:page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true})}).last();
+  await expect(panel.locator('p').first()).toHaveText(`${person.stage} · ${person.recencyDays} days since last purchase · ${person.orders} orders`);
+  await expect(panel.locator('p').nth(1)).toHaveText(`Recency score ${person.recencyScore}/5 · Frequency score ${person.frequencyScore}/5`);
+  await expect(panel.locator('p').filter({hasText:'Monetary score'})).toHaveText(person.monetaryByCurrency.map(value=>`${displayedMoney(value.currency,value.amountMinor)} · Monetary score ${value.score}/5`));
 }
 
 

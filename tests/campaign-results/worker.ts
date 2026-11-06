@@ -1,3 +1,4 @@
+import { setRetentionClock } from './retention-clock';
 import {seedOverview} from './overview-fixture';
 import { seedArchive } from './archive-fixture';
 import {seedFollowup,seedFollowupOpens} from './followup-fixture';
@@ -25,6 +26,11 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     app.all('/_results/:action',async context=>{
       if(context.req.header('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN) return context.json({error:'forbidden'},403);
       const action=context.req.param('action');
+      if(action==='retention-time') {
+        const {at}=await context.req.json<{at:number|null}>();
+        if(at!==null&&(!Number.isSafeInteger(at)||!Number.isFinite(new Date(at).getTime())))return context.json({error:'invalid_test_clock'},400);
+        setRetentionClock(at);return context.json({now:Date.now()});
+      }
       if(action==='open') {
         await testIdentity(platform).importLocalDemoOperator({id:'results-operator',email:'results@example.test',displayName:'Results operator'},fixedNow);
         const session=await testIdentity(platform).createTestSession('results-operator');return context.json({token:session.token});

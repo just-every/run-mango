@@ -10,13 +10,16 @@ type OrderFact = {
 /** Stored commerce facts for the retention acceptance journey, never application data. */
 export async function seedRetention(db:D1Database) {
   const now=Date.now(),day=86400000;
-  const profiles=[['iris','Iris Dawson',5,5],['luis','Luis Moreno',1,10],['maya','Maya Chen',3,60],['noah','Noah Brooks',2,120],['opal','Opal Bennett',4,210]] as const;
+  const profiles=[['iris','Iris Dawson',5,5],['luis','Luis Moreno',1,29],['maya','Maya Chen',2,5],['noah','Noah Brooks',2,120],['opal','Opal Bennett',4,210]] as const;
   // Retention reports on every recorded order, so this fixture owns the whole order population;
   // purchases seeded by earlier journeys in the same runtime must not join it.
   await db.prepare('DELETE FROM commerce_refunds').run();
   await db.prepare('DELETE FROM commerce_orders').run();
   await db.prepare("DELETE FROM source_records WHERE source_type IN ('order','refund')").run();
   const orders:OrderFact[]=[],excludedOrders:OrderFact[]=[];
+  const customers=profiles.map(([id,displayName])=>({contactId:`retention-${id}`,displayName}));
+  // Iris and Maya tie in recency, Maya and Noah in frequency, Luis and Maya
+  // in USD value. Maya alone owns JPY; none of those ranks may split a tie.
   const captures:{contactId:string;method:string;source:string;occurredAt:number}[]=[];
   const customerSources:{contactId:string;provider:string;occurredAt:number}[]=[];
   for(const[id,name,count,recency]of profiles) {
@@ -63,5 +66,5 @@ export async function seedRetention(db:D1Database) {
     await db.prepare("INSERT INTO commerce_orders(source_record_id,provider_order_id,contact_id,purchased_at,gross_amount_minor,reported_refund_minor,currency,qualifying,financial_status,cancelled_at,updated_at) VALUES(?,?,'retention-luis',?,10000,?,'USD',?,?,NULL,?)").bind(sourceId,sourceId,purchasedAt,refund,qualifying,qualifying?'PAID':'PENDING',now).run();
     excludedOrders.push({id:sourceId,contactId:'retention-luis',purchasedAt,amountMinor:10000-refund,grossMinor:10000,refundedMinor:refund,currency:'USD',lines});
   }
-  return {orders,excludedOrders,captures,customerSources,now};
+  return {customers,orders,excludedOrders,captures,customerSources,now};
 }
