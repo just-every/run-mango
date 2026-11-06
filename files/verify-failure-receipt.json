@@ -1,0 +1,19 @@
+{
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "run_id": 42185681684,
+  "archive_reads": [
+    {
+      "command": "gh run view 42185681684 --repo just-every/run-mango --job 127785379786 --log-failed",
+      "exit": 0,
+      "observed_command": "node src/base/contract-docs.mjs check",
+      "observed_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+      "observed_step_exit": 1
+    },
+    {
+      "command": "gh run view 42185681684 --repo just-every/run-mango --job 127785462691 --log-failed",
+      "exit": 0,
+      "observed_failure": "BUILD: failure; SHARDS: skipped; aggregate step exit 1"
+    }
+  ],
+  "note": "Only command and failure observations are included here; raw workflow environment declarations are excluded from the public packet. No blob redirect or workflow rerun was attempted."
+}

@@ -1,0 +1,20 @@
+{
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "checks": [
+    {
+      "check": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "check": "first-party",
+      "command": "node node_modules/@runeditrun/rer/bin/rer.mjs check --profile first-party",
+      "exit": 0
+    },
+    {
+      "check": "source-lock",
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ]
+}

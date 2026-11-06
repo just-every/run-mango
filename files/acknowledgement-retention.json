@@ -1,0 +1,43 @@
+{
+  "startedAt": 1793952500402,
+  "finishedAt": 1793952500402,
+  "replayAt": 1793952620402,
+  "acknowledged": {
+    "status": "acknowledged",
+    "acknowledgement": {
+      "operatorId": "go-live-owner",
+      "acknowledgedAt": "2026-11-06T08:08:20.402Z"
+    }
+  },
+  "findingIdentity": "76b365f19daf76d84a6bb23fdeb08dc02128fdccc655587f5447f00699342114",
+  "refreshedFindingIdentity": "76b365f19daf76d84a6bb23fdeb08dc02128fdccc655587f5447f00699342114",
+  "originalAcknowledgement": {
+    "revisionId": "01M6QYBR2JYPDDF70MF35D7XDS",
+    "findingIdentity": "76b365f19daf76d84a6bb23fdeb08dc02128fdccc655587f5447f00699342114"
+  },
+  "originalCheckId": "01M6QYBR2JKR86H9DZH4HZTAT1",
+  "refreshedCheckId": "01M6QYH7VJVP48NEYAED3SE5EH",
+  "acknowledgingOperatorId": "go-live-owner",
+  "replayOperatorId": "synthetic-mango-2",
+  "expectedAcknowledgement": {
+    "operatorId": "go-live-owner",
+    "acknowledgedAt": "2026-11-06T08:08:20.402Z"
+  },
+  "visibleAttributionRetainedForReplayOperator": true,
+  "staleCheckStatus": 409,
+  "audit": [
+    {
+      "id": "01M6QYDJNJ4HQ9RBZ9YE0FRBG9",
+      "operation_key": "advisory-acknowledgement:76b365f19daf76d84a6bb23fdeb08dc02128fdccc655587f5447f00699342114",
+      "entity_type": "campaign-revision",
+      "entity_id": "01M6QYBR2JYPDDF70MF35D7XDS",
+      "action": "acknowledge-advisory",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "detail_json": "{\"campaignId\":\"01M6QYBR2JA0T0Q8EC26PCFT83\",\"revisionId\":\"01M6QYBR2JYPDDF70MF35D7XDS\",\"revisionDigest\":\"bbe0baa2d9f7d699d99a934331f926ea146fe029879e36d96d7b7d9e54a3b518\",\"findingIdentity\":\"76b365f19daf76d84a6bb23fdeb08dc02128fdccc655587f5447f00699342114\",\"kind\":\"message.email-subject-length\",\"detail\":\"Email subject is 104 characters. Some inboxes may truncate it; review the opening words.\"}",
+      "occurred_at": 1793952500402,
+      "created_at": 1793952500402
+    }
+  ],
+  "noAuthorityAsserted": true
+}

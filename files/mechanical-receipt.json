@@ -1,0 +1,28 @@
+{
+  "views": {
+    "write_exit": 0,
+    "check_exit": 0,
+    "restored_from": "origin/main"
+  },
+  "checks": [
+    {
+      "check": "lock",
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "ledger": "none; no migration change",
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "views_restored_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "output": "ACCEPTANCE.md: generated content differs; run contract-docs write.\n",
+    "expected": "Generated views restored whole from origin/main; the lander regenerates them."
+  },
+  "status_rows": {
+    "candidate": 316,
+    "first_parent": 316,
+    "main_parent": 316,
+    "removed": 0
+  }
+}

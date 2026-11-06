@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-11-06T08:16:01.533465+00:00",
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "run_id": 42185681684,
+  "name": "Verify",
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42185681684",
+  "github_calls_used": 9,
+  "main": {
+    "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+    "verify_success": 42181327459,
+    "run_site_success": 42181327367
+  },
+  "base": {
+    "head": "05c6069c3958a03972287ffd31324cbd6fa92271",
+    "verify_run": 42180353381,
+    "conclusion": "failure",
+    "failed_job": 127768341007,
+    "only_root_failure": "Check generated contract documents: ACCEPTANCE.md generated content differs, exit 1"
+  },
+  "head_sha": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "root_failure": {
+    "job": 127785379786,
+    "step": "Check generated contract documents",
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "diagnostic": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "aggregate_failure": {
+    "job": 127785462691,
+    "step": "Require the selected coverage and its proof",
+    "cause": "BUILD failure; dependent shards skipped"
+  },
+  "classification": "Expected generated-view freshness difference; allowed by the supplied cloud handoff contract. No product assertion failed; CI journey jobs were skipped.",
+  "handoff": "READY under generated-view exception; lander must regenerate views, scan and require its own exact-SHA checks."
+}

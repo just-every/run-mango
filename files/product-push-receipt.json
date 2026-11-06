@@ -1,0 +1,18 @@
+{
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "branch": "cloud/sd-mango-c-f89",
+  "push_command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f89",
+  "push_exit": 0,
+  "advertised_ref": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f\trefs/heads/cloud/sd-mango-c-f89",
+  "base": "05c6069c3958a03972287ffd31324cbd6fa92271",
+  "merged_main": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "candidate_commits": [
+    "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+    "05c6069c3958a03972287ffd31324cbd6fa92271",
+    "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8",
+    "168232b040acb57546e435ba53cd62f7622511bb",
+    "5afd4c606e7fc4d3beee51c054f35a0530a6b27b"
+  ],
+  "identity_and_trailers": "All candidate commits, including side parents, passed the fleet author and committer policy; trailers absent.",
+  "status": ""
+}

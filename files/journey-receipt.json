@@ -1,0 +1,15 @@
+{
+  "head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts --workers=1",
+  "startedAt": "2026-11-06T08:06:48.340Z",
+  "finishedAt": "2026-11-06T08:08:26.893Z",
+  "status": "passed",
+  "tests": [
+    {
+      "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+      "status": "passed",
+      "durationMs": 95587,
+      "errors": []
+    }
+  ]
+}

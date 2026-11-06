@@ -1,0 +1,88 @@
+{
+  "files": [
+    {
+      "blob": "196d61840d4a3645549bee31e9e2bf7bac1757f7",
+      "bytes": 3318,
+      "path": "PLAN.md",
+      "sha256": "dad492b5cde0b78a2883366124d7e667f7d9b4bfd04c4c20ee624a6958e05eea"
+    },
+    {
+      "blob": "f3ce5df264ede296834312f432f900388410292e",
+      "bytes": 1116,
+      "path": "PROBES.txt",
+      "sha256": "897dcff2e40a6a67e725fadd4b615ee2b69f557231648a17451dcd4a865875d2"
+    },
+    {
+      "blob": "cfa4397d2a258a81b11fbb9cd82e6ff3c22fd4eb",
+      "bytes": 11492,
+      "path": "REPORT.md",
+      "sha256": "d7c0e208c69f2cff882d80f50555ee71d0dbccda269dfa86ee168b766ad94c3a"
+    },
+    {
+      "blob": "b67d9302e2e960a11b174d2b2a8518b6faf99c40",
+      "bytes": 29882,
+      "path": "acknowledged-advisory-1440.png",
+      "sha256": "61bd30a8935e96e8b4fd2004a240c39edcd97adec461df1731e08d71b777fc10"
+    },
+    {
+      "blob": "2d7cf6ce41a095a8963954bdf03957615d739106",
+      "bytes": 29160,
+      "path": "acknowledged-advisory-390.png",
+      "sha256": "7d5d380c9a3dca6fcd282cc4d918937193d3b3a401bba29cb5709cadaa794b95"
+    },
+    {
+      "blob": "75c67253988c95440d3610f508fad97a39683c94",
+      "bytes": 1949,
+      "path": "acknowledgement-retention.json",
+      "sha256": "4735d6f70316b6200c753f9749e80ab0884d3d59b8562dbb25a5c9ce018be08c"
+    },
+    {
+      "blob": "7fb9fbc71762839375e251fcb5f76fe656c6c1a0",
+      "bytes": 448,
+      "path": "checks-receipt.json",
+      "sha256": "920f402f0d74d88d45daba69455b915b7661b424f1bc88c56d4eae61b35e38ef"
+    },
+    {
+      "blob": "2614bf2fcb9187eefa1e02b44038b65aade2c822",
+      "bytes": 1542,
+      "path": "ci-receipt.json",
+      "sha256": "fa23bccd592e63231806abc2ebf345452be0270a2e2f9b52871d91a48bf67eff"
+    },
+    {
+      "blob": "a6dda0a169291f5a02f81fb29153475bef50580f",
+      "bytes": 610,
+      "path": "journey-receipt.json",
+      "sha256": "3034c5f89cd2010b733bc88dc7a19e097542078da5fe6fd2ef2a767d5c350673"
+    },
+    {
+      "blob": "8a9ea850344562c8e176ce648a90a0f77618a187",
+      "bytes": 788,
+      "path": "journey.log",
+      "sha256": "210497bdcaedfe804e97b5c70aae0b8882584cbea4895d3962c4dc9c1fc7d794"
+    },
+    {
+      "blob": "05813cdd885f913e6e2e5cd47c0e78486be61e72",
+      "bytes": 726,
+      "path": "mechanical-receipt.json",
+      "sha256": "8f1d1560c81c7ed5c48212d425a3c644b69e512854a76d8b16366bbe0b1423e1"
+    },
+    {
+      "blob": "2df5b8e5d54986b0a7d26486f83cc89948250d27",
+      "bytes": 850,
+      "path": "product-push-receipt.json",
+      "sha256": "085fe3640167bfdb1b947754e6fbf805eaeb8e2430e521c2666d112702cb052a"
+    },
+    {
+      "blob": "9423accd2ea85635cc35688056853ecbb04a2ca0",
+      "bytes": 846,
+      "path": "verify-failure-receipt.json",
+      "sha256": "c60c16384e734ab73fff2e5da016ee64297a2f084cb0380d3ae2f1f3957dc002"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f89",
+  "product_head": "7c574fa7e3ea960601bf94602bb4b60e7232fe8f",
+  "ref": "refs/heads/evidence/sd-mango-c-f89",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f89"
+}
