@@ -1,0 +1,14 @@
+# CONT-010 proof rubric
+
+Scope: the six existing CONT-010 acceptance sentences. No acceptance text is added or narrowed. The full SCALE-001 installation, event-store, campaign, delivery and segment obligations remain with SCALE-001; this clause receives its contact-import review floor.
+
+- R1: Independently validate email and phone rows and retain applicable original consent. Public CSV preview, apply, resume and authenticated contact readback: `tests/move-in/phone-csv-journey.ts`, `phoneCsvJourney`, and `tests/move-in/csv-rules-journey.ts`, `csvRulesJourney`.
+- R2: A canonical match updates one contact and a replay changes nothing further. `csvRulesJourney` compares the original contact identity, updated name and phone, unchanged complete persisted snapshots on replay and the same job. `phoneCsvJourney` independently repeats the reviewed phone file.
+- R3: Created, updated and rejected totals reconcile and every rejected file row has its semantic reason. Both small journeys read their reports twice; `tests/move-in/csv-capacity-journey.ts`, `csvCapacityJourney`, reconciles every row at the selected run size, including the distinct duplicate outcome.
+- R4: Existing restrictions cannot become subscription. `csvRulesJourney` applies every incoming state against unsubscribe and suppression on both recorded channels and checks restrictions after undo. `csvCapacityJourney` puts a suppression after the first mapping window and reads back the restricted canonical phone before any provider handoff.
+- R5: Named-source consent requires explicit source attestation; generic input needs per-row evidence. `tests/move-in/incumbent-journey.ts`, `incumbentJourney`, performs missing and uncertain attestation, affirmative original-time consent, durable operator audit, restoration and revocation. `csvRulesJourney` independently supplies complete, missing and reversed consent times.
+- R6: Undo preserves restrictions and one review holds 250,000 rows. `csvRulesJourney` exercises real undo. `csvCapacityJourney` uses bounded preparation, operator row controls, unchanged original bytes, complete report reads, native Start and Resume, exact created and rejected totals, no consent or marketing authority, and erasure withdrawal followed by replay refusal. Only a passing full-size run on the final candidate qualifies the scale part.
+
+All helpers are invoked by the existing registration in `tests/move-in/archive.journeys.ts`. The ordinary Verify case uses 5,002 rows. The separately recorded capacity run sets `MANGO_CSV_SCALE_ROWS=250000` and uses the same registration and production routes.
+
+Boundary: recorded SMS states are ledger evidence. They establish neither real SMS transport nor owner-held carrier registration. No live provider, account, device, Base adoption, CONT-013 hold or broader SCALE-001 obligation is promoted by this rubric.

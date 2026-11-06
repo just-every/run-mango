@@ -1,0 +1,70 @@
+{
+  "files": [
+    {
+      "blob": "8a6991f5e5d37f0b13c2bdfb847cbc598018d344",
+      "bytes": 1485,
+      "path": "PLAN.md",
+      "sha256": "ea918ce2f935b99921e9c941205f8bec8d1e40b3f99688b713ace8dd7f61a551"
+    },
+    {
+      "blob": "bc6cc6d2fc5b70a96e6152fbb85d4b79982f5e00",
+      "bytes": 2437,
+      "path": "REPORT.md",
+      "sha256": "159eb1ff50de40a542c794d0f9f7614cac9c6918dc9a484055990bcebe70445b"
+    },
+    {
+      "blob": "8a40b70ba70b72924c89409114332cdc713fbc98",
+      "bytes": 2860,
+      "path": "RUBRIC.md",
+      "sha256": "0ac83dcc6f3370a533c53481f8f98311380393f2afe7e19a9bafa123246a11eb"
+    },
+    {
+      "blob": "d83f55baa6c6d622dfccad6cadf1dfd667fb2e09",
+      "bytes": 1209,
+      "path": "csv-capacity-250000-before-final.json",
+      "sha256": "2175001129e8e4be9bb39307e18f12b89d1ba07364e4c4bdfaa436d2c393844d"
+    },
+    {
+      "blob": "0b2f1c1d17b20a0b43606dfdff71992967ec7290",
+      "bytes": 177,
+      "path": "csv-capacity-erasure-250000-before-final.json",
+      "sha256": "dce588df6d4d431ddce568f9d2f31a3d5085e42fd0ed0b1308cce1c121dd67a4"
+    },
+    {
+      "blob": "584b8133aa8fa3347220ca5ae4974d88ac11310f",
+      "bytes": 17889520,
+      "path": "csv-capacity-report-250000.md",
+      "sha256": "64bcdf3cd19bf2dd0ebabdacd380f90dfbd95a4c039508b8c43dc457e5739fbb"
+    },
+    {
+      "blob": "8d66dda6cec7250a9a04e3bb9bee647c16862d04",
+      "bytes": 575,
+      "path": "scale-optimized-receipt.json",
+      "sha256": "9b8b72cf586fdadf790bf8821fb2b4d752ee0e2a7e56b95cde2dd1341b3fd95b"
+    },
+    {
+      "blob": "70ba269847561ac926fdeaf8ab60ce67c71f82db",
+      "bytes": 1210,
+      "path": "scale-optimized.log",
+      "sha256": "d574bf719c0e5f251cb3316dd14b55be242f6b27cc6a7a4af6e40724d14de5b9"
+    },
+    {
+      "blob": "09a2d9c5973b57af8bd5a2c2fc22214119c88402",
+      "bytes": 451,
+      "path": "typecheck-fixed-receipt.json",
+      "sha256": "a2b9d9d557ade5cba5d10b56fb915b75ccd6641a5b8bf3b06fcc1d9ffadee2c3"
+    },
+    {
+      "blob": "d1888cec30730430bfeebce5fab56ee0ef59bb64",
+      "bytes": 207,
+      "path": "typecheck-fixed.log",
+      "sha256": "a3a8bba3d0bc6a0807622f9b3fe704d0d5838defaa7e2649b711ec2b057f828d"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f64",
+  "product_head": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+  "ref": "refs/heads/evidence/sd-mango-c-f64",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f64"
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "cloud-sd-mango-c-f64-typecheck-fixed",
+  "head": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+  "command": [
+    "pnpm",
+    "run",
+    "typecheck"
+  ],
+  "started_at": "2026-11-06T02:43:37.154599+00:00",
+  "worktree_clean_before": false,
+  "exit": 0,
+  "finished_at": "2026-11-06T02:43:54.157826+00:00",
+  "wall_seconds": 16.995660308999504,
+  "head_after": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+  "worktree_clean_after": false
+}
