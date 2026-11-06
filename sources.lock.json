@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "07a4416a22d3f29da69fff9ef3f4ea7592c2fa47dc2e3368688c773c72ad0819",
       "executable": false
     },
     "DEMO.md": {
@@ -8329,6 +8329,10 @@
       "sha256": "11676b25e05cd94d1b3595fccf46355b8d0e3d380dfed78fb84a485316ffe180",
       "executable": false
     },
+    "tests/audience-controls/audience-summary-journey.ts": {
+      "sha256": "519b14b91f7061e99af45365016586ce951fc3a74488901fddfaab286a47179a",
+      "executable": false
+    },
     "tests/audience-controls/contact-profile-flow.ts": {
       "sha256": "9baf5540d9fc5fff8da762c4fcca1db0495fa345a55719379fc48c877cc7b58e",
       "executable": false
@@ -8362,7 +8366,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "7685051053c30f587058092e06e4ee4252603a43bf07ec0d790d31c37adba810",
+      "sha256": "63b9cc6f0265aef54f3769d79e19a2165ef38e98298563fb3e1aa339b505622e",
       "executable": false
     },
     "tests/audience-import/config.js": {
