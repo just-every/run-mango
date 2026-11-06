@@ -1,0 +1,67 @@
+{
+  "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+  "completedAt": "2026-11-06T12:01:46.181876+00:00",
+  "checks": [
+    {
+      "check": "journey",
+      "command": [
+        "timeout",
+        "1200",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/go-live/playwright.config.js",
+        "embed-origin.journeys.ts"
+      ],
+      "exit": 0,
+      "seconds": 75.64,
+      "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+      "outputFile": "journey.txt",
+      "outputSha256": "37d5d493aaa1b9feb05e6c913342d9ae44b3b89c94cd280cd9962c569b124cd9"
+    },
+    {
+      "check": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 20.21,
+      "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+      "outputFile": "typecheck.txt",
+      "outputSha256": "b0518e3fd5f61bde09dfd0d63e6c36c917598348feb1ebbc2bf24dcf3f957750"
+    },
+    {
+      "check": "first-party",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "seconds": 1.19,
+      "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+      "outputFile": "first-party.txt",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.78,
+      "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+      "outputFile": "lock-check.txt",
+      "outputSha256": "e081c8e6fbe7b5fa640f3b69dc34b68bc54cd0874ef5b7821ca91358343ade8b"
+    }
+  ]
+}

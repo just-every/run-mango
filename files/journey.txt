@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/go-live/embed-origin.journeys.ts:24:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (1.2m)
+
+  1 passed (1.2m)
+(node:6866) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

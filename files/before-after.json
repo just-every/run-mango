@@ -1,0 +1,32 @@
+{
+  "base": {
+    "ref": "e619395d34184b1003fdde7808bd8a9a2b61eae4",
+    "counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "FORM-001": "| `FORM-001` | Hosted and embedded signup | target | partial | `src/core/features/audience/signup-routes.ts` \u00b7 `tests/audience-import/signup.spec.ts` \u2014 \u201cCONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP\u201d; \u201cCONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies\u201d  \u00b7 `tests/go-live/embed-origin.journeys.ts` \u2014 \u201c[FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame\u201d: native authenticated settings, real allowed email capture, unlisted direct and outer-ancestor browser refusals, and allowlist-removal reload with unchanged contact, consent, confirmation and mail counts at 1440 and 390. | Acceptance 3 is proved by the configured-origin journey. Remaining proof: acceptance 1\u2019s complete hosted and embedded explicit-consent and optional-SMS matrix; acceptance 2\u2019s complete embedded pending, confirmation, replay and expiry matrix; acceptance 4\u2019s explicit absence of campaign and flow handoff authority after submission. Existing allowed embedded email proof is retained. Twilio A2P and US carrier registration are owner-held; SMS transport and real-provider qualification remain unproved. |"
+  },
+  "mergedMain": {
+    "ref": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+    "counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "FORM-001": "| `FORM-001` | Hosted and embedded signup | target | partial | `src/core/features/audience/signup-routes.ts` \u00b7 `tests/audience-import/signup.spec.ts` \u2014 \u201cCONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP\u201d; \u201cCONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies\u201d | The cited signup journey asserts pending consent, one confirmation, replay and expiry. It does not assert an embedded-origin refusal or absence of campaign/flow authority after submission; the old evidence set has no embed-origin journey. Missing public-door journey: \u201cHosted and embedded signup \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+  },
+  "candidate": {
+    "ref": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+    "counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "FORM-001": "| `FORM-001` | Hosted and embedded signup | target | partial | `tests/go-live/embed-origin.journeys.ts` \u2014 \u201c[FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame\u201d, invoking `tests/go-live/signup-consent-journey.ts` and `tests/go-live/signup-sms-journey.ts`: acceptance 1 records explicit hosted and embedded email consent and optional Australian SMS consent at a synthetic provider edge, refuses invalid identities and missing consent without capture, and refuses disabled SMS; acceptance 2 observes pending status, affirmative confirmation, unchanged replay and expired-token refusal for both carriers and channels; acceptance 3 proves configured origin admission, unlisted direct and outer ancestor refusal and removal reload with unchanged capture and mail counts at 1440 and 390; acceptance 4 retains existing campaign and flow drafts with no approval, recipients, enrollment, dispatch command or marketing handoff throughout capture and confirmation. | The native email matrix and the existing Australian SMS adapter are proved through real forms and public confirmation doors. US optional SMS remains unqualified: owner-held Twilio A2P and US carrier registration, SMS transport and real-provider qualification are still required. The synthetic Australian provider boundary proves no US carrier or Twilio behavior. Existing provider, account and cross-seed or Base prerequisites and CONT-013\u2019s SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |"
+  }
+}

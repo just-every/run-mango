@@ -1,0 +1,120 @@
+[
+  {
+    "carrier": "hosted",
+    "case": "refused-capture",
+    "before": {
+      "contacts": 0,
+      "evidence": 0,
+      "confirmations": 0,
+      "service": 0,
+      "sms": 0
+    },
+    "after": {
+      "contacts": 0,
+      "evidence": 0,
+      "confirmations": 0,
+      "service": 0,
+      "sms": 0
+    }
+  },
+  {
+    "carrier": "hosted",
+    "outcome": "confirm",
+    "channel": "sms",
+    "pending": true,
+    "finalState": {
+      "sms_status": "subscribed",
+      "email_status": "non-subscribed",
+      "channel_status": "subscribed"
+    },
+    "purpose": "consent-confirmation"
+  },
+  {
+    "carrier": "hosted",
+    "outcome": "expire",
+    "channel": "sms",
+    "pending": true,
+    "finalState": {
+      "sms_status": "pending",
+      "email_status": "non-subscribed",
+      "channel_status": "pending"
+    },
+    "purpose": "consent-confirmation"
+  },
+  {
+    "carrier": "embedded",
+    "case": "refused-capture",
+    "before": {
+      "contacts": 2,
+      "evidence": 2,
+      "confirmations": 2,
+      "service": 2,
+      "sms": 2
+    },
+    "after": {
+      "contacts": 2,
+      "evidence": 2,
+      "confirmations": 2,
+      "service": 2,
+      "sms": 2
+    }
+  },
+  {
+    "carrier": "embedded",
+    "outcome": "confirm",
+    "channel": "sms",
+    "pending": true,
+    "finalState": {
+      "sms_status": "subscribed",
+      "email_status": "non-subscribed",
+      "channel_status": "subscribed"
+    },
+    "purpose": "consent-confirmation"
+  },
+  {
+    "carrier": "embedded",
+    "outcome": "expire",
+    "channel": "sms",
+    "pending": true,
+    "finalState": {
+      "sms_status": "pending",
+      "email_status": "non-subscribed",
+      "channel_status": "pending"
+    },
+    "purpose": "consent-confirmation"
+  },
+  {
+    "carrier": "expired",
+    "channel": "sms",
+    "pending": true,
+    "confirmationRefused": true
+  },
+  {
+    "carrier": "expired",
+    "channel": "sms",
+    "pending": true,
+    "confirmationRefused": true
+  },
+  {
+    "case": "delivery-authority",
+    "beforeCounts": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "afterCounts": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "deliveryCommands": 0
+  }
+]

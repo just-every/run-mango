@@ -1,0 +1,21 @@
+{
+  "parentStatusRows": {
+    "HEAD": 316,
+    "MERGE_HEAD": 316
+  },
+  "candidateStatusRows": 316,
+  "dropped": [],
+  "viewsWriteExit": 0,
+  "viewsCheckExit": 0,
+  "lockExit": 0,
+  "lockCheckExit": 0,
+  "lockSha256": "4e2adf1a98eb99194687235a2a0469c821261d90d8fa9e55723c41bfc546b507",
+  "migrationLedger": "not applicable; no migration changed",
+  "head": "23518d1fc84e7ec260c7d701760cf85e96e11ff1",
+  "parents": [
+    "164911b56ec4a61a58763441e86b3e8e51e7577b",
+    "3adffb27a2b153edfe784251bf61acee45ea9ca4"
+  ],
+  "restoredViewCheckExit": 1,
+  "restoredViewDifference": "expected; main generated files retained for the Mac lander"
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "carrier": "hosted",
+    "case": "refused-capture",
+    "before": {
+      "contacts": 2,
+      "evidence": 2,
+      "confirmations": 2,
+      "mail": 2
+    },
+    "after": {
+      "contacts": 2,
+      "evidence": 2,
+      "confirmations": 2,
+      "mail": 2
+    }
+  },
+  {
+    "carrier": "hosted",
+    "outcome": "confirm",
+    "pendingEvidence": {
+      "email_status": "pending",
+      "channel": "email",
+      "brand_or_legal_sender": "Mango Garden",
+      "message_category": "newsletter",
+      "frequency_disclosure": "Occasional newsletters",
+      "destination_jurisdiction": "Not provided",
+      "capture_source": "http://127.0.0.1:29409/subscribe",
+      "capture_method": "hosted-signup-form",
+      "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+      "consent_version": "newsletter-signup-v1",
+      "occurred_at": 1793966446045,
+      "confirmation_required": 1,
+      "expires_at": 1796558446045,
+      "confirmed_at": null
+    },
+    "finalStatus": "subscribed"
+  },
+  {
+    "carrier": "hosted",
+    "outcome": "expire",
+    "pendingEvidence": {
+      "email_status": "pending",
+      "channel": "email",
+      "brand_or_legal_sender": "Mango Garden",
+      "message_category": "newsletter",
+      "frequency_disclosure": "Occasional newsletters",
+      "destination_jurisdiction": "Not provided",
+      "capture_source": "http://127.0.0.1:29409/subscribe",
+      "capture_method": "hosted-signup-form",
+      "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+      "consent_version": "newsletter-signup-v1",
+      "occurred_at": 1793966447543,
+      "confirmation_required": 1,
+      "expires_at": 1796558447543,
+      "confirmed_at": null
+    },
+    "finalStatus": "pending"
+  },
+  {
+    "carrier": "embedded",
+    "case": "refused-capture",
+    "before": {
+      "contacts": 4,
+      "evidence": 4,
+      "confirmations": 4,
+      "mail": 4
+    },
+    "after": {
+      "contacts": 4,
+      "evidence": 4,
+      "confirmations": 4,
+      "mail": 4
+    }
+  },
+  {
+    "carrier": "embedded",
+    "outcome": "confirm",
+    "pendingEvidence": {
+      "email_status": "pending",
+      "channel": "email",
+      "brand_or_legal_sender": "Mango Garden",
+      "message_category": "newsletter",
+      "frequency_disclosure": "Occasional newsletters",
+      "destination_jurisdiction": "Not provided",
+      "capture_source": "http://127.0.0.1:29409/subscribe",
+      "capture_method": "hosted-signup-form",
+      "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+      "consent_version": "newsletter-signup-v1",
+      "occurred_at": 1793966449838,
+      "confirmation_required": 1,
+      "expires_at": 1796558449838,
+      "confirmed_at": null
+    },
+    "finalStatus": "subscribed"
+  },
+  {
+    "carrier": "embedded",
+    "outcome": "expire",
+    "pendingEvidence": {
+      "email_status": "pending",
+      "channel": "email",
+      "brand_or_legal_sender": "Mango Garden",
+      "message_category": "newsletter",
+      "frequency_disclosure": "Occasional newsletters",
+      "destination_jurisdiction": "Not provided",
+      "capture_source": "http://127.0.0.1:29409/subscribe",
+      "capture_method": "hosted-signup-form",
+      "consent_text": "I agree to receive email newsletters from Mango Garden. I can unsubscribe at any time.",
+      "consent_version": "newsletter-signup-v1",
+      "occurred_at": 1793966451395,
+      "confirmation_required": 1,
+      "expires_at": 1796558451395,
+      "confirmed_at": null
+    },
+    "finalStatus": "pending"
+  },
+  {
+    "case": "expired",
+    "email": "synthetic-mango-611@example.test",
+    "status": "pending",
+    "confirmationRefused": true
+  },
+  {
+    "case": "expired",
+    "email": "synthetic-mango-613@example.test",
+    "status": "pending",
+    "confirmationRefused": true
+  },
+  {
+    "case": "delivery-authority",
+    "beforeCounts": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "afterCounts": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "deliveryCommands": 0
+  }
+]
