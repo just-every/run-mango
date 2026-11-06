@@ -7,7 +7,7 @@ Product head: `73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0`
 Base main: `980b25d4b34d19493662d2662ba8f5123c194aef`  
 PR: none; Verify runs on branch push.  
 Push: successful on attempt 1, using the required fleet guard. Main was not pushed.  
-Candidate Verify: 42172214424, push, initially in progress on this exact head. See the latest CI receipt for final observed status.  
+Candidate Verify: 42172214424, push, initially in progress on this exact head. Final status: failure only at generated contract document freshness for ACCEPTANCE.md. Build job 127742490502 failed that step, dependent verify job 127742555183 failed its aggregate requirement, and shards were skipped. This is the explicit expected-view exception; no test failure or fully green candidate Verify is claimed.  
 Starting main Verify: 42171092345, success. Starting main Run site: 42171092326, success.
 
 ## Change and acceptance map
@@ -34,7 +34,7 @@ The CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold are unchanged; 
 - Contract generator write then check: exit 0. Its generated views were restored whole from main and excluded from the commit. Candidate freshness may therefore fail only on that expected generated-view check; the Mac lander regenerates it.
 - Source lock regenerated last and checked: exit 0; exact-head check also exit 0.
 - Migration ledger: not applicable; no migration changes.
-- All 490 pipe-table rows retained. The explicit Status-row inventory retained every matched parent identifier. The only contract row edited is CAMP-004; acceptance sentences and counts are unchanged.
+- All 490 pipe-table rows and all 379 parent identifier table rows were retained. The only contract row edited is CAMP-004; acceptance sentences and counts are unchanged.
 - Routine Playwright inventory: 80 before, 81 after; one focused registration added, none removed. No permanent pin or duplicate test was added.
 - Diff whitespace check: pass. Added source text has no email-shaped string or co-author trailer. All product candidate authors and committers use fleet identity; trailers absent. No bare prose token resembling a repository reference was added.
 
@@ -44,7 +44,7 @@ An initial verification-runner invocation omitted the file selection. Its own co
 
 1. PARTIAL: only the selected acceptance outcomes are proved; broader carried matrices remain open.
 2. PASS for this slice: populated audience, passing baseline, native refusal and unchanged data, then passing correction.
-3. PENDING at first discovery: focused spec is in the ordinary push pack; exact-SHA Verify 42172214424 is recorded separately.
+3. RECORDED EXPECTED VIEW FAILURE: focused spec is in the ordinary push pack; exact-SHA push Verify 42172214424 failed only generated-view freshness and skipped shards. Exact-head local proof passed, and the stated view exception permits handoff; no green CI journey claim is made.
 4. PASS: exact-head local focused journey passed on `73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0`.
 5. UNCHANGED: no inherited Base duties added or removed.
 6. PASS for partial evidence: honest gap and current test reference; generator write and check pass locally. Generated views are deliberately left to the lander.
@@ -61,3 +61,9 @@ The new assertions fail if the missing sender is unnamed, if approval succeeds, 
 The plan's CAMP-004 row should record PARTIAL to PARTIAL: acceptance 5 sender-name blocker and acceptance 4 no-authority refusal are closed for the empty-name case, with all listed carried gaps and holds retained. No other plan row changed. The complete execution plan is `PLAN.md`; probes are `PROBES.txt`; mechanical checks, source identities, custody and rider results are in `RECEIPT.json` and `mechanical.json`.
 
 Product custody and evidence publication are separate. The evidence packet contains only explicitly selected regular non-secret reports and actual receipts. Landing, provider qualification and COMPLETE publication scanning are not inferred from evidence transport.
+
+## Final CI observation
+
+Six GitHub calls were used: starting-main run discovery, candidate run discovery, one run read at least 300 seconds later, one jobs listing, and one failed-log archive command for each of the two failed jobs. No workflow dispatch or rerun was requested. The candidate restored-view check reproduces exit 1 with “ACCEPTANCE.md: generated content differs; run contract-docs write.” Earlier generator write and check both passed, and the two generated views were then restored exactly as instructed. No generated file is committed to repair the expected failure. The ordinary test shards did not run in this branch Verify because build stopped first. This is not a real product blocker under the brief's explicit generated-view exception.
+
+The packet was published and fetched back with manifest and file-hash validation before this final CI update; its final publication contains the updated status and failed-step evidence. The guarded lander remains responsible for regeneration, exact-SHA Verify of its resulting tree, full-history publication scan and Run site. No landing or COMPLETE scan is claimed in this report.

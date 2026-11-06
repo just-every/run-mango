@@ -1,0 +1,22 @@
+{
+  "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+  "run": 42172214424,
+  "failures": [
+    {
+      "job": 127742490502,
+      "archive_command": "gh run view 42172214424 --repo just-every/run-mango --job 127742490502 --log-failed",
+      "archive_exit": 0,
+      "failed_step_exit": 1,
+      "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+    },
+    {
+      "job": 127742555183,
+      "archive_command": "gh run view 42172214424 --repo just-every/run-mango --job 127742555183 --log-failed",
+      "archive_exit": 0,
+      "failed_step_exit": 1,
+      "failure": "BUILD: failure; SHARDS: skipped; aggregate requires successful selected coverage."
+    }
+  ],
+  "cause": "expected generated-view freshness only",
+  "private_environment_or_signed_urls": "not included"
+}

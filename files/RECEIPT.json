@@ -48,6 +48,11 @@
       "exit": 0,
       "tests": 1,
       "receipt": "exact-head-test.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+      "exit": 0
     }
   ],
   "mechanical_receipt": "mechanical.json",
@@ -81,7 +86,7 @@
     "reason": "Owned by the Mac guarded lander; no COMPLETE scan is claimed."
   },
   "landing": {
-    "status": "branch_only",
+    "status": "ready_for_guarded_lander_under_generated_view_exception",
     "main_unchanged": true,
     "pr": null
   },
@@ -98,8 +103,8 @@
     },
     {
       "row": 3,
-      "result": "pending_ci",
-      "evidence": "Registered in push identity-data pack; exact-SHA Verify discovered in progress."
+      "result": "recorded_expected_view_failure",
+      "evidence": "Push Verify 42172214424 fails only generated-view freshness; shards skipped. The spec is registered in push identity-data and exact-head local run passes. No exact-SHA green journey claim is made."
     },
     {
       "row": 4,
@@ -156,5 +161,189 @@
     "checked_all_candidates": true,
     "author_and_committer": "fleet",
     "trailers": "none"
-  }
+  },
+  "ci_final": {
+    "conclusion": "failure",
+    "head_sha": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42172214424",
+    "status": "completed"
+  },
+  "ci_jobs": [
+    {
+      "conclusion": "success",
+      "id": 127742435390,
+      "name": "plan",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check reusable workflow permissions"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Look up complete nightly marker"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node scripts/ci/mango-plan.mjs"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "id": 127742490502,
+      "name": "Build and public command checks",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set runner-owned browser cache"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Check edition source lock freshness"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run npm install --global pnpm@10.12.4"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Set runner-owned pnpm store"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Prepare runner-owned browser and apt caches"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Cache frozen dependencies and Chromium"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install frozen dependencies and reserve native runtime disk"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run pnpm run deps"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install and probe Chromium before system dependencies"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Build and check the public command once"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Share the verified production build"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127742491724,
+      "name": "light",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "failure",
+      "id": 127742555183,
+      "name": "verify",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127742556291,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127742556638,
+      "name": "nightly-proof",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127742556985,
+      "name": "full-push-proof",
+      "status": "completed",
+      "steps": []
+    }
+  ],
+  "ci_exception": {
+    "kind": "expected_generated_view_freshness",
+    "file": "ACCEPTANCE.md",
+    "failed_job": 127742490502,
+    "dependent_verify_job": 127742555183,
+    "local_command": "node src/base/contract-docs.mjs check",
+    "local_exit": 1,
+    "local_error": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "shards": "skipped",
+    "ready_per_brief_exception": true
+  },
+  "github_calls": 6
 }
