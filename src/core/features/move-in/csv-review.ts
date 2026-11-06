@@ -27,7 +27,27 @@ export async function recordCsvAttestations(db:D1Database,plan:ImportPlan,operat
   if(statements.length)await db.batch(statements);
 }
 export function csvReconciliation(plan:ImportPlan){
-  const summary=csvReview(plan),counts=csvCounts(plan),cell=(value:unknown)=>String(value??'').replaceAll('|','\\|').replace(/[\r\n]+/g,' ');
+  const summary=csvReview(plan),counts=csvCounts(plan);
+  const cell=(value:unknown)=>String(value??'').replaceAll('|','\\|').replace(/[\r\n]+/g,' ');
   const extras=extrasOf(plan);
-  return ['# Import reconciliation','','No campaign or flow was scheduled or activated.','', '## Reviewed totals','','| Input | Created | Updated | Rejected | Other |','| ---: | ---: | ---: | ---: | ---: |',`| ${counts.input} | ${counts.created} | ${counts.updated} | ${counts.rejected} | ${counts.input-counts.created-counts.updated-counts.rejected} |`,'','## Consent evidence','','| Kind | Rows |','| --- | ---: |',...Object.entries(summary.evidenceKinds).map(([kind,total])=>`| ${cell(kind)} | ${total} |`),'','## Source attestations','',...summary.attestationSources.map(s=>`${s.sourceName}: ${s.accepted?'affirmed':s.reason??'not affirmed'}`),'','## Source outlines and review snapshots','',...(extras?.notes??[]),...(extras?.segments.map(s=>`${s.name}: ${s.conditions}`)??[]),'','## Templates','',...(extras?.templates.map(t=>`${t.name}: imported through the restricted template-library conversion; unsafe markup is removed and unsupported merge tags remain held for review.`)??[]),'','## Row outcomes','','| File | Row | Status | Reason |','| --- | ---: | --- | --- |',...plan.entries.map(entry=>{const row=entry.source.payload as unknown as NormalizedImportRow;return `| ${cell(row.file)} | ${row.row} | ${cell(row.status)} | ${cell(entry.rejection??row.reason??row.warnings.join('; '))} |`;})].join('\n')+'\n';
+  const outcomes=plan.entries.map(entry=>{
+    const row=entry.source.payload as unknown as NormalizedImportRow;
+    const outcome=entry.rejection?'rejected':row.held?'updated':entry.effects.length
+      ?(entry.effects[0].expectedRevision?'updated':'created'):row.optOuts?'restriction-only':'skipped';
+    return `| ${cell(row.file)} | ${row.row} | ${cell(row.status)} | ${cell(entry.rejection??row.reason??row.warnings.join('; '))} | ${outcome} |`;
+  });
+  return [
+    '# Import reconciliation','','No campaign or flow was scheduled or activated.','',
+    '## Reviewed totals','','| Input | Created | Updated | Rejected | Other |',
+    '| ---: | ---: | ---: | ---: | ---: |',
+    `| ${counts.input} | ${counts.created} | ${counts.updated} | ${counts.rejected} | ${counts.input-counts.created-counts.updated-counts.rejected} |`,'',
+    '## Consent evidence','','| Kind | Rows |','| --- | ---: |',
+    ...Object.entries(summary.evidenceKinds).map(([kind,total])=>`| ${cell(kind)} | ${total} |`),'',
+    '## Source attestations','',
+    ...summary.attestationSources.map(s=>`${s.sourceName}: ${s.accepted?'affirmed':s.reason??'not affirmed'}`),'',
+    '## Source outlines and review snapshots','',...(extras?.notes??[]),
+    ...(extras?.segments.map(s=>`${s.name}: ${s.conditions}`)??[]),'',
+    '## Templates','',...(extras?.templates.map(t=>`${t.name}: imported through the restricted template-library conversion; unsafe markup is removed and unsupported merge tags remain held for review.`)??[]),'',
+    '## Row outcomes','','| File | Row | Status | Reason | Outcome |','| --- | ---: | --- | --- | --- |',...outcomes,
+  ].join('\n')+'\n';
 }
