@@ -43,8 +43,8 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     console.log('step 2');
     await add(vipOnly);
     const conditional=page.locator('fieldset').filter({hasText:'Conditional display'});
-    await conditional.getByLabel('Property',{exact:true}).selectOption('synthetic_mango_tier');
-    await conditional.getByLabel('Value',{exact:true}).fill('vip');
+    await conditional.getByRole('combobox',{name:'Property',exact:true}).selectOption('synthetic_mango_tier');
+    await conditional.getByRole('textbox',{name:'Value',exact:true}).fill('vip');
     await conditional.getByRole('button',{name:'Show only to this condition',exact:true}).click();
     await expect(conditional).toContainText('Shown only to contacts who match');
     console.log('step 3');
