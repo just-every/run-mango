@@ -8502,7 +8502,11 @@
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+      "sha256": "4ba7937affc4634e7342345049bf9008fc4402c9f76cf8bf4d1ded5374aa871d",
+      "executable": false
+    },
+    "tests/campaign-authoring/design-summary-journey.ts": {
+      "sha256": "cb1d1b2e67592e0aa0f325a57fbbe73a3c886034f9adb04bf5796e6c7c64cdc3",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {

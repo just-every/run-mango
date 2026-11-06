@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
+import { designSummaryJourney } from './design-summary-journey';
 
 test.describe.configure({ mode: 'serial', timeout: 180000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -172,6 +173,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByRole('status').filter({ hasText: 'exact saved revision is approved and scheduled' })).toBeVisible();
     expect((await read()).campaign.state).toBe('scheduled');
+    await test.step('Review matching and novel image descriptions, then edit and save the import', () =>
+      designSummaryJourney(page, testInfo, runtime.url, runtime.token));
     expect(outbound).toEqual([]);
   } finally { await runtime.close(); }
 });
