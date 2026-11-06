@@ -1,0 +1,14 @@
+Exact head: 0acfc77e9b20718a284b6a9bb580cc717be79d43
+Verify: 42201171130, push, completed/failure
+Failed build job: 127836629582
+Archive command: gh run view 42201171130 --repo just-every/run-mango --job 127836629582 --log-failed
+Archive command exit: 0; requested once
+Failing workflow command: node src/base/contract-docs.mjs check
+Observed error: ACCEPTANCE.md: generated content differs; run contract-docs write.
+Observed command exit: 1
+Aggregate job: 127836723883
+Archive command: gh run view 42201171130 --repo just-every/run-mango --job 127836723883 --log-failed
+Archive command exit: 0; requested once
+Observed result: coverage guard exit 1 because Build failed and shards were skipped.
+No independent browser or product assertion failed. No workflow dispatch or rerun was requested.
+The cloud generated-view exception applies; the lander must regenerate views and run Verify on its resulting exact commit.
