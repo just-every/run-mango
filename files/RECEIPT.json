@@ -1,0 +1,132 @@
+{
+  "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "branch": "cloud/sd-mango-c-f91",
+  "base": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "main": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "new_product_changes": false,
+  "candidate_commits": [
+    "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+    "653a6ffa98f6dc087b07e50b5855f786e2f2acf9",
+    "81e6fd085c0d56b5c082ed6a178d12a8fe5f829e",
+    "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2"
+  ],
+  "identity_check": "passed",
+  "trailer_check": "passed",
+  "parent_row_preservation": [
+    {
+      "commit": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+      "parent": "653a6ffa98f6dc087b07e50b5855f786e2f2acf9",
+      "parent_status_ids": 379,
+      "child_status_ids": 379,
+      "retained": true
+    },
+    {
+      "commit": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+      "parent": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "parent_status_ids": 379,
+      "child_status_ids": 379,
+      "retained": true
+    },
+    {
+      "commit": "653a6ffa98f6dc087b07e50b5855f786e2f2acf9",
+      "parent": "81e6fd085c0d56b5c082ed6a178d12a8fe5f829e",
+      "parent_status_ids": 379,
+      "child_status_ids": 379,
+      "retained": true
+    },
+    {
+      "commit": "81e6fd085c0d56b5c082ed6a178d12a8fe5f829e",
+      "parent": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "parent_status_ids": 379,
+      "child_status_ids": 379,
+      "retained": true
+    },
+    {
+      "commit": "4cbffaf96ace56c151a5bad2d3acf73d261c3fe2",
+      "parent": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+      "parent_status_ids": 379,
+      "child_status_ids": 379,
+      "retained": true
+    }
+  ],
+  "counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "files_carried_from_base": [
+    "CONTRACT.md",
+    "RELEASE.json",
+    "management/integration/deployment-spec.json",
+    "migrations/core/0104_native_audience_authority.sql",
+    "scripts/verification/plan.mjs",
+    "sources.lock.json",
+    "tests/proposals-decision/missing-sender.spec.ts",
+    "tests/proposals-decision/runtime.ts",
+    "tests/support/sender-verification.ts"
+  ],
+  "focused_test": {
+    "command": "MANGO_NO_FIXTURE_SERVER=1 pnpm exec playwright test tests/proposals-decision/missing-sender.spec.ts --workers=1 --reporter=list",
+    "exit": 0,
+    "registrations": 1,
+    "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8"
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8"
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8"
+  },
+  "mechanical": {
+    "views_write": {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    "views_check": {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0
+    },
+    "views_restored_from": "origin/main",
+    "lock": {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    "lock_check": {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    "ledger": "none: no migration added or edited by this run"
+  },
+  "done_claim": false,
+  "ci": {
+    "previous_base_run": 42184249151,
+    "conclusion": "failure",
+    "failure_class": "generated-view freshness only",
+    "failed_build_job": 127780765231,
+    "event": "push",
+    "named_branch_run": 42189801768,
+    "named_branch_status": "completed",
+    "github_command_calls": 7,
+    "named_branch_conclusion": "failure",
+    "named_branch_failure_class": "generated-view freshness only",
+    "named_branch_failed_build_job": 127798790400,
+    "ready_exception": "Permitted stale generated contract views; no product test failure observed."
+  },
+  "product_push": {
+    "branch": "cloud/sd-mango-c-f91",
+    "head": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+    "status": "pushed",
+    "attempts": 1,
+    "remote": "e5ddac0129a005f30daa5749ab5f5308196ee7f8"
+  },
+  "exact_head_checks_unchanged": true,
+  "main_is_ancestor": true,
+  "tests_added": 0,
+  "assertions_changed": 0,
+  "source_files_changed_by_run": 0,
+  "inbox_plan_change": "CAMP-004 selected sender-name points already proved on supplied base; retain PARTIAL and all existing gaps and holds."
+}
