@@ -1,0 +1,43 @@
+[
+  {
+    "name": "one-click",
+    "status": 200,
+    "address": "unsubscribed",
+    "records": [
+      "recipient-unsubscribe"
+    ]
+  },
+  {
+    "name": "soft bounce 1",
+    "status": 204,
+    "address": "unsubscribed",
+    "records": [
+      "recipient-unsubscribe"
+    ]
+  },
+  {
+    "name": "soft bounce 2",
+    "status": 204,
+    "address": "unsubscribed",
+    "records": [
+      "recipient-unsubscribe"
+    ]
+  },
+  {
+    "name": "soft bounce 3",
+    "status": 204,
+    "address": "suppressed",
+    "records": [
+      "recipient-unsubscribe",
+      "three-consecutive-soft-bounces"
+    ]
+  },
+  {
+    "name": "delivered",
+    "status": 204,
+    "address": "unsubscribed",
+    "records": [
+      "recipient-unsubscribe"
+    ]
+  }
+]

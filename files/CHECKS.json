@@ -1,0 +1,146 @@
+{
+  "tag": "sd-mango-c-f68",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f68",
+  "head": "49b620633c5e78e271f694af073bc87429db3e8f",
+  "baseMain": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email <fleet identity> --non-interactive",
+      "exit": 0,
+      "note": "fleet toolchain and child subreaper; no runtime secret links copied"
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js opt-out-reasons.journeys.ts",
+      "exit": 0,
+      "head": "49b620633c5e78e271f694af073bc87429db3e8f",
+      "testsPassed": 1,
+      "durationSeconds": 42.9,
+      "browser": "/usr/bin/chromium with --no-sandbox",
+      "assertionWidth": 1440,
+      "captureWidths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "note": "final source and test bytes, before commit"
+    },
+    {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0,
+      "note": "same production source bytes, before final contract evidence edit and receipt-output addition"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "note": "final tree before commit"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "note": "wrote ACCEPTANCE.md; restored from origin/main afterward"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "note": "immediately after generation"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "head": "49b620633c5e78e271f694af073bc87429db3e8f",
+      "expected": true,
+      "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+      "note": "required cloud restoration of generated views; lander regenerates them"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "note": "last source mutation before commit"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "49b620633c5e78e271f694af073bc87429db3e8f"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+      "exit": 0
+    },
+    {
+      "command": "migration ledger",
+      "exit": 0,
+      "note": "not applicable; no migration changed"
+    },
+    {
+      "command": "git diff --cached --check and Status row preservation",
+      "exit": 0,
+      "parentRows": 316,
+      "candidateRows": 316,
+      "parentTableLines": 490,
+      "candidateTableLines": 490
+    }
+  ],
+  "clause": "CONT-006",
+  "before": "partial",
+  "after": "partial",
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "registrationsBefore": 1,
+  "registrationsAfter": 1,
+  "sourceFiles": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "0752994c11d1bde6820ba374e41a0e90879438f943f056f9430b41d65f2cc10e",
+      "bytes": 489657
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "5704eccebfde9023208e57a8c1bd88fbe1dcebac610a081e37946af73b05afd9",
+      "bytes": 411248
+    },
+    {
+      "path": "src/core/features/audience/repository.ts",
+      "sha256": "bc8040635dfb4baa8339913fa43220509d3391e7e268571ef05a9e0aeafcd79a",
+      "bytes": 35944
+    },
+    {
+      "path": "src/core/features/audience/service.ts",
+      "sha256": "552efeb7f532f06e7ff03e4ba636d1de20acdb54a899b3ca5d24c471b1892186",
+      "bytes": 45097
+    },
+    {
+      "path": "tests/go-live/opt-out-reasons.journeys.ts",
+      "sha256": "3312227b4116ddbacbde08c9bb0b74b96619a195fa7036e2eac7abb33a65f520",
+      "bytes": 17055
+    }
+  ],
+  "ci": {
+    "runId": 42150946191,
+    "head": "49b620633c5e78e271f694af073bc87429db3e8f",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "readinessException": "generated-view freshness only",
+    "primaryFailedJob": 127673826259,
+    "dependentSummaryJob": 127673916491,
+    "error": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "githubCalls": 6,
+    "workflowDispatches": 0,
+    "reruns": 0,
+    "repairRounds": 0
+  }
+}

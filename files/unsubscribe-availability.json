@@ -1,0 +1,89 @@
+{
+  "allowance": 10,
+  "timings": [
+    {
+      "name": "confirmation GET",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 25.097470000000612
+    },
+    {
+      "name": "one-click POST",
+      "method": "POST",
+      "status": 200,
+      "elapsedMs": 45.39274399999704
+    },
+    {
+      "name": "allowed token request 5",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 31.031122000000323
+    },
+    {
+      "name": "allowed token request 6",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 18.26342200000363
+    },
+    {
+      "name": "allowed token request 7",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 20.509804000001168
+    },
+    {
+      "name": "allowed token request 8",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 25.07263399999647
+    },
+    {
+      "name": "allowed token request 9",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 20.23947500000213
+    },
+    {
+      "name": "allowed token request 10",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 20.18147399999725
+    },
+    {
+      "name": "exhausted token GET",
+      "method": "GET",
+      "status": 429,
+      "elapsedMs": 18.80228899999929
+    },
+    {
+      "name": "exhausted token POST",
+      "method": "POST",
+      "status": 429,
+      "elapsedMs": 21.37467900000047
+    },
+    {
+      "name": "distinct token GET from same IP",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 20.266069999997853
+    },
+    {
+      "name": "distinct token POST from same IP",
+      "method": "POST",
+      "status": 200,
+      "elapsedMs": 28.3053510000027
+    }
+  ],
+  "outcomes": [
+    {
+      "email": "carol@example.test",
+      "disposition": "skipped",
+      "reason": "channel-not-subscribed"
+    },
+    {
+      "email": "dave@example.test",
+      "disposition": "skipped",
+      "reason": "channel-not-subscribed"
+    }
+  ]
+}

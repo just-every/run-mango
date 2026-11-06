@@ -1,0 +1,28 @@
+
+Running 1 test using 1 worker
+
+(node:2515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset (39.0s)
+
+
+  1) tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "unsubscribed"
+    Received: "suppressed"
+
+      121 |     expect(resetCount).toBe(0);
+      122 |     const afterDelivery = await detail();
+    > 123 |     expect(afterDelivery.contact.emailStatus).toBe('unsubscribed');
+          |                                               ^
+      124 |     expect(afterDelivery.history.filter((row: any) => row.kind === 'soft-bounce')).toEqual(beforeDelivery.history.filter((row: any) => row.kind === 'soft-bounce'));
+      125 |     expect(afterDelivery.history.filter((row: any) => row.kind === 'provider-delivery')).toEqual([
+      126 |       expect.objectContaining({ occurredAt: new Date(deliveredAt).toISOString() }),
+        at /home/agent/rer-consolidation/work/sd-mango-c-f68/run-mango/tests/go-live/opt-out-reasons.journeys.ts:123:47
+
+    Error Context: ../evidence/ad63dcfa2483/go-live/opt-out-reasons.journeys.t-2dce8-ed-delivery-and-count-reset/error-context.md
+
+  1 failed
+    tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset 

@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:2032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset (42.5s)
+
+
+  1) tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 5
+    + Received  + 0
+
+    @@ -7,11 +7,6 @@
+        Object {
+          "detail": "Consecutive soft bounce count: 2.",
+          "kind": "soft-bounce",
+          "occurredAt": "2026-11-06T02:25:24.000Z",
+        },
+    -   Object {
+    -     "detail": "Consecutive soft bounce count: 3.",
+    -     "kind": "soft-bounce",
+    -     "occurredAt": "2026-11-06T02:25:27.000Z",
+    -   },
+      ]
+
+      110 |     const beforeDelivery = await detail();
+      111 |     expect(beforeDelivery.history.filter((row: any) => row.kind === 'soft-bounce').map(({ kind, detail, occurredAt }: any) => ({ kind, detail, occurredAt }))
+    > 112 |       .sort((a: any, b: any) => a.occurredAt.localeCompare(b.occurredAt))).toEqual(expectedHistory);
+          |                                                                            ^
+      113 |     const earlierFacts = await bounceRows();
+      114 |     expect(earlierFacts.map(({ kind, occurred_at }) => ({ kind, occurred_at }))).toEqual(bounces.map(fact => ({ kind: 'soft-bounce', occurred_at: fact.at })));
+      115 |     const nonzeroCount = await count();
+        at /home/agent/rer-consolidation/work/sd-mango-c-f68/run-mango/tests/go-live/opt-out-reasons.journeys.ts:112:76
+
+    Error Context: ../evidence/ad63dcfa2483/go-live/opt-out-reasons.journeys.t-2dce8-ed-delivery-and-count-reset/error-context.md
+
+  1 failed
+    tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs retain visible soft-bounce history through signed delivery and count reset 

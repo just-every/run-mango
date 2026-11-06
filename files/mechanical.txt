@@ -1,0 +1,6 @@
+Candidate 49b620633c5e78e271f694af073bc87429db3e8f
+MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then check exit=0; views=node src/base/contract-docs.mjs write then check exit=0; ledger=none exit=0.
+Post-restoration exact-candidate views check exit=1: ACCEPTANCE.md: generated content differs; run contract-docs write.
+Post-commit exact-candidate lock check exit=0.
+Generated views committed: none.
+Migration changed: none.

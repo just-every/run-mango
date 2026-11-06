@@ -1,0 +1,7 @@
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.2823029Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.2823473Z node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.2845865Z shell: /usr/bin/bash -e {0}
+[CI environment scaffolding omitted; no environment values are evidence]
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.2848108Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.4380219Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T02:32:39.4470498Z ##[error]Process completed with exit code 1.
