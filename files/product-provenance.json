@@ -1,0 +1,107 @@
+{
+  "head": "aaa79109917f202654c658ef12070b2c98944bd8",
+  "product_branch": "cloud/sd-mango-c-f103",
+  "declared_repository": "just-every/run-mango",
+  "full_history": true,
+  "product_worktree_clean": true,
+  "candidate_commits": [
+    "aaa79109917f202654c658ef12070b2c98944bd8",
+    "6e9698e8751b92f99b8a616075cf07d249902b69"
+  ],
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "status_before": "partial",
+  "status_after": "partial",
+  "contract_generation_write_and_check_exit": 0,
+  "restored_views_check_exit": 1,
+  "scan": "Mac lander required; no cloud scan claimed",
+  "ci": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "aaa79109917f202654c658ef12070b2c98944bd8",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42203615600",
+      "id": 42203615600,
+      "name": "Verify",
+      "status": "queued"
+    }
+  ],
+  "ci_terminal": {
+    "conclusion": "failure",
+    "head_sha": "aaa79109917f202654c658ef12070b2c98944bd8",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42203615600",
+    "status": "completed"
+  },
+  "ci_failed_jobs": [
+    {
+      "conclusion": "success",
+      "id": 127844677295,
+      "name": "plan",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "failure",
+      "id": 127844753729,
+      "name": "Build and public command checks",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127844756055,
+      "name": "light",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "failure",
+      "id": 127844848745,
+      "name": "verify",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127844849478,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127844850290,
+      "name": "full-push-proof",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127844850762,
+      "name": "nightly-proof",
+      "status": "completed",
+      "steps": []
+    }
+  ],
+  "ci_exception": "generated-view check and its downstream coverage guard only",
+  "ready_under_generated_view_exception": true,
+  "github_command_calls": 6
+}

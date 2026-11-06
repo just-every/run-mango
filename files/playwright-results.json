@@ -1,0 +1,167 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "tests/go-live/playwright.config.js",
+      "presend-checks.journeys.ts",
+      "--reporter=list,json"
+    ],
+    "configFile": "/workspace/run-mango/tests/go-live/playwright.config.js",
+    "rootDir": "/workspace/run-mango/tests/go-live",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f103/evidence/7f523b30a6bf/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": [
+          "*.journeys.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f103/evidence/7f523b30a6bf/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/workspace/run-mango/tests/go-live",
+        "snapshotDir": "/workspace/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": "*.journeys.ts",
+        "timeout": 900000,
+        "use": {
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "headless": true,
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "presend-checks.journeys.ts",
+      "file": "presend-checks.journeys.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[BUILD-008][BUILD-012][CAMP-003] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 185414,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T10:34:12.215Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "meter-response-1440",
+                      "contentType": "application/json",
+                      "body": "eyJzdGF0dXMiOjIwMCwibWF0Y2hlc1NhdmVkQm9keSI6dHJ1ZSwicmVxdWVzdEJvZHlDaGFyYWN0ZXJzIjo1ODc0Mn0="
+                    },
+                    {
+                      "name": "followup-response-1440",
+                      "contentType": "application/json",
+                      "body": "eyJzdGF0dXMiOjQwMCwiZXJyb3IiOiJlbWFpbF90b29fbGFyZ2UiLCJkZXRhaWwiOiJFbWFpbCBpcyB0b28gbGFyZ2UuIEhUTUwgMTY4LjYgS0IgKDE3MjU5NyBieXRlcyk7IHBsYWluIHRleHQgMTUyLjYgS0IgKDE1NjI2NSBieXRlcyk7IGxpbWl0IDEwMC4wIEtCICgxMDI0MDAgYnl0ZXMpIHBlciBwYXJ0LiBMYXJnZXN0IGJsb2NrczogYm9keS9wWzUwNV06IDE0MDgwNyBieXRlczsgYm9keS9pbWdbNTA5XTogMzI3IGJ5dGVzOyBib2R5L3BbNTA4XTogMjg1IGJ5dGVzLiIsInNpemUiOnsiaHRtbEJ5dGVzIjoxNzI1OTcsInRleHRCeXRlcyI6MTU2MjY1LCJsaW1pdEJ5dGVzIjoxMDI0MDAsImxhcmdlc3RCbG9ja3MiOlt7ImxvY2F0aW9uIjoiYm9keS9wWzUwNV0iLCJieXRlcyI6MTQwODA3fSx7ImxvY2F0aW9uIjoiYm9keS9pbWdbNTA5XSIsImJ5dGVzIjozMjd9LHsibG9jYXRpb24iOiJib2R5L3BbNTA4XSIsImJ5dGVzIjoyODV9XSwiZXhjZWVkc0xpbWl0Ijp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ca99e2351285d0352a08-635327806e23f18feaa7",
+          "file": "presend-checks.journeys.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T10:34:11.565Z",
+    "duration": 186368.166,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "head": "aaa79109917f202654c658ef12070b2c98944bd8",
+  "finished_at": "2026-11-06T10:36:29.707449+00:00",
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "head": "aaa79109917f202654c658ef12070b2c98944bd8"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "pnpm",
+        "exec",
+        "rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "head": "aaa79109917f202654c658ef12070b2c98944bd8"
+    },
+    {
+      "name": "source-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "head": "aaa79109917f202654c658ef12070b2c98944bd8"
+    },
+    {
+      "name": "source-base-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "verify-base",
+        "--offline"
+      ],
+      "exit": 0,
+      "head": "aaa79109917f202654c658ef12070b2c98944bd8"
+    }
+  ]
+}

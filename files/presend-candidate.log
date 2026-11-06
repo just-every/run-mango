@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:3355) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][CAMP-003] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (3.1m)
+
+  1 passed (3.1m)
