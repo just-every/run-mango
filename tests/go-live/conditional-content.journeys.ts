@@ -4,6 +4,7 @@ import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch} from './harness';
 import {openPage} from '../support/navigation';
 
+test.use({actionTimeout:20000});
 const vipOnly='VIP early access to the seed beds.',otherwise='Join the garden club for early access.';
 const preview=async(page:Page,address:string)=>{
   const details=page.locator('details').filter({hasText:'Preview as a contact'});
@@ -41,7 +42,7 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await add('Spring is here at the market.');
     console.log('step 2');
     await add(vipOnly);
-    const conditional=page.getByRole('group',{name:'Conditional display'}).or(page.locator('fieldset').filter({hasText:'Conditional display'}));
+    const conditional=page.locator('fieldset').filter({hasText:'Conditional display'});
     await conditional.getByLabel('Property',{exact:true}).selectOption('synthetic_mango_tier');
     await conditional.getByLabel('Value',{exact:true}).fill('vip');
     await conditional.getByRole('button',{name:'Show only to this condition',exact:true}).click();
