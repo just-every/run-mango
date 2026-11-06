@@ -70,7 +70,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     await conditionalSourcesJourney(page,site,cookie,draft,vipId,regularId);
     mark('previews complete; approve and deliver');
     await approve(site,cookie,draft);
-    await site.control('/_golive/clock',{advanceMs:due.getTime()-clock.now+1000});await dispatch(site,draft.campaignId,due);
+    await site.control('/_golive/clock',{advanceMs:due.getTime()-clock.now+1000,hold:false});await dispatch(site,draft.campaignId,due);
     const sends=edge.sends.filter(send=>send.body.subject==='Synthetic conditional letter: what is growing this month');expect(sends).toHaveLength(2);
     for(const [email,shown,hidden] of [[vip,'VIP early access to the garden','Explore the garden collection'],[regular,'Explore the garden collection','VIP early access to the garden']]) {
       const send=sends.find(s=>s.to===email)!;expect(send).toBeTruthy();
