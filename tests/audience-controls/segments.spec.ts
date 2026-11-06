@@ -1,3 +1,4 @@
+import {audienceSummaryJourney} from './audience-summary-journey';
 import {contactProfileJourney} from './contact-profile-flow';
 import {test} from '@playwright/test';
 import {walk0 as section0} from "./segments.flow";
@@ -13,4 +14,9 @@ test("[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011
     await test.step('Contact history — complete acceptance',()=>contactProfileJourney({page:profilePage,request},info));
   }
   finally {await context.close();}
+});
+
+test("[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion", async ({page}, info) => {
+  test.setTimeout(240000);
+  await audienceSummaryJourney(page,info);
 });
