@@ -35,6 +35,7 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
     const cases=[
       ['GET','/api/flow-drafts',['owner','admin','manager','author','analyst']],
       ['POST','/api/flow-drafts',['owner','admin','manager','author']],
+      ['POST','/api/contacts/absent/conditions',['owner','admin','manager','author']],
       ['POST','/api/campaigns/absent/approve',['owner','admin','manager']],
       ['PUT','/api/campaigns/absent/dormancy',['owner','admin','manager']],
       ['PUT','/api/settings/audience-exclusions',['owner','admin']],

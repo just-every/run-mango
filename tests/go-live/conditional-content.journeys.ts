@@ -3,6 +3,7 @@ import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch} from './harness';
 import {openPage} from '../support/navigation';
+import {conditionalBlockContent} from '../../src/core/features/campaigns/conditional-blocks';
 
 test.use({actionTimeout:20000});
 const vipOnly='VIP early access to the seed beds.',otherwise='Join the garden club for early access.';
@@ -79,5 +80,14 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
       expect(html).toContain(shown);expect(text).toContain(shown);expect(html).not.toContain(hidden);expect(text).not.toContain(hidden);
       expect(html).not.toContain('data-mango-when');expect(html).not.toContain('data-mango-otherwise');
     }
+
+    // A custom compliance footer shown only to VIP contacts would leave every other recipient without an unsubscribe link and postal address: approval refuses it.
+    const fresh=['fresh-one@example.test','fresh-two@example.test'];
+    await confirmedContact(site,edge,cookie,fresh[0],'Fern Fresh');await confirmedContact(site,edge,cookie,fresh[1],'Finn Fresh');
+    const guarded=await draftCampaign(site,cookie,'VIP-only footer letter',fresh,new Date(due.getTime()+86400000));
+    const vipFooter=conditionalBlockContent({kind:'contact',predicate:{sourceType:'contact',field:'property',property:'synthetic_mango_tier',comparator:'eq',value:'vip'}},'<p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>');
+    await json(await site.call(`/api/campaign-revisions/${guarded.revisionId}`,{method:'PATCH',cookie,body:{emailBody:`<p>Seeds are in.</p>${vipFooter}`}}),200);
+    const refused=await json(await site.call(`/api/campaigns/${guarded.campaignId}/approve`,{method:'POST',cookie,body:{revisionId:guarded.revisionId,idempotencyKey:`approve-${guarded.revisionId}`}}),409);
+    expect(JSON.stringify(refused)).toContain('message.email-unsubscribe');expect(JSON.stringify(refused)).toContain('message.email-address');
   } finally {await site.runtime.close();await edge.close();}
 });

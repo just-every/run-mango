@@ -63,6 +63,8 @@ export function requiredPermission(method: string, path: string): Capability {
   if (/^\/api\/settings\/properties(?:\/|$)/.test(p))return 'integration.manage';
   if (/^\/api\/contacts\/[^/]+\/properties$/.test(p))return 'integration.manage';
   if (read&&/^\/api\/contacts\/[^/]+\/personalisation$/.test(p))return 'contact.unmasked';
+  // BUILD-005: which conditional blocks one contact meets is read from that contact's facts, as the personalised preview is.
+  if (verb==='POST'&&/^\/api\/contacts\/[^/]+\/conditions$/.test(p))return 'contact.unmasked';
   if (p === '/api/settings/link-hosts') return 'campaign.approve';
   if(p==='/api/editor/config')return 'provider.connect';
   if (/^\/api\/settings(?:\/|$)/.test(p)) return 'settings.manage';

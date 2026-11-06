@@ -21,6 +21,7 @@ import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-co
 import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import { invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+import { conditionalBlocks, possibleRecipientBodies } from '@/core/features/campaigns/conditional-blocks';
 import { parseStructuredRules } from './rules';
 import { prepareApprovalChecks } from './checks-preparation';
 import type { ApprovalCheck, LifecycleRepository } from './repository';
@@ -79,10 +80,15 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     const required = {subject:revision.emailSubject, 'message body':htmlToText(authoredBody(revision.emailBody)).replace(/\{\{(?:physical_address|unsubscribe_url)\}\}/g, '').replace(/Unsubscribe|[()]/g, '').trim(), 'plain-text body':revision.emailText, preheader:revision.preheader, 'sender name':revision.senderName, 'from email':revision.fromEmail, 'reply-to email':revision.replyToEmail, 'postal address':revision.physicalAddress};
     const missingContent = Object.entries(required).filter(([,value]) => !value.trim()).map(([name]) => name);
     findings.push(check('message.email-identity', emailComplete && !missingContent.length, missingContent.length ? `Add the missing ${missingContent.join(', ')} before approval.` : 'All required email content and identity fields are present.'));
-    const hasUnsubscribe = htmlPolicy.anchors.some(anchor => anchor.href === '{{unsubscribe_url}}' && anchor.label.length > 0) && revision.emailText.includes('{{unsubscribe_url}}');
-    findings.push(check('message.email-unsubscribe', hasUnsubscribe, 'HTML requires a visibly labelled managed unsubscribe link; plain text must carry the same managed URL.'));
-    const hasPhysicalAddress = revision.emailBody.includes('{{physical_address}}') && revision.emailText.includes('{{physical_address}}');
-    findings.push(check('message.email-address', hasPhysicalAddress, 'HTML and plain-text email bodies must both carry the managed physical postal address.'));
+    // BUILD-005: a conditional block may hide the footer from some recipients, so each body a recipient can receive must carry both managed items.
+    // A block whose condition Mango cannot read has no recipient version to prove, so both items count as missing.
+    const unreadable = (() => { try { conditionalBlocks(revision.emailBody); return false; } catch { return true; } })();
+    const conditional = !unreadable && conditionalBlocks(revision.emailBody).length > 0;
+    const recipientBodies = unreadable ? [{html: '', text: ''}] : possibleRecipientBodies(revision.emailBody).map(body => ({html: body, text: conditional ? htmlToText(body) : revision.emailText}));
+    const hasUnsubscribe = recipientBodies.every(({html, text}) => inspectEmailHtml(html, undefined, demoOrigin).anchors.some(anchor => anchor.href === '{{unsubscribe_url}}' && anchor.label.length > 0) && text.includes('{{unsubscribe_url}}'));
+    findings.push(check('message.email-unsubscribe', hasUnsubscribe, 'HTML requires a visibly labelled managed unsubscribe link; plain text must carry the same managed URL. With conditional blocks, every recipient\'s version must carry them.'));
+    const hasPhysicalAddress = recipientBodies.every(({html, text}) => html.includes('{{physical_address}}') && text.includes('{{physical_address}}'));
+    findings.push(check('message.email-address', hasPhysicalAddress, 'HTML and plain-text email bodies must both carry the managed physical postal address, in every recipient\'s version when blocks are conditional.'));
     const htmlDestinations = new Set(htmlPolicy.anchors.filter(anchor => anchor.href !== '{{unsubscribe_url}}').map(anchor => anchor.href.replaceAll('&amp;', '&')));
     const textDestinations = new Set([...textLinkDestinations(revision.emailText), ...links.filter(link => contactLink(link.destinationUrl) && revision.emailText.includes(`(${link.destinationUrl})`)).map(link => link.destinationUrl)]);
     const savedDestinations = new Set(links.map(link => link.destinationUrl));

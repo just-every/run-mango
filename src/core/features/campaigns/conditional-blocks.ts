@@ -43,19 +43,42 @@ export function conditionalBlocks(source:string){
   return [...seen].map(([key,condition])=>({key,condition}));
 }
 
+/** Rebuilds the body keeping each marked block `keep` accepts (unwrapped) and dropping the rest. */
+function rewriteBlocks(source:string,keep:(found:{key:string;otherwise:boolean})=>boolean){
+  const envelope=mobileEnvelope(source),fragment=parseFragment(envelope.body);
+  for(const node of [...elements(fragment)].reverse()){
+    const found=marker(node);if(!found||!node.parentNode)continue;
+    const parent=node.parentNode,index=parent.childNodes.indexOf(node);
+    if(keep(found)){for(const child of node.childNodes)child.parentNode=parent;parent.childNodes.splice(index,1,...node.childNodes);}
+    else parent.childNodes.splice(index,1);
+  }
+  return mobileDocument(serialize(fragment),envelope.style);
+}
+
 /** The body as one recipient receives it: a block whose condition holds stays, its "otherwise" block goes, and the
  * reverse. Pure over supplied outcomes; a condition with no outcome is never guessed. `force` previews one branch
  * for every condition at once; `all` keeps both blocks. */
 export function resolveConditionalBlocks(source:string,outcomes:ConditionOutcomes,force?:ConditionBranch){
   if(!conditionalBlocks(source).length)return source;
-  const envelope=mobileEnvelope(source),fragment=parseFragment(envelope.body);
-  for(const node of [...elements(fragment)].reverse()){
-    const found=marker(node);if(!found||!node.parentNode)continue;
+  return rewriteBlocks(source,found=>{
     const holds=force==='all'?!found.otherwise:force?force==='then':outcomes[found.key];
     if(holds===undefined)throw new ConditionUnavailable();
-    const parent=node.parentNode,index=parent.childNodes.indexOf(node);
-    if(holds!==found.otherwise){for(const child of node.childNodes)child.parentNode=parent;parent.childNodes.splice(index,1,...node.childNodes);}
-    else parent.childNodes.splice(index,1);
-  }
-  return mobileDocument(serialize(fragment),envelope.style);
+    return holds!==found.otherwise;
+  });
+}
+
+/** Most distinct conditions whose every combination of outcomes is resolved when a rule must hold for all recipients. */
+const enumeratedConditions=10;
+/** The bodies a recipient can receive: one per combination of condition outcomes. A rule every recipient must meet
+ * (the unsubscribe link, the postal address) holds only if it holds in each. Past the cap the one body every
+ * combination contains (all conditional blocks removed) stands for them, so a rule is never passed on a block that
+ * only some recipients see. */
+export function possibleRecipientBodies(source:string){
+  const keys=conditionalBlocks(source).map(row=>row.key);
+  if(!keys.length)return [source];
+  if(keys.length>enumeratedConditions)return [rewriteBlocks(source,()=>false)];
+  return Array.from({length:2**keys.length},(_,mask)=>{
+    const outcomes=Object.fromEntries(keys.map((key,index)=>[key,Boolean(mask>>index&1)]));
+    return resolveConditionalBlocks(source,outcomes);
+  });
 }
