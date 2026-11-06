@@ -8822,7 +8822,7 @@
       "executable": false
     },
     "tests/go-live/custom-property-types.ts": {
-      "sha256": "72d729b20cd164a0786b0e0cb6b74980491d81e6c0dc9aa8f2399f80cd14002d",
+      "sha256": "0f5e57b571441c725b6e333d390dc193d9ba5f4eba660546950f2bf1e6ef447d",
       "executable": false
     },
     "tests/go-live/declared-capability.ts": {
