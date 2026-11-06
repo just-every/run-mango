@@ -3714,7 +3714,7 @@
       "executable": false
     },
     "src/core/features/auth/response-privacy.ts": {
-      "sha256": "d6dea0f1d94309d9d4ab20507219301606fbd61eb48ed8f292b59b9433d7049b",
+      "sha256": "de5bf8160ac00ab799030daf29bd2c022c280de7dfae4ec19cd262de5d888a40",
       "executable": false
     },
     "src/core/features/auth/routes.ts": {
@@ -3818,7 +3818,7 @@
       "executable": false
     },
     "src/core/features/campaigns/audience-summary.ts": {
-      "sha256": "ab3db66da0b7d2d738f5c1a1fe493d62052f95c2cb30d45dc7d8ea7855782ef7",
+      "sha256": "f34176fb8cb4a7267c20cbf46d7117b41cda6b823b941018bd4b0f8fde72beac",
       "executable": false
     },
     "src/core/features/campaigns/authoring-audience.ts": {
@@ -4062,7 +4062,7 @@
       "executable": false
     },
     "src/core/features/campaigns/service.ts": {
-      "sha256": "04abac01a64906d22d8277a21b4094066fb53add597f3cc04b5ff5586dd73256",
+      "sha256": "cb3dcc83869a1b434a623b4d5f23b99d110dcaa6a0b07f9cbf2382d050c920bd",
       "executable": false
     },
     "src/core/features/campaigns/signal-starters.ts": {
@@ -5126,7 +5126,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/checks.ts": {
-      "sha256": "ea9acbd099c50c926269d40ce98f244e81dca09c802bfadf362d6d913b340e3d",
+      "sha256": "a99758ff9e578fb3a646acc4e24f90d30feb80ff2461d58f82a0075752067cd4",
       "executable": false
     },
     "src/core/features/lifecycle/delivery-eligibility.ts": {
@@ -8330,7 +8330,7 @@
       "executable": false
     },
     "tests/audience-controls/audience-summary-journey.ts": {
-      "sha256": "519b14b91f7061e99af45365016586ce951fc3a74488901fddfaab286a47179a",
+      "sha256": "ce24b89f25a00fb6ceebccb208646d819f8fe32e31becf12c65d3bdd28f1c280",
       "executable": false
     },
     "tests/audience-controls/contact-profile-flow.ts": {

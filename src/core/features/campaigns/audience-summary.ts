@@ -4,7 +4,6 @@ import { audienceRuleComparisons, audienceRuleFieldLabel } from './audience-rule
 type Predicate = InclusionRule['predicates'][number];
 
 function describeCondition(predicate: Predicate): string {
-  if(predicate.sourceType==='campaign')return 'Non-engaged recipients from the linked campaign at its saved cutoff';
   const comparison = audienceRuleComparisons.find(([value]) => value === predicate.comparator)![1];
   // Presentation quotes preserve the exact string contents, including whitespace.
   // Return text, not HTML; consumers must render this as a text node.
@@ -16,9 +15,10 @@ function describeCondition(predicate: Predicate): string {
   const scope=[predicate.property?`property "${predicate.property}"`:undefined,predicate.channel?`${predicate.channel.toUpperCase()} channel`:undefined,
     predicate.topicId?`topic "${predicate.topicId}"`:undefined,predicate.originZip?`origin ZIP ${predicate.originZip}`:undefined,
     predicate.field.startsWith('rfmMonetary')?`currency ${predicate.currency??'USD'}`:undefined].filter(Boolean);
-  const filterLabels:Record<string,string>={'value':'Order value','total':'Order value','total.shop.amount':'Order value','total.shop.currency':'Order currency','total.presentment.amount':'Presented order value','total.presentment.currency':'Presented order currency','financialStatus':'Order financial status','customer.location.provinceCode':'Order customer state'};
+  const filterLabels:Record<string,string>={'value':'Order value','total':'Order value','total.shop.amount':'Order value','total.shop.currency':'Order currency','total.presentment.amount':'Presented order value','total.presentment.currency':'Presented order currency','financialStatus':'Financial status','customer.location.provinceCode':'Customer state'};
   const filters=predicate.filters?.map(filter=>`${filterLabels[filter.field]??filter.field} ${audienceRuleComparisons.find(([key])=>key===filter.comparator)![1]} ${JSON.stringify(filter.value)}`).join(' and ');
-  return `${audienceRuleFieldLabel(predicate)}${scope.length?` (${scope.join(', ')})`:''} ${comparison} ${value}${lookback}${filters?` where ${filters} on the same event`:''}`;
+  const label=predicate.sourceType==='campaign'?'Saved non-engagement audience':audienceRuleFieldLabel(predicate);
+  return `${label}${scope.length?` (${scope.join(', ')})`:''} ${comparison} ${value}${lookback}${filters?` where ${filters} on the same event`:''}`;
 }
 
 function describeGroup(group:InclusionGroup):string {
