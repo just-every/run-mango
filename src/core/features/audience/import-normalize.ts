@@ -32,22 +32,31 @@ export function timestamp(value: string | undefined) {
   if (!Number.isFinite(time)) throw new Error(`Invalid timestamp: ${value}`);
   return time;
 }
+export function importColumns(input: ImportInput) {
+  return input.files.map(file=>{
+    const headers = iterateCsvRows(file.csv).next().value ?? [];
+    return {name:file.name,headers,mapping:file.preset==='mango'?{}:resolveHeaderMapping(headers,file.mapping)};
+  });
+}
 export function normalizeImport(input: ImportInput, incumbentSources:Record<string,IncumbentFile> = {}) {
+  return {rows:[...normalizedImportRows(input,incumbentSources)],columns:importColumns(input)};
+}
+export function* normalizedImportRows(input: ImportInput, incumbentSources:Record<string,IncumbentFile> = {}): Generator<NormalizedImportRow> {
   if (!Array.isArray(input.files) || !input.files.length || input.files.length > 10) throw new Error('Choose between one and ten CSV files.');
   if(new Set(input.files.map(file=>file.name)).size!==input.files.length)throw new Error('Choose distinct filenames for each CSV export.');
-  const rows: NormalizedImportRow[] = []; const columns: Array<{name:string;headers:string[];mapping:Record<string,string>}> = [];
+  let count = 0;
   if (input.files.reduce((sum, file) => sum + new TextEncoder().encode(file.csv).length, 0) > 10_000_000) throw new Error('Audience import is limited to 10 MB.');
   for (const file of input.files) {
     if (!(file.preset in presetStatuses)) throw new Error(`Unknown CSV preset: ${file.preset}`);
     const headers = iterateCsvRows(file.csv).next().value ?? [];
     const mapping = file.preset === 'mango' ? {} : resolveHeaderMapping(headers, file.mapping);
-    columns.push({name:file.name,headers,mapping});
+    const mappingEntries=Object.entries(mapping);
+    const propertyColumns=Object.fromEntries(mappingEntries.filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]));
     let index = 0;
     for (const original of iterateCsvRecords(file.csv)) {
       const values = { ...original };
-      for (const [field, header] of Object.entries(mapping)) if(!field.startsWith('property:')||header)values[field] = original[header.trim().toLowerCase()] ?? '';
+      for (const [field, header] of mappingEntries) if(!field.startsWith('property:')||header)values[field] = original[header.trim().toLowerCase()] ?? '';
       let sourceRow:ReturnType<typeof csvSourceRow>|undefined;
-      const propertyColumns=Object.fromEntries(Object.entries(mapping).filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]));
       const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values,...(Object.keys(propertyColumns).length?{propertyColumns}:{})};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
@@ -120,12 +129,11 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
           }
         }
       } catch (error) { row.reason = error instanceof Error ? error.message : 'Invalid CSV row.'; }
-      rows.push(row);
       index++;
-      if (rows.length > maxContactImportRows) throw new Error(`Audience import is limited to ${maxContactImportRows} rows per review.`);
+      if (++count > maxContactImportRows) throw new Error(`Audience import is limited to ${maxContactImportRows} rows per review.`);
+      yield row;
     }
   }
-  return { rows, columns };
 }
 export const restrictiveRank: Record<string,number> = {subscribed:0,pending:1,'non-subscribed':2,unsubscribed:3,suppressed:4};
 

@@ -1,3 +1,5 @@
+import {isPreparedManifest} from './import-preparation-types';
+import {loadPlans} from '@/vendor/base/import-kit/src/d1/plans';
 import {canonicalJson,sha256 as digest,type D1Database} from '@/vendor/base/import-kit/src/d1/index';
 import type {AudienceSnapshot,NativeRow} from './import-types';
 import {readAudiencePlan} from './import-plans';
@@ -49,20 +51,22 @@ export async function restoredValues(db:D1Database,destination:string,changed:Ar
  const ids=JSON.stringify(candidates.map(item=>item.id)),revisions=JSON.stringify(candidates.map(item=>item.revision));
  const written=(await db.prepare("SELECT target_id,json_extract(record_json,'$.before.revision') AS revision,json_extract(record_json,'$.before.value') AS value FROM ik_provenance WHERE reversed=1 AND destination=? AND target_kind='contact' AND target_id IN (SELECT value FROM json_each(?)) AND json_extract(record_json,'$.before.revision') IN (SELECT value FROM json_each(?))")
   .bind(destination,ids,revisions).all<{target_id:string;revision:string;value:string}>()).results.map(row=>({id:row.target_id,revision:row.revision,value:()=>Promise.resolve(JSON.parse(row.value) as AudienceSnapshot)}));
- const applied=(await db.prepare(`SELECT p.target_id,p.effect_ordinal,json_extract(p.record_json,'$.appliedRevision') AS revision,json_extract(p.record_json,'$.sourceId') AS source_id,
+ const applied=(await db.prepare(`SELECT p.job_id,p.target_id,p.effect_ordinal,json_extract(p.record_json,'$.appliedRevision') AS revision,json_extract(p.record_json,'$.sourceId') AS source_id,
    COALESCE((SELECT s.operation_key FROM ik_d1_stream_pages sp JOIN ik_d1_streams s ON s.id=sp.stream_id WHERE sp.job_id=p.job_id),j.operation_key) AS fingerprint
    FROM ik_provenance p JOIN ik_jobs j ON j.id=p.job_id WHERE p.reversed=0 AND p.destination=? AND p.target_kind='contact' AND p.target_id IN (SELECT value FROM json_each(?)) AND json_extract(p.record_json,'$.appliedRevision') IN (SELECT value FROM json_each(?))`)
-  .bind(destination,ids,revisions).all<{target_id:string;effect_ordinal:number;revision:string;source_id:string;fingerprint:string}>()).results;
+  .bind(destination,ids,revisions).all<{job_id:string;target_id:string;effect_ordinal:number;revision:string;source_id:string;fingerprint:string}>()).results;
  const plans=new Map<string,Promise<Map<string,AudienceSnapshot[]>>>();
- const plan=(fingerprint:string)=>{
-  if(!plans.has(fingerprint))plans.set(fingerprint,(async()=>{
+ const plan=(fingerprint:string,job:string)=>{
+  const cacheKey=fingerprint+':'+job;
+  if(!plans.has(cacheKey))plans.set(cacheKey,(async()=>{
    const stored=await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(fingerprint).first<{fingerprint:string;plan_json:string}>();
-   const entries=stored?(await readAudiencePlan(db as unknown as Parameters<typeof readAudiencePlan>[0],stored)).entries:[];
+   const native=stored&&isPreparedManifest(stored.plan_json)?await db.prepare('SELECT id,plan_json FROM ik_jobs WHERE id=?').bind(job).first<{id:string;plan_json:string}>():null;
+   const entries=native?(await loadPlans([native],db)).get(job)!.entries:stored?(await readAudiencePlan(db as unknown as Parameters<typeof readAudiencePlan>[0],stored)).entries:[];
    return new Map(entries.map(entry=>[entry.source.sourceId,entry.effects.map(effect=>effect.value as unknown as AudienceSnapshot)]));
   })());
-  return plans.get(fingerprint)!;
+  return plans.get(cacheKey)!;
  };
- const sources=[...written,...applied.map(row=>({id:row.target_id,revision:row.revision,value:async()=>(await plan(row.fingerprint)).get(row.source_id)?.[row.effect_ordinal]}))];
+ const sources=[...written,...applied.map(row=>({id:row.target_id,revision:row.revision,value:async()=>(await plan(row.fingerprint,row.job_id)).get(row.source_id)?.[row.effect_ordinal]}))];
  for(const item of candidates){
   for(const source of sources.filter(source=>source.id===item.id&&source.revision===item.revision)){
    const value=await source.value();

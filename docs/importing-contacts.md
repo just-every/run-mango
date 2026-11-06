@@ -13,15 +13,17 @@ There are no named importers for other email services. Mango does not claim comp
 
 ## Limits and file rules
 
-Up to 10 files, 10 MB in total, and 50,000 rows per review. Files must end in `.csv`, have a header row with no empty or duplicate headers, and every row must have as many fields as the header. Give each file a different name.
+Up to 10 files and 10 MB in total. Generic CSV reviews hold up to 250,000 rows. Named-source exports, exports with additional source objects and lossless Mango restoration retain the 50,000-row ceiling. Files must end in `.csv`, have a header row with no empty or duplicate headers, and every row must have as many fields as the header. Give each file a different name.
 
 ## Step by step
 
 1. **Select files and presets.** Choose each file and its preset.
-2. **Field mapping.** Map your columns to **Email** (required), **Email marketing status**, **First Name**, **Last Name**, **Occurred At** (the original opt-in time), **Capture Ip**, **Confirmed At** and **Confirmation Ip**. Mango suggests matching headers, ignoring case, spaces and underscores. It recognizes `email` or `email address`; `status`, `email_status`, `email marketing`, `marketing status` or `email marketing status`; first and last names; and the original `optin_time`, `optin_ip`, `confirm_time` and `confirm_ip` fields (or the corresponding Mango field names). Missing fields stay unmapped, and your explicit choices are retained. Record creation dates are never suggested as consent.
+2. **Field mapping.** Map your columns to **Email** or **Phone** (at least one required), **Email marketing status**, **First Name**, **Last Name**, **Occurred At** (the original opt-in time), **Capture Ip**, **Confirmed At** and **Confirmation Ip**. Mango suggests matching headers, ignoring case, spaces and underscores. It recognizes `email` or `email address`; `status`, `email_status`, `email marketing`, `marketing status` or `email marketing status`; first and last names; and the original `optin_time`, `optin_ip`, `confirm_time` and `confirm_ip` fields (or the corresponding Mango field names). Missing fields stay unmapped, and your explicit choices are retained. Record creation dates are never suggested as consent.
 3. **Consent evidence.** Fill in **Brand or legal sender**, **Disclosed frequency**, **Destination jurisdiction**, **Consent version** and **Original consent text**, and choose **Message category** from this installation’s drafts and consent records (`newsletter` is always available for the hosted signup form). To add a category, save it in a draft first. These details must describe what people actually saw when they opted in.
 4. Press **Preview import**. Nothing is imported yet. You see counts for created, updated, rejected, unsubscribed and suppressed rows, plus a row-by-row table with warnings.
 5. Press **Start import**.
+
+Large generic reviews prepare in bounded steps and retain the original files. No contacts change during preparation. Use **Previous rows** and **Next rows** to inspect the complete reviewed set. Start and Resume keep the same reviewed job; the reconciliation download includes every row. An erasure invalidates a large review and its continuation, and an affected upload cannot be replayed to restore the erased person. Choose a fresh source export before reviewing again.
 
 ## How consent is kept
 

@@ -1,3 +1,4 @@
+import {assertPreparedCsvCurrent,isPreparedManifest,preparedCsvReport} from './import-preparation';
 import {propertyDefinitions} from './properties/read';
 import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
@@ -49,7 +50,7 @@ export function createAudienceImportService(platform: Platform) {
   // An archive's contacts are continued and undone with the archive, never as a separate CSV import.
   const finish=async<T extends {id:string;state:string}>(job:T,context:D1ImportContext,plan?:ImportPlan)=>{
     if(!['completed','undone','rolled_back'].includes(job.state))return job;
-    if(!plan){const key=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(job.id,job.id).first<{operation_key:string}>();const stored=key?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(key.operation_key).first<{fingerprint:string;plan_json:string}>():null;if(stored&&JSON.parse(stored.plan_json).hasSourceExtras===true)plan=await readAudiencePlan(db,stored);}
+    if(!plan){const key=await db.prepare('SELECT operation_key FROM ik_d1_streams WHERE id=? UNION ALL SELECT operation_key FROM ik_jobs WHERE id=?').bind(job.id,job.id).first<{operation_key:string}>();const stored=key?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(key.operation_key).first<{fingerprint:string;plan_json:string}>():null;if(stored&&JSON.parse(stored.plan_json).hasSourceExtras===true)plan=await readAudiencePlan(db,stored);}
     if(plan){if(job.state==='completed')await applySourceExtras(platform,plan,context.authorization.principalId);else await undoSourceExtras(platform,plan);}
     return job;
   };
@@ -60,11 +61,11 @@ export function createAudienceImportService(platform: Platform) {
      * contact changed since, keeps everything Mango holds; only an unsubscribed or suppressed
      * row still applies its opt-out to it. archive: a contact that existed before an archive
      * move-in keeps its name (the exported name stays in the import observation). */
-    async review(input: ImportInput, context: D1ImportContext, previewDb: D1Database = db, options: {archive?: boolean;incumbentSources?:Record<string,IncumbentFile>} = {}) {
+    async review(input: ImportInput, context: D1ImportContext, previewDb: D1Database = db, options: {archive?: boolean;incumbentSources?:Record<string,IncumbentFile>; normalized?:ReturnType<typeof normalizeImport>; artifacts?:SourceBundle['artifacts']} = {}) {
       const csvProof=options.incumbentSources?[]:await csvAttestations(input,previewDb);
       const csvSources=Object.fromEntries(input.files.flatMap(file=>{const id=sourceIdentity(file.preset,file.name),record=csvProof.find(r=>r.sourceKey===id.sourceKey);return record?[[file.name,{...record,exportCreatedAt:record.exportCreatedAt}]]:[];}));
       const incumbentSources=options.incumbentSources??csvSources;
-      const normalized = normalizeImport(input,incumbentSources);
+      const normalized = options.normalized ?? normalizeImport(input,incumbentSources);
       if(input.sourceExtras&&normalized.rows.length)normalized.rows[0].sourceExtras=input.sourceExtras;
       for(const proof of csvProof){const file=input.files.find(f=>sourceIdentity(f.preset,f.name).sourceKey===proof.sourceKey);const row=normalized.rows.find(r=>r.file===file?.name);if(row)row.sourceAttestation=proof;}
       const previewContext = {...context,storage:{...context.storage,database:previewDb}};
@@ -72,7 +73,7 @@ export function createAudienceImportService(platform: Platform) {
       // One native effect per canonical identity, across every file. All restrictive
       // rows are handled before any sendable row, including between resume calls.
       const winners = new Map<string,typeof normalized.rows[number]>();
-      for (const row of normalized.rows.filter(row=>!row.reason&&!row.optOuts)) {
+      for (const row of normalized.rows.filter(row=>!row.reason&&!row.optOuts&&!row.skipped)) {
         if(row.ledger){try{validateSnapshot(row.ledger);}catch(error){row.reason=error instanceof Error?error.message:'Invalid audience ledger.';continue;}}
         const key=row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164);
         const previous = winners.get(key);
@@ -87,7 +88,7 @@ export function createAudienceImportService(platform: Platform) {
       const phoneRows=new Map<string,typeof normalized.rows[number]>();
       for(const row of winners.values())if(row.phone){const other=phoneRows.get(row.phone);if(other&&other.email!==row.email){other.reason=row.reason='Phone appears with different email identities. Resolve the identities explicitly.';}else phoneRows.set(row.phone,row);}
       normalized.rows.sort((a,b)=>restrictiveRank[b.status]-restrictiveRank[a.status]);
-      const artifacts = await Promise.all(input.files.map(async file=>({name:file.name,sha256:await sha256(file.csv),size:new TextEncoder().encode(file.csv).length,original:{status:'available' as const,base64:Buffer.from(file.csv,'utf8').toString('base64')}})));
+      const artifacts = options.artifacts ?? await Promise.all(input.files.map(async file=>({name:file.name,sha256:await sha256(file.csv),size:new TextEncoder().encode(file.csv).length,original:{status:'available' as const,base64:Buffer.from(file.csv,'utf8').toString('base64')}})));
       const state=await readImportState(previewDb,[...winners.values()],platform.config.contactHashSalt,context.destination);
       for(const source of Object.values(incumbentSources))if(source.accepted)state.activeAttestations.add(source.id);
       const held=await heldContacts(previewDb,context.destination,state);
@@ -104,7 +105,7 @@ export function createAudienceImportService(platform: Platform) {
         const sourceId = `${input.origin?`${input.origin}:`:''}${artifacts.find(artifact=>artifact.name===row.file)!.sha256}:${index}:${row.file}:${row.row}`;
         // An opt-out-only line takes no contact effect: the import writes it when it starts (import-start).
         if (row.optOuts) row.warnings.push('An opt-out for an address no contact holds: it is restored before any contact is written and stays when the import is undone.');
-        else if (!row.reason && winners.get(row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
+        else if (!row.reason && !row.skipped && winners.get(row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
           const destination=row.email||row.phone;
           const contactId=state.byIdentity.get(destination) ?? state.byIdentity.get(row.phone) ?? null, holder=contactId?held.get(contactId):plannedIdentities.has(destination)?planned:undefined;
           const emailOwner=state.byIdentity.get(row.email),phoneOwner=state.byIdentity.get(row.phone);
@@ -179,9 +180,10 @@ export function createAudienceImportService(platform: Platform) {
     report:async(id:string,input:D1ImportContext)=>{
       const context=await sharedAudienceImport(id,input);
       if(await isAudienceStream(id,context))await audienceStreamActions.read(id,context);else await readD1ImportJob(id,context);
-      const job=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(id,id).first<{operation_key:string}>();
+      const job=await db.prepare('SELECT operation_key FROM ik_d1_streams WHERE id=? UNION ALL SELECT operation_key FROM ik_jobs WHERE id=?').bind(id,id).first<{operation_key:string}>();
       const stored=job?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(job.operation_key).first<{fingerprint:string;plan_json:string}>():null;
       if(!stored)throw new Error('The reviewed source is no longer held.');
+      if(isPreparedManifest(stored.plan_json))return preparedCsvReport(id,stored.plan_json,context);
       const plan = await readAudiencePlan(db,stored);
       return csvReconciliation(plan)+'\n'+await apiImageReport(db,'csv:'+plan.fingerprint);
     },
@@ -190,6 +192,7 @@ export function createAudienceImportService(platform: Platform) {
       return await isAudienceStream(id,context)?audienceStreamActions.read(id,context):readD1ImportJob(id,context);
     },
     resume:async(id:string,context:D1ImportContext)=>{
+      await assertPreparedCsvCurrent(id,context);
       context=await sharedAudienceImport(id,context);
       await notArchive(id);
       if(await abandoning(db,id))return abandonImport(db,platform.config.contactHashSalt,id,context);

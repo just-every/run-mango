@@ -807,7 +807,7 @@
     "status": "estimated-until-load-tested",
     "maxContacts": 100000,
     "maxStoredCommerceEvents": 5000000,
-    "maxContactImportRows": 50000,
+    "maxContactImportRows": 250000,
     "maxCampaignSteps": 10,
     "maxEligibleContactsPerCampaign": 100000,
     "maxCampaignAssetBytes": 10485760,

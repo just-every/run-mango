@@ -170,10 +170,15 @@ export function AudienceImportPage() {
     setNotice(undefined);
     try {
       const payload = await readPayload();
-      const response = await requestJson<ImportPreview & ImportApiError>('/api/audience/import-preview', {
+      type ReviewResponse=ImportPreview & ImportApiError & {state?:string;records?:number;total?:number};
+      let response = await requestJson<ReviewResponse>('/api/audience/import-preview', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
+      while(response.status<300&&['preparing','verifying'].includes(response.data.state??'')){
+        setNotice(`Reviewing CSV: ${response.data.records??0} of ${response.data.total??0} rows prepared.`);
+        response=await requestJson<ReviewResponse>('/api/audience/import-preview',{method:'POST',body:JSON.stringify(payload)});
+      }
       if (response.status >= 300 || !response.data.fingerprint) {
         setPreviewIsCurrent(false);
         setError(requestError(response.data, 'The CSV could not be reviewed. Correct the source or mapping and try again.'));
@@ -200,10 +205,15 @@ export function AudienceImportPage() {
     setError(undefined);
     setNotice(undefined);
     try {
-      const response = await requestJson<{ job?: ImportJob } & ImportApiError>('/api/audience/imports', {
+      type StartResponse={job?:ImportJob;preparing?:boolean;checkpoint?:number;total?:number}&ImportApiError;
+      let response = await requestJson<StartResponse>('/api/audience/imports', {
         method: 'POST',
         body: JSON.stringify({ fingerprint: preview.fingerprint }),
       });
+      while(ownsOperation(operation)&&response.status<300&&response.data.preparing){
+        setNotice(`Preparing import: ${response.data.checkpoint} of ${response.data.total} pages checked.`);
+        response=await requestJson<StartResponse>('/api/audience/imports',{method:'POST',body:JSON.stringify({fingerprint:preview.fingerprint})});
+      }
       if (!ownsOperation(operation)) return;
       if (response.status >= 300 || !response.data.job) {
         if (response.status === 409) setPreviewIsCurrent(false);

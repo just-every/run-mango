@@ -1,3 +1,4 @@
+import {isPreparedManifest} from '../import-preparation-types';
 import {readAudiencePlan} from '../import-plans';
 import {containsLiteral} from './literals';
 import {identifierNeedles,splitFreeText} from './needles';
@@ -9,6 +10,11 @@ import {personalSourceLiterals} from './source-literals';
 export async function discoverPlan(db:D1Database,scope:ErasureScope,cursor:number){
  const row=await db.prepare('SELECT rowid AS cursor,fingerprint,plan_json FROM audience_import_plans WHERE rowid>? ORDER BY rowid LIMIT 1').bind(cursor).first<{cursor:number;fingerprint:string;plan_json:string}>();
  if(!row)return {stage:-1,cursor:0};
+ if(isPreparedManifest(row.plan_json)){
+  const chunks=(await db.prepare('SELECT content FROM audience_import_plan_chunks WHERE fingerprint=? ORDER BY ordinal').bind(row.fingerprint).all<{content:string}>()).results;
+  if(!scope.plans.includes(row.fingerprint)&&containsLiteral([row.plan_json,chunks.map(chunk=>chunk.content).join('')],identifierNeedles(scope)))scope.plans.push(row.fingerprint);
+  return {stage:-2,cursor:row.cursor};
+ }
  const plan=await readAudiencePlan(db,row);
  for(const entry of plan.entries){
   const source=entry.source.payload as Record<string,unknown>,values=source.values as Record<string,unknown>|undefined;

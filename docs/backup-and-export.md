@@ -33,7 +33,7 @@ Restoration has rules:
 - A row restores only into an installation where that address does not already exist. If the address is there, the row is rejected with "Lossless Mango restoration requires an empty destination for each imported identity."
 - A row without a valid `ledger_json` column is rejected.
 - Opt-outs and suppressions already recorded on the receiving installation still apply, and restoring never reverses them.
-- The usual import limits apply: up to 50,000 rows per review and 10 MB in total.
+- Lossless Mango restoration accepts up to 50,000 rows per review and 10 MB in total. Generic CSV reviews have a separate 250,000-row capacity.
 
 ## What the contacts CSV does not include
 

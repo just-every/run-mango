@@ -1,3 +1,4 @@
+import {preparedCsvRows,steppedReviewRequired,prepareCsv,startPreparedCsv,isPreparedManifest} from './import-preparation';
 import {propertyDefinitions} from './properties/read';
 import {readSourceExport} from '../move-in/source-api';
 import {sourceExtrasSchema} from '../move-in/source-extras';
@@ -61,17 +62,37 @@ export function createAudienceImportRoutes(platform: Platform) {
       throw error;
     }
   });
+  routes.get('/audience/import-preparations/:id/rows',async context=>{
+    const offset=z.coerce.number().int().min(0).max(250000).safeParse(context.req.query('offset')??0);
+    if(!offset.success)return context.json({error:'invalid_row_offset'},400);
+    try{return context.json(await preparedCsvRows(context.req.param('id'),offset.data,await audienceImportContext(platform,context.get('operator').id,context.req.raw)));}
+    catch{return context.json({error:'review_unavailable'},409);}
+  });
+  routes.post('/audience/import-preparations',async context=>{
+    const parsed=inputSchema.safeParse(await context.req.json().catch(()=>null));
+    if(!parsed.success)return context.json({error:'invalid_import'},400);
+    try{return context.json(await prepareCsv(parsed.data,await audienceImportContext(platform,context.get('operator').id,context.req.raw),service.review));}
+    catch(error){return context.json({error:'import_preview_failed',detail:error instanceof Error?error.message:'Preview failed.'},400);}
+  });
   routes.post('/audience/import-preview',async context=>{
     const parsed=inputSchema.safeParse(await context.req.json().catch(()=>null));
     if(!parsed.success) return context.json({error:'invalid_import',detail:'Choose CSV files and their export presets.'},400);
-    try{return context.json(await service.preview(parsed.data,await audienceImportContext(platform,context.get('operator').id,context.req.raw)));}
+    try{
+      const authority=await audienceImportContext(platform,context.get('operator').id,context.req.raw);
+      return context.json(steppedReviewRequired(parsed.data)?await prepareCsv(parsed.data,authority,service.review):await service.preview(parsed.data,authority));
+    }
     catch(error){return context.json({error:'import_preview_failed',detail:error instanceof Error?error.message:'Preview failed.'},400);}
   });
   routes.post('/audience/imports',async context=>{
     const body=await context.req.json().catch(()=>null);
     if(typeof body?.fingerprint!=='string')return context.json({error:'review_required'},400);
     try{
-      const job=await service.create(body.fingerprint,await audienceImportContext(platform,context.get('operator').id,context.req.raw),{operator:context.get('operator'),request:context.req.raw});
+      const authority=await audienceImportContext(platform,context.get('operator').id,context.req.raw);
+      const stored=await platform.database.$client.prepare('SELECT plan_json FROM audience_import_plans WHERE fingerprint=? AND principal_id=?').bind(body.fingerprint,authority.authorization.principalId).first<{plan_json:string}>();
+      if(stored&&isPreparedManifest(stored.plan_json)){
+        return context.json(await startPreparedCsv(body.fingerprint,stored.plan_json,authority,platform.config.contactHashSalt));
+      }
+      const job=await service.create(body.fingerprint,authority,{operator:context.get('operator'),request:context.req.raw});
       await recordActivity(platform.database.$client,{key:`import-applied:${job.id}`,action:'import.applied',entityType:'audience-import',entityId:job.id,actorId:context.get('operator').id,detail:{state:job.state}});
       return context.json({job});
     }

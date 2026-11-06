@@ -29,6 +29,7 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
     const revisions=(await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results;
     const recipients=(await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results;
     expect(recipients).toHaveLength(24);
+    const forecasts=(await runtime.db.prepare('SELECT * FROM proposal_forecasts ORDER BY id').all()).results;
     const benchmark='Synthetic Mango foreign store reports a 42 percent recovery rate and USD 900 expected revenue. This forecast uses that other-store benchmark.';
     const attempts:Array<{field:string;alter:(output:GeneratedProposalWire)=>void}>=[
       {field:'summary',alter:output=>{output.summary.text+=' '+benchmark;}},
@@ -38,6 +39,10 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
         // Deliberately violate the provider wire contract at the network edge.
         Object.assign(output,{forecast:{status:'available',metric:'expected-revenue',valueMinor:90000,currency:'USD',
           method:benchmark,campaignIds:['synthetic-mango-foreign-1'],sourceEventIds:['synthetic-mango-foreign-2'],sampleSize:100}});
+      }},
+      {field:'provider benchmark with owned history identifiers',alter:output=>{
+        // Owned identifiers do not authorize a provider to supply a benchmark.
+        Object.assign(output,{forecast:{...expected,method:benchmark}});
       }},
     ];
     for(const attempt of attempts) {
@@ -76,6 +81,7 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
         expect(control.status).toBe(200);
         expect(control.body.forecast).toEqual(original.forecast);
         expect(control.body.forecast).toMatchObject(expected);
+        expect((await runtime.db.prepare('SELECT * FROM proposal_forecasts ORDER BY id').all()).results).toEqual(forecasts);
         expect((await runtime.db.prepare('SELECT * FROM campaigns ORDER BY id').all()).results).toEqual(campaigns);
         expect((await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results).toEqual(revisions);
         expect((await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results).toEqual(recipients);
@@ -85,6 +91,25 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
       }
       console.log(`PROBE PROP-008 acceptance-2 ${attempt.field}: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority`);
     }
+    runtime.controls.alter=undefined;
+    const recovered=await generated(runtime);
+    for(let read=0;read<2;read++) {
+      const control=await runtime.call(`/api/proposals/${recovered.proposalId}`);
+      expect(control.status).toBe(200);
+      expect(control.body.forecast).toMatchObject(expected);
+      expect(control.body.forecast.recipientStepIds).toEqual(original.forecast.recipientStepIds);
+      expect(control.body.proposal).toMatchObject({state:'proposed',campaignId:recovered.campaignId});
+      expect(control.body.composition.revision.state).toBe('draft');
+      const desk=await runtime.call('/api/decision-desk');
+      expect(desk.status).toBe(200);
+      expect(desk.body.proposals.map((entry:any)=>entry.proposal.id).sort()).toEqual([own.proposalId,recovered.proposalId].sort());
+      expect(desk.body.proposals.find((entry:any)=>entry.proposal.id===own.proposalId).forecast).toEqual(original.forecast);
+      expect((await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results).toEqual(recipients);
+      expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM campaign_approval_requests').first()).toEqual({count:0});
+      expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM step_dispatches').first()).toEqual({count:0});
+      expect(runtime.jobs).toEqual([]);
+    }
+    console.log('PROBE PROP-008 recovery control: valid native generation after all benchmark refusals -> HTTP 201, independently expected owned revenue forecast, draft only, original forecast unchanged, no recipient or dispatch authority');
     console.log('PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch');
   } finally {await runtime.close();}
 });

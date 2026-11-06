@@ -99,7 +99,7 @@ One archive is read inside a single Worker request (128 MB memory). These limits
 | Engagement rows per archive | 10,000 | A larger granular-activity export is refused visibly before import; request a shorter time frame. The existing 12 MB retained-text and ZIP limits also apply. |
 | One expanded entry / all entries | 64 MB / 160 MB | Entries stream through inflate and hashing and are never written to disk; only text kept for review stays in memory. 124 MB of expanded reports peaked at about 115 MB of heap and buffers (70 MB of process growth), down from 193 MB before streaming. |
 | Expanded text read for review | 12 MB | Audience CSVs, the emails CSV, content and templates are held as text. The worst case measured, 5,000 rows plus 600 HTML files and 11.25 MB of text, peaked at about 75 MB. |
-| Audience rows | 5,000 per archive | Each reviewed row holds a snapshot: 5,000 rows peaked at about 81 MB, and 10,000 ran out of memory under a 150 MB heap. A larger audience imports as individual CSV files, up to 50,000 rows per review. |
+| Audience rows | 5,000 per archive | Each reviewed row holds a snapshot: 5,000 rows peaked at about 81 MB, and 10,000 ran out of memory under a 150 MB heap. A larger audience imports as individual generic CSV files, up to 250,000 rows per review within the 10 MB upload limit. |
 | Compression ratio | 100 to 1 for entries over 1 MB | Refuses expansion bombs before inflating them. |
 | History records / library templates | 500 / 100 per archive | Content is written in pages of 20 after the import starts; a larger export is refused with a request to export a shorter time frame. |
 

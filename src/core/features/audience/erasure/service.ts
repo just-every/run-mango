@@ -91,6 +91,10 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         // These blocks leave an export by the address's portable identity only (import-opt-out-lines).
         statements.push(recordPortableHash(db,hash,destination));
       }
+      // Stepped CSV custody retires the upload independently of the operator,
+      // so removing its body cannot turn a replay into a new review.
+      const csvReviews=(await db.prepare('SELECT plan_json FROM audience_import_plans WHERE fingerprint IN (SELECT value FROM json_each(?))').bind(JSON.stringify(scope.plans)).all<{plan_json:string}>()).results;
+      for(const stored of csvReviews){const review=JSON.parse(stored.plan_json);if(review.format==='mango-csv-preparation-v1'&&typeof review.inputHash==='string')statements.push(db.prepare(`INSERT INTO ik_d1_erased_sources(destination,identity) SELECT 'mango',? WHERE ${admitted} ON CONFLICT DO NOTHING`).bind(await sha256('mango-csv-review:'+review.inputHash),reference));}
       // Capture staged blob ownership before invalidating transfer manifests.
       statements.push(db.prepare(`INSERT INTO audience_erasure_blobs SELECT ?,o.bucket,o.key FROM rer_portability_owned o JOIN rer_portability_jobs j ON j.id=o.job WHERE j.phase<>'complete' AND ${admitted}`).bind(reference,reference));
       statements.push(db.prepare(`UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?)) AND ${admitted}`).bind(JSON.stringify(scope.jobs),reference));

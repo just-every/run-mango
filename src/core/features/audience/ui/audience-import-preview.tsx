@@ -1,3 +1,4 @@
+import {requestJson} from '@/core/app/client/lib/api';
 import { useEffect, useState } from 'react';
 
 import type { ImportPreview } from './audience-import-types';
@@ -32,8 +33,20 @@ const reviewedFields = [
 
 export function AudienceImportPreview({ preview, isCurrent }: { preview: ImportPreview; isCurrent: boolean }) {
   const [page, setPage] = useState(0);
-  const pageCount = Math.max(1, Math.ceil(preview.rows.length / pageSize));
-  const visibleRows = preview.rows.slice(page * pageSize, (page + 1) * pageSize);
+  const totalRows=preview.preparationId?preview.counts.input??0:preview.rows.length;
+  const [remoteRows,setRemoteRows]=useState(preview.rows.slice(0,pageSize)),[pageError,setPageError]=useState(''),[loading,setLoading]=useState(false);
+  const pageCount = Math.max(1, Math.ceil(totalRows / pageSize));
+  const visibleRows = preview.preparationId?remoteRows:preview.rows.slice(page * pageSize, (page + 1) * pageSize);
+  useEffect(()=>{
+    if(!preview.preparationId)return;
+    let active=true;setLoading(true);setPageError('');
+    void requestJson<{rows:ImportPreview['rows']}>(`/api/audience/import-preparations/${preview.preparationId}/rows?offset=${page*pageSize}`).then(response=>{
+      if(!active)return;
+      if(response.status>=300){setRemoteRows([]);setPageError('This review page is unavailable. Review the CSV again.');}
+      else setRemoteRows(response.data.rows);
+    }).catch(()=>{if(active){setRemoteRows([]);setPageError('The review page could not be loaded.');}}).finally(()=>{if(active)setLoading(false);});
+    return()=>{active=false;};
+  },[preview.preparationId,page]);
 
   useEffect(() => setPage(0), [preview.fingerprint]);
 
@@ -111,15 +124,16 @@ export function AudienceImportPreview({ preview, isCurrent }: { preview: ImportP
             </tbody>
           </table>
         </div>
+        {pageError?<p role="alert">{pageError}</p>:null}
         <div className="audience-import-pagination">
           <p className="quiet-caption" aria-live="polite">
-            {preview.rows.length ? `Showing rows ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, preview.rows.length)} of ${count(preview.rows.length)}.` : 'The preview contains no rows.'}
+            {totalRows ? `Showing rows ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, totalRows)} of ${count(totalRows)}.` : 'The preview contains no rows.'}
           </p>
           {pageCount > 1 ? (
             <div>
-              <button className="secondary-action" type="button" onClick={() => setPage((current) => current - 1)} disabled={page === 0}>Previous rows</button>
+              <button className="secondary-action" type="button" onClick={() => setPage((current) => current - 1)} disabled={loading||page === 0}>Previous rows</button>
               <span>Page {page + 1} of {pageCount}</span>
-              <button className="secondary-action" type="button" onClick={() => setPage((current) => current + 1)} disabled={page + 1 >= pageCount}>Next rows</button>
+              <button className="secondary-action" type="button" onClick={() => setPage((current) => current + 1)} disabled={loading||page + 1 >= pageCount}>Next rows</button>
             </div>
           ) : null}
         </div>
