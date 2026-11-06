@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:2157) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact across sign-out (1.5m)
+
+
+  1) tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact across sign-out 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  getByLabel('Email body', { exact: true })
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" getByLabel('Email body', { exact: true }) with timeout 5000ms
+      - waiting for getByLabel('Email body', { exact: true })
+        14 × locator resolved to <div role="textbox" aria-required="true" aria-disabled="false" aria-multiline="true" contenteditable="true" aria-label="Email body" id="field-_R_9jj9gbb6_" class="rich-email-editor">…</div>
+           - unexpected value "inactive"
+
+
+       at campaign-authoring/design-generation.flow.ts:119
+
+      117 |     await page.keyboard.type(' still typing');
+      118 |     await expect(apply).toHaveCount(0);
+    > 119 |     await expect(body).toBeFocused();
+          |                        ^
+      120 |     expect(await body.evaluate(element => element instanceof HTMLTextAreaElement ? element.value : element.textContent)).toContain('orchard still typing');
+      121 |     await ready.click();
+      122 |     const build = async () => {
+        at walk1 (/home/agent/rer-consolidation/work/sd-mango-c-f92/run-mango/tests/campaign-authoring/design-generation.flow.ts:119:24)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f92/run-mango/tests/campaign-authoring/design-generation.spec.ts:10:10
+
+    Error Context: ../evidence/313334bfc0af/main/campaign-authoring-design--bccd3--byte-exact-across-sign-out/error-context.md
+
+  1 failed
+    tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact across sign-out 

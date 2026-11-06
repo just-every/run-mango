@@ -1,0 +1,37 @@
+[
+  {
+    "file": "src/core/app/app.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "e3b2bd81f3681b46e18eaeeca05af2dc92c22f2b"
+  },
+  {
+    "file": "src/core/features/auth/permissions.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "b74d1e48684aabf8c9239a018b484faa4d040ca7"
+  },
+  {
+    "file": "src/core/features/design-generation/routes.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "1cad465c06a5d4d80e022eedb3f8c9cbd368c578"
+  },
+  {
+    "file": "src/core/features/design-generation/repository.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "5115db66de8c019e15b6f0266c7a893c826b16f5"
+  },
+  {
+    "file": "tests/campaign-authoring/design-generation.flow.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "4b2167463103508568d4a5bef86625a6011036c9"
+  },
+  {
+    "file": "tests/campaign-authoring/design-generation.spec.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "031385962b464b64ccc87953643f14d4c3722216"
+  },
+  {
+    "file": "tests/support/fake-twelve-ui.ts",
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "blob": "661d4b0b6d9168bb4a3da279b194a310bc88b3a2"
+  }
+]

@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:2950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged
+PROBE DESIGN-011 acceptance-4 session-revocation: native sign-out -> revoked credential and ordinary browser reads 401 without artifacts; fresh Author session -> exact retained bytes and unchanged domain state
+  ✓  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact across sign-out (3.9m)
+
+  1 passed (3.9m)

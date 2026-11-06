@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f92",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f92",
+  "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "remoteHead": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+  "productPush": {
+    "guard": "cloud-push.py",
+    "exit": 0,
+    "attempts": 1
+  },
+  "newProductCommits": 0,
+  "inheritedCommits": [
+    "9530fde8c8eaf079046b8157c0a57bf9e00946b6",
+    "7de50fe2b154ce0e7e90af57e17f6ee0ebefbad5",
+    "8c09d1f38d21e0df6fb2d81bf2b3896b9309f625",
+    "f8dde56aff55d0c13165fc6a853459994e22ce7b",
+    "d811eaa5cc62066c2d711de34f6d3b434a3dd74d"
+  ],
+  "checks": [
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test tests/campaign-authoring/design-generation.spec.ts --workers=1 --reporter=list",
+      "initialExit": 1,
+      "retryExit": 0,
+      "retryResult": "1 passed (3.9m)",
+      "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d"
+    },
+    {
+      "command": "same focused spec on origin/main",
+      "exit": 0,
+      "result": "1 passed (3.5m)",
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "pnpm exec rer check --profile first-party",
+      "exit": 0
+    }
+  ],
+  "probeLines": [
+    "PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged",
+    "PROBE DESIGN-011 acceptance-4 session-revocation: native sign-out -> revoked credential and ordinary browser reads 401 without artifacts; fresh Author session -> exact retained bytes and unchanged domain state"
+  ],
+  "statusBefore": "partial",
+  "statusAfter": "partial",
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "ciRun": 42190010984,
+  "ciObservedStatus": "in_progress",
+  "priorExactShaRun": 42186099177,
+  "priorExactShaFailure": "generated ACCEPTANCE.md check only",
+  "publicationScan": "delegated to guarded Mac lander, not run in cloud",
+  "runSite": "not run, main unchanged",
+  "pr": null,
+  "sourceTreeClean": true,
+  "createdAt": "2026-11-06T08:47:09.317601+00:00"
+}

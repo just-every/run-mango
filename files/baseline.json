@@ -1,0 +1,42 @@
+{
+  "repository": "just-every/run-mango",
+  "tag": "sd-mango-c-f92",
+  "target": "DESIGN-011",
+  "refs": [
+    {
+      "ref": "HEAD",
+      "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+      "counts": {
+        "done": 20,
+        "partial": 198,
+        "missing": 98
+      },
+      "statusRows": 316
+    },
+    {
+      "ref": "origin/main",
+      "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+      "counts": {
+        "done": 20,
+        "partial": 198,
+        "missing": 98
+      },
+      "statusRows": 316
+    }
+  ],
+  "scopeAlreadyPresentInPredecessor": true,
+  "initialFailure": {
+    "head": "d811eaa5cc62066c2d711de34f6d3b434a3dd74d",
+    "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test tests/campaign-authoring/design-generation.spec.ts --workers=1 --reporter=list",
+    "test": "design-generation registered journey, walk1",
+    "location": "tests/campaign-authoring/design-generation.flow.ts:119",
+    "exit": 1,
+    "failure": "expect(locator).toBeFocused() failed: Email body; Expected focused; Received inactive; Timeout 5000ms"
+  },
+  "baseVerify": {
+    "id": 42186099177,
+    "buildJob": 127786740732,
+    "conclusion": "failure",
+    "onlyRootFailure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  }
+}
