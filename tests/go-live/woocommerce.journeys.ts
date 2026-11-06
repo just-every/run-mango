@@ -66,6 +66,56 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect(await site.count('commerce_receipts')).toBe(1);
     expect(await site.rows('SELECT gross_amount_minor,reported_refund_minor,currency FROM commerce_orders')).toEqual([{gross_amount_minor: 4800, reported_refund_minor: 1200, currency: 'AUD'}]);
     expect(await site.rows('SELECT amount_minor,currency FROM commerce_refunds')).toEqual([{amount_minor: 1200, currency: 'AUD'}]);
+    const sourceIdentities = () => site.rows(`SELECT id,provider,source_type,provider_source_id,contact_id,occurred_at,created_at FROM source_records WHERE provider='${provider}' ORDER BY source_type,provider_source_id`);
+    const originalIdentities = await sourceIdentities();
+    const originalCustomer = originalIdentities.find(row => row.source_type === 'customer')!;
+    const originalRefund = originalIdentities.find(row => row.source_type === 'refund')!;
+    const originalOrder = originalIdentities.find(row => row.source_type === 'order')!;
+    const contactStates = () => site.rows(`SELECT id,email,email_status,sms_status,email_status_at,sms_status_at FROM contacts WHERE id='${originalCustomer.contact_id}'`);
+    const originalContact = await contactStates();
+    const originalContactCount = await site.count('contacts');
+    // Only the authenticated provider read carries changes; notifications carry the original identity.
+    Object.assign(woo.state.customer, {first_name: 'Morgan', last_name: 'Grove', date_modified_gmt: '2026-10-22T11:30:00'});
+    const customerUpdate = () => webhook({id: 11}, 'synthetic-mango-10', {'X-WC-Webhook-Topic': 'customer.updated'});
+    for (let replay = 0; replay < 2; replay++) {
+      await json(await customerUpdate(), 204);
+      expect(await sourceIdentities()).toEqual(originalIdentities);
+      const [customer] = await site.rows(`SELECT payload,provider_updated_at FROM source_records WHERE id='${originalCustomer.id}'`);
+      expect(JSON.parse(customer.payload)).toMatchObject({firstName: 'Morgan', lastName: 'Grove', createdAt: '2026-10-20T10:00:00.000Z', updatedAt: '2026-10-22T11:30:00.000Z'});
+      expect(customer.provider_updated_at).toBe(Date.parse('2026-10-22T11:30:00Z'));
+      expect(await site.rows(`SELECT display_name FROM contacts WHERE id='${originalCustomer.contact_id}'`)).toEqual([{display_name: 'Morgan Grove'}]);
+      expect(await contactStates()).toEqual(originalContact);
+      expect(await site.count('contacts')).toBe(originalContactCount);
+      expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
+    }
+    Object.assign(woo.state.refund, {amount: '18.50', refunded_payment: false, date_modified_gmt: '2026-10-23T12:45:00'});
+    woo.state.refund.line_items[0].quantity = -2;
+    woo.state.order.date_modified_gmt = '2026-10-23T12:45:00';
+    for (let replay = 0; replay < 2; replay++) {
+      await json(await webhook({id: 31}, 'synthetic-mango-11'), 204);
+      expect(await sourceIdentities()).toEqual(originalIdentities);
+      const [refund] = await site.rows(`SELECT payload,provider_updated_at FROM source_records WHERE id='${originalRefund.id}'`);
+      expect(JSON.parse(refund.payload)).toMatchObject({amount: '18.50', currency: 'AUD', paymentRefundedViaApi: false,
+        createdAt: '2026-10-21T10:00:00.000Z', updatedAt: '2026-10-23T12:45:00.000Z',
+        lines: [{quantity: -2}], total: {shop: {amount: '18.50', currency: 'AUD'}}});
+      expect(refund.provider_updated_at).toBe(Date.parse('2026-10-23T12:45:00Z'));
+      const [order] = await site.rows(`SELECT payload FROM source_records WHERE id='${originalOrder.id}'`);
+      expect(JSON.parse(order.payload)).toMatchObject({refunded: {shop: {amount: '18.50', currency: 'AUD'}},
+        refunds: [{id: originalRefund.provider_source_id, amount: '18.50', paymentRefundedViaApi: false}]});
+      expect(await site.rows('SELECT provider_refund_id,provider_order_id,source_record_id,contact_id,original_amount_minor,amount_minor,currency,occurred_at FROM commerce_refunds')).toEqual([{
+        provider_refund_id: originalRefund.provider_source_id, provider_order_id: originalOrder.provider_source_id,
+        source_record_id: originalRefund.id, contact_id: originalCustomer.contact_id, original_amount_minor: 1850,
+        amount_minor: 1850, currency: 'AUD', occurred_at: Date.parse('2026-10-21T10:00:00Z'),
+      }]);
+      expect(await site.rows('SELECT source_record_id,contact_id,gross_amount_minor,reported_refund_minor,currency,purchased_at FROM commerce_orders')).toEqual([{
+        source_record_id: originalOrder.id, contact_id: originalCustomer.contact_id, gross_amount_minor: 4800,
+        reported_refund_minor: 1850, currency: 'AUD', purchased_at: Date.parse('2026-10-20T10:00:00Z'),
+      }]);
+      expect(await contactStates()).toEqual(originalContact);
+      expect(await site.count('contacts')).toBe(originalContactCount);
+      expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
+    }
+    expect(await site.count('commerce_receipts')).toBe(3);
     expect((await webhook({id: 31, changed: true})).status).toBe(409);
     expect((await webhook({id: 31}, 'synthetic-mango-5', {'X-WC-Webhook-Signature': 'invalid'})).status).toBe(401);
     expect((await webhook({id: 31}, 'synthetic-mango-5', {'X-WC-Webhook-Source': 'https://other.example.test/'})).status).toBe(401);
@@ -84,8 +134,27 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await json(await plugin.send({...plugin.event, id: crypto.randomUUID(), checkoutId: crypto.randomUUID()}), 204);
     expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     woo.state.observations.push(plugin.event);
+    const browsing = {version: 1, id: crypto.randomUUID(), kind: 'viewed_product', occurredAt: new Date(Date.now()-60000).toISOString(),
+      customerId: '11', products: ['21'], consent: {analytics: true, marketing: true}, gpc: false};
+    await json(await plugin.send(browsing), 204);
+    const observationRecords = () => site.rows(`SELECT id,source_type,provider_source_id,contact_id,occurred_at,payload FROM source_records WHERE provider='${provider}' AND source_type IN ('cart','browsing-event') ORDER BY source_type,provider_source_id`);
+    const originalObservations = await observationRecords();
+    expect(originalObservations.filter(row => row.source_type === 'browsing-event')).toEqual([expect.objectContaining({
+      provider_source_id: provider + ':browsing-event:' + browsing.id, contact_id: originalCustomer.contact_id,
+      occurred_at: Date.parse(browsing.occurredAt),
+    })]);
+    expect(JSON.parse(originalObservations.find(row => row.source_type === 'browsing-event')!.payload)).toMatchObject({
+      eventId: browsing.id, observation: 'viewed_product', lines: [{productId: provider + ':product:21'}],
+    });
+    await json(await plugin.send(browsing), 204);
+    expect(await observationRecords()).toEqual(originalObservations);
+    woo.state.observations.push(browsing);
     const cartSync = await queue('cart'); await finished(cartSync.runId);
     const browsingSync = await queue('browsing-event'); await finished(browsingSync.runId);
+    expect(await observationRecords()).toEqual(originalObservations);
+    for (const sourceType of ['cart', 'browsing-event']) {const run = await queue(sourceType); await finished(run.runId);}
+    expect(await observationRecords()).toEqual(originalObservations);
+    expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     // Later store reads cannot undo Mango's native opt-out.
     const contactId = records.find(row => row.source_type === 'customer')!.contact_id;
@@ -121,6 +190,11 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
+    await page.setViewportSize({width: 390, height: 1000});
+    await page.screenshot({path: info.outputPath('woocommerce-store-390.png'), fullPage: true});
+    await openPage(page, site.runtime.url + '/app/settings');
+    await page.screenshot({path: info.outputPath('woocommerce-settings-390.png'), fullPage: true});
+    await page.setViewportSize({width: 1440, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     await page.getByRole('button', {name: 'Disconnect WooCommerce', exact: true}).click();
     await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'No WooCommerce connection.'})).toBeVisible();
@@ -128,7 +202,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(6);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
     await wooBrowserConsent(page);
