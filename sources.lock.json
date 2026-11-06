@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "97838046205b2d1579bb7a62e4cdcbeedf74e23c36f9de83422d19150b3a230e",
+      "sha256": "94737e5086c812aef09e1e0be311573c73ad95be765e0ce3b4d94de23b25b50e",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "103e938f65f655477598cf98252612176141450b056f796f0e4ebf992547b7b3",
+      "sha256": "ceeed4870ce9d019f7bd5a731cc870f462d376539d0517d33eaf3d5aa65d065c",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8855,6 +8855,10 @@
     },
     "tests/go-live/email-size.flow.ts": {
       "sha256": "32a1f3ff7ce7597043ae550d8aefdb7a978c02a47694423a5eb17f7fd4d1af2c",
+      "executable": false
+    },
+    "tests/go-live/frequency-protection.journeys.ts": {
+      "sha256": "439fa86567f6a2a3bda4dacf67ba668504d880142e52a2474ee7f7bd8314ba61",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {

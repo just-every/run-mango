@@ -25,7 +25,7 @@ export const packs = [
   {name:'reports',members:[member('campaign-results'),member('go-live',['managed-mail.journeys.ts','shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
   {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
-  {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts'])]},
+  {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts','frequency-protection.journeys.ts'])]},
   {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts'])]},
 ];
 
