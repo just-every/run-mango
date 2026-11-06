@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "0c1e8bc012b03f51d60b7864a33dacd10505a52f4ae0fefad129c60b3f70cf91",
+      "sha256": "4f416b0c1f1893b792764ff402644bb49b2b985065f00b634b7deb8dfbd48fe9",
       "executable": false
     },
     "DEMO.md": {
@@ -8830,11 +8830,11 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "c2d15599668555fa3b325115fb068d59abe760f0fc00003451db2bcfd8013a7d",
+      "sha256": "172754bad75644881d18953b17b748698b5a0cc4d31f4b5824e3e957f0e7325a",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
-      "sha256": "fd7158aa81a9bf39d68dee67725f6e9a7e1ba17ba9e8fab115048302922e65f8",
+      "sha256": "7a53e0f18c6710d439c6e4043843cfa016841edb241e345444ef0376466a4642",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {
