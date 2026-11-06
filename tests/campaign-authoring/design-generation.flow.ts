@@ -409,10 +409,8 @@ export const walk2 = async ({ page, request }, testInfo) => {
     expect(Number((await estimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
     expect(converts()).toHaveLength(convertsBefore);
     expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore);
-    await run.scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing.png'), fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
-    await run.scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing-phone.png'), fullPage: true });
     await page.setViewportSize({ width: 1440, height: 1000 });
 

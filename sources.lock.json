@@ -8490,7 +8490,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "483f80ff761cd7868501a7fc7c65653136c78fdbe8fc4f63b6b3f70e1699f332",
+      "sha256": "cc1f924685cacfcab194832118199c4f86f20712ae71443c7ea512980e6e3d4c",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
