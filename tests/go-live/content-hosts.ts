@@ -14,6 +14,7 @@ export const hostNetwork = {
   'https://myshop.com/offer': {},
   'https://myshop.com.evil.example/offer': {},
   'https://admin-review.example.test/offer': {},
+  'https://author-review.example.test/offer': {},
 };
 
 async function adminHostAllowance(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
@@ -88,6 +89,80 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
     await page.setViewportSize({width, height:1000});
     await page.screenshot({path:info.outputPath(`admin-allowed-host-${width}.png`), fullPage:true});
   }
+  await page.setViewportSize({width:1440, height:1000});
+  const custody = await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='link-host.allowed' AND entity_id='${campaign.campaignId}'`);
+  await json(await site.call(`/api/operators/${operatorId}/role`, {method:'PUT', cookie:owner, body:{role:'author'}}), 200);
+  await json(await site.call(`${path}/link-hosts`, {method:'POST', cookie:admin, body:{host:'revoked-review.example.test'}}), 403);
+  expect((await json(await site.call('/api/settings/link-hosts', {cookie:owner}), 200)).hosts).not.toContain('revoked-review.example.test');
+  expect(await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='link-host.allowed' AND entity_id='${campaign.campaignId}'`)).toEqual(custody);
+  await noAuthority();
+  await json(await site.call(`/api/operators/${operatorId}/role`, {method:'PUT', cookie:owner, body:{role:'admin'}}), 200);
+  // An exact allowance cannot silently authorize a descendant host.
+  const childHost = `child.${host}`, childDestination = `https://${childHost}/offer`;
+  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`, {method:'PATCH', cookie:admin,
+    body:{emailBody:`<p><a href="${childDestination}">Another partner</a></p>`}}), 200);
+  expect((await json(await site.call(`${path}/review`, {cookie:admin}), 200)).blockedHosts)
+    .toEqual([{host:childHost, links:[childDestination]}]);
+  const refused = await json(await site.call(`${path}/approve`, {method:'POST', cookie:admin,
+    body:{revisionId:campaign.revisionId, idempotencyKey:'synthetic-mango-168'}}), 409);
+  expect(JSON.stringify(refused.blockers)).toContain(childHost);
+  await noAuthority();
+  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`, {method:'PATCH', cookie:admin,
+    body:{emailBody:`<p><a href="${destination}">Admin partner offer</a></p>`}}), 200);
+  // Removing and allowing the host again appends history; it cannot rewrite the original custody.
+  const original = await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE id='${activity.entries[0].id}'`);
+  await json(await site.call('/api/settings/link-hosts', {method:'PUT', cookie:owner,
+    body:{hosts:settings.hosts.filter((entry:string) => entry !== host).join(',')}}), 200);
+  expect((await json(await site.call(`${path}/review`, {cookie:admin}), 200)).blockedHosts)
+    .toEqual([{host, links:[destination]}]);
+  expect((await json(await site.call(`/api/activity?operator=${operatorId}&action=link-host.allowed&object=${campaign.campaignId}`, {cookie:admin}), 200)).entries)
+    .toEqual(activity.entries);
+  await site.control('/_golive/clock', {advanceMs:1000});
+  await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+  await blocked.getByRole('button', {name:'Allow this host', exact:true}).click();
+  await expect(blocked).toHaveCount(0);
+  const retained = await json(await site.call(`/api/activity?operator=${operatorId}&action=link-host.allowed&object=${campaign.campaignId}`, {cookie:admin}), 200);
+  expect(retained.entries).toHaveLength(2);
+  expect(retained.entries[1]).toEqual(activity.entries[0]);
+  expect(retained.entries[0].id).not.toBe(retained.entries[1].id);
+  expect(retained.entries[0].occurredAt).toBeGreaterThan(retained.entries[1].occurredAt);
+  expect(retained.entries[0].detail).toEqual(activity.entries[0].detail);
+  expect(await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE id='${activity.entries[0].id}'`)).toEqual(original);
+  await noAuthority();
+  await openPage(page, `${site.runtime.url}/app/settings/activity`);
+  const entries = page.getByRole('region', {name:'Activity entries', exact:true});
+  const filters = page.getByRole('form', {name:'Activity filters', exact:true});
+  await expect(entries).toHaveAttribute('aria-busy','false');
+  await filters.getByLabel('Operator', {exact:true}).fill(operatorId);
+  await filters.getByLabel('Action', {exact:true}).fill('link-host.allowed');
+  await filters.getByLabel('Object', {exact:true}).fill(campaign.campaignId);
+  const apply = async () => {
+    const wanted = await Promise.all(['Operator','Action','Object'].map(label=>filters.getByLabel(label,{exact:true}).inputValue()));
+    const response = page.waitForResponse(value => {
+      const url = new URL(value.url());
+      return url.pathname === '/api/activity' && value.request().method() === 'GET'
+        && ['operator','action','object'].every((field,index)=>url.searchParams.get(field)===wanted[index]);
+    });
+    await filters.getByRole('button', {name:'Apply filters', exact:true}).click();
+    const result = await response;
+    expect(result.status()).toBe(200);
+    return result.json();
+  };
+  expect((await apply()).entries).toEqual(retained.entries);
+  await expect(entries.locator('tbody tr')).toHaveCount(2);
+  await expect(entries).toContainText(host);
+  for (const [label,wrong,right] of [['Operator','go-live-owner',operatorId],['Action','link-host.removed','link-host.allowed'],['Object',campaign.revisionId,campaign.campaignId]]) {
+    await filters.getByLabel(label, {exact:true}).fill(wrong);
+    expect((await apply()).entries).toEqual([]);
+    await expect(entries).toContainText('No activity matches these filters.');
+    await filters.getByLabel(label, {exact:true}).fill(right);
+    expect((await apply()).entries).toEqual(retained.entries);
+    await expect(entries.locator('tbody tr')).toHaveCount(2);
+  }
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height:1000});
+    await page.screenshot({path:info.outputPath(`admin-host-activity-${width}.png`), fullPage:true});
+  }
 }
 
 export async function blockedHostJourney(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
@@ -114,7 +189,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   const path = `/api/campaigns/${campaign.campaignId}`;
   // Both the saved destination and a redirect destination are named, alongside the authored link.
   await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie:owner,body:{hosts:'mango.example.test,redirect.example,myshop.com'}}),200);
-  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p>Visit our <a href="https://partner.example/offer">Garden partner offer</a> or <a href="https://redirect.example/start">Market partner redirect</a>.</p>'}}),200);
+  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p>Visit our <a href="https://partner.example/offer">Garden partner offer</a> or <a href="https://redirect.example/start">Market partner redirect</a> and <a href="https://author-review.example.test/offer">Another garden partner</a>.</p>'}}),200);
   const rejected = await json(await site.call(`${path}/approve`,{method:'POST',cookie:manager,body:{revisionId:campaign.revisionId,idempotencyKey:'partner-host-blocked'}}),409);
   expect(JSON.stringify(rejected.blockers)).toContain('partner.example');
   expect(JSON.stringify(rejected.blockers)).toContain('https://redirect.example/start');
@@ -128,9 +203,27 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await expect(blocked).toContainText('Garden partner offer');
   await expect(blocked).toContainText('Market partner redirect');
   await expect(blocked.getByRole('button',{name:'Allow this host',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Allow this host',exact:true})).toHaveCount(0);
   await json(await site.call(`${path}/link-hosts`,{method:'POST',cookie:author,body:{host:'partner.example'}}),403);
+  const expectedHosts = [{host:'partner.example',links:['https://partner.example/offer','https://redirect.example/start']},{host:'author-review.example.test',links:['https://author-review.example.test/offer']}];
+  const requestedHosts = [{host:'partner.example'},{host:'author-review.example.test'}];
+  expect((await json(await site.call(`${path}/review`,{cookie:author}),200)).blockedHosts).toEqual(expectedHosts);
   await page.getByRole('button',{name:'Request approval',exact:true}).click();
   await expect(page.getByText(/Approval requested by Lena Chen/)).toBeVisible();
+  await expect(page.getByText('Blocked hosts in this request: partner.example, author-review.example.test.',{exact:true})).toBeVisible();
+  const requested = await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='campaign.approval-requested' AND entity_id='${campaign.revisionId}'`);
+  expect(requested).toHaveLength(1);
+  expect(requested[0].actor_id).toBe('host-author');
+  expect(JSON.parse(requested[0].detail_json)).toEqual({campaignId:campaign.campaignId,revisionId:campaign.revisionId,blockedHosts:requestedHosts});
+  await json(await site.call(`${path}/request-approval`,{method:'POST',cookie:author,body:{revisionId:campaign.revisionId}}),200);
+  expect(await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE action='campaign.approval-requested' AND entity_id='${campaign.revisionId}'`)).toEqual(requested);
+  expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+  expect(await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+  for (const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    await page.screenshot({path:info.outputPath(`author-host-request-${width}.png`),fullPage:true});
+  }
+  await page.setViewportSize({width:1440,height:1000});
   await view(manager);
   for (const width of [1440]) {
     await page.setViewportSize({width,height:1000});
@@ -142,6 +235,9 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await expect(blocked).toHaveCount(0);
   await reloadPage(page);
   await expect(blocked).toHaveCount(0);
+  expect((await json(await site.call(`${path}/approval-requests`,{cookie:manager}),200)).requests)
+    .toEqual([{revisionId:campaign.revisionId,requestedAt:requested[0].occurred_at,operator:'Lena Chen',blockedHosts:requestedHosts}]);
+  await expect(page.getByText('Blocked hosts in this request: partner.example, author-review.example.test.',{exact:true})).toBeVisible();
   const allowed = await json(await site.call('/api/settings/link-hosts',{cookie:manager}),200);
   expect(allowed.hosts).toEqual(expect.arrayContaining(['mango.example.test','redirect.example','myshop.com','partner.example']));
   expect(allowed.sources).toContainEqual(expect.objectContaining({host:'partner.example',source:'allowed in review',campaignId:campaign.campaignId,operatorId:'host-manager'}));
@@ -150,6 +246,8 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   expect(activity.entries[0]).toMatchObject({operatorId:'host-manager',operatorName:'Maya Torres',objectId:campaign.campaignId,detail:expect.objectContaining({host:'partner.example'})});
   await json(await site.call('/api/activity',{cookie:manager}),403);
   await json(await site.call('/api/activity',{cookie:author}),403);
+  await page.getByRole('region',{name:'Blocked host author-review.example.test',exact:true}).getByRole('button',{name:'Allow this host',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Blocked host author-review.example.test',exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
   await page.getByRole('alertdialog',{name:'Approve and schedule?'}).getByRole('button',{name:'Approve & schedule',exact:true}).click();
   await expect(page.getByRole('link',{name:'View schedule and results'})).toBeVisible();
