@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
+      "sha256": "0752994c11d1bde6820ba374e41a0e90879438f943f056f9430b41d65f2cc10e",
       "executable": false
     },
     "DEMO.md": {
@@ -3434,7 +3434,7 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "86f680b8ad69c24b453ed2b31ef9fa19489d2e77f5050f922e9d56e55d70396a",
+      "sha256": "bc8040635dfb4baa8339913fa43220509d3391e7e268571ef05a9e0aeafcd79a",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
@@ -3466,7 +3466,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "70425c030625aea8ae70536c8b99a2dffbd335418fee28a6908b76f5e9dcfe0e",
+      "sha256": "552efeb7f532f06e7ff03e4ba636d1de20acdb54a899b3ca5d24c471b1892186",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -8938,7 +8938,7 @@
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
-      "sha256": "aceefc34f274c1127727208e99cbe3e466035acdbe81d266ef99a36a707e8841",
+      "sha256": "3312227b4116ddbacbde08c9bb0b74b96619a195fa7036e2eac7abb33a65f520",
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
