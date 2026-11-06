@@ -1,0 +1,31 @@
+{
+  "configs": [
+    {
+      "config": "playwright.config.js",
+      "registrations": 49
+    },
+    {
+      "config": "scripts/verification/local-start.config.mjs",
+      "registrations": 5
+    },
+    {
+      "config": "tests/newsletter-ui/playwright.config.js",
+      "registrations": 1
+    },
+    {
+      "config": "tests/campaign-results/playwright.config.js",
+      "registrations": 2
+    },
+    {
+      "config": "tests/go-live/playwright.config.js",
+      "registrations": 22
+    },
+    {
+      "config": "tests/move-in/playwright.config.js",
+      "registrations": 2
+    }
+  ],
+  "total": 81,
+  "added": 1,
+  "removed": 0
+}

@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "output": "Wrote 1 contract documents.\n"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "output": "Contract documents are current.\n"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "output_file": "source-lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "output_file": "source-check.log"
+    }
+  ],
+  "ledger": {
+    "command": "none; no migrations changed",
+    "exit": 0
+  },
+  "generated_views_restored": true
+}

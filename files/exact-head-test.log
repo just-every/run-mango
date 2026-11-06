@@ -1,0 +1,19 @@
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f76/evidence/cd9df31af4a3/verify/main-s6osfU
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-06T06:05:15.625Z"}
+main
+
+Running 1 test using 1 worker
+
+(node:3180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-004 acceptance-5 missing sender: native PATCH with empty sender name and checks -> saved draft, named message.email-identity blocker with two eligible contacts
+PROBE CAMP-004 acceptance-4 missing sender refusal: native approve -> HTTP 409 with all current blockers; campaign, revision, steps and links unchanged; no approval receipt, recipients, dispatch, jobs or marketing handoff
+PROBE CAMP-004 acceptance-5 correction: native PATCH restoring configured sender and checks -> no blockers; campaign remains draft without approval or sending authority
+  ✓  1 tests/proposals-decision/missing-sender.spec.ts:4:1 › [CAMP-004] a missing sender name blocks approval without authority and clears only after a saved correction (27.1s)
+
+  1 passed (37.3s)
+VERIFY_STAGE {"name":"main","status":"PASS","startedAt":"2026-11-06T06:05:15.625Z","durationMs":39659,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":39709,"boundary":"coordinator"}

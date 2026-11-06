@@ -1,0 +1,160 @@
+{
+  "tag": "sd-mango-c-f76",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f76",
+  "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+  "base": "980b25d4b34d19493662d2662ba8f5123c194aef",
+  "product_push": {
+    "exit": 0,
+    "attempts": 1,
+    "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f76"
+  },
+  "contract": {
+    "clause": "CAMP-004",
+    "before": "partial",
+    "after": "partial",
+    "counts_before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "counts_after": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    }
+  },
+  "local_checks": [
+    {
+      "command": "MANGO_VERIFY_FILES=[\"proposals-decision/missing-sender.spec.ts\"] MANGO_NO_FIXTURE_SERVER=1 node scripts/verification/run.mjs --stage main",
+      "exit": 0,
+      "tests": 1,
+      "receipt": "registered-focused-test.log",
+      "tree_matches_head": true
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "receipt": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "receipt": "command-check.log"
+    },
+    {
+      "command": "MANGO_VERIFY_FILES=[\"proposals-decision/missing-sender.spec.ts\"] MANGO_NO_FIXTURE_SERVER=1 node scripts/verification/run.mjs --stage main",
+      "head": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+      "exit": 0,
+      "tests": 1,
+      "receipt": "exact-head-test.log"
+    }
+  ],
+  "mechanical_receipt": "mechanical.json",
+  "files": [
+    {
+      "path": "tests/proposals-decision/missing-sender.spec.ts",
+      "sha256": "446f6f1b0b1cf2f1075c23c0a7b355b1814ed585d8edcd9e5ed030b83c794243"
+    },
+    {
+      "path": "tests/proposals-decision/runtime.ts",
+      "sha256": "5016cb23f9ab04ff96a88b8e7181d459baed4716c3978e234808b950e3c6fc52"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "f70cbebff9b3dc727275befc86f9d529e37aef201490cea7d0185dc013bef614"
+    }
+  ],
+  "ci": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "73a8306b4ac4ac93f05a4f5dc73c5ecba61d7af0",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42172214424",
+      "id": 42172214424,
+      "name": "Verify",
+      "status": "in_progress"
+    }
+  ],
+  "publication_scan": {
+    "status": "not_run_in_cloud",
+    "reason": "Owned by the Mac guarded lander; no COMPLETE scan is claimed."
+  },
+  "landing": {
+    "status": "branch_only",
+    "main_unchanged": true,
+    "pr": null
+  },
+  "riders": [
+    {
+      "row": 1,
+      "result": "partial",
+      "evidence": "Focused public-door journey covers only the selected sender-name case; carried matrices remain open."
+    },
+    {
+      "row": 2,
+      "result": "pass_for_selected_points",
+      "evidence": "Two eligible contacts, passing baseline, empty sender refusal with unchanged saved data and authority, then passing correction without approval."
+    },
+    {
+      "row": 3,
+      "result": "pending_ci",
+      "evidence": "Registered in push identity-data pack; exact-SHA Verify discovered in progress."
+    },
+    {
+      "row": 4,
+      "result": "pass",
+      "evidence": "Local registered test uses final source bytes; exact-head replay is recorded separately."
+    },
+    {
+      "row": 5,
+      "result": "unchanged",
+      "evidence": "No new inheritance or acceptance duties."
+    },
+    {
+      "row": 6,
+      "result": "pass_for_partial",
+      "evidence": "Precise evidence and gap retained; generator write and check pass locally, then generated views restored as required."
+    },
+    {
+      "row": 7,
+      "result": "pass",
+      "evidence": "No acceptance sentences, statuses or counts changed; all table rows retained."
+    },
+    {
+      "row": 8,
+      "result": "pass_for_selected_points",
+      "evidence": "Native approval refusal creates no approval, recipients, step dispatch or queued command, and makes no marketing transport attempt."
+    },
+    {
+      "row": 9,
+      "result": "honest_boundary",
+      "evidence": "Network-edge sender qualification only; no real provider qualification claimed."
+    },
+    {
+      "row": 10,
+      "result": "not_applicable",
+      "evidence": "No new policy default."
+    },
+    {
+      "row": 11,
+      "result": "pending_lander",
+      "evidence": "Branch custody only; exact main, publication scan and Run site remain lander gates."
+    }
+  ],
+  "deviations": [
+    {
+      "command": "node scripts/verification/run.mjs --stage main without MANGO_VERIFY_FILES",
+      "result": "Stopped own coordinator with SIGTERM after detecting broad selection; corrected focused invocation passed. No completed full-suite result is claimed."
+    }
+  ],
+  "ui": {
+    "changed": false,
+    "browser_proof": "not applicable; no screens changed"
+  },
+  "identity_and_trailers": {
+    "checked_all_candidates": true,
+    "author_and_committer": "fleet",
+    "trailers": "none"
+  }
+}

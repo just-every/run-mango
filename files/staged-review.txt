@@ -1,0 +1,4 @@
+All 305 parent Status rows retained.
+Generated views excluded.
+No email-shaped strings or co-author trailers added.
+Files: CONTRACT.md, scripts/verification/plan.mjs, sources.lock.json, tests/proposals-decision/missing-sender.spec.ts, tests/proposals-decision/runtime.ts
