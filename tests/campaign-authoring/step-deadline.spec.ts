@@ -82,6 +82,49 @@ test('[CAMP-010] native email steps without send-by fields retain local day-end 
     await read();
     expect(await persisted()).toEqual(expectedRows);
     await noAuthority();
+    // Complete-create and PATCH use the same public composition contract.
+    // A UTC-only client has an unambiguous instant, while its deadline still
+    // belongs to the selected zone's calendar day rather than the browser day.
+    const base = (await (await request.get(`${runtime.url}/api/campaigns/${campaignId}`, {headers})).json()).revision;
+    for (const mode of ['local', 'instant'] as const) {
+      const selected = (['email', 'sms'] as const).flatMap(channel => days.map(day => ({
+        channel, timezone:'America/New_York', whyThisTime:'Selected by the operator.',
+        ...(mode === 'local' ? {localScheduledAt:day.local} : {scheduledAt:day.scheduled}),
+      })));
+      const matrixExpected = (['email', 'sms'] as const).flatMap(channel => days.map(day => ({
+        channel, timezone:'America/New_York', scheduledAt:day.scheduled, sendByAt:day.deadline,
+      }))).map((step, index) => ({...step, sequence:index+1}));
+      const complete = await request.post(runtime.url+'/api/campaigns', {headers, data:{composition:{
+        name:'synthetic-mango-500', emailSubject:'Synthetic deadline letter',
+        emailBody:'<p>Synthetic garden news.</p><p>{{physical_address}} {{unsubscribe_url}}</p>', emailText:'Synthetic garden news. {{physical_address}} {{unsubscribe_url}}',
+        senderName:'Synthetic garden', fromEmail:['synthetic-mango-500','example.test'].join('@'), replyToEmail:['synthetic-mango-501','example.test'].join('@'),
+        physicalAddress:'1 Synthetic Street', messageCategory:'newsletter',
+        inclusionRuleJson:base.inclusionRuleJson, steps:selected,
+      }}});
+      expect(complete.status(), mode+': '+await complete.text()).toBe(201);
+      const draft = await complete.json();
+      const checkMatrix = async () => {
+        for (const suffix of ['', '/review']) {
+          const response = await request.get(`${runtime.url}/api/campaigns/${draft.campaignId}${suffix}`, {headers});
+          expect(response.status(), await response.text()).toBe(200);
+          const value = await response.json();
+          expect(value.campaign).toMatchObject({state:'draft', activeRevisionId:draft.revisionId});
+          expect(value.revision).toMatchObject({state:'draft'});
+          expect(value.steps).toHaveLength(matrixExpected.length);
+          expect(value.steps).toMatchObject(matrixExpected);
+        }
+        expect(await runtime.sql(`SELECT sequence,channel,timezone,scheduled_at,send_by_at FROM campaign_steps WHERE revision_id='${draft.revisionId}' ORDER BY sequence`)).toEqual(
+          matrixExpected.map(step => ({sequence:step.sequence, channel:step.channel, timezone:step.timezone,
+            scheduled_at:Date.parse(step.scheduledAt), send_by_at:Date.parse(step.sendByAt)})));
+        await noAuthority();
+      };
+      await checkMatrix();
+      const patched = await request.patch(`${runtime.url}/api/campaign-revisions/${draft.revisionId}`, {headers, data:{steps:selected}});
+      expect(patched.status(), await patched.text()).toBe(200);
+      await checkMatrix();
+      console.log('Native deadline matrix passed: '+mode);
+    }
+    console.log('PROBE CAMP-010 acceptance-1 additional doors: complete-create and PATCH, email and SMS, local and UTC-only inputs -> independently specified ordinary and DST local-day-end deadlines; no approval, recipients or dispatch jobs.');
     console.log('PROBE CAMP-010 acceptance-1: authenticated native PATCH with local times and IANA zone, both send-by fields omitted -> ordinary and both DST day-end instants persisted; reopened controls; draft with no approval, recipients or dispatch jobs.');
   } finally {
     await context.close();

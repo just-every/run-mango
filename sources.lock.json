@@ -3898,7 +3898,7 @@
       "executable": false
     },
     "src/core/features/campaigns/draft-composition.ts": {
-      "sha256": "629c106162fde360ebae9ec1ba4a62e9239578e1f5e9f4dda02c3a77da647dcc",
+      "sha256": "5c4872c85ca60c9df7917dc8ddb08c7cc7bac260d07a5b60e98c3a2cdc1e6ce7",
       "executable": false
     },
     "src/core/features/campaigns/edit-schedule.ts": {
@@ -5242,7 +5242,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/schedule.ts": {
-      "sha256": "6dbc1dabec85180a496e80d3a45270932e578c562a35a386ab3457de2fce70ad",
+      "sha256": "3f933f42a429fe0743bc1185d45cdb59f779099909b3b7159499f39a82e6f8d6",
       "executable": false
     },
     "src/core/features/lifecycle/scheduler-observation.ts": {
@@ -8534,7 +8534,7 @@
       "executable": false
     },
     "tests/campaign-authoring/step-deadline.spec.ts": {
-      "sha256": "9354f1eae4f682cb22e43afa70acfd7782f4cb3580ffbd9dcf218774e656c328",
+      "sha256": "5efbc7bb03d89ba96f28897efc472e7f01646186ab4a9032841499f1f2900257",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
