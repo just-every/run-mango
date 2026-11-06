@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2ff72fbf1a592cd97751758b9ab88f6a454b0472028c48b72365663eacd6512a",
+      "sha256": "ee7ad2f89ec42af7fb69f14e6b0fc0e957c08163278b262ad4fcc5afaa470a41",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "94737e5086c812aef09e1e0be311573c73ad95be765e0ce3b4d94de23b25b50e",
+      "sha256": "4b8777dfefe663cf21c8f9ecd36dcd0a11f21a4ef84308a0016d3f64dba81b7e",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "ceeed4870ce9d019f7bd5a731cc870f462d376539d0517d33eaf3d5aa65d065c",
+      "sha256": "7be016c6f5cac4015d615173d50490846667533b81d5c1c6579f8c6d95397db3",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8533,6 +8533,10 @@
       "sha256": "d62074ba7d51511f57b63dd76a99bc449a560b20665005089d711159bd7082ca",
       "executable": false
     },
+    "tests/campaign-authoring/step-deadline.spec.ts": {
+      "sha256": "9354f1eae4f682cb22e43afa70acfd7782f4cb3580ffbd9dcf218774e656c328",
+      "executable": false
+    },
     "tests/campaign-authoring/worker.ts": {
       "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
       "executable": false
@@ -8858,7 +8862,7 @@
       "executable": false
     },
     "tests/go-live/frequency-protection.journeys.ts": {
-      "sha256": "439fa86567f6a2a3bda4dacf67ba668504d880142e52a2474ee7f7bd8314ba61",
+      "sha256": "3488b3f87f0e43c09165aa2e5d45fdad008d7ee7142531a91d1eadd9582ddf75",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
