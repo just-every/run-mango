@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
 import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
+import { designImportRefusals, importScreens } from './design-import-refusals';
 
 test.describe.configure({ mode: 'serial', timeout: 180000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -61,6 +62,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await dialog.getByRole('button', { name: 'Import design', exact: true }).click();
     await expect(dialog.getByRole('alert').first()).toContainText('HTTPS');
     expect(uploads).toEqual([]);
+
+    await designImportRefusals({ page, request, info: testInfo, url: runtime.url, token: runtime.token, layerdoc, destination, body, files, read, uploads, saves });
 
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
@@ -177,7 +180,7 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await expect(preview.getByRole('alert')).toHaveCount(0);
     await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('h1')).toContainText('Good Things');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.screenshot({ path: testInfo.outputPath(`design-import-${width}.png`), fullPage: true });
+    await importScreens(page, testInfo, 'design-import');
 
     await page.getByRole('button', { name: 'Approve & schedule', exact: true }).click();
     await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();

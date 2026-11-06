@@ -8501,8 +8501,12 @@
       "sha256": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
       "executable": false
     },
+    "tests/campaign-authoring/design-import-refusals.ts": {
+      "sha256": "bfa7f7f98c32ee04e2c51d45b9cfe93638d74b0041d3a67bd791f042aa3efcba",
+      "executable": false
+    },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "7b6b253c774975b39892cc1abbdedb332664401bec505f2b1ef9ce3202e9da40",
+      "sha256": "37ba35b9b3103d592e4c189f41f584efcc1496c37635420d903159e131b01d73",
       "executable": false
     },
     "tests/campaign-authoring/design-input-bounds.ts": {
