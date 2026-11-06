@@ -19,22 +19,22 @@
       "sha256": "d907e93ac288e4648b9657d6f80c84fad227f9a46b2c7f3422580409792fa5e9"
     },
     {
-      "blob": "ade7a109d6754a60551e4f55e719e575e8177a9d",
-      "bytes": 21384,
+      "blob": "684825284153edd33d76a780c739b71d4d46724c",
+      "bytes": 21870,
       "path": "REPORT.md",
-      "sha256": "4874becfdd0ab19cfc16659b41e0d7289530e739fd9b712eed5f98130db03e90"
+      "sha256": "87405c099b7d4a3e3e47a252e5deedf16b0ff7434d92d0ad3ea387b757575433"
     },
     {
-      "blob": "ade7a109d6754a60551e4f55e719e575e8177a9d",
-      "bytes": 21384,
+      "blob": "684825284153edd33d76a780c739b71d4d46724c",
+      "bytes": 21870,
       "path": "VERDICT.md",
-      "sha256": "4874becfdd0ab19cfc16659b41e0d7289530e739fd9b712eed5f98130db03e90"
+      "sha256": "87405c099b7d4a3e3e47a252e5deedf16b0ff7434d92d0ad3ea387b757575433"
     },
     {
-      "blob": "61186e2e1ab435db7594f9b2b0609f8901892c29",
-      "bytes": 13141,
+      "blob": "1258ed7cefdae43e29263a5462d4b2fe6aa03cd5",
+      "bytes": 13820,
       "path": "artifact-manifest.json",
-      "sha256": "667dfd894715abe4fb969ff8e26a92614730f88877a4547ecd416e0e54e44913"
+      "sha256": "cad6392185dd9bebfcd00f3078e5bc1ff1a4b2bf7353687e6ba067b2f840f889"
     },
     {
       "blob": "ceb9ca35c8c917b1abd34e751ddb75512b652c7b",
@@ -125,6 +125,30 @@
       "bytes": 978,
       "path": "design-generation-r1-probe.json",
       "sha256": "1a0626cfb861a9a513df03ed7c6042c1b962c277790d2f533815ead577830b2b"
+    },
+    {
+      "blob": "9408f74a782fb6fb8031cb72dd1be0bf14cc9404",
+      "bytes": 4397,
+      "path": "evidence-initial-publish-command.json",
+      "sha256": "eb6a3d46a56a9d23e30d90b9d5972f7e207c609657f9ceab32067e70191f8945"
+    },
+    {
+      "blob": "bb27fcb3e6db59ee01d923312753b5c6a9d37e3e",
+      "bytes": 17828,
+      "path": "evidence-initial-publish-receipt.json",
+      "sha256": "b7c7b75b2fbc13f2b071b27b9a63907d7abc14f73c047611d2ce60765b1b4b62"
+    },
+    {
+      "blob": "ae0a492d440c89d2b31a35c031e15e71a239da6a",
+      "bytes": 15434,
+      "path": "evidence-initial-publish.log",
+      "sha256": "2f6b666312cce27f021ddcb701d6af99e53efc39eb6335c3d7326ab15546ece8"
+    },
+    {
+      "blob": "605854523aa01b4d2ee87518d52d4b9ead16f8e2",
+      "bytes": 18265,
+      "path": "evidence-initial-verification.json",
+      "sha256": "7a066cc84e3d1e19e56c3145f5d391206bda07031750062e7fb50757722997dc"
     },
     {
       "blob": "9a7627560d3b6e6d0281e3e675333eaf167452be",
