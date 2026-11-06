@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7a61fcec5393735e4302ca8c93efc064ee172766f4ccb2069d88a350b764681e",
+      "sha256": "ea9f16e3929ef6ab96121f20079304192ff67252e6fc683ded103fcf8b0e95d8",
       "executable": false
     },
     "DEMO.md": {
@@ -9190,7 +9190,7 @@
       "executable": false
     },
     "tests/local-start/local.journey.ts": {
-      "sha256": "c221e3785c15f2bf71dc8625ae106964c92c422fd63882d2b8ec7886baa38da9",
+      "sha256": "1842ecd046bd6f72d2778632dc35950855151351d23d0654c8ab715eaef1eba1",
       "executable": false
     },
     "tests/local-start/native-dev.mjs": {
