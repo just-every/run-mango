@@ -2,8 +2,9 @@ import {test,expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {segmentFixture} from './segment-fixture';
 import {json,draftCampaign,approve} from '../go-live/harness';
-import {openPage} from '../support/navigation';
+import {openPage,reloadPage} from '../support/navigation';
 import {catalogSegmentJourney} from './segment-catalog';
+import {channelSnapshotJourney} from './channel-snapshot-journey';
 
 export async function segmentJourney(page:Page,info:TestInfo) {
   page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000);
@@ -57,18 +58,98 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     const campaign=await draftCampaign(site,cookie,'California repeat gardeners',people.map(p=>p.email),new Date(now+3600000));
     const setRules=async(rule:unknown)=>json(await site.call('/api/campaign-revisions/'+campaign.revisionId,{method:'PATCH',cookie,body:{inclusionRuleJson:JSON.stringify(rule)}}),200);
     const review=async()=>json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
+    // Two saved email steps distinguish the two selected people from four messages.
+    const steps=[1,2].map(hour=>({channel:'email',timezone:'UTC',
+      scheduledAt:new Date(now+hour*3600000).toISOString(),
+      sendByAt:new Date(now+(hour+2)*3600000).toISOString(),whyThisTime:'Owner chose this time'}));
+    await json(await site.call('/api/campaign-revisions/'+campaign.revisionId,{method:'PATCH',cookie,body:{steps}}),200);
     await setRules(conditions);
-    expect(await review()).toMatchObject({candidateCount:2,eligibleCount:2});
-    for(const width of [1440]) {
-      await page.setViewportSize({width,height:1000});
-      await test.step(`Open review at ${width}`,()=>openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`));
-      for(const part of ['Placed Order','US state','94103'])await expect(page.locator('main')).toContainText(part);
-      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await test.step('Review snapshot — saved as-of time and email recipient-step counts',async()=>{
+      const read=async()=>json(await site.call('/api/campaigns/'+campaign.campaignId+'/review',{cookie}),200);
+      const persisted=async()=>({
+        audiences:await site.rows("SELECT * FROM campaign_audiences WHERE revision_id='"+campaign.revisionId+"'"),
+        channels:await site.rows("SELECT c.* FROM campaign_audience_channel_counts c JOIN campaign_audiences a ON a.id=c.audience_id WHERE a.revision_id='"+campaign.revisionId+"'"),
+      });
+      const authority=async()=>({
+        campaign:await site.rows("SELECT * FROM campaigns WHERE id='"+campaign.campaignId+"'"),
+        revision:await site.rows("SELECT * FROM campaign_revisions WHERE id='"+campaign.revisionId+"'"),
+        approvals:await site.rows("SELECT * FROM campaign_approval_requests WHERE campaign_id='"+campaign.campaignId+"'"),
+        candidates:await site.rows("SELECT * FROM campaign_revision_candidates WHERE revision_id='"+campaign.revisionId+"'"),
+        recipients:await site.rows("SELECT * FROM recipient_steps WHERE campaign_id='"+campaign.campaignId+"'"),
+        dispatches:(await site.control('/_golive/emissions')).filter((item:any)=>item.command.kind==='campaign.dispatch'),
+        handoffs:structuredClone(f.edge.sends),
+      });
+      const before=await authority();
+      expect(before.campaign).toMatchObject([{state:'draft'}]);
+      expect(before.revision).toMatchObject([{state:'draft',approved_at:null}]);
+      for(const key of ['approvals','candidates','recipients','dispatches'] as const)expect(before[key]).toEqual([]);
+      expect((await read()).audienceState).toBe('needs_recomputation');
+      expect(await persisted()).toEqual({audiences:[],channels:[]});
+      // Bracket creation of the snapshot with an independent installation clock read.
+      const started=await site.control('/_golive/clock',{hold:true});
+      const checked=await review();
+      const finished=await site.control('/_golive/clock',{hold:true});
+      const asOf=Date.parse(checked.asOf);
+      expect(asOf).toBeGreaterThanOrEqual(started.now);
+      expect(asOf).toBeLessThanOrEqual(finished.now);
+      expect(checked).toMatchObject({candidateCount:2,eligibleCount:2,
+        channelCounts:[{channel:'email',recipientStepCount:4,eligibleContactCount:2}]});
+      expect(checked.channelCounts).toHaveLength(1);
+      const stored=await persisted();
+      expect(stored.audiences).toHaveLength(1);
+      expect(stored.audiences[0]).toMatchObject({revision_id:campaign.revisionId,as_of_at:asOf,
+        candidate_count:2,eligible_count:2,excluded_count:0});
+      expect(stored.channels).toHaveLength(1);
+      expect(stored.channels[0]).toMatchObject({audience_id:stored.audiences[0].id,
+        channel:'email',recipient_step_count:4,eligible_contact_count:2});
+      const saved=await read();
+      expect(saved).toMatchObject({audienceState:'saved',revision:{state:'draft',inclusionRuleJson:JSON.stringify(conditions),exclusionRulesJson:'[]'},
+        audience:{asOfAt:checked.asOf,candidateCount:2,eligibleCount:2,excludedCount:0},
+        audienceChannelCounts:[{channel:'email',recipientStepCount:4,eligibleContactCount:2}]});
+      expect(saved.steps).toHaveLength(2);
+      expect(saved.steps.map(({channel,scheduledAt,sendByAt}:any)=>({channel,scheduledAt,sendByAt})))
+        .toEqual(steps.map(({channel,scheduledAt,sendByAt})=>({channel,scheduledAt,sendByAt})));
+      // A later browser clock must not replace the saved audience instant.
+      // Keep the native fixture's millisecond segment-window boundaries intact.
+      await page.clock.setFixedTime(new Date(asOf+120000));
+      const reviewUrl=site.runtime.url+'/app/campaigns/'+campaign.campaignId+'/review';
+      await openPage(page,reviewUrl);
+      await page.getByRole('combobox',{name:'Times shown in',exact:true}).selectOption('UTC');
+      const timestamp='Saved '+new Intl.DateTimeFormat('en-AU',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'}).format(new Date(asOf));
+      const snapshot=page.getByRole('region',{name:timestamp,exact:true});
+      const assertSaved=async()=>{
+        await expect(snapshot).toBeVisible();
+        for(const part of ['Placed Order','US state','94103'])await expect(snapshot.getByLabel('Saved audience rule',{exact:true})).toContainText(part);
+        await expect(snapshot.locator('dl > div').filter({has:page.getByText('Eligible contacts',{exact:true})}).locator('dd')).toHaveText('2');
+        const email=snapshot.getByLabel('Saved channel step counts',{exact:true}).locator('p').filter({has:page.getByText('Email',{exact:true})});
+        await expect(email.locator('strong')).toHaveText('4');
+        expect((await read()).audience).toEqual(saved.audience);
+        expect((await read()).audienceChannelCounts).toEqual(saved.audienceChannelCounts);
+        expect(await persisted()).toEqual(stored);
+        expect(await authority()).toEqual(before);
+      };
+      await assertSaved();
+      await reloadPage(page);
+      await assertSaved();
+      await openPage(page,site.runtime.url+'/app/audience');
+      await openPage(page,reviewUrl);
+      await assertSaved();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
       // Axe cannot enter the intentionally sandboxed authored-email preview.
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('The spring beds are in.');
-      await test.step(`Review accessibility at ${width}`,async()=>expect((await new AxeBuilder({page}).exclude('iframe[title="Saved email preview"]').analyze()).violations).toEqual([]),{timeout:30000});
-      await page.screenshot({path:info.outputPath(`segment-review-${width}.png`),fullPage:true});
-    }
+      await test.step('Review accessibility at 1440',async()=>expect((await new AxeBuilder({page}).exclude('iframe[title="Saved email preview"]').analyze()).violations).toEqual([]),{timeout:30000});
+      await page.screenshot({path:info.outputPath('segment-review-1440.png'),fullPage:true});
+      // The journey asserts at desktop width; the reopened phone screen is browser proof.
+      await page.setViewportSize({width:390,height:844});
+      await openPage(page,reviewUrl);
+      await snapshot.waitFor({state:'visible'});
+      await page.screenshot({path:info.outputPath('segment-review-390.png'),fullPage:true});
+      expect(await authority()).toEqual(before);
+      await page.setViewportSize({width:1440,height:1000});
+      await page.clock.setFixedTime(new Date());
+      console.log('PROBE AUD-001 acceptance-1: native checks bracket '+started.now+'..'+finished.now+' -> saved as-of '+checked.asOf+' matches native and persisted readback after reload and reopen');
+      console.log('PROBE AUD-001 acceptance-3-email: two native saved email steps and two known eligible contacts -> four labeled email recipient steps, unchanged draft authority and no handoff');
+    });
     // Intersect the saved segment with each actual contact through review. Equal
     // total counts alone cannot prove that the right people were selected.
     for(const [index,person]of people.entries()) {
@@ -109,6 +190,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(selected.map(r=>r.contact_id)).toEqual([people[0].id,people[4].id].sort());
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.find((s:any)=>s.id===saved.id)).toEqual(saved);
     await catalogSegmentJourney(page,info,f);
+    await test.step('Review snapshot — separate email and SMS recipient-step counts',()=>channelSnapshotJourney(page,info));
     expect(f.edge.unexpected).toEqual([]);
   }finally{await f.close();}
 }
