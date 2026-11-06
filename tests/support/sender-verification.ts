@@ -9,20 +9,20 @@ function publicKey() {
     .then(pair=>crypto.subtle.exportKey('spki',pair.publicKey)).then(bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))));
 }
 /** Test-only external evidence. The production verifier, SQL authority and guards execute unchanged. */
-export function fixtureVerification(db: D1Database, input: Partial<AppConfig> = {}) {
+export function fixtureVerification(db: D1Database, input: Partial<AppConfig> = {}, edge: {domainVerified?:boolean;failedAuthentication?:'spf'|'dkim'|'dmarc'} = {}) {
   const config = {publicBaseUrl:new URL('https://mango.example.test'),sessionSigningKey:'fixture-sender-secret-at-least-thirty-two-bytes',mailProviderApiKey:'fixture-api-key',
     testEmailAllowlist:['receiver@example.test'],mailSender:{displayName:'Mango',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street'},...input} as AppConfig;
   config.testEmailAllowlist=[...config.testEmailAllowlist,'receiver@example.test'];
   const receiver={id:'test-only-receiver',recipient:'receiver@example.test',async acquire(challenge:Challenge) {
     return {receiptId:challenge.id,originalDigest:await digest(challenge.request),receivedAt:Date.now(),from:challenge.request.sender,to:challenge.recipient,
       providerMessageId:challenge.providerMessageId!,requestDigest:challenge.requestDigest,nonce:challenge.nonce,
-      signedBody:{digest:await digest(challenge.request.content.text),complete:true,nonce:challenge.nonce},authentication:{spf:{result:'pass',mailFromDomain:'send.example.test'},
-        dkim:{result:'pass',domain:'example.test',selector:'s1',keyDigest:await digest({v:'DKIM1',k:'rsa',p:await publicKey()})},dmarc:{result:'pass',fromDomain:'example.test',semantics:'rfc9989' as const}}};
+      signedBody:{digest:await digest(challenge.request.content.text),complete:true,nonce:challenge.nonce},authentication:{spf:{result:edge.failedAuthentication==='spf'?'fail':'pass',mailFromDomain:'send.example.test'},
+        dkim:{result:edge.failedAuthentication==='dkim'?'fail':'pass',domain:'example.test',selector:'s1',keyDigest:await digest({v:'DKIM1',k:'rsa',p:await publicKey()})},dmarc:{result:edge.failedAuthentication==='dmarc'?'fail':'pass',fromDomain:'example.test',semantics:'rfc9989' as const}}};
   }};
   const transport:typeof fetch=async input=>{
     const url=new URL(String(input));const p=await publicKey();
     if(url.hostname==='api.resend.com') {
-      const domain={id:'fixture-domain',name:'example.test',status:'verified',region:'global',capabilities:{sending:'enabled'}};
+      const domain={id:'fixture-domain',name:'example.test',status:edge.domainVerified===false?'pending':'verified',region:'global',capabilities:{sending:'enabled'}};
       return Response.json(url.pathname==='/domains'?{data:[domain],has_more:false}:{...domain,records:[
         {record:'SPF',type:'TXT',name:'send',value:'v=spf1 ip4:192.0.2.1 -all',status:'verified'},
         {record:'DKIM',type:'TXT',name:'s1._domainkey',value:`v=DKIM1; k=rsa; p=${p}`,status:'verified'}]});
@@ -34,9 +34,10 @@ export function fixtureVerification(db: D1Database, input: Partial<AppConfig> = 
   };
   const verification=createSenderVerification({database:createDatabase(db),config,receiver,transport});
   let proof:Promise<void>;
-  return {verification,config,async inspect(sender:string) {
-    await (proof ??= (async()=>{const challenge=await verification.prepareChallenge({recipient:receiver.recipient,subject:'Approved test diagnostic',text:'Synthetic sender evidence for isolated tests.'});
-      await verification.sendChallenge(challenge.id,{async send(){return {providerMessageId:`fixture-${challenge.id}`,disposition:'accepted',providerAcceptedAt:new Date()}},async reconcile(){return {facts:[],exhausted:true}}});await verification.acquireObservation(challenge.id);})());
+  const acquire=async()=>{const challenge=await verification.prepareChallenge({recipient:receiver.recipient,subject:'Approved test diagnostic',text:'Synthetic sender evidence for isolated tests.'});
+    await verification.sendChallenge(challenge.id,{async send(){return {providerMessageId:`fixture-${challenge.id}`,disposition:'accepted',providerAcceptedAt:new Date()}},async reconcile(){return {facts:[],exhausted:true}}});await verification.acquireObservation(challenge.id);};
+  return {verification,config,renew(){return proof=acquire();},async inspect(sender:string) {
+    await (proof ??= acquire());
     return verification.inspect(sender);
   }};
 }

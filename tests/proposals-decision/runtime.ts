@@ -29,7 +29,8 @@ export async function decisionRuntime() {
     const env = {DB:db,ASSETS_BUCKET:await native.getR2Bucket('ASSETS_BUCKET'),MANGO_JOBS:{async send(job:unknown){jobs.push(job)}},MANGO_PUBLIC_BASE_URL:'http://127.0.0.1',INITIAL_OPERATOR_EMAILS:'owner@example.test'} as unknown as AppBindings;
     const platform = createFixturePlatform(env,'proposal-fixture-signing-authority-at-least-thirty-two');
     platform.commerce=proposalCommerce();
-    const verification=fixtureVerification(db,platform.config);
+    const senderEdge:{domainVerified?:boolean;failedAuthentication?:'spf'|'dkim'|'dmarc'}={};
+    const verification=fixtureVerification(db,platform.config,senderEdge);
     platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:86400000,reconciliationWindowMs:86400000,detail:'Test transport'}},inspectSender:sender=>verification.inspect(sender),async validateSender(){return {ready:true,detail:'Test transport'}},async send(request){marketingHandoffs.push(request);throw new Error('No proposal test sends')},async reconcile(){return {facts:[],exhausted:true}},async verifyWebhook(){throw new Error('No webhook')}};
     const controls:{alter?:(output:GeneratedProposalWire)=>void;failure?:Error;lastRequest?:GroundedGenerationRequest}={};
     platform.ai={costIdentity:{provider:'openai',model:'fixture-model'},async generateGroundedJson(request){
@@ -68,7 +69,11 @@ export async function decisionRuntime() {
       const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
       return {status:response.status,body:await response.json() as any};
     };
-    return {db,platform,services,controls,jobs,marketingHandoffs,call,analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+    const publicPost=async(path:string,form:string)=>{
+      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:form}),env);
+      return {status:response.status,text:await response.text()};
+    };
+    return {db,platform,services,controls,jobs,marketingHandoffs,call,publicPost,senderEdge,senderEvidence:verification,analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
   }catch(error){await native.dispose();throw error;}
 }
 
