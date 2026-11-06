@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-11-06T02:09:13.029181+00:00",
+  "source_ref": "refs/heads/cloud/sd-mango-c-f53",
+  "source_head": "a42d93dda07504379674a52c5031a3b349a41367",
+  "main_head": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "source_contract_sha256": "5cf74af87d27bc8799c3052e22477e8c0c42ca00b0121d95a1b33dfa3afc9b60",
+  "main_contract_sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
+  "rows_compared": 316,
+  "changed_rows": [
+    "PROP-008",
+    "CAMP-018",
+    "PUB-005",
+    "PUB-006"
+  ],
+  "source_counts": {
+    "partial": 199,
+    "done": 19,
+    "missing": 98
+  },
+  "main_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  }
+}

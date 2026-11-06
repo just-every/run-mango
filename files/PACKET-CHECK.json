@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-06T02:15:46.205307+00:00",
+  "selected_regular_files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "46ca681f6038727df81c4570abadb361ade0fd9ad4f47a88896c94daf635c27e"
+    },
+    {
+      "path": "VERDICT.md",
+      "sha256": "46ca681f6038727df81c4570abadb361ade0fd9ad4f47a88896c94daf635c27e"
+    },
+    {
+      "path": "PLAN.md",
+      "sha256": "912188553f44ba317767805dab7bd650913414d4511439bc3fe96fea8b031af0"
+    },
+    {
+      "path": "RECEIPT.json",
+      "sha256": "51ccf7be376b1a48c4c501b09cbe572c97df4156e274c2252ca0463ae461e68f"
+    },
+    {
+      "path": "INSTALL.json",
+      "sha256": "fd64e5d6dc73c5742998df31c6b4fb1a8c02f9e3dcd6312a8ba5717c1f41e568"
+    },
+    {
+      "path": "INSTALL.log",
+      "sha256": "dbe196e57d3d2c3575954909af3cd46db7d3fd8dad2f05e4762e5f944d962444"
+    },
+    {
+      "path": "JOURNEY.json",
+      "sha256": "dab7221771cc51c12150cc4e9cd29b84f382511b22ab88cec3e31fed62ecf861"
+    },
+    {
+      "path": "JOURNEY.log",
+      "sha256": "44cab9ecf5420c5d68d3f312a01e7623a3b8080046a78de61298b2090af452dc"
+    },
+    {
+      "path": "MAIN-DRIFT.md",
+      "sha256": "68fba90e34af7a430278d9f1ada88aabad986449985b80d410e87c2af95cdffb"
+    },
+    {
+      "path": "REMOTE-REFS.json",
+      "sha256": "3791ae0907ec61f62190cc155c8598dd07f49b144b4cf9aff1d87f4c8ebda042"
+    },
+    {
+      "path": "DOCUMENT-READ-RECEIPT.json",
+      "sha256": "61d890fb5c279558cb180fb2775c34ae63d82682cf70015ee02e3af8a2d928be"
+    },
+    {
+      "path": "ACCEPTANCE-READING.txt",
+      "sha256": "b801a2c3c8353c001a61da96cd4255e67e871553c3b7cf9f2ec3f1bd90a14add"
+    },
+    {
+      "path": "CLEANUP.json",
+      "sha256": "7ab9f7d54c12f2994f036a1aa188c4e628471089fb79ae6087094e93873b4d81"
+    },
+    {
+      "path": "erased-source-1440.png",
+      "sha256": "9355e3571bdafcfe39731fba2e22a37494b126073c36819139a9818b24efa1c6"
+    },
+    {
+      "path": "erased-source-390.png",
+      "sha256": "9aa82fc695dce7d2ba54cf93cfff69ea6f1cc94a7a6d8c9464bb80f0d19cab40"
+    },
+    {
+      "path": "redacted-copy-1440.png",
+      "sha256": "f33e4b0cb381768919aac3b332a9665a0f13dce0f7a34f1ac89529bb4be002c9"
+    },
+    {
+      "path": "redacted-copy-390.png",
+      "sha256": "42bb9a1e951bd389d5410ef15da9fb32ce663699856b3fb484563fbc8e87fc35"
+    }
+  ],
+  "selected_count": 17,
+  "credentials_environment_dumps_heldouts_symlinks": "excluded",
+  "publication_scan": "not a fleet full-history publication scan; that remains pending",
+  "product_head_unchanged": true,
+  "product_branch": "cloud/sd-mango-c-f53",
+  "product_branch_not_pushed": true,
+  "tracked_and_untracked_worktree_clean": true,
+  "evidence_only_ref": "refs/heads/evidence/ct-judge-mango-camp018-20261106-0018-sol1"
+}

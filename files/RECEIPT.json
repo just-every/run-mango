@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-camp018-20261106-0018-sol1",
+  "source": "a42d93dda07504379674a52c5031a3b349a41367",
+  "source_branch": "cloud/sd-mango-c-f53",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "billing": "subscription-only",
+  "subagents": 0,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "prs_created": 0,
+  "ci_api_calls": 0,
+  "read_only_tracked_tree": true,
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "5cf74af87d27bc8799c3052e22477e8c0c42ca00b0121d95a1b33dfa3afc9b60"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8"
+    },
+    {
+      "path": "BASELINE.md",
+      "sha256": "fd937425932d01516ae3c9df672eb8273a6c30b90df453d02f3df1715010a206"
+    },
+    {
+      "path": "RULINGS.md",
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "534bacb426296864f3e339df092a9a1476255b657619e0d9fd72ff78f5924e80"
+    },
+    {
+      "path": "tests/campaign-authoring/duplicate-settings.spec.ts",
+      "sha256": "be0903362d32717a3c56ae7b53b3a518f04c0ab58da3ed88b21dc4e7e99ee68a"
+    },
+    {
+      "path": "tests/campaign-authoring/duplicate-authority-journey.ts",
+      "sha256": "42d8b8b990d224fd7b8af55cf1975b9edf830335734a0030538f858abd836e5b"
+    },
+    {
+      "path": "tests/campaign-authoring/duplicate-erased-source-journey.ts",
+      "sha256": "517518c24c14ea82362ff0faef70bcd82f04410c952e62bd15433330029b3cd8"
+    },
+    {
+      "path": "tests/campaign-authoring/browser-runtime.mjs",
+      "sha256": "0542609977c08a8a88149388d5dc548b76b3bba0bf55e4b844b28601ac1be9df"
+    },
+    {
+      "path": "tests/campaign-authoring/worker.ts",
+      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1"
+    },
+    {
+      "path": "tests/go-live/harness.ts",
+      "sha256": "3816a3b05f06d1e322ea1c00ba4cad0d14db19f5f4ca7c9c86d04b7fdca4460e"
+    },
+    {
+      "path": "tests/go-live/worker.ts",
+      "sha256": "63f5d7d90f906f8c7c18649bd574be70b8157234c81ea24f43ba6fd08fc27e35"
+    },
+    {
+      "path": "tests/go-live/edge.ts",
+      "sha256": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270"
+    },
+    {
+      "path": "tests/go-live/delivery-controls.ts",
+      "sha256": "707129f59b348bc00600a2da5c31dbd108d7c0f8fc157c76d90b379efe5b8c17"
+    },
+    {
+      "path": "src/core/features/campaigns/reuse-service.ts",
+      "sha256": "4ee8b36e1305e3395f326984576526289c74a4863a0edec00ff937fca583efd9"
+    },
+    {
+      "path": "src/core/features/campaigns/reuse-routes.ts",
+      "sha256": "d1a6cdc006c0e4177ba5761c6b78d2106592d048419a7e73d2495da726e357a0"
+    },
+    {
+      "path": "src/core/features/campaigns/create-draft.ts",
+      "sha256": "1781b704dcc22363c463f18e19d3be9d396604c6b1744d236e7bf858c12b66ac"
+    },
+    {
+      "path": "src/core/features/campaigns/authoring-content.ts",
+      "sha256": "a470bfd555627c5574e3bc0a197d7a6b4a95b3bd18a101210d99b59540368022"
+    },
+    {
+      "path": "src/core/features/audience/erasure/write-fence.ts",
+      "sha256": "635282696d2b1b0b8d13ac88dfe265e638e73352541bdf76b6714791be0fde33"
+    },
+    {
+      "path": "src/core/features/auth/permissions.ts",
+      "sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "79fc0d24af8d9d4b4001dedfa42f39e37a2507e01c1aa4a265eb58076a01a755"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb"
+    }
+  ],
+  "journey": {
+    "command": "cloud_run timeout 900 env MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<task>/runtime pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/duplicate-settings.spec.ts --workers=1 --reporter=list",
+    "started_at": "2026-11-06T02:06:10.115539+00:00",
+    "head": "a42d93dda07504379674a52c5031a3b349a41367",
+    "node": "v24.19.0",
+    "pnpm": "10.12.4",
+    "execution_count": 1,
+    "exit": 0,
+    "completed_at": "2026-11-06T02:07:26.844523+00:00"
+  },
+  "install": {
+    "command": "cloud_run timeout 600 pnpm install --frozen-lockfile",
+    "exit": 0,
+    "head": "a42d93dda07504379674a52c5031a3b349a41367"
+  },
+  "new_findings": 0,
+  "verdict": "ACCEPT ON LANDING",
+  "timestamp": "2026-11-06T02:11:30.097172+00:00",
+  "ci_supplied": {
+    "verify_run_id": 42130437068,
+    "head_sha": "a42d93dda07504379674a52c5031a3b349a41367",
+    "event": "push",
+    "conclusion": "failure",
+    "root_failure": "generated contract views freshness",
+    "dependent_failure": "verify aggregate",
+    "native_shards": "skipped",
+    "source": "inline builder and independent affected-gate reports; no CT query",
+    "candidate_exception": true,
+    "final_runtime_green": false
+  }
+}

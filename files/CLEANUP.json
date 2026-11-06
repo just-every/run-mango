@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-06T02:14:49.814297+00:00",
+  "owned_subreaper_remaining": [],
+  "browsers_and_servers": "closed by original runtime finally blocks and completed subreaper",
+  "owned_node_modules_removed": true,
+  "owned_runtime_scratch_removed": true,
+  "tracked_tree_clean": true,
+  "clone": "retained temporarily only for required evidence publication, then removed"
+}

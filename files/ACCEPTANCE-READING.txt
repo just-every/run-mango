@@ -1,0 +1,436 @@
+1 [preamble] <!-- Generated from CONTRACT.md by contract-docs. Edit CONTRACT.md, then regenerate. -->
+3 [preamble] # Accept a Mango installation
+7 [preamble] ## Progress
+9 [preamble] | Tier | Done | Partial | Missing | Total |
+11 [preamble] | Core | 18 | 200 | 89 | 307 |
+12 [preamble] | Agent surface | 0 | 0 | 9 | 9 |
+13 [preamble] | Later | 0 | 0 | 0 | 0 |
+14 [preamble] | Full target | 18 | 200 | 98 | 316 |
+16 [preamble] Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+18 [preamble] ## Core
+24 [HOME-001 — Installation Lobby] Core · published · **partial** · Cites BASE-PUBLIC-001, BASE-ACCESS-003
+38 [HOME-002 — Newsletter landing] Core · published · **partial** · From HOME-001 · Cites BASE-PUBLIC-001, BASE-DATA-005, BASE-PUBLIC-003, BASE-ACCESS-003, BASE-ACCESSIBILITY-001 · Register R-801, R-802
+57 [DOCS-001 — Public documentation] Core · published · **partial** · Cites BASE-DOCS-001, BASE-PUBLIC-001, BASE-ACCESS-003, BASE-ACCESSIBILITY-001 · Register R-801, R-802
+78 [OPER-001 — Operators and the default role] Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
+93 [OPER-002 — Management] Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
+109 [OPER-003 — Removal does not rewrite history] Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
+125 [STORE-001 — Store and event connections] Core · published · **partial** · Rules D-1
+141 [STORE-002 — Source identity] Core · published · **partial** · Cites BASE-OPS-003 · Rules D-1
+153 [STORE-003 — Freshness] Core · published · **done** · Cites BASE-OPS-004 · Rules D-1
+165 [STORE-003 — Freshness] **Gap.** None.
+169 [STORE-004 — Source failure] Core · published · **done** · Cites BASE-OPS-004 · Rules D-1
+181 [STORE-004 — Source failure] **Gap.** None.
+185 [STORE-005 — Stale sources block approval] Core · published · **done** · Rules D-1
+196 [STORE-005 — Stale sources block approval] **Gap.** None.
+200 [STORE-006 — Declared adapter capability] Core · published · **done** · Rules D-1
+211 [STORE-006 — Declared adapter capability] **Gap.** None.
+215 [STORE-007 — Ingestion latency] Core · published · **partial** · Rules D-1
+229 [CONT-001 — Contact identity] Core · published · **partial** · Rules D-2
+243 [CONT-002 — Channel status] Core · published · **partial** · Rules D-2
+257 [CONT-003 — Consent evidence] Core · published · **partial** · Rules D-2
+273 [CONT-004 — Opt-out precedence] Core · published · **partial** · Rules D-2
+287 [CONT-005 — Resubscription] Core · published · **partial** · Rules D-2
+302 [CONT-006 — Email suppression] Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D-2
+319 [CONT-007 — SMS compliance replies] Core · published · **partial** · Cites BASE-OPS-003 · Rules D-2
+333 [CONT-008 — Contact history] Core · published · **done** · Rules D-2
+344 [CONT-008 — Contact history] **Gap.** None.
+348 [CONT-009 — Confirmation] Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2
+366 [CONT-028 — Guarded consent capture] Core · published · **partial** · From CONT-005, CONT-009 · Rules D-2
+382 [CONT-010 — Import] Core · published · **partial** · Cites BASE-INPUT-001 · Rules D-2
+399 [CONT-011 — Merge] Core · published · **done** · Rules D-2
+409 [CONT-011 — Merge] **Gap.** None.
+413 [CONT-012 — Dormancy without deletion] Core · published · **partial** · Cites BASE-DATA-002 · Rules D-2
+429 [CONT-013 — Erasure and surviving opt-out] Core · published · **partial** · Cites BASE-DATA-003, BASE-INPUT-001 · Rules D-2
+445 [CONT-029 — Portable surviving restrictions] Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-DATA-004 · Rules D-2
+461 [CONT-030 — Erasure-safe restore authority] Core · published · **done** · From CONT-013 · Cites BASE-DATA-003, BASE-DATA-001 · Rules D-2
+472 [CONT-030 — Erasure-safe restore authority] **Gap.** None.
+478 [PROP-001 — Decision Desk] Core · published · **done** · Rules D-1
+487 [PROP-001 — Decision Desk] **Gap.** None.
+491 [PROP-002 — Evidence] Core · published · **partial** · Rules D-1
+506 [PROP-003 — Counts] Core · published · **partial** · Rules D-1
+519 [PROP-004 — Content] Core · published · **partial** · Rules D-1
+534 [PROP-005 — Owner control] Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
+547 [PROP-006 — Grounded generation] Core · published · **partial** · Rules D-1
+561 [PROP-007 — Generation failure] Core · published · **partial** · Cites BASE-OPS-004 · Rules D-1
+575 [PROP-008 — Forecast provenance] Core · published · **partial** · Rules D-1
+589 [PROP-009 — Proposal states] Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1
+605 [AUD-001 — Review snapshot] Core · published · **partial** · Rules D-2
+619 [AUD-002 — Consent and suppression] Core · published · **done** · Rules D-2
+627 [AUD-002 — Consent and suppression] **Gap.** None.
+631 [AUD-003 — Commerce and dormancy exclusions] Core · published · **done** · Rules D-2
+641 [AUD-003 — Commerce and dormancy exclusions] **Gap.** None.
+645 [AUD-004 — Frequency protection] Core · published · **partial** · Rules D-2
+658 [AUD-005 — Dispatch recheck] Core · published · **partial** · Rules D-2
+672 [AUD-006 — Multi-step exit] Core · published · **partial** · Rules D-2
+686 [AUD-007 — Frozen candidate set] Core · published · **partial** · Rules D-2
+701 [CAMP-001 — States] Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
+714 [CAMP-002 — Draft editing] Core · published · **partial** · Rules D-1, D-3
+731 [AUD-010 — Derived audience rule summaries] Core · published · **partial** · From AUD-001 · Rules D-2
+746 [CAMP-020 — Live audience authoring counts] Core · published · **partial** · From CAMP-002 · Rules D-1, D-3
+760 [CAMP-021 — Start and adopt newsletters] Core · published · **partial** · From CAMP-002 · Cites BASE-ACCESS-002 · Rules D-1, D-3
+775 [CAMP-003 — Revision preview] Core · published · **partial** · Rules D-1, D-3
+789 [CAMP-022 — Canonical saved email bytes] Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
+806 [CAMP-004 — Approval checks] Core · published · **partial** · Rules D-1, D-3
+822 [CAMP-005 — Idempotent approval] Core · published · **done** · Rules D-1, D-3
+830 [CAMP-005 — Idempotent approval] **Gap.** None.
+834 [CAMP-006 — Schedule] Core · published · **partial** · Rules D-1, D-3
+851 [CAMP-007 — Scheduled edits] Core · published · **partial** · Rules D-1, D-3
+865 [CAMP-008 — Test send] Core · published · **partial** · Rules D-1, D-3
+879 [CAMP-009 — Cancellation] Core · published · **partial** · Rules D-1, D-3
+893 [CAMP-010 — Step deadline] Core · published · **partial** · Rules D-1, D-3
+907 [CAMP-011 — Dispatch punctuality] Core · published · **done** · Rules D-1, D-3
+916 [CAMP-011 — Dispatch punctuality] **Gap.** None.
+920 [CAMP-012 — Campaign images] Core · published · **partial** · Cites BASE-ACCESS-003, BASE-INPUT-003, BASE-DATA-001, BASE-DATA-003, BASE-PUBLIC-001 · Rules D-1, D-3 · Register R-202
+939 [CAMP-023 — Insert and preview campaign images] Core · published · **partial** · From CAMP-012 · Rules D-1, D-3 · Register R-202
+956 [DESIGN-001 — Optional design module] Core · published · **partial** · Cites BASE-SECRET-002, BASE-DATA-004 · Rules D-1 · Register R-203
+971 [DESIGN-005 — Owner-selected design provider] Core · published · **partial** · From DESIGN-001 · Cites BASE-DATA-004, BASE-DATA-005 · Rules D-1 · Register R-203
+986 [DESIGN-006 — Optional design deployment credentials] Core · published · **partial** · From DESIGN-001 · Cites BASE-SECRET-002 · Rules D-1 · Register R-203
+1000 [DESIGN-002 — Draft-only design generation] Core · published · **partial** · Cites BASE-DATA-004 · Rules D-1
+1014 [DESIGN-007 — Design provider retries and deadlines] Core · published · **partial** · From DESIGN-002 · Cites BASE-OPS-004 · Rules D-1
+1031 [DESIGN-008 — Save generated design through ordinary authoring] Core · published · **partial** · From DESIGN-002 · Rules D-1
+1045 [DESIGN-009 — Apply a chosen design without stealing focus] Core · published · **partial** · From DESIGN-002 · Rules D-1
+1060 [DESIGN-010 — Keep paid design candidates] Core · published · **partial** · From DESIGN-002 · Rules D-1
+1076 [DESIGN-003 — Design data and records] Core · published · **partial** · Cites BASE-DATA-001, BASE-DATA-004, BASE-OPS-003, BASE-OPS-005 · Rules D-1
+1092 [DESIGN-011 — Design provider custody] Core · published · **partial** · From DESIGN-003 · Cites BASE-ACCESS-002, BASE-SECRET-001, BASE-INPUT-001, BASE-DATA-003 · Rules D-1
+1109 [DESIGN-004 — Design import] Core · published · **partial** · Rules D-1 · Register R-201
+1127 [DESIGN-012 — Compile the imported layout] Core · published · **partial** · From DESIGN-004 · Rules D-1 · Register R-201
+1144 [DESIGN-013 — Review imported design content] Core · published · **partial** · From DESIGN-004 · Rules D-1
+1159 [DESIGN-014 — Bounded local design input] Core · published · **partial** · From DESIGN-004 · Cites BASE-INPUT-001, BASE-DATA-004 · Rules D-1
+1177 [MSG-001 — Sender identity] Core · published · **partial**
+1190 [MSG-002 — Email authentication] Core · published · **partial**
+1206 [MSG-003 — Email unsubscribe] Core · published · **partial** · Cites BASE-ACCESS-003, BASE-OPS-003
+1223 [MSG-004 — SMS permission] Core · published · **partial**
+1236 [MSG-005 — SMS opt-out] Core · published · **partial**
+1251 [MSG-006 — Links] Core · published · **partial**
+1269 [MSG-007 — Content checks] Core · published · **partial**
+1285 [MSG-008 — Personalization] Core · published · **partial**
+1302 [MSG-009 — Email body] Core · published · **partial** · Cites BASE-INPUT-002
+1321 [MSG-010 — Unsubscribe availability] Core · published · **partial** · Cites BASE-ACCESS-003
+1337 [MSG-011 — Sending reputation] Core · published · **partial**
+1353 [MSG-012 — Hidden or deceptive presentation] Core · published · **partial**
+1370 [MSG-016 — Legacy approved email and draft compatibility] Core · published · **partial** · From MSG-009, MSG-012 · Cites BASE-INPUT-002
+1388 [SEND-001 — Provider hand-off] Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D-2, D-3
+1406 [SEND-002 — Quiet hours] Core · published · **partial** · Rules D-2, D-3
+1421 [SEND-003 — Throttling and progress] Core · published · **partial** · Rules D-2, D-3
+1435 [SEND-004 — Transport failure] Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001 · Rules D-2, D-3
+1450 [SEND-005 — Provider-event identity] Core · published · **partial** · Cites BASE-OPS-003 · Rules D-2, D-3
+1464 [SEND-006 — Delivery truth] Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2, D-3
+1479 [SEND-007 — Partial completion] Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2, D-3
+1493 [SEND-008 — Resumable dispatch and reconciliation] Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D-2, D-3
+1511 [SEND-009 — Provider outage] Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001 · Rules D-2, D-3
+1529 [RESULT-001 — Campaign history] Core · published · **partial**
+1544 [RESULT-002 — Engagement] Core · published · **partial**
+1559 [RESULT-003 — Attribution] Core · published · **done**
+1570 [RESULT-003 — Attribution] **Gap.** None.
+1574 [RESULT-004 — Cost] Core · published · **partial**
+1589 [RESULT-005 — Link tracking] Core · published · **partial**
+1607 [RESULT-009 — Open-estimate lifecycle] Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE-MAIL-001
+1623 [RESULT-010 — Ordinary campaign images are untracked] Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
+1637 [RESULT-006 — Deliverability reporting] Core · published · **partial**
+1652 [DATA-001 — Export contents] Core · published · **partial** · Cites BASE-DATA-001
+1666 [DATA-002 — Marketing restore custody] Core · published · **partial** · From DATA-001 · Cites BASE-DATA-001
+1684 [MGMT-001 — Signed first-owner admission] Core · published · **partial** · Cites BASE-ACCESS-001, BASE-ACCESS-002, BASE-ACCESS-004
+1699 [MGMT-002 — Native owner editor] Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
+1718 [OPER-004 — Roles and permissions] Core · target · **partial** · Cites BASE-ROLE-001, BASE-ACCESS-004, BASE-AUDIT-001
+1735 [OPER-005 — Separation of approval] Core · target · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007
+1744 [OPER-005 — Separation of approval] **Evidence.** None.
+1749 [OPER-006 — Single sign-on and deprovisioning] Core · target · **missing** · Cites BASE-SIGNIN-001, BASE-ACCESS-002, BASE-AUDIT-001 · Register R-101
+1758 [OPER-006 — Single sign-on and deprovisioning] **Evidence.** None.
+1763 [OPER-007 — Activity log] Core · target · **partial** · Cites BASE-AUDIT-001, BASE-DATA-003, BASE-AGENT-009
+1781 [CONT-014 — Custom properties] Core · target · **partial** · Rules D-2
+1796 [CONT-015 — Topics and tags] Core · target · **partial** · Rules D-2
+1811 [CONT-016 — Preference center] Core · target · **missing** · Cites BASE-PUBLIC-001 · Rules D-2
+1821 [CONT-016 — Preference center] **Evidence.** None.
+1826 [CONT-017 — Contact profile and event timeline] Core · target · **partial** · Cites BASE-ROLE-001 · Rules D-2
+1841 [CONT-018 — Onsite behavior] Core · target · **partial** · Cites BASE-PUBLIC-001, BASE-PUBLIC-002 · Rules D-2
+1857 [CONT-031 — Per-site tracking switch] Core · target · **partial** · From CONT-018 · Cites BASE-ROLE-001, BASE-PUBLIC-002, BASE-AUDIT-001 · Rules D-2
+1873 [CONT-032 — Onsite consent and opt-out precedence] Core · target · **partial** · From CONT-018 · Cites BASE-PUBLIC-001 · Rules D-2
+1890 [CONT-033 — Onsite session storage] Core · target · **partial** · From CONT-018 · Cites BASE-PUBLIC-001 · Rules D-2
+1907 [CONT-034 — Storefront click identity] Core · target · **missing** · From CONT-018 · Rules D-2
+1924 [CONT-035 — Earlier browsing stays on the visitor’s device] Core · target · **missing** · From CONT-018 · Rules D-2
+1939 [CONT-036 — Onsite retention and erasure] Core · target · **missing** · From CONT-018 · Cites BASE-DATA-003 · Rules D-2
+1957 [CONT-037 — No cross-site onsite identity] Core · target · **partial** · From CONT-018 · Cites BASE-DATA-004, BASE-PUBLIC-001 · Rules D-2
+1972 [CONT-019 — US SMS consent capture] Core · target · **partial** · Rules D-2
+1987 [CONT-020 — Engagement-based sunsetting] Core · target · **missing** · Rules D-2
+1998 [CONT-020 — Engagement-based sunsetting] **Evidence.** None.
+2003 [CONT-021 — US privacy requests] Core · target · **partial** · Cites BASE-DATA-003, BASE-AUDIT-001 · Rules D-2
+2018 [CONT-022 — Contact search and bulk actions] Core · target · **partial** · Cites BASE-OPS-004 · Rules D-2
+2033 [CONT-023 — Custom objects] Core · target · **missing** · Cites BASE-DATA-001, BASE-DATA-003 · Rules D-2
+2043 [CONT-023 — Custom objects] **Evidence.** None.
+2048 [CONT-024 — Incumbent-held consent] Core · target · **partial** · Rules D-2
+2064 [CONT-038 — Source consent attestation] Core · target · **partial** · From CONT-024 · Cites BASE-AUDIT-001, BASE-DATA-001 · Rules D-2
+2081 [CONT-039 — Incumbent evidence restrictions] Core · target · **partial** · From CONT-024 · Rules D-2
+2097 [CONT-040 — Incumbent evidence labeling and revocation] Core · target · **partial** · From CONT-024 · Cites BASE-AUDIT-001 · Rules D-2
+2113 [CONT-025 — Opt-in mode per form and source] Core · target · **partial** · Cites BASE-ROLE-001, BASE-AUDIT-001 · Rules D-2
+2132 [CONT-026 — Contact added by hand] Core · target · **partial** · Cites BASE-ROLE-001, BASE-AUDIT-001 · Rules D-2
+2149 [CONT-027 — Resubscribe through a public form] Core · target · **partial** · Rules D-2
+2166 [CONT-041 — Destination-private resubscription refusals] Core · target · **partial** · From CONT-027 · Cites BASE-ACCESS-003 · Rules D-2
+2183 [CONT-042 — Shared destination confirmation allowance] Core · target · **partial** · From CONT-027 · Rules D-2
+2198 [CONT-043 — Resubscription after erasure] Core · target · **missing** · From CONT-027 · Rules D-2
+2216 [AUD-008 — Inactivity rules in review] Core · target · **partial** · Cites BASE-OPS-005 · Rules D-2
+2232 [AUD-009 — Frequency protection: one policy and a recorded override] Core · target · **partial** · Cites BASE-OPS-005 · Rules D-2
+2248 [AUD-011 — Cart-flow frequency and impact] Core · target · **missing** · From AUD-009 · Rules D-2
+2265 [CAMP-013 — Recipient-local send time] Core · target · **missing** · Rules D-1, D-3
+2274 [CAMP-013 — Recipient-local send time] **Evidence.** None.
+2279 [CAMP-014 — Pause and resume] Core · target · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
+2293 [CAMP-015 — Marketing calendar] Core · target · **missing** · Rules D-1, D-3
+2303 [CAMP-015 — Marketing calendar] **Evidence.** None.
+2308 [CAMP-016 — Follow-up to non-engaged recipients] Core · target · **partial** · Rules D-1, D-3
+2322 [CAMP-017 — Recurring and RSS-to-email campaigns] Core · target · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007 · Rules D-1, D-3
+2331 [CAMP-017 — Recurring and RSS-to-email campaigns] **Evidence.** None.
+2336 [CAMP-018 — Duplicate a campaign] Core · target · **partial** · Rules D-1, D-3
+2346 [CAMP-018 — Duplicate a campaign] **Evidence.** `tests/campaign-authoring/browser.spec.ts`
+2347 [CAMP-018 — Duplicate a campaign] **Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Duplication from every campaign state; Copy-of name; New independent draft; Copied channels; Copied audience rule; Copied content bytes; Copied sender; Copied preheader; Copied tracking choice; Copied step settings; No copied schedule; No copied approval; No copied snapshot; No copied test; No copied result; Current settings checked; Current consent checked; Current audience checked; Source revision unchanged; Source results unchanged. Assertions in tests/campaign-authoring/reuse-journey.ts are outside the old Evidence cell. Missing public-door journey: “Duplicate a campaign — complete acceptance”, covering the unasserted outcomes above.
+2351 [CAMP-019 — Test send to typed addresses] Core · target · **partial** · Cites BASE-ROLE-001, BASE-OPS-005 · Rules D-1, D-3
+2366 [CAMP-024 — Shared daily test allowance] Core · target · **partial** · From CAMP-019 · Rules D-1, D-3
+2384 [MSG-013 — Contact links (mailto:, tel:, sms:)] Core · target · **partial**
+2401 [MSG-014 — Allowed link and image hosts] Core · target · **partial**
+2420 [MSG-015 — Allow a blocked host from review] Core · target · **partial** · Cites BASE-ROLE-001, BASE-AUDIT-001
+2439 [RESULT-007 — Click map, per-link clicks and clicker lists] Core · target · **partial**
+2458 [RESULT-008 — Recipients per outcome] Core · target · **partial**
+2476 [SCALE-001 — Capacity for the first buyer] Core · target · **partial**
+2494 [FORM-001 — Hosted and embedded signup] Core · target · **partial** · Cites BASE-PUBLIC-002 · Rules D-2
+2509 [FORM-002 — Popups, flyouts and full-page forms] Core · target · **missing** · Cites BASE-ACCESSIBILITY-001, BASE-PUBLIC-002 · Rules D-2
+2521 [FORM-002 — Popups, flyouts and full-page forms] **Evidence.** None.
+2526 [FORM-003 — Multi-step capture and incentives] Core · target · **missing** · Rules D-2
+2536 [FORM-003 — Multi-step capture and incentives] **Evidence.** None.
+2541 [FORM-004 — Landing pages] Core · target · **missing** · Cites BASE-PUBLIC-001 · Rules D-2
+2551 [FORM-004 — Landing pages] **Evidence.** None.
+2556 [FORM-005 — Form performance and tests] Core · target · **missing** · Rules D-2
+2565 [FORM-005 — Form performance and tests] **Evidence.** None.
+2570 [FORM-006 — Referral program] Core · target · **missing** · Rules D-2
+2580 [FORM-006 — Referral program] **Evidence.** None.
+2585 [FORM-007 — Abuse resistance] Core · target · **partial** · Cites BASE-INPUT-001, BASE-ACCESS-003 · Rules D-2
+2603 [FORM-008 — Signup intake capacity] Core · target · **partial** · Rules D-2
+2620 [FORM-011 — Accepted-only signup accounting] Core · target · **partial** · From FORM-008 · Rules D-2
+2637 [FORM-012 — Owner-controlled signup allowance raises] Core · target · **partial** · From FORM-008 · Cites BASE-ROLE-001, BASE-AUDIT-001 · Rules D-2
+2653 [FORM-013 — Signup challenge defaults and configuration] Core · target · **partial** · From FORM-008 · Cites BASE-ROLE-001, BASE-AUDIT-001, BASE-SECRET-002 · Rules D-2
+2669 [FORM-009 — Kiosk and event forms] Core · target · **partial** · Rules D-2
+2686 [FORM-010 — Refused signups are never silent] Core · target · **partial** · Cites BASE-OPS-004, BASE-AUDIT-001 · Rules D-2
+2705 [SEG-001 — Segment builder] Core · target · **partial**
+2723 [SEG-002 — Live membership] Core · target · **missing**
+2733 [SEG-002 — Live membership] **Evidence.** None.
+2738 [SEG-003 — RFM and lifecycle stages] Core · target · **partial**
+2753 [SEG-004 — Predictions] Core · target · **missing**
+2763 [SEG-004 — Predictions] **Evidence.** None.
+2768 [SEG-005 — Engagement and lead scoring] Core · target · **missing**
+2778 [SEG-005 — Engagement and lead scoring] **Evidence.** None.
+2783 [SEG-006 — Campaign and flow activity conditions] Core · target · **missing**
+2795 [SEG-006 — Campaign and flow activity conditions] **Evidence.** None.
+2802 [BUILD-001 — Drag-and-drop email builder] Core · target · **partial** · Cites BASE-INPUT-002, BASE-INPUT-003, BASE-ACCESSIBILITY-001 · Rules D-1
+2818 [BUILD-002 — Template library] Core · target · **partial** · Cites BASE-DATA-001 · Rules D-1
+2830 [BUILD-003 — Brand kit] Core · target · **missing** · Cites BASE-DATA-004 · Rules D-1
+2837 [BUILD-003 — Brand kit] **Evidence.** None.
+2842 [BUILD-004 — Reusable blocks] Core · target · **partial** · Cites BASE-AGENT-007 · Rules D-1
+2854 [BUILD-005 — Conditional content] Core · target · **missing** · Rules D-1
+2861 [BUILD-005 — Conditional content] **Evidence.** None.
+2866 [BUILD-006 — Dynamic product content] Core · target · **missing** · Rules D-1
+2876 [BUILD-006 — Dynamic product content] **Evidence.** None.
+2881 [BUILD-007 — Coupons] Core · target · **missing** · Rules D-1
+2890 [BUILD-007 — Coupons] **Evidence.** None.
+2895 [BUILD-008 — Previews and pre-send checks] Core · target · **done** · Rules D-1
+2907 [BUILD-008 — Previews and pre-send checks] **Gap.** None.
+2911 [BUILD-009 — SMS and MMS composer] Core · target · **partial** · Rules D-1
+2923 [BUILD-010 — Mobile layout the checker can prove] Core · target · **partial** · Cites BASE-INPUT-002 · Rules D-1
+2938 [BUILD-013 — Mobile and desktop message checks] Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules D-1
+2952 [BUILD-014 — Generated mobile presentation] Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules D-1
+2968 [BUILD-011 — Chosen catalog products] Core · target · **partial** · Rules D-1
+2984 [BUILD-012 — Email size the builder and imported templates fit in] Core · target · **partial** · Rules D-1
+3003 [FLOW-001 — Visual flow builder] Core · target · **partial** · Cites BASE-ACCESSIBILITY-001 · Rules D-2, D-3
+3019 [FLOW-002 — Triggers] Core · target · **missing** · Rules D-2, D-3
+3032 [FLOW-002 — Triggers] **Evidence.** None.
+3037 [FLOW-003 — Entry filters and re-entry] Core · target · **missing** · Rules D-2, D-3
+3047 [FLOW-003 — Entry filters and re-entry] **Evidence.** None.
+3052 [FLOW-004 — Delays and waits] Core · target · **missing** · Rules D-2, D-3
+3062 [FLOW-004 — Delays and waits] **Evidence.** None.
+3067 [FLOW-005 — Splits] Core · target · **missing** · Rules D-2, D-3
+3076 [FLOW-005 — Splits] **Evidence.** None.
+3081 [FLOW-006 — Actions] Core · target · **missing** · Cites BASE-OPS-003 · Rules D-2, D-3
+3091 [FLOW-006 — Actions] **Evidence.** None.
+3096 [FLOW-007 — Exits and goals] Core · target · **missing** · Rules D-2, D-3
+3105 [FLOW-007 — Exits and goals] **Evidence.** None.
+3110 [FLOW-008 — Reviewed activation] Core · target · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AUDIT-001 · Rules D-2, D-3
+3123 [FLOW-008 — Reviewed activation] **Evidence.** None.
+3128 [FLOW-009 — Per-send rechecks] Core · target · **missing** · Rules D-2, D-3
+3137 [FLOW-009 — Per-send rechecks] **Evidence.** None.
+3142 [FLOW-010 — Exactly-once execution] Core · target · **missing** · Cites BASE-OPS-003 · Rules D-2, D-3
+3152 [FLOW-010 — Exactly-once execution] **Evidence.** None.
+3157 [FLOW-011 — Pause, manual review and stop] Core · target · **missing** · Rules D-2, D-3
+3167 [FLOW-011 — Pause, manual review and stop] **Evidence.** None.
+3172 [FLOW-012 — Flow library] Core · target · **missing** · Rules D-2, D-3
+3182 [FLOW-012 — Flow library] **Evidence.** None.
+3187 [FLOW-013 — Flow analytics and path inspection] Core · target · **missing** · Rules D-2, D-3
+3196 [FLOW-013 — Flow analytics and path inspection] **Evidence.** None.
+3201 [FLOW-014 — Priority and cross-message frequency] Core · target · **missing** · Rules D-2, D-3
+3211 [FLOW-014 — Priority and cross-message frequency] **Evidence.** None.
+3216 [FLOW-015 — Sequences] Core · target · **missing** · Rules D-2, D-3
+3225 [FLOW-015 — Sequences] **Evidence.** None.
+3230 [FLOW-016 — Flow portability] Core · target · **missing** · Cites BASE-DATA-001 · Rules D-2, D-3
+3239 [FLOW-016 — Flow portability] **Evidence.** None.
+3246 [EXP-001 — Campaign A/B tests] Core · target · **missing**
+3253 [EXP-001 — Campaign A/B tests] **Evidence.** None.
+3258 [EXP-002 — Multivariate tests] Core · target · **missing**
+3265 [EXP-002 — Multivariate tests] **Evidence.** None.
+3270 [EXP-003 — Flow splits and flow holdouts] Core · target · **missing**
+3277 [EXP-003 — Flow splits and flow holdouts] **Evidence.** None.
+3282 [EXP-004 — Global holdout] Core · target · **missing**
+3289 [EXP-004 — Global holdout] **Evidence.** None.
+3294 [EXP-005 — Honest test statistics] Core · target · **missing**
+3301 [EXP-005 — Honest test statistics] **Evidence.** None.
+3306 [EXP-006 — Send-time optimization] Core · target · **missing**
+3314 [EXP-006 — Send-time optimization] **Evidence.** None.
+3321 [SMS-001 — US SMS through Twilio] Core · target · **partial** · Cites BASE-OPS-003, BASE-MAIL-001
+3335 [SMS-002 — Carrier registration status] Core · target · **missing**
+3345 [SMS-002 — Carrier registration status] **Evidence.** None.
+3350 [SMS-003 — US quiet hours and state rules] Core · target · **partial**
+3365 [SMS-004 — Two-way SMS inbox] Core · target · **partial**
+3377 [SMS-005 — Branded short links and MMS] Core · target · **missing**
+3384 [SMS-005 — Branded short links and MMS] **Evidence.** None.
+3389 [SMS-006 — SMS cost control] Core · target · **missing**
+3396 [SMS-006 — SMS cost control] **Evidence.** None.
+3401 [SMS-007 — WhatsApp marketing messages] Core · target · **missing**
+3408 [SMS-007 — WhatsApp marketing messages] **Evidence.** None.
+3413 [SMS-008 — Twilio connection an owner makes in Settings] Core · target · **missing** · Cites BASE-SECRET-001, BASE-ROLE-001
+3426 [SMS-008 — Twilio connection an owner makes in Settings] **Evidence.** None.
+3431 [PUSH-001 — Web push] Core · target · **missing**
+3439 [PUSH-001 — Web push] **Evidence.** None.
+3444 [PUSH-002 — Mobile app push and in-app messages] Core · target · **missing** · Cites BASE-SECRET-001
+3451 [PUSH-002 — Mobile app push and in-app messages] **Evidence.** None.
+3458 [DELIV-001 — Sending providers] Core · target · **partial** · Cites BASE-MAIL-001
+3471 [DELIV-002 — Domain setup] Core · target · **partial** · Register R-502
+3484 [DELIV-003 — Bulk-sender compliance dashboard] Core · target · **partial**
+3497 [DELIV-004 — Domain warm-up] Core · target · **missing**
+3504 [DELIV-004 — Domain warm-up] **Evidence.** None.
+3509 [DELIV-005 — Mailbox-provider breakdown] Core · target · **done**
+3518 [DELIV-005 — Mailbox-provider breakdown] **Gap.** None.
+3522 [DELIV-006 — Address quality at intake] Core · target · **missing**
+3529 [DELIV-006 — Address quality at intake] **Evidence.** None.
+3534 [DELIV-007 — Sender evidence renewal without stopping live flows] Core · target · **partial** · Cites BASE-MAIL-001, BASE-OPS-003
+3550 [DELIV-008 — Sending connection an owner makes in Settings] Core · target · **partial** · Cites BASE-SECRET-001, BASE-ROLE-001 · Register R-502
+3566 [DELIV-009 — Sending-connection watch and replacement] Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-MAIL-001, BASE-OPS-005
+3583 [DELIV-010 — Signed delivery-event connection] Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-OPS-003, BASE-MAIL-001
+3603 [REPORT-001 — Overview dashboard] Core · target · **partial**
+3617 [REPORT-002 — Campaign and flow performance tables] Core · target · **partial**
+3632 [REPORT-003 — Attribution for campaigns, flows and SMS] Core · target · **partial**
+3647 [REPORT-004 — Customer and retention analytics] Core · target · **done**
+3657 [REPORT-004 — Customer and retention analytics] **Gap.** None.
+3661 [REPORT-005 — List growth and consent sources] Core · target · **partial**
+3677 [REPORT-006 — Scheduled and custom reports] Core · target · **partial** · Cites BASE-MAIL-001
+3690 [REPORT-007 — Usage and cost transparency] Core · target · **partial**
+3707 [INT-001 — Shopify] Core · target · **partial**
+3722 [INT-002 — WooCommerce] Core · target · **partial** · Cites BASE-SECRET-001, BASE-OPS-003
+3738 [INT-003 — BigCommerce] Core · target · **missing**
+3745 [INT-003 — BigCommerce] **Evidence.** None.
+3750 [INT-004 — Stripe] Core · target · **partial**
+3762 [INT-005 — Square] Core · target · **missing**
+3769 [INT-005 — Square] **Evidence.** None.
+3774 [INT-006 — Stall and Orbit] Core · target · **missing**
+3781 [INT-006 — Stall and Orbit] **Evidence.** None.
+3786 [INT-007 — Events and profiles API] Core · target · **done** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS-003
+3799 [INT-007 — Events and profiles API] **Gap.** None.
+3803 [INT-008 — Outbound webhooks] Core · target · **missing** · Cites BASE-OPS-003, BASE-OPS-004
+3810 [INT-008 — Outbound webhooks] **Evidence.** None.
+3815 [INT-009 — Zapier and Crank] Core · target · **missing** · Register R-503
+3822 [INT-009 — Zapier and Crank] **Evidence.** None.
+3827 [INT-010 — Segment] Core · target · **missing**
+3834 [INT-010 — Segment] **Evidence.** None.
+3839 [INT-011 — CRM sync] Core · target · **partial**
+3851 [INT-012 — Ad audiences] Core · target · **missing**
+3858 [INT-012 — Ad audiences] **Evidence.** None.
+3863 [INT-013 — Web analytics tagging] Core · target · **partial**
+3878 [INT-014 — Reviews and loyalty apps] Core · target · **partial**
+3890 [INT-015 — Shopify connection a merchant installs] Core · target · **missing** · Cites BASE-DATA-004, BASE-SECRET-001 · Register R-501
+3907 [INT-016 — Shopify mandatory privacy intake] Core · target · **missing** · From INT-015 · Cites BASE-DATA-003, BASE-OPS-005
+3923 [INT-017 — Shopify disconnection and reinstall] Core · target · **missing** · From INT-015 · Cites BASE-SECRET-001, BASE-OPS-003
+3938 [INT-018 — Shopify connector trust and custody] Core · target · **missing** · From INT-015 · Cites BASE-DATA-004, BASE-DATA-005, BASE-SECRET-001, BASE-OPS-003
+3955 [INT-019 — Shopify bulk first sync] Core · target · **missing** · From INT-015 · Cites BASE-OPS-003
+3970 [INT-020 — Shopify wiring and first-use work] Core · target · **missing** · From INT-015 · Cites BASE-OPS-004
+3988 [MOVE-001 — From Mailchimp] Core · target · **partial** · Rules D-2 · Register R-701
+4006 [MOVE-002 — From Klaviyo] Core · target · **partial** · Rules D-2
+4020 [MOVE-003 — From ActiveCampaign] Core · target · **partial** · Rules D-2
+4034 [MOVE-004 — From Kit (ConvertKit)] Core · target · **partial** · Rules D-2
+4048 [MOVE-005 — From beehiiv, Omnisend and Customer.io] Core · target · **partial** · Rules D-2
+4062 [MOVE-006 — Reconciliation and cutover] Core · target · **partial** · Rules D-2
+4077 [MOVE-016 — Move-in cutover checklist] Core · target · **partial** · From MOVE-006 · Rules D-2
+4091 [MOVE-007 — Mailchimp saved segments] Core · target · **missing** · Rules D-2
+4103 [MOVE-007 — Mailchimp saved segments] **Evidence.** None.
+4108 [MOVE-008 — Mailchimp automations and Customer Journeys] Core · target · **missing** · Rules D-2
+4117 [MOVE-008 — Mailchimp automations and Customer Journeys] **Evidence.** None.
+4122 [MOVE-017 — Customer Journey inventory and drafts] Core · target · **missing** · From MOVE-008 · Rules D-2
+4132 [MOVE-017 — Customer Journey inventory and drafts] **Evidence.** None.
+4137 [MOVE-009 — Incumbent engagement history] Core · target · **partial** · Rules D-2
+4153 [MOVE-010 — Several audiences] Core · target · **partial** · Rules D-2
+4168 [MOVE-011 — Incumbent template conversion] Core · target · **partial** · Rules D-2
+4183 [MOVE-018 — Converted template styles and readability] Core · target · **partial** · From MOVE-011 · Rules D-2
+4199 [MOVE-019 — Held conversions and outside hosts] Core · target · **partial** · From MOVE-011 · Rules D-2
+4215 [MOVE-012 — Move-in at the buyer's scale] Core · target · **partial** · Rules D-2
+4231 [MOVE-020 — Full-size API move-in] Core · target · **partial** · From MOVE-012 · Rules D-2
+4245 [MOVE-021 — Move-in resumption and reconciliation] Core · target · **partial** · From MOVE-012 · Rules D-2
+4260 [MOVE-013 — Two-way sync during the parallel run] Core · target · **missing** · Rules D-2
+4271 [MOVE-013 — Two-way sync during the parallel run] **Evidence.** None.
+4276 [MOVE-022 — Parallel-run verification and freshness] Core · target · **missing** · From MOVE-013 · Rules D-2
+4286 [MOVE-022 — Parallel-run verification and freshness] **Evidence.** None.
+4291 [MOVE-023 — Restriction writeback] Core · target · **missing** · From MOVE-013 · Rules D-2
+4301 [MOVE-023 — Restriction writeback] **Evidence.** None.
+4306 [MOVE-024 — Export-only parallel-run custody] Core · target · **missing** · From MOVE-013 · Rules D-2
+4316 [MOVE-024 — Export-only parallel-run custody] **Evidence.** None.
+4321 [MOVE-025 — End the parallel run] Core · target · **missing** · From MOVE-013 · Cites BASE-AUDIT-001 · Rules D-2
+4331 [MOVE-025 — End the parallel run] **Evidence.** None.
+4336 [MOVE-026 — Other-incumbent parallel sync] Core · target · **missing** · From MOVE-013 · Rules D-2
+4348 [MOVE-026 — Other-incumbent parallel sync] **Evidence.** None.
+4353 [MOVE-014 — Incumbent images brought home] Core · target · **partial** · Rules D-2
+4369 [MOVE-015 — Incumbent engagement history beyond the Mailchimp export] Core · target · **missing** · Rules D-2 · Register R-702
+4379 [MOVE-015 — Incumbent engagement history beyond the Mailchimp export] **Evidence.** None.
+4386 [MOBILE-001 — Responsive operator app] Core · target · **partial** · Cites BASE-ACCESSIBILITY-001 · Register R-801, R-802
+4399 [MOBILE-002 — Native iOS and Android app] Core · target · **missing** · Cites BASE-ROLE-001 · Register R-703
+4410 [MOBILE-002 — Native iOS and Android app] **Evidence.** None.
+4417 [PUB-001 — Web archive] Core · target · **done** · Cites BASE-PUBLIC-001 · Rules D-2
+4427 [PUB-001 — Web archive] **Gap.** None.
+4431 [PUB-002 — Paid newsletters] Core · target · **partial** · Cites BASE-SECRET-001 · Rules D-2
+4447 [PUB-003 — Recommendations] Core · target · **missing** · Rules D-2
+4455 [PUB-003 — Recommendations] **Evidence.** None.
+4460 [PUB-004 — Direct sponsorships] Core · target · **missing** · Rules D-2
+4468 [PUB-004 — Direct sponsorships] **Evidence.** None.
+4473 [PUB-005 — Paid signup page and payer consent] Core · target · **partial** · Rules D-2
+4488 [PUB-006 — Paid-reader consent and restrictions] Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
+4506 [HEALTH-001 — Bounded dependency readiness] Core · target · **partial** · From new · Cites BASE-OPS-001, BASE-ACCESS-003, BASE-SECRET-001
+4524 [MAIL-001 — Selected Managed service mail] Core · target · **partial** · From new · Cites BASE-DATA-005, BASE-DATA-004, BASE-MAIL-001
+4541 [AGENT-001 — Retention-gap finder] Core · push-further · **partial** · Cites BASE-AGENT-003, BASE-AGENT-007, BASE-AGENT-011 · Rules D-2, D-3
+4555 [AGENT-002 — Journey proposal with holdout and stop rules] Core · push-further · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-2, D-3
+4566 [AGENT-002 — Journey proposal with holdout and stop rules] **Evidence.** None.
+4571 [AGENT-003 — Outcome judge] Core · push-further · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007 · Rules D-2, D-3
+4581 [AGENT-003 — Outcome judge] **Evidence.** None.
+4586 [AGENT-004 — Lifecycle failure diagnosis and repair] Core · push-further · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-012 · Rules D-2, D-3
+4601 [AGENT-005 — Deliverability diagnostician] Core · push-further · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007 · Rules D-2, D-3
+4610 [AGENT-005 — Deliverability diagnostician] **Evidence.** None.
+4615 [AGENT-006 — Account audit] Core · push-further · **missing** · Cites BASE-AGENT-003, BASE-AGENT-007 · Rules D-2, D-3
+4624 [AGENT-006 — Account audit] **Evidence.** None.
+4629 [AGENT-007 — Grounded content drafting] Core · push-further · **partial** · Cites BASE-AGENT-002, BASE-AGENT-006, BASE-AGENT-007 · Rules D-2, D-3
+4644 [AGENT-008 — Natural-language segments and questions] Core · push-further · **missing** · Cites BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007 · Rules D-2, D-3
+4653 [AGENT-008 — Natural-language segments and questions] **Evidence.** None.
+4658 [AGENT-009 — Scheduled routines and editable memory] Core · push-further · **missing** · Cites BASE-AGENT-007, BASE-AGENT-011 · Rules D-2, D-3
+4668 [AGENT-009 — Scheduled routines and editable memory] **Evidence.** None.
+4673 [AGENT-010 — Retention-routine authority and activity] Core · push-further · **partial** · Cites BASE-AGENT-005, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008, BASE-AGENT-009, BASE-AGENT-011 · Rules D-2, D-3
+4689 [AGENT-011 — Migration agent] Core · push-further · **missing** · Cites BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007 · Rules D-2, D-3
+4699 [AGENT-011 — Migration agent] **Evidence.** None.
+4702 [AGENT-011 — Migration agent] ## Agent surface
+4708 [SURFACE-001 — The marketing registry and conformance journey] Agent surface · target · **missing** · From new · Cites BASE-AGENT-001, BASE-AGENT-002, BASE-AGENT-003, BASE-AGENT-013 · Register R-601
+4718 [SURFACE-001 — The marketing registry and conformance journey] **Evidence.** None.
+4723 [SURFACE-002 — Drafts and outside marketing exposure] Agent surface · target · **missing** · From new · Cites BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007
+4735 [SURFACE-002 — Drafts and outside marketing exposure] **Evidence.** None.
+4740 [SURFACE-003 — Sending-provider setup classes] Agent surface · target · **missing** · From new · Cites BASE-AGENT-004, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008
+4752 [SURFACE-003 — Sending-provider setup classes] **Evidence.** None.
+4757 [SURFACE-004 — Marketing authority and irreversible privacy operations] Agent surface · target · **missing** · From new · Cites BASE-AGENT-005, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-011
+4769 [SURFACE-004 — Marketing authority and irreversible privacy operations] **Evidence.** None.
+4774 [SURFACE-005 — Paid marketing and exact-revision commitments] Agent surface · target · **missing** · From new · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008
+4788 [SURFACE-005 — Paid marketing and exact-revision commitments] **Evidence.** None.
+4793 [SURFACE-006 — Live marketing changes] Agent surface · target · **missing** · From new · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-012
+4804 [SURFACE-006 — Live marketing changes] **Evidence.** None.
+4809 [SURFACE-007 — Marketing records and reports] Agent surface · target · **missing** · From new · Cites BASE-AGENT-003, BASE-AGENT-010, BASE-AGENT-013
+4819 [SURFACE-007 — Marketing records and reports] **Evidence.** None.
+4824 [SURFACE-008 — A stranger runs a seeded retention week] Agent surface · target · **missing** · From new · Cites BASE-AGENT-002, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-009, BASE-AGENT-013 · Register R-601
+4838 [SURFACE-008 — A stranger runs a seeded retention week] **Evidence.** None.
+4843 [SURFACE-009 — Specialist handoffs keep marketing context] Agent surface · target · **missing** · From new · Cites BASE-AGENT-003, BASE-AGENT-010, BASE-AGENT-012, BASE-AGENT-013
+4853 [SURFACE-009 — Specialist handoffs keep marketing context] **Evidence.** None.
+4856 [SURFACE-009 — Specialist handoffs keep marketing context] ## Later
+4858 [SURFACE-009 — Specialist handoffs keep marketing context] None.

@@ -1,0 +1,10 @@
+{
+  "method": "Full CONTRACT.md read in sequential ranges; ACCEPTANCE.md read losslessly by exact previously read source lines and cells, plus all novel lines in ACCEPTANCE-READING.txt. Reconstruction asserted byte-identical. No generator executed or document edited.",
+  "contract_sha256": "5cf74af87d27bc8799c3052e22477e8c0c42ca00b0121d95a1b33dfa3afc9b60",
+  "acceptance_sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d",
+  "acceptance_lines": 4876,
+  "reference_lines": 2812,
+  "blank_lines": 1628,
+  "novel_lines": 436,
+  "byte_identical_reconstruction": true
+}

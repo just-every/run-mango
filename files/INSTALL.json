@@ -1,0 +1,5 @@
+{
+  "command": "cloud_run timeout 600 pnpm install --frozen-lockfile",
+  "exit": 0,
+  "head": "a42d93dda07504379674a52c5031a3b349a41367"
+}

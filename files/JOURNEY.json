@@ -1,0 +1,10 @@
+{
+  "command": "cloud_run timeout 900 env MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<task>/runtime pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/duplicate-settings.spec.ts --workers=1 --reporter=list",
+  "started_at": "2026-11-06T02:06:10.115539+00:00",
+  "head": "a42d93dda07504379674a52c5031a3b349a41367",
+  "node": "v24.19.0",
+  "pnpm": "10.12.4",
+  "execution_count": 1,
+  "exit": 0,
+  "completed_at": "2026-11-06T02:07:26.844523+00:00"
+}
