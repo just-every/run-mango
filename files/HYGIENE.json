@@ -1,0 +1,20 @@
+{
+  "head": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "assertions_retained": true,
+  "acceptance_text_unchanged": true,
+  "changed_files": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/campaign-authoring/design-import-refusals.ts",
+    "tests/campaign-authoring/design-import.spec.ts"
+  ],
+  "parent_status_rows_retained_for_every_candidate": true,
+  "candidate_commits": [
+    "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+    "22c60b5c54b06c83a4120c511950f69dc2a84d4a"
+  ],
+  "shallow": "false",
+  "new_email_literals": false,
+  "coauthor_trailers": false,
+  "publication_scan": "reserved to Mac lander; not run in cloud"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "candidate-command-check",
+  "head": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "clean_checkout": true,
+  "started": "2026-11-06T11:18:14.705349+00:00",
+  "finished": "2026-11-06T11:18:15.522292+00:00",
+  "seconds": 0.8,
+  "command": [
+    "node",
+    "node_modules/@runeditrun/rer/bin/rer.mjs",
+    "check",
+    "--profile",
+    "first-party"
+  ],
+  "exit": 0
+}

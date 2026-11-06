@@ -1,0 +1,14 @@
+{
+  "name": "candidate-typecheck",
+  "head": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "clean_checkout": true,
+  "started": "2026-11-06T11:17:28.376514+00:00",
+  "finished": "2026-11-06T11:18:14.589355+00:00",
+  "seconds": 46.14,
+  "command": [
+    "pnpm",
+    "run",
+    "typecheck"
+  ],
+  "exit": 0
+}

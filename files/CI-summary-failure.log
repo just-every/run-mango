@@ -1,0 +1,15 @@
+verify	Require the selected coverage and its proof	﻿2026-11-06T11:20:24.0580887Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0581643Z set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0582191Z test "$PLAN" = success
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0583020Z case "$PUSH_PROOF:$NIGHTLY_PROOF" in
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0583728Z   *failure*|*cancelled*) exit 1 ;;
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0584352Z esac
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0584876Z case "$COVERAGE" in
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0585662Z   reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0587101Z   light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0588386Z   full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0589566Z   *) exit 1 ;;
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0590090Z esac
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0782623Z shell: /usr/bin/bash -e {0}
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0788983Z ##[endgroup]
+verify	Require the selected coverage and its proof	2026-11-06T11:20:24.0956317Z ##[error]Process completed with exit code 1.

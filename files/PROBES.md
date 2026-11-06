@@ -1,0 +1,3 @@
+PROBE DESIGN-004 acceptance-4 reserved-personalization: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 compiled-grammar: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 4 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 empty-crop: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.

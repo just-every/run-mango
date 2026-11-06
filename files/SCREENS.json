@@ -1,0 +1,50 @@
+{
+  "head": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "screens": [
+    {
+      "path": "screens/design-refused-reserved-personalization-1440.png",
+      "bytes": 484971,
+      "sha256": "8209d04c475c449b65559cacfb570ea0aba420a3302145c6b24a8d7b9976b422"
+    },
+    {
+      "path": "screens/design-refused-reserved-personalization-390.png",
+      "bytes": 438497,
+      "sha256": "e2f8b581ce1116fd4c12d0f691480d197f4156e9d50e06585436ac895ff968f0"
+    },
+    {
+      "path": "screens/design-refused-compiled-grammar-1440.png",
+      "bytes": 484609,
+      "sha256": "3676c998315003ef593a20e13e964b2caa57c5f74e3c11ee65dce1eff0ea0d19"
+    },
+    {
+      "path": "screens/design-refused-compiled-grammar-390.png",
+      "bytes": 439024,
+      "sha256": "1b6995d39de4ede236219728ae61850002ba5c9ed2f6acd8ec320ee12580c695"
+    },
+    {
+      "path": "screens/design-refused-empty-crop-1440.png",
+      "bytes": 485695,
+      "sha256": "6dc637114ccaba0e6382e492e3e55e79fd80f6e9d3c74a35b2d7eec4f750a337"
+    },
+    {
+      "path": "screens/design-refused-empty-crop-390.png",
+      "bytes": 437276,
+      "sha256": "477ca31676d01ebd2c2bcbf8a569c98777c70e218f04e9d5ee517202b9691f32"
+    },
+    {
+      "path": "screens/design-import-1440.png",
+      "bytes": 920740,
+      "sha256": "e214f6fbcf6c6f514b46c1fb1ec1cde6c0ca241bbb2931b65e75e0fb779af598"
+    },
+    {
+      "path": "screens/design-import-390.png",
+      "bytes": 806551,
+      "sha256": "51db3b2a00ab58dbb9ab4f439d985352167a1817294cac08a89f887555017a0f"
+    },
+    {
+      "path": "screens/design-oversize-refused-1440.png",
+      "bytes": 35329,
+      "sha256": "899668fed62554c8931a2479f4cfe685591a80c4b0e9aac2cc8f44215f7db6bc"
+    }
+  ]
+}

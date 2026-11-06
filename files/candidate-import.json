@@ -1,0 +1,25 @@
+{
+  "name": "candidate-import",
+  "head": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "clean_checkout": true,
+  "started": "2026-11-06T11:17:23.140387+00:00",
+  "finished": "2026-11-06T11:19:19.223829+00:00",
+  "seconds": 116.06,
+  "command": [
+    "timeout",
+    "1200",
+    "env",
+    "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+    "MANGO_NO_FIXTURE_SERVER=1",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/campaign-authoring/design-import.spec.ts",
+    "--workers=1",
+    "--reporter=list"
+  ],
+  "exit": 0
+}

@@ -1,0 +1,20 @@
+{
+  "conclusion": "failure",
+  "event": "push",
+  "head_sha": "b7c728c5f547017f7e31b31517fd3d8496943aa0",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42209445739",
+  "id": 42209445739,
+  "name": "Verify",
+  "status": "completed",
+  "observed_at": "2026-11-06T11:26:25.840685+00:00",
+  "permitted_generated_view_exception": true,
+  "root_failure_job": 127864237063,
+  "dependent_summary_job": 127864344134,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "local_exact_candidate_checks": "passed",
+  "github_cli_invocations": 6,
+  "repairs": 0,
+  "reruns": 0,
+  "dispatches": 0,
+  "landing": "pending guarded Mac lander"
+}

@@ -1,0 +1,11 @@
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+PUSH attempt=1/5 command=git push --porcelain origin HEAD:refs/heads/cloud/sd-mango-c-f108
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+To https://github.com/just-every/run-mango.git
+ 	HEAD:refs/heads/cloud/sd-mango-c-f108	22c60b5..b7c728c
+Done
+remote: 
+remote: GitHub found 14 vulnerabilities on just-every/run-mango's default branch (6 high, 7 moderate, 1 low). To find out more, visit:        
+remote:      https://github.com/just-every/run-mango/security/dependabot        
+remote: 
+PUSH_OK branch=cloud/sd-mango-c-f108
