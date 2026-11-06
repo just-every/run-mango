@@ -1,0 +1,17 @@
+{
+  "head": "41b888cca49b4ceb965cf896d791a2ea52f7f79b",
+  "status_counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "status_rows": 316,
+  "github_calls": 2,
+  "inherited_verify": {
+    "id": 42151836264,
+    "status": "completed",
+    "conclusion": "failure",
+    "failed_step": "Check generated contract documents",
+    "dependent_verify_failure": true
+  }
+}

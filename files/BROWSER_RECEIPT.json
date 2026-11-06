@@ -1,0 +1,32 @@
+{
+  "head": "45751bb91537977b98facc45314d62b4a4256f2d",
+  "source_journey": "tests/go-live/woocommerce.journeys.ts",
+  "proof_widths": [
+    1440,
+    390
+  ],
+  "assertion_width": 1440,
+  "images": [
+    {
+      "file": "woocommerce-disconnected-hosts-1440.png",
+      "sha256": "a3265e5d1920e0f10f2b885822d23a230b1be812a6e5877b144649324b0f142b",
+      "bytes": 31835
+    },
+    {
+      "file": "woocommerce-disconnected-hosts-390.png",
+      "sha256": "5e98abdfa4b49b7e3461f62a0fb615774ae56f51581d7a4ec01cb8e30d96a27e",
+      "bytes": 87364
+    },
+    {
+      "file": "woocommerce-disconnected-review-1440.png",
+      "sha256": "f7a3c4430a82404f55c41376d351f66a8f77c4cf12a1a3e6854f4d79f32a1b27",
+      "bytes": 662344
+    },
+    {
+      "file": "woocommerce-disconnected-review-390.png",
+      "sha256": "9e458b729d6976b7fd4fe618d768429ec7dbd000b85b51880a32e4356669fa26",
+      "bytes": 607860
+    }
+  ],
+  "privacy": "Synthetic native installations only; no real browser profile, account or session was used."
+}

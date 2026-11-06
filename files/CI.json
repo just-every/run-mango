@@ -1,0 +1,22 @@
+{
+  "workflow_runs": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "45751bb91537977b98facc45314d62b4a4256f2d",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42157776979",
+      "id": 42157776979,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "github_call_budget_used": 6,
+  "diagnosis": "Only stale generated ACCEPTANCE.md plus dependent coverage failure; permitted cloud handoff exception.",
+  "failed_step_command": "node src/base/contract-docs.mjs check",
+  "failed_step_error": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "failure_logs": [
+    "verify-build-failure.log",
+    "verify-gate-failure.log"
+  ],
+  "no_rerun_or_dispatch": true
+}

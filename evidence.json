@@ -1,0 +1,208 @@
+{
+  "files": [
+    {
+      "blob": "8b13a95317e010baa501521917722da5ad04448e",
+      "bytes": 382,
+      "path": "BASELINE.json",
+      "sha256": "e69b04d4c3f6b270e652823b336e615cd29d8084b54a96221e5d33d7cd171f9b"
+    },
+    {
+      "blob": "966fdf2ad0d2f76807d152f08c081870021849f5",
+      "bytes": 1015,
+      "path": "BROWSER_RECEIPT.json",
+      "sha256": "6f5b38b06ca42af4236c7873166ed30798241af216d796469f0cd59a3788b3fd"
+    },
+    {
+      "blob": "0ff8201020f37c94b17ecc0a763cd8039f80c16d",
+      "bytes": 611,
+      "path": "CANDIDATE.json",
+      "sha256": "03f848063a79117fe15accc2aec3b67c0d6cc96279590ea524a98b61716f1600"
+    },
+    {
+      "blob": "a9d178b8a3749aa260307c253619731bc0147813",
+      "bytes": 915,
+      "path": "CHECKS.json",
+      "sha256": "1cb8eefa32340742f773b5a78d0333cbd89585ab29658c5258070c469954d58d"
+    },
+    {
+      "blob": "230657d8848931e8f6df6b585b0ec88f57dc2d18",
+      "bytes": 751,
+      "path": "CI.json",
+      "sha256": "bea65d7b8e8f37cfc1f9febc1d594421ac43327d439c649b4749595edc728a37"
+    },
+    {
+      "blob": "afa277209713294e04bc44fe14182b041034da18",
+      "bytes": 828,
+      "path": "CI_JOBS.json",
+      "sha256": "d30ad44f3d1a934b1cbcd90c4b6bebeb43f55b4cd87678042d20dbb99d6f39bc"
+    },
+    {
+      "blob": "96ea648a8aab81a8deb0efdd783d07dc834cab87",
+      "bytes": 828,
+      "path": "HISTORY_ROWS.json",
+      "sha256": "d20faa9247e7435de5399ffc294e09ceb614b409d7b9158e37e84f096ac960a0"
+    },
+    {
+      "blob": "6eeea5acbc321be4539cd513b6514bfd8e4c1614",
+      "bytes": 425,
+      "path": "IDENTITY.txt",
+      "sha256": "bebd14c2976af3c82732395800b1877f2bce97efc547cdf8d38d82d3d735928d"
+    },
+    {
+      "blob": "4c32a967e21beab9318904cbba0381cda7b4a6c2",
+      "bytes": 156,
+      "path": "INTEGRATION.json",
+      "sha256": "781ac5d9c659e2588e1f05e1c8d46dce15afe5cd68f8bb62993e3224bd366667"
+    },
+    {
+      "blob": "c0358a3072edd388b9119af74ee0be2766398c46",
+      "bytes": 577,
+      "path": "JOURNEY_RECEIPT.json",
+      "sha256": "361b5fb893c289b1f250de89d0aea668cd449a46a53cbe3d6ab1163b1317a99b"
+    },
+    {
+      "blob": "18f0945b69a97e87794d8b1d79794c0b414e9fd2",
+      "bytes": 836,
+      "path": "MECHANICAL.json",
+      "sha256": "22b4390ec3dc3ea8509f465ec9cf35c3448a59037a920d114707a797588bd4d1"
+    },
+    {
+      "blob": "8d5c5b0be4dd1ae0b7cbd4a0383d4d0b3e0ab1c2",
+      "bytes": 3829,
+      "path": "PLAN.md",
+      "sha256": "57f45a872271fef78f0812e7a9887628c4f47795fe8a796bc7f110f6adc20c1a"
+    },
+    {
+      "blob": "357782d9f9982b38da2e7bd37c77a8101f67f369",
+      "bytes": 1211,
+      "path": "PROBES.txt",
+      "sha256": "f8f6290afee53c7678e410cba91db888cf7d6485f92e0ea335397370e2c08013"
+    },
+    {
+      "blob": "b92d318c4de273ad01dcef0ca790db68fb12ed1f",
+      "bytes": 6253,
+      "path": "REPORT.md",
+      "sha256": "78a0d76e8a47e0df7937d0442b1bbdebc2718c7e8c54c5ac1563ad296b6b078f"
+    },
+    {
+      "blob": "a962f0510a590362c6614efeeee842714b778768",
+      "bytes": 2410,
+      "path": "RIDERS.md",
+      "sha256": "d622a723fdbb29bc6c74c3ede4713e55491c3e22c6bd48feaed2f3f36e34323e"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "first-party.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "e56b52e6a84a794f4bdf84be61d7fdbe92fde4a2",
+      "bytes": 411263,
+      "path": "lock-check.log",
+      "sha256": "8372945d66306c2eafb6e453047a2aa7cb996449bbf281c43c61e4abb207315f"
+    },
+    {
+      "blob": "b234be5104b00a97217ab2f7377852ed1a46d080",
+      "bytes": 411249,
+      "path": "lock-write.log",
+      "sha256": "e6d7603e412f4a5ae3e40b4ffaab980ec33f623c5e7e2aa4d295712c446cf465"
+    },
+    {
+      "blob": "9fa58960246c0019b8a635e782f520f5d1a948cf",
+      "bytes": 541,
+      "path": "product-commits.txt",
+      "sha256": "4be332474de3a64d538dd40a41ef7e344fbb3bd626f9b4123e5af60417689161"
+    },
+    {
+      "blob": "dc0dd7c7ea6ec2867b47c372927c8d4157dbf567",
+      "bytes": 891,
+      "path": "push.log",
+      "sha256": "677b587e81fe439b4b9a080521f747817c8c7ea56adcd3f2d967255bdbba2270"
+    },
+    {
+      "blob": "4b8e47ecce939bcead32ab8533b0cd8284ec9474",
+      "bytes": 207,
+      "path": "typecheck-inherited.log",
+      "sha256": "730e81aa6c8e9a51cd75f5391fce80657d7a1f856d611e8ebe45215ad884d7a2"
+    },
+    {
+      "blob": "4b8e47ecce939bcead32ab8533b0cd8284ec9474",
+      "bytes": 207,
+      "path": "typecheck.log",
+      "sha256": "730e81aa6c8e9a51cd75f5391fce80657d7a1f856d611e8ebe45215ad884d7a2"
+    },
+    {
+      "blob": "19c76c0731ad8719a44fcbaed76d9501005ea8a0",
+      "bytes": 877,
+      "path": "verify-build-failure.log",
+      "sha256": "2e568faa7027ed6a8c14011dcd93248c18cef8a5ea4bae735b5e67537ba17528"
+    },
+    {
+      "blob": "b957246458b15ca077b9236a12521daadc029e6e",
+      "bytes": 2012,
+      "path": "verify-gate-failure.log",
+      "sha256": "0157fa27e2a41ebcf4074d33a11e10085593b72b7154b944ae3fae3ddd2c2a57"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "views-check.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "d4d1e60ea7fdc565c576421664992b40e47a816e",
+      "bytes": 28,
+      "path": "views-write.log",
+      "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+    },
+    {
+      "blob": "cc149a21ce5d931ee6c900866551b463e8e38b47",
+      "bytes": 1795,
+      "path": "woocommerce-candidate.log",
+      "sha256": "4440cf859362e3f5ae780757b6bf21433f51e0e44881b06b6aed8628dbb89504"
+    },
+    {
+      "blob": "3955990ff45608cd1be457ca6e26447d285f9278",
+      "bytes": 31835,
+      "path": "woocommerce-disconnected-hosts-1440.png",
+      "sha256": "a3265e5d1920e0f10f2b885822d23a230b1be812a6e5877b144649324b0f142b"
+    },
+    {
+      "blob": "0512117811bb0c4c32a3f42309f766d6d2f2b07a",
+      "bytes": 87364,
+      "path": "woocommerce-disconnected-hosts-390.png",
+      "sha256": "5e98abdfa4b49b7e3461f62a0fb615774ae56f51581d7a4ec01cb8e30d96a27e"
+    },
+    {
+      "blob": "3d141b261478cb64ddb524f10d948c573ca134a0",
+      "bytes": 662344,
+      "path": "woocommerce-disconnected-review-1440.png",
+      "sha256": "f7a3c4430a82404f55c41376d351f66a8f77c4cf12a1a3e6854f4d79f32a1b27"
+    },
+    {
+      "blob": "7f5dfc0c27d33f495cfdcd67108b1e20d30b3dd1",
+      "bytes": 607860,
+      "path": "woocommerce-disconnected-review-390.png",
+      "sha256": "9e458b729d6976b7fd4fe618d768429ec7dbd000b85b51880a32e4356669fa26"
+    },
+    {
+      "blob": "6108a13885ca13345f6f4cd3848a8c1c5c6bd0d6",
+      "bytes": 1795,
+      "path": "woocommerce-inherited.log",
+      "sha256": "925816606a127e072d5284158c5a4fd6fa7422bf3614e6c996e4d0ab832e9d33"
+    },
+    {
+      "blob": "75e4d723bad111381dcb0269055a9a9be6bcc318",
+      "bytes": 1793,
+      "path": "woocommerce-revoked-source.log",
+      "sha256": "194882fb2e501aa7ff0c46e2cd7faacc13651e138c437168aeee59fcfb46ed06"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f73",
+  "product_head": "45751bb91537977b98facc45314d62b4a4256f2d",
+  "ref": "refs/heads/evidence/sd-mango-c-f73",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f73"
+}

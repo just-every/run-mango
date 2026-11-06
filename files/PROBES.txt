@@ -1,0 +1,6 @@
+head=45751bb91537977b98facc45314d62b4a4256f2d
+PROBE MSG-014 acceptance-5 connected: native WooCommerce connection plus completed catalog sync and saved two-host draft -> catalog source reconciled; both destination checks passed; no blocked hosts.
+PROBE MSG-014 acceptance-5 disconnect: native Settings disconnect then same draft checks and Review -> catalog.woo.example.test absent from sources and explicitly blocked; operator.example.test remains allowed; both catalog records retained without restoring allowance.
+PROBE MSG-014 acceptance-5 revoked-source: fresh signed product.updated and explicit product sync after native disconnect -> HTTP 409 woocommerce_not_connected and source_unavailable; provider reads, commerce receipts and source sync records unchanged.
+PROBE MSG-014 acceptance-6 selected-source-audit: authenticated activity filtered to link-host.source-removed -> one WooCommerce catalog removal attributed to link-host-sources, unchanged after repeated checks and reads.
+PROBE MSG-014 no-authority: native approval attempt on the disconnected draft -> HTTP 409 with catalog host blocker; draft and revision unchanged; zero approvals, recipient rows, dispatch commands or marketing handoffs.

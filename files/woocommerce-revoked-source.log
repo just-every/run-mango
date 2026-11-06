@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:2586) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2586) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built source phase runtime ready elapsed=3670ms
+Built source phase owner ready elapsed=3699ms
+Built source phase WooCommerce connected elapsed=3794ms
+Built source phase customer queued elapsed=3841ms
+Built source phase customer synced elapsed=4004ms
+Built source phase product queued elapsed=4029ms
+Built source phase product synced elapsed=4185ms
+Built source phase order queued elapsed=4209ms
+Built source phase order synced elapsed=4360ms
+Built source phase refund queued elapsed=4383ms
+Built source phase refund synced elapsed=4532ms
+Built source phase cart queued elapsed=4560ms
+Built source phase cart synced elapsed=4716ms
+Store facts phase browsing synced elapsed=171ms
+Store facts phase Stripe connected elapsed=188ms
+Store facts phase customer received elapsed=225ms
+Store facts phase payment received elapsed=245ms
+Store facts phase checkout-session received elapsed=272ms
+Store facts phase subscription received elapsed=294ms
+Store facts phase refund received elapsed=315ms
+Source export read elapsed=3381ms
+Store facts phase export read elapsed=3696ms
+Built store source proof: WooCommerce=6 Stripe=5; one shared contact; all identifiers, connections and edge occurrence times read through the owner export
+  ✓  1 tests/go-live/woocommerce.journeys.ts:11:1 › [INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery (1.1m)
+
+  1 passed (1.1m)

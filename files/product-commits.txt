@@ -1,0 +1,15 @@
+45751bb91537977b98facc45314d62b4a4256f2d
+Prove disconnected WooCommerce catalog requests cannot restore host authority
+
+41b888cca49b4ceb965cf896d791a2ea52f7f79b
+Capture the visible host source panel in the browser viewport
+
+89076ee50471ca0d7246290bb68206ab99583941
+Wait for the host source panel to paint before browser proof
+
+ab1472fcf87fa3226015c2606d4018a558830cd9
+Verify retained operator allowance and stable source-removal audit
+
+bbf6957bbd7d70a86dd6c0e25c98c9cd65bce918
+Prove WooCommerce catalog host removal on disconnect [skip ci]
+

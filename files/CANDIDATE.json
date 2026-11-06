@@ -1,0 +1,12 @@
+{
+  "head": "45751bb91537977b98facc45314d62b4a4256f2d",
+  "branch": "cloud/sd-mango-c-f73",
+  "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "utc": "2026-11-06T03:39:01.334916+00:00",
+  "files": {
+    "CONTRACT.md": "83c6f4bca24a436cca4cd8250202b05efca6f954acf73fea003b099238dc2ab0",
+    "tests/go-live/woocommerce.journeys.ts": "5a3ba1ee63762a509da6fb31a86e93398b2606e5a0d9b5e76999d14be1882d34",
+    "tests/go-live/woocommerce-edge.ts": "b4b8a37b47256ce6645830dd45c503993abf341865724cd1f35ee6209c2cce8b",
+    "sources.lock.json": "d9ee01803038a117502370c51c6fccd0cec95e86c88459014f3d319d97ab461f"
+  }
+}

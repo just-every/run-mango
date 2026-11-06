@@ -1,0 +1,38 @@
+{
+  "head": "45751bb91537977b98facc45314d62b4a4256f2d",
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log"
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "log": "first-party.log"
+  },
+  "test_registrations": {
+    "woocommerce_before": 1,
+    "woocommerce_after": 1,
+    "added": 0,
+    "deleted": 0
+  },
+  "relevant_bytes_match_precommit": true,
+  "untracked_evidence_in_product": false,
+  "source_changes": false,
+  "contract_status": "partial",
+  "counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "publication_scan": {
+    "status": "Mac lander responsibility; not run in cloud",
+    "complete": false,
+    "findings": null
+  },
+  "run_site": {
+    "status": "main-only; not run by cloud"
+  },
+  "no_assertions_removed_or_narrowed": true,
+  "no_new_email_shaped_strings": true
+}

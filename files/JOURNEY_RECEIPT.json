@@ -1,0 +1,13 @@
+{
+  "head": "45751bb91537977b98facc45314d62b4a4256f2d",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js woocommerce.journeys.ts --workers=1 --reporter=list",
+  "exit": 0,
+  "ended_at": "2026-11-06T03:39:59.655974+00:00",
+  "log": "woocommerce-candidate.log",
+  "registration": "[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery",
+  "assertion_width": 1440,
+  "proof_widths": [
+    1440,
+    390
+  ]
+}

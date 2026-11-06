@@ -1,0 +1,33 @@
+{
+  "views": {
+    "write": "node src/base/contract-docs.mjs write",
+    "write_exit": 0,
+    "check": "node src/base/contract-docs.mjs check",
+    "check_exit": 0,
+    "restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ]
+  },
+  "lock": {
+    "write": "node scripts/edition-authoring/cli.mjs lock",
+    "write_exit": 0,
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "check_exit": 0,
+    "post_rebase_check_exit": 0
+  },
+  "ledger": {
+    "command": null,
+    "exit": 0,
+    "reason": "No migration changed."
+  },
+  "parent_status_rows": 316,
+  "staged_status_rows": 316,
+  "dropped_status_rows": [],
+  "new_email_shaped_values": false,
+  "rebase": {
+    "command": "git fetch origin main && git rebase origin/main",
+    "exit": 0,
+    "result": "Current branch cloud/sd-mango-c-f73 is up to date."
+  }
+}
