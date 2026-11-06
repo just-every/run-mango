@@ -27,12 +27,10 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await confirmedContact(site,edge,cookie,other,'Rory Reader');
     const contact=async(email:string)=>(await json(await site.call('/api/contacts/search?address='+encodeURIComponent(email),{cookie}),200)).contacts.find((c:any)=>c.email===email);
     await json(await site.call(`/api/contacts/${(await contact(vip)).id}/properties`,{method:'PUT',cookie,body:{fields:{synthetic_mango_tier:'vip'}}}),200);
-    console.log('step 0');
     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
     const campaign=await draftCampaign(site,cookie,'Conditional garden letter',[vip,other],due);
     await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{emailBody:''}}),200);
 
-    console.log('step 1');
     // Author the blocks in the builder: a block for everyone, a VIP-only block and its otherwise block.
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.setViewportSize({width:1440,height:1000});
@@ -40,30 +38,25 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await page.getByRole('button',{name:'Block builder',exact:true}).click();
     const add=async(text:string)=>{await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('text');await page.getByRole('button',{name:'Add block',exact:true}).click();await page.getByRole('textbox',{name:'Block text',exact:true}).fill(text);};
     await add('Spring is here at the market.');
-    console.log('step 2');
     await add(vipOnly);
     const conditional=page.getByRole('group',{name:'Conditional display',exact:true});
     await conditional.getByRole('combobox',{name:'Property',exact:true}).selectOption('synthetic_mango_tier');
     await conditional.getByRole('textbox',{name:'Value',exact:true}).fill('vip');
     await conditional.getByRole('button',{name:'Show only to this condition',exact:true}).click();
     await expect(conditional).toContainText('Shown only to contacts who match');
-    console.log('step 3');
     await conditional.getByRole('button',{name:'Add otherwise block',exact:true}).click();
     await page.getByRole('button',{name:/^Block 3:/}).click();
     await page.getByRole('textbox',{name:'Block text',exact:true}).fill(otherwise);
     await expect(page.getByRole('group',{name:'Conditional display',exact:true})).toContainText('do not match');
-    console.log('step 4');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
     await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
 
     // Preview as the VIP contact, then as another contact: HTML and plain text agree in each.
     const frame=page.frameLocator('iframe[title="Saved email preview"]').locator('body'),plain=page.locator('.message-preview--plain');
-    console.log('step 5');
     await preview(page,vip);
     await expect(frame).toContainText(vipOnly);await expect(plain).toContainText(vipOnly);
     await expect(frame).not.toContainText(otherwise);await expect(plain).not.toContainText(otherwise);
     await page.locator('.message-preview--email').screenshot({path:info.outputPath('conditional-preview-vip-1440.png')});
-    console.log('step 6');
     await preview(page,other);
     await expect(frame).toContainText(otherwise);await expect(plain).toContainText(otherwise);
     await expect(frame).not.toContainText(vipOnly);await expect(plain).not.toContainText(vipOnly);
@@ -72,12 +65,10 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await expect(frame).toContainText(vipOnly);await expect(plain).toContainText(vipOnly);await expect(plain).not.toContainText(otherwise);
     await page.setViewportSize({width:390,height:900});
     const group=await page.getByRole('group',{name:'Conditional content preview'}).boundingBox();expect(group!.x+group!.width).toBeLessThanOrEqual(390);
-    console.log('page width at 390: '+await page.evaluate(()=>document.documentElement.scrollWidth));
     await page.locator('.message-preview--email').screenshot({path:info.outputPath('conditional-preview-390.png')});
     await page.setViewportSize({width:1440,height:1000});
 
     // Delivery makes the same choice per recipient, in both parts of the message.
-    console.log('step 7');
     await approve(site,cookie,campaign);
     await site.control('/_golive/clock',{advanceMs:3600001,hold:false});
     const outcomes=await dispatch(site,campaign.campaignId,due);
