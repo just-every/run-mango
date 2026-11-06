@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "30c0d95621d231c35a0b0d4d43bb46b0eea589f5733831e30d6aef3adb0db0d0",
+      "sha256": "ffb0f732823c5cea649dba72e8d48abc29b7abc0cd9fcabd571b1b63f8eb17b4",
       "executable": false
     },
     "DEMO.md": {
@@ -9206,7 +9206,7 @@
       "executable": false
     },
     "tests/local-start/sender-setup.flow.ts": {
-      "sha256": "d0845e244479fde993b08d86e0fb46892cf47bf92d9c44817739ec599e391066",
+      "sha256": "620a44e903c1006f3833fb6656f071433a104628dee700d78b4dd3472e631acd",
       "executable": false
     },
     "tests/local-start/sender-setup.journey.ts": {

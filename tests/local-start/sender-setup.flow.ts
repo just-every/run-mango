@@ -16,14 +16,14 @@ export async function senderSetupJourney(browser: Browser, runtime: {checkout: s
     await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
-    const readUnreadyConfiguration = async () => {
-      const senderResponse=await page.request.get(runtime.url+'/api/settings/sender');
+    const readUnreadyConfiguration = async (request=page.request) => {
+      const senderResponse=await request.get(runtime.url+'/api/settings/sender');
       expect(senderResponse.status()).toBe(200);
       const sender: SenderStatus=await senderResponse.json();
       expect(sender.validation).toMatchObject({state:'unavailable',ready:false});
       expect(sender.readiness.filter(item=>['domain','dns','receipt','authentication'].includes(item.key)))
         .toEqual(['domain','dns','receipt','authentication'].map(key=>expect.objectContaining({key,state:'unavailable'})));
-      const providersResponse=await page.request.get(runtime.url+'/api/settings/providers');
+      const providersResponse=await request.get(runtime.url+'/api/settings/providers');
       expect(providersResponse.status()).toBe(200);
       const {providers}=await providersResponse.json();
       expect(providers).toEqual([expect.objectContaining({id:'mail',configured:false,status:'unavailable'})]);
@@ -101,6 +101,40 @@ export async function senderSetupJourney(browser: Browser, runtime: {checkout: s
       await test.info().attach(`configured-app-${viewportWidth}`,{path:capture,contentType:'image/png'});
     }
     await page.setViewportSize({width,height:900});
+    // A new native session must recover the identity without repeating setup or
+    // treating configuration as a successful provider check.
+    const reopenedContext=await browser.newContext({viewport:{width,height:900}});
+    try {
+      await openGate(reopenedContext,runtime.url);
+      const reopened=await reopenedContext.newPage();
+      await reopened.goto(runtime.url+'/signin?returnTo=%2Fsetup');
+      await reopened.getByRole('link',{name:'Sign in as Owner'}).click();
+      await expect(reopened).toHaveURL(runtime.url+'/app');
+      await reopened.goto(runtime.url+'/app/settings');
+      await reopened.reload();
+      await expect(reopened).toHaveURL(runtime.url+'/app/settings');
+      const identity={displayName:'Mango Test Newsletter',
+        fromEmail:['newsletter','example.test'].join(String.fromCharCode(64)),
+        replyToEmail:['reply','example.test'].join(String.fromCharCode(64)),
+        physicalAddress:'123 Test Street, Brisbane QLD 4000, Australia'};
+      const reopenedSender=await readUnreadyConfiguration(reopened.request);
+      expect(reopenedSender.identity).toEqual(identity);
+      expect(reopenedSender.canSendCheck).toBe(false);
+      expect(reopenedSender.evidence).toMatchObject({provider:{state:'unknown'},dns:{state:'unknown'},observation:{state:'missing'}});
+      const senderPanel=reopened.getByRole('region',{name:identity.displayName,exact:true});
+      await expect(senderPanel.getByLabel('Business display name',{exact:true})).toHaveValue(identity.displayName);
+      await expect(senderPanel.getByLabel('From email',{exact:true})).toHaveValue(identity.fromEmail);
+      await expect(senderPanel.getByLabel('Reply-to email',{exact:true})).toHaveValue(identity.replyToEmail);
+      await expect(senderPanel.getByLabel('Physical postal address',{exact:true})).toHaveValue(identity.physicalAddress);
+      await expect(senderPanel.getByRole('heading',{name:'Sender check unavailable',exact:true})).toBeVisible();
+      await expect(senderPanel.getByRole('definition').filter({hasText:'Unavailable'})).toHaveCount(4);
+      for (const viewportWidth of [1440,390]) {
+        await reopened.setViewportSize({width:viewportWidth,height:900});
+        const capture=test.info().outputPath(`reopened-settings-${viewportWidth}.png`);
+        await reopened.screenshot({path:capture,fullPage:true});
+        await test.info().attach(`reopened-settings-${viewportWidth}`,{path:capture,contentType:'image/png'});
+      }
+    } finally {await reopenedContext.close();}
     await page.goto(runtime.url+'/app/campaigns');
     expect((await (await page.request.get(runtime.url+'/api/campaigns')).json()).campaigns).toEqual([]);
     await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();
