@@ -48,6 +48,8 @@ export async function provePropertyTypes(site:Installation,cookie:string,page:Pa
   const desktopSaved=await desktopResponse;expect(desktopSaved.status()).toBe(200);
   expect((await desktopSaved.json()).fields).toMatchObject({...priorProperties,...desktop});
   expect((await profile()).profile.properties).toMatchObject({...priorProperties,...desktop});
+  expect(JSON.parse((await site.rows(`SELECT fields_json FROM integration_contact_profiles WHERE contact_id='${contactId}'`))[0].fields_json)).toMatchObject(desktop);
+  expect(await permissionState()).toEqual(permissionBefore);
   await openPage(page,site.runtime.url+'/app/audience/'+contactId);
   await panel.getByRole('button',{name:'Edit properties',exact:true}).click();
   await expect(boolean).toHaveValue('true');await expect(list).toHaveValues([choices[0],choices[1]]);
@@ -59,9 +61,10 @@ export async function provePropertyTypes(site:Installation,cookie:string,page:Pa
   const savedResponse=page.waitForResponse(response=>response.url().endsWith('/api/contacts/'+contactId+'/properties')&&response.request().method()==='PUT');
   await panel.getByRole('button',{name:'Save properties',exact:true}).click();
   const edited={[textKey]:'synthetic-mango-1428',[numberKey]:-7.25,[booleanKey]:false,[listKey]:[choices[1],choices[2]]};
-  const saved=await savedResponse;expect(saved.status()).toBe(200);
-  expect((await saved.json()).fields).toMatchObject({...priorProperties,...edited});
+  const saved=await savedResponse;
   await page.setViewportSize({width:1440,height:1000});
+  expect(saved.status()).toBe(200);
+  expect((await saved.json()).fields).toMatchObject({...priorProperties,...edited});
   await openPage(page,site.runtime.url+'/app/audience/'+contactId);
   await expect(panel).toContainText('synthetic-mango-1428');await expect(panel).toContainText('-7.25');
   const displayed=(label:string)=>panel.locator('dl > div').filter({has:page.getByText(label,{exact:true})}).locator('dd');
