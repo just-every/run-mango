@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "bb16b1dc98f74f86a94212b42620f4322d371b0d92e6f0a5e21a20d184426571",
+      "sha256": "5c1a4d1dbf2bcef96355ec88e8fde52fe3f785dccaa49750fdc22c11406d52d0",
       "executable": false
     },
     "DEMO.md": {
@@ -8522,7 +8522,11 @@
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "28ffba7db4a813cd43c1a82b091687da594d5f51ad10726e10e41ef52e15abdc",
+      "sha256": "b394c8b423d83980b38596c07ec29c62376587fe7629e5dea75dc21abd24bfbe",
+      "executable": false
+    },
+    "tests/campaign-authoring/design-input-bounds.ts": {
+      "sha256": "c1a2a0260c13f3a48fefc5083d1bbc9c9a75bc5f6327c044a36d1fa884389400",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
