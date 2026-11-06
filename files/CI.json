@@ -1,0 +1,17 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+  "observed_at": "2026-11-06T11:10:42.627873+00:00",
+  "github_calls": 3,
+  "runs": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42208158123",
+      "id": 42208158123,
+      "name": "Verify",
+      "status": "in_progress"
+    }
+  ]
+}

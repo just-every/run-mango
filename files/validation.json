@@ -1,0 +1,47 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f105",
+  "head": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+  "generation": {
+    "command": "pnpm exec playwright test --config /tmp/mango-focused.config.mjs design-generation.spec.ts",
+    "exit": 0,
+    "registrations": 1,
+    "test_minutes": 3.8,
+    "total_minutes": 4.2,
+    "configuration": "Existing authoring configuration, with temporary absolute test and server working directories plus Chromium /usr/bin/chromium and --no-sandbox"
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0
+  },
+  "mechanical": {
+    "lock": "node scripts/edition-authoring/cli.mjs lock",
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "lock_exit": 0,
+    "check_exit": 0,
+    "views_write": "node src/base/contract-docs.mjs write",
+    "views_check": "node src/base/contract-docs.mjs check",
+    "views_write_exit": 0,
+    "views_check_exit": 0,
+    "views_restored_from": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "ledger": "none",
+    "ledger_exit": 0
+  },
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "receipt_sha256": "95c5887092b5531882eeb92637ef51ac2632cd3a9d263829b67605eb3ecf0426",
+  "publication_scan": "Fleet responsibility; not run in cloud",
+  "production_code_changed": false
+}
