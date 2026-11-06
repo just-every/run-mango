@@ -7,6 +7,7 @@ import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
 import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
 import { designImportRefusals, importScreens } from './design-import-refusals';
+import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
 
 test.describe.configure({ mode: 'serial', timeout: 180000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -66,6 +67,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
     await designImportRefusals({ page, request, info: testInfo, url: runtime.url, token: runtime.token, layerdoc, destination, body, files, read, uploads, saves });
+    await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+    await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
 
     // A legal LayerDoc can compile beyond the delivery limit without any one
     // text layer exceeding the input grammar's bound. Keep both selected files.
