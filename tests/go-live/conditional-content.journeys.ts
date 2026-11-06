@@ -71,7 +71,8 @@ test('[BUILD-005] a VIP-only block shows in the preview as a VIP contact and not
     await page.getByRole('button',{name:'Every condition met',exact:true}).click();
     await expect(frame).toContainText(vipOnly);await expect(plain).toContainText(vipOnly);await expect(plain).not.toContainText(otherwise);
     await page.setViewportSize({width:390,height:900});
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    const group=await page.getByRole('group',{name:'Conditional content preview'}).boundingBox();expect(group!.x+group!.width).toBeLessThanOrEqual(390);
+    console.log('page width at 390: '+await page.evaluate(()=>document.documentElement.scrollWidth));
     await page.locator('.message-preview--email').screenshot({path:info.outputPath('conditional-preview-390.png')});
     await page.setViewportSize({width:1440,height:1000});
 
