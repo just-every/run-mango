@@ -1,0 +1,16 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('heading', { name: 'Proposal generation failed', exact: true }) to be visible
+
+    at /tmp/ct-mango-browser.mjs:45:81 {
+  log: [
+    "  - waiting for getByRole('heading', { name: 'Proposal generation failed', exact: true }) to be visible"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

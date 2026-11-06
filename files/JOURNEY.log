@@ -1,0 +1,20 @@
+
+Running 1 test using 1 worker
+
+(node:2032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/proposals-decision/decision-routes.spec.ts:7:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes
+tests/proposals-decision/decision-routes.spec.ts:7:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes
+(node:2032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+PROBE PROP-007 acceptance-1: authenticated generate with ungrounded output -> 409 invalid_ai_output, persisted failed proposal, no substitute and unchanged existing work after repeated reads
+
+PROBE PROP-007 acceptance-2: authenticated generate, production OpenAI adapter, unanswered abort-aware transport -> 409 ai_provider_timeout; route=60149ms transport=60010ms, persisted failed proposal, unknown cost, no substitute campaign or command
+
+PROBE PROP-007 acceptance-3: invalid output, provider error and real timeout plus repeated authenticated reads -> unchanged 6 proposals, 9 campaigns, 6 revisions, 6 proposal steps, 6 campaign steps and 1 links; no new approval, recipient, dispatch or marketing command
+
+  1 passed (1.7m)

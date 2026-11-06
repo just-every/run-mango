@@ -1,0 +1,104 @@
+{
+  "frozen_utc": "2026-11-06T02:18:56.892221+00:00",
+  "source": "9cd2d7546097b03ce44ce356f021451cfa63f8a6",
+  "authority": "Original Requirement/AP and inherited text plus all originally requested DONE-RIDERS rows 1\u201311. No original stable-ID CT rubric or private held-outs supplied. Local IDs label only those original items. DONE-AUDIT original outcomes are mapped, not added.",
+  "original_items": [
+    {
+      "id": "Q",
+      "item": "Invalid or overdue generation fails visibly while preserving existing work."
+    },
+    {
+      "id": "AP1",
+      "item": "Invalid output from the configured AI provider fails the proposal with its provider error."
+    },
+    {
+      "id": "AP2",
+      "item": "A configured AI provider that does not complete within 60 seconds fails the proposal with its provider error."
+    },
+    {
+      "id": "AP3",
+      "item": "Failure creates no semantic substitute and leaves existing proposals and campaigns unaffected."
+    },
+    {
+      "id": "BASE-OPS-004",
+      "item": "A job that fails after its retries is marked failed where an operator can see it. Nothing is dropped silently."
+    },
+    {
+      "id": "D-1",
+      "item": "Optional marketing modules. A disabled commerce, SMS or design module is unavailable, constructs or contacts no adapter and invents no facts, content, forecast or delivery. Commerce-dependent audience inclusion and exclusion remain blocked without their required current source; manual mail-only work uses recorded contact and permission evidence."
+    }
+  ],
+  "riders": [
+    {
+      "id": "RIDER1",
+      "item": "One or a few named sanity journeys through the clause\u2019s public doors (route, command, browser, transport) perform each outcome the clause names and check what a user or the business would see, on the exact SHA with Verify green (DONE RULE, briefs/ct/judge-common.md, 28 Oct). The Status row\u2019s Evidence cell names each journey: its file in backticks, then its name. A journey may cover several clauses. A sentence without its own assertion, a surviving mutation, a missing unit or pin test, receipt form and Gap-cell wording are notes for the lander or ct, never a reason for STAYS PARTIAL."
+    },
+    {
+      "id": "RIDER2",
+      "item": "The journey runs on real seeded data and checks the result a user or the business would see. A money, security or data-loss clause\u2019s journey executes the dangerous path both ways: the supported case is served and the unsafe case is refused and changes nothing. One journey covers the clause\u2019s verbs; a test per verb is not required."
+    },
+    {
+      "id": "RIDER3",
+      "item": "The journey is invoked by push, pull_request or dispatch Verify and that run is green on the candidate SHA. An outside-Verify job counts only where the sentence names a clock or scale proof, with its receipt at the exact SHA."
+    },
+    {
+      "id": "RIDER4",
+      "item": "Re-run on the candidate, or show with a diff that no byte of the relevant code or test changed since."
+    },
+    {
+      "id": "RIDER5",
+      "item": "Cite the Base duty as `*Cites:* BASE-...` in the receiving clause\u2019s meta line and write only its delta, or name the duty in its own acceptance points; otherwise keep the duty in the Gap of the clause that owes it."
+    },
+    {
+      "id": "RIDER6",
+      "item": "A done row has an empty Gap. A partial or missing row\u2019s Gap names what is missing and narrows no scope; Evidence names the proof present on the candidate; `node <parser dir>/contract-docs.mjs check` passes on the candidate; the `Judged from` line names the candidate commit."
+    },
+    {
+      "id": "RIDER7",
+      "item": "An acceptance point changes only by a ct ruling recorded in the seed\u2019s RULINGS.md. State each CT rider once, as a door rule, a Base citation or the clause\u2019s own acceptance point. In a rewrite, `docs/contract/COVERAGE.json` stands in for keeping every original sentence verbatim, under the standard\u2019s coverage and status-carry rules."
+    },
+    {
+      "id": "RIDER8",
+      "item": "The clause\u2019s journey runs the dangerous path both ways through the public door: the owner\u2019s correction or refund lands with its audit, archive and closed-period effect, and a non-owner, wrong-state or wrong-permission attempt is refused and changes nothing. One journey covers the clause\u2019s verbs; a test per verb is not required."
+    },
+    {
+      "id": "RIDER9",
+      "item": "Keep the honest boundary named in the Gap; claim only what a real provider receipt or journey shows at the exact SHA."
+    },
+    {
+      "id": "RIDER10",
+      "item": "Post an ASK with the default first; count nothing until the ruling, then synchronize its exact wording."
+    },
+    {
+      "id": "RIDER11",
+      "item": "Main equals the SHA (ls-remote); exact-SHA Verify green (a canceled duplicate main-push Verify is not counted); Run site green on it; complete full-history publication scan NEW 0; diff against the prior main limited to the clause\u2019s status, Gap and counts plus the work."
+    }
+  ],
+  "original_audit_outcomes": [
+    {
+      "text": "Invalid AI output fails proposal",
+      "maps_to": "AP1"
+    },
+    {
+      "text": "Provider error recorded",
+      "maps_to": "AP1"
+    },
+    {
+      "text": "60-second timeout fails with provider error",
+      "maps_to": "AP2"
+    },
+    {
+      "text": "No substitute campaign",
+      "maps_to": "AP3"
+    },
+    {
+      "text": "Existing proposals preserved",
+      "maps_to": "AP3"
+    },
+    {
+      "text": "Existing campaigns preserved",
+      "maps_to": "AP3"
+    }
+  ],
+  "scope_note": "Only original outcomes are scored. No new tests, checklist, structural rewrite, mutation-survival requirement or later-clause promotion. Full supplied rider and common wording controls; typographic apostrophes in this JSON do not change the original text."
+}

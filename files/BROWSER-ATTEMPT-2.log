@@ -1,0 +1,8 @@
+file:///tmp/ct-mango-browser.mjs:15
+ if(open.status()!==200)throw new Error('Fixture native identity bootstrap failed status '+open.status());
+                              ^
+
+Error: Fixture native identity bootstrap failed status 500
+    at file:///tmp/ct-mango-browser.mjs:15:31
+
+Node.js v24.19.0

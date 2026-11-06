@@ -1,0 +1,29 @@
+{
+  "source": "9cd2d7546097b03ce44ce356f021451cfa63f8a6",
+  "exit": 0,
+  "browser": "Chromium /usr/bin/chromium --no-sandbox",
+  "route": "/app",
+  "screens": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "file": "browser-failure-1440.png"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "file": "browser-failure-390.png"
+    }
+  ],
+  "assertionsAtWidth": 1440,
+  "observed": [
+    "Native session and actual SSR/browser/API",
+    "Synthetic persisted failed proposal, safe timeout reason and actor history visible",
+    "Failed proposal Use this disabled",
+    "No substituted email preview",
+    "Existing campaign remains readable",
+    "Anonymous proposal read returns 401",
+    "Disabled AI generation returns 409 unavailable"
+  ],
+  "boundary": "Browser failure row and transition arranged directly in disposable D1. Browser does not independently execute provider timeout. Exact pinned decision-routes journey separately executes the real production-adapter deadline once. No production/provider calls or source edits."
+}

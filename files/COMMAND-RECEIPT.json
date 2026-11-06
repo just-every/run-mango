@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-prop007-20261105-1932-sol1",
+  "recorded_utc": "2026-11-06T02:28:05.958385+00:00",
+  "repository": "just-every/run-mango",
+  "source": "9cd2d7546097b03ce44ce356f021451cfa63f8a6",
+  "product_branch": "cloud/sd-mango-c-f39",
+  "actual_model": "gpt-6.1-sol",
+  "actual_reasoning_effort": "xhigh",
+  "model_authority": "2026-11-06T01:26Z replacement routing; no alternate session or paid model API used",
+  "runtime": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "cloud_toolchain_script": "provided script accepts already-newer Node; local proof is not final pinned runtime qualification",
+    "rer_declared": {
+      "AGENTS": "0.2.76",
+      "package": "0.2.85"
+    },
+    "inherited_rer_0_2_95_adoption": "not performed; hold remains"
+  },
+  "commands": [
+    {
+      "command": "git config --global user.name 'Run Edit Run fleet' && git config --global user.email fleet@runeditrun.com",
+      "exit": 0
+    },
+    {
+      "command": "bash /workspace/rer-cloud-launcher/refresh.sh",
+      "exit": 0,
+      "notes": "Shared credential helper installed; secret values excluded."
+    },
+    {
+      "command": "git clone --depth 1 --filter=blob:none --branch cloud/sd-mango-c-f39 https://github.com/just-every/run-mango.git /tmp/ct-judge-mango-prop007",
+      "exit": 0
+    },
+    {
+      "command": "git config user.name 'Run Edit Run fleet' && git config user.email fleet@runeditrun.com",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run pnpm install --frozen-lockfile",
+      "exit": 0,
+      "output": "INSTALL.log"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "observed": "First owner claimed; RER_SETUP_READY http://127.0.0.1:8787; disposable local state only",
+      "private_setup_log_excluded": true
+    },
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=/tmp/ct-mango-testwork cloud_run pnpm exec playwright test tests/proposals-decision/decision-routes.spec.ts --workers=1 --reporter=line",
+      "exit": 0,
+      "times_run": 1,
+      "tests_passed": 1,
+      "reported_duration": "1.7m",
+      "output": "JOURNEY.log",
+      "measured_route_timeout_ms": 60149,
+      "measured_transport_abort_ms": 60010
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "output": "TYPECHECK.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "output": "SOURCE-LOCK-CHECK.json",
+      "ok": true
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "output": "GENERATED-CHECK.log",
+      "expected_exception": "ACCEPTANCE.md generated content differs; no views rewritten or committed"
+    },
+    {
+      "command": "cloud_run node tests/support/start-fixture-runtime.mjs",
+      "exit": 0,
+      "notes": "First owned fixture stopped with SIGTERM after browser attempt; restarted with fresh disposable D1."
+    },
+    {
+      "command": "cloud_run node /tmp/ct-mango-browser.mjs (attempt 1)",
+      "exit": 1,
+      "output": "BROWSER-ATTEMPT-1.log",
+      "reason": "Observation command clicked SSR control before existing hydration signal. No product change."
+    },
+    {
+      "command": "cloud_run node /tmp/ct-mango-browser.mjs (attempt 2)",
+      "exit": 1,
+      "output": "BROWSER-ATTEMPT-2.log",
+      "reason": "Reused authoring bootstrap returned 500; test fixture requires fresh database. No product regression alleged."
+    },
+    {
+      "command": "cloud_run node /tmp/ct-mango-browser.mjs (fresh fixture; hydration signal awaited)",
+      "exit": 0,
+      "output": "BROWSER.log",
+      "receipt": "BROWSER-RECEIPT.json",
+      "note": "One successful functional proof; one screenshot at each of 1440 and 390. No per-point source test added."
+    },
+    {
+      "command": "git ls-remote origin refs/heads/main refs/heads/cloud/sd-mango-c-f39",
+      "exit": 0,
+      "observed": {
+        "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+        "source": "9cd2d7546097b03ce44ce356f021451cfa63f8a6"
+      }
+    },
+    {
+      "command": "git status --porcelain=v1; git diff --exit-code; git diff --cached --exit-code",
+      "exit": 0,
+      "observed": "Empty tracked and untracked status; working tree/index match original source."
+    }
+  ],
+  "github_reads": {
+    "total_calls": 3,
+    "CI_calls": 0,
+    "commands": [
+      "gh api repos/just-every/run-mango/contents/CONTRACT.md?ref=main",
+      "gh api repos/just-every/run-mango/commits/9cd2d7546097b03ce44ce356f021451cfa63f8a6",
+      "gh api repos/just-every/run-mango/contents/CONTRACT.md?ref=cc6321c2372d631d9607df9af8ad1dd9f7878e84"
+    ],
+    "all_exit": 0
+  },
+  "product_mutations": {
+    "tracked_edits": 0,
+    "commits": 0,
+    "pushes": 0,
+    "PRs": 0,
+    "CI_polls_reruns_dispatches": 0,
+    "provider_or_production_operations": 0,
+    "custody_or_hold_changes": 0
+  },
+  "NOT_RUN": [
+    {
+      "item": "Full or baseline suite; mutation tests; per-point new tests",
+      "reason": "Explicitly outside focused read-only original judgment."
+    },
+    {
+      "item": "Independent repeated timeout journey",
+      "reason": "Existing relied-on journey ran once; no repetition requested."
+    },
+    {
+      "item": "Isolated contract-docs write and generated-view regeneration",
+      "reason": "No generated edits authorized for this read-only reviewer; read-only check executed and expected freshness failure preserved."
+    },
+    {
+      "item": "Final exact-SHA runtime Verify or source CI poll/rerun/dispatch",
+      "reason": "Explicit read-only commission prohibits CI operations; supplied source Verify exception is candidate-only."
+    },
+    {
+      "item": "Full-history publication scan NEW 0 and exact-main Run site",
+      "reason": "Cloud cannot perform fleet publication scan; owned by existing guarded integration families."
+    },
+    {
+      "item": "Live OpenAI, commerce, mail, Twilio or device qualification",
+      "reason": "No provider or production operation authorized; test network/provider boundaries only; UNMET-EXTERNAL."
+    },
+    {
+      "item": "Original source and exact-chain protection root readback; original held-out gate archive and prior CT stable-ID rubric",
+      "reason": "Not supplied as readable files; inline request reports original protections ACTIVE and gate PASS; not inferred independently."
+    },
+    {
+      "item": "rer 0.2.95 adoption, account acceptance, release, new source pin or hold lifecycle",
+      "reason": "No authority; all inherited prerequisites and holds remain."
+    }
+  ]
+}

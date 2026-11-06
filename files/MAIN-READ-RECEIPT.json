@@ -1,0 +1,10 @@
+{
+  "command": "gh api repos/just-every/run-mango/contents/CONTRACT.md?ref=cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "exit": 0,
+  "commit": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "blob_sha": "d9a81496bfd62cd67f6910ab86c7347e771fc46d",
+  "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
+  "bytes": 489381,
+  "gh_read_calls_total": 3,
+  "CI_calls": 0
+}
