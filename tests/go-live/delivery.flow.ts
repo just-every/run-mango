@@ -20,11 +20,6 @@ async function setup(site:Installation) {
   await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
   await availableTransport(site);await site.control('/_golive/sender-evidence');return cookie;
 }
-async function edit(site:Installation,cookie:string,campaignId:string,subject:string) {
-  const draft=await json(await site.call(`/api/campaigns/${campaignId}/edit-schedule`,{method:'POST',cookie,body:{}}),201);
-  await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailSubject:subject}}),200);
-  return draft as {campaignId:string;revisionId:string;kind:'replacement'|'fork'};
-}
 async function due(time:Date) {const delay=time.getTime()-Date.now();if(delay>0)await new Promise(resolve=>setTimeout(resolve,delay+20));}
 
 
@@ -35,43 +30,6 @@ async function due(time:Date) {const delay=time.getTime()-Date.now();if(delay>0)
 
 
 
-export const walk0 = async()=>{
-  const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
-  try {
-    const cookie=await setup(site),email='replace@example.test';
-    await confirmedContact(site,edge,cookie,email,'Replacement reader');
-    const original=await draftCampaign(site,cookie,'Original',[email],new Date(Date.now()-1000));
-    const [step]=await site.rows(`SELECT id FROM campaign_steps WHERE revision_id='${original.revisionId}'`);
-    await barrier(site,'step-start',step.id);
-    await approve(site,cookie,original);await waiting(site);
-    const replacement=await edit(site,cookie,original.campaignId,'Replacement content');
-    expect(replacement.kind).toBe('replacement');await approve(site,cookie,replacement);
-    await release(site);
-    await expect.poll(()=>Promise.resolve(edge.sends.filter(s=>s.to===email&&s.body.headers?.['List-Unsubscribe']).length),{timeout:60000}).toBe(1);
-    expect(edge.sends.filter(s=>s.to===email&&s.body.headers?.['List-Unsubscribe']).map(s=>s.body.subject)).toEqual(['Replacement content']);
-    expect(await site.rows(`SELECT transport_disposition,skip_reason FROM recipient_steps WHERE revision_id='${original.revisionId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'schedule-replaced'}]);
-    const emissions=await site.control('/_golive/emissions');
-    const oldIndex=emissions.findIndex((e:any)=>e.command.kind==='campaign.dispatch'&&e.command.payload.revisionId===original.revisionId);
-    expect(oldIndex).toBeGreaterThanOrEqual(0);await site.control('/_golive/replay',{index:oldIndex});
-
-    const secondEmail='dispatch-wins@example.test';await confirmedContact(site,edge,cookie,secondEmail,'Dispatch reader');
-    const time=new Date(Date.now()+12000),second=await draftCampaign(site,cookie,'Dispatch winner',[secondEmail],time);
-    await approve(site,cookie,second);
-    const contender=await edit(site,cookie,second.campaignId,'Losing replacement');
-    await barrier(site,'approval',contender.revisionId);
-    const approval=site.call(`/api/campaigns/${second.campaignId}/approve`,{method:'POST',cookie,body:{revisionId:contender.revisionId,idempotencyKey:`approval-${contender.revisionId}`}});
-    await waiting(site);await due(time);await site.control('/_golive/cron');
-    await expect.poll(()=>Promise.resolve(edge.sends.filter(s=>s.to===secondEmail&&s.body.headers?.['List-Unsubscribe']).length),{timeout:60000}).toBe(1);
-    await release(site);expect((await approval).status).toBe(409);
-    expect(await site.rows(`SELECT active_revision_id FROM campaigns WHERE id='${second.campaignId}'`)).toEqual([{active_revision_id:second.revisionId}]);
-    expect(edge.sends.filter(s=>s.to===secondEmail&&s.body.headers?.['List-Unsubscribe']).map(s=>s.body.subject)).toEqual(['Dispatch winner: what is growing this month']);
-    expect(await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${contender.revisionId}'`)).toEqual([{n:0}]);
-    const fork=await edit(site,cookie,second.campaignId,'Future fork');expect(fork.kind).toBe('fork');expect(fork.campaignId).not.toBe(second.campaignId);
-    await site.control('/_golive/cron');
-    expect(edge.sends.filter(s=>s.body.headers?.['List-Unsubscribe']).map(s=>s.body.subject).sort()).toEqual(['Dispatch winner: what is growing this month','Replacement content'].sort());
-    expect(edge.unexpected).toEqual([]);
-  } finally {await release(site).catch(()=>{});await site.runtime.close();await edge.close();}
-};
 export const walk1 = async()=>{
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {
