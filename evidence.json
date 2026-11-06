@@ -103,10 +103,10 @@
       "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
     },
     {
-      "blob": "7fc90d2962e958de2515370211825d91d120c1a5",
-      "bytes": 1564,
+      "blob": "354835bcf30b66fef7c1611c67857bb73407e565",
+      "bytes": 815,
       "path": "failed-build.log",
-      "sha256": "5fc5b8a18ac11bafc6e3d6ef5dc0c74e3c4bc308902bc09632e7622c32a33d23"
+      "sha256": "f96acd7e2bf25d59ad12a8781563f0b508c05dd35ffe26dbb66e022cde8d970a"
     },
     {
       "blob": "b625cb3a92981d739a5d66b87ef740f0ec306e84",
@@ -115,10 +115,10 @@
       "sha256": "5606fcf5d1ed7681997cc708bb800f3ce86451a0a3e882fb235d219c22ffb827"
     },
     {
-      "blob": "5b0053a57094eb89555e14ca7ff871abe5691130",
-      "bytes": 3044,
+      "blob": "f49fe68f7753aa5546e56099707cded29a67390a",
+      "bytes": 1966,
       "path": "failed-verify.log",
-      "sha256": "bd0709ec58186b65ac139cd1a431868fbb5ebdaf07308412a3d8cf2f4ecab09e"
+      "sha256": "f0d6aae9973e81e6e70eb4983567d1ca4ba83078ad490f3e4a4986bbd35d9933"
     },
     {
       "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",

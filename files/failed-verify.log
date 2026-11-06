@@ -11,16 +11,5 @@ verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5551651Z 
 verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5554276Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
 verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5556990Z [36;1m  *) exit 1 ;;[0m
 verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5558152Z [36;1mesac[0m
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5836595Z shell: /usr/bin/bash -e {0}
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5838547Z env:
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5839205Z   PLAN: success
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5840200Z   BUILD: failure
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5840897Z   SHARDS: skipped
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5841470Z   LIGHT: skipped
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5842060Z   PUSH_PROOF: skipped
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5842780Z   NIGHTLY_PROOF: skipped
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5843422Z   COVERAGE: full
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5844086Z   HAS_SHARDS: true
-verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5844692Z   SKIP: false
 verify	Require the selected coverage and its proof	2026-11-06T11:11:29.5845277Z ##[endgroup]
 verify	Require the selected coverage and its proof	2026-11-06T11:11:29.6372177Z ##[error]Process completed with exit code 1.
