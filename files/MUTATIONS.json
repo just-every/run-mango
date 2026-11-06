@@ -1,0 +1,27 @@
+{
+  "head": "d0b4463beb507932b050b26d23e7585bd9139eab",
+  "sourceRestored": true,
+  "originalSha256": "50b7b0473924facba254a23174eec74497c751d09706e447045dadad43f813d2",
+  "mutations": [
+    {
+      "id": "M1",
+      "description": "Remove the email frequency exclusion",
+      "candidate": "d0b4463beb507932b050b26d23e7585bd9139eab",
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js frequency-protection.journeys.ts --workers=1",
+      "exit": 1,
+      "caught": true,
+      "log": "M1.log",
+      "assertion": "terminal skipped disposition, reason and zero attempts at journey line 68"
+    },
+    {
+      "id": "M2",
+      "description": "Defer a protected recipient to the end of the window",
+      "candidate": "d0b4463beb507932b050b26d23e7585bd9139eab",
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js frequency-protection.journeys.ts --workers=1",
+      "exit": 1,
+      "caught": true,
+      "log": "M2.log",
+      "assertion": "native dispatch settles terminally, journey line 52"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "firstReceipt": {
+    "transport_disposition": "accepted",
+    "attempt_count": 1,
+    "provider_accepted_at": 1793959668670
+  },
+  "terminal": [
+    {
+      "id": "01M6R1TF9XJTXMJ73H1RJVYFT0",
+      "destination": "synthetic-mango-971@example.test",
+      "transport_disposition": "skipped",
+      "skip_reason": "frequency-window",
+      "attempt_count": 0,
+      "terminal_at": 1793974068670,
+      "next_attempt_at": 1793974068669,
+      "provider_message_id": null,
+      "handoff_started_at": null,
+      "send_by_at": 1794146868669
+    },
+    {
+      "id": "01M6R1TF9XFR6Y2DDK1T3VWA5Y",
+      "destination": "synthetic-mango-972@example.test",
+      "transport_disposition": "accepted",
+      "skip_reason": null,
+      "attempt_count": 1,
+      "terminal_at": null,
+      "next_attempt_at": 1793974068669,
+      "provider_message_id": "CKOQUodr_g01yQ4",
+      "handoff_started_at": 1793974068670,
+      "send_by_at": 1794146868669
+    }
+  ],
+  "replayAt": 1794053268670,
+  "afterReplay": [
+    {
+      "id": "01M6R1TF9XJTXMJ73H1RJVYFT0",
+      "destination": "synthetic-mango-971@example.test",
+      "transport_disposition": "skipped",
+      "skip_reason": "frequency-window",
+      "attempt_count": 0,
+      "terminal_at": 1793974068670,
+      "next_attempt_at": 1793974068669,
+      "provider_message_id": null,
+      "handoff_started_at": null,
+      "send_by_at": 1794146868669
+    },
+    {
+      "id": "01M6R1TF9XFR6Y2DDK1T3VWA5Y",
+      "destination": "synthetic-mango-972@example.test",
+      "transport_disposition": "accepted",
+      "skip_reason": null,
+      "attempt_count": 1,
+      "terminal_at": null,
+      "next_attempt_at": 1793974068669,
+      "provider_message_id": "CKOQUodr_g01yQ4",
+      "handoff_started_at": 1793974068670,
+      "send_by_at": 1794146868669
+    }
+  ],
+  "results": {
+    "asOf": "2026-11-07T12:08:48.670Z",
+    "steps": [
+      {
+        "stepId": "24e5358e-db60-434b-9612-d8e9e1324467",
+        "outageNotices": [],
+        "estimatedCompletionAt": null,
+        "pauses": [],
+        "state": "Sent",
+        "startedAt": "2026-11-06T14:07:48.670Z",
+        "completedAt": "2026-11-06T14:07:48.670Z",
+        "counts": [
+          {
+            "disposition": "accepted",
+            "reason": null,
+            "count": 1
+          },
+          {
+            "disposition": "skipped",
+            "reason": "frequency-window",
+            "count": 1
+          }
+        ],
+        "failures": [],
+        "stoppableCount": 0,
+        "expiredQueuedCount": 0,
+        "inFlightCount": 0,
+        "complainedCount": 0,
+        "suppressedCount": 0
+      }
+    ],
+    "cancellable": false
+  },
+  "marketing": [
+    {
+      "to": "synthetic-mango-971@example.test",
+      "messageId": "6Ov0rFnaKECWAeU"
+    },
+    {
+      "to": "synthetic-mango-972@example.test",
+      "messageId": "CKOQUodr_g01yQ4"
+    }
+  ]
+}

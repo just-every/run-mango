@@ -1,0 +1,44 @@
+
+Running 1 test using 1 worker
+
+(node:3737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/frequency-protection.journeys.ts:8:1 › [AUD-004] an email frequency exclusion is terminal even after its window expires (25.1s)
+
+
+  1) tests/go-live/frequency-protection.journeys.ts:8:1 › [AUD-004] an email frequency exclusion is terminal even after its window expires 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 6
+    + Received  + 6
+
+      Object {
+    -   "attempt_count": 0,
+    -   "handoff_started_at": null,
+    -   "next_attempt_at": 1793974202712,
+    -   "provider_message_id": null,
+    +   "attempt_count": 1,
+    +   "handoff_started_at": 1793974262713,
+    +   "next_attempt_at": 1793974203913,
+    +   "provider_message_id": "Ngs8pVy9L3LTzmI",
+        "send_by_at": 1794147002712,
+    -   "skip_reason": "frequency-window",
+    -   "transport_disposition": "skipped",
+    +   "skip_reason": null,
+    +   "transport_disposition": "accepted",
+      }
+
+      66 |     expect(terminal).toHaveLength(2);
+      67 |     const skipped = terminal.find(row => row.destination === repeat)!;
+    > 68 |     expect(skipped).toMatchObject({transport_disposition: 'skipped', skip_reason: 'frequency-window', attempt_count: 0,
+         |                     ^
+      69 |       next_attempt_at: secondAt, provider_message_id: null, handoff_started_at: null, send_by_at: deadline});
+      70 |     expect(skipped.terminal_at).toBeGreaterThanOrEqual(secondAt);
+      71 |     expect(skipped.terminal_at - firstReceipt.provider_accepted_at).toBeLessThan(24 * hour);
+        at /workspace/run-mango/tests/go-live/frequency-protection.journeys.ts:68:21
+
+    Error Context: ../evidence/7f523b30a6bf/go-live/frequency-protection.journ-7142f-en-after-its-window-expires/error-context.md
+
+  1 failed
+    tests/go-live/frequency-protection.journeys.ts:8:1 › [AUD-004] an email frequency exclusion is terminal even after its window expires 

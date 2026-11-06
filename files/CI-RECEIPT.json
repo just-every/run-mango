@@ -1,0 +1,29 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "d0b4463beb507932b050b26d23e7585bd9139eab",
+  "run": 42192705713,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "permittedGeneratedViewException": true,
+  "rootFailedJob": 127808419102,
+  "rootFailedCommand": "node src/base/contract-docs.mjs check",
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "aggregateJob": 127808511498,
+  "shards": "skipped",
+  "localFocusedJourney": "passed on committed candidate",
+  "repairRounds": 0,
+  "githubCliCalls": 5,
+  "archiveReads": [
+    {
+      "job": 127808419102,
+      "exit": 0
+    },
+    {
+      "job": 127808511498,
+      "exit": 0
+    }
+  ],
+  "handoff": "READY under explicit generated-view exception",
+  "landing": "pending maintained Mac lander"
+}

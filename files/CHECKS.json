@@ -1,0 +1,75 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f97",
+  "head": "d0b4463beb507932b050b26d23e7585bd9139eab",
+  "at": "2026-11-06T09:08:43.328338+00:00",
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js frequency-protection.journeys.ts --workers=1",
+      "exit": 0,
+      "tests": 1,
+      "durationSeconds": 29.9,
+      "browser": "/usr/bin/chromium",
+      "launchArgs": [
+        "--no-sandbox"
+      ],
+      "log": "JOURNEY.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "TYPECHECK.log",
+      "sourceIdenticalToCandidate": true
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write; node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "VIEWS.log",
+      "viewsRestoredFrom": "origin/main"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock; node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "JOURNEY.log",
+      "sha256": "ee138533cdbef7e94131a2bfacbd1eabe968db6fb37c500f6956b558f97b1400",
+      "bytes": 674
+    },
+    {
+      "path": "RUNTIME-RECEIPT.json",
+      "sha256": "8a92c7a2dc61509baf67355f90d9d2f41eb1abc6444c91039f406441a2974008",
+      "bytes": 2865
+    },
+    {
+      "path": "TYPECHECK.log",
+      "sha256": "37dc7bb443a34dda15cf70e5286200eadcb931b3cc5b73bd3ff57f91cb0a98ca",
+      "bytes": 168
+    },
+    {
+      "path": "VIEWS.log",
+      "sha256": "a0dc3e5a57608862eebb5d81291a8613096d4984f76019b102a0ac55b950fe97",
+      "bytes": 60
+    },
+    {
+      "path": "frequency-protection-1440.png",
+      "sha256": "c92f976318afea70f14adcb475b8a2a37cefe61597c4678338647e58c3cec22f",
+      "bytes": 234495
+    },
+    {
+      "path": "frequency-protection-390.png",
+      "sha256": "c8382f3632c7362bc3e0c118f7c68fbdf2de8b174e1f68830e03a152063f0d2e",
+      "bytes": 280251
+    }
+  ],
+  "finalLockCheckExit": 0,
+  "mutationSourceRestored": true,
+  "ciReceipt": "CI-RECEIPT.json",
+  "remoteProductHead": "d0b4463beb507932b050b26d23e7585bd9139eab"
+}

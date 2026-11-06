@@ -1,0 +1,29 @@
+{
+  "head": "d0b4463beb507932b050b26d23e7585bd9139eab",
+  "branch": "cloud/sd-mango-c-f97",
+  "repository": "just-every/run-mango",
+  "parent": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "changedPaths": [
+    "CONTRACT.md",
+    "scripts/verification/plan.mjs",
+    "sources.lock.json",
+    "tests/go-live/frequency-protection.journeys.ts"
+  ],
+  "fullHistory": true,
+  "cleanProductWorktree": true,
+  "addedEmailLiterals": [],
+  "generatedViewsCommitted": false,
+  "candidateCommitCount": 1,
+  "authorsAndCommitters": "Run Edit Run fleet",
+  "trailers": [],
+  "publicationScan": "delegated to maintained Mac lander; not established in cloud",
+  "localMechanical": {
+    "generatorWrite": 0,
+    "generatorCheckBeforeRestore": 0,
+    "restoredViewCheck": 1,
+    "restoredViewDiagnostic": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "lock": 0,
+    "finalLockCheck": 0,
+    "migrationLedger": "not applicable"
+  }
+}
