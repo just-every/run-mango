@@ -1,0 +1,17 @@
+{
+  "head": "baaa28d4b5526bd7005548d1e34f8fec3c7e13c7",
+  "main_at_integration": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "changed_files": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/go-live/go-live.flow.ts"
+  ],
+  "full_history": true,
+  "clean": true,
+  "product_ref": "refs/heads/cloud/sd-mango-c-f62",
+  "pr": null,
+  "all_candidate_identities_verified": true,
+  "all_candidate_trailers_absent": true,
+  "all_parent_status_rows_retained": true,
+  "generated_views_committed": false
+}

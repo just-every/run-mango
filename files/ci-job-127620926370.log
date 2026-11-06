@@ -1,0 +1,7 @@
+COMMAND gh run view 42135020447 --repo just-every/run-mango --job 127620926370 --log-failed
+EXIT 0
+Build and public command checks	Check generated contract documents	﻿2026-11-06T00:12:01.3861746Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-06T00:12:01.3862178Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-06T00:12:01.3876628Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-06T00:12:01.5163851Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-06T00:12:01.5225943Z ##[error]Process completed with exit code 1.

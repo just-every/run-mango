@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "command": "node scripts/edition-authoring/cli.mjs lock",
+  "edition": "just-every/mango",
+  "manifest": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
+  "output_sha256": "84eb2343002e1f566105b18f18a4ceb2d1d98788cffca1f4c46e0b7ed27e5446"
+}

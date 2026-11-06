@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+(node:2174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (1.0m)
+
+
+  1) tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 1
+
+    @@ -1,7 +1,8 @@
+      Object {
+        "destination": "alice@example.test",
+    +   "destinationHash": "bc65c1246c39806b2c8d5a34184806eaf3be0df52b6bb04f8594a587275f515b",
+        "hard": false,
+        "mangoReference": "01M6Q2SB2S5Z5YHT1H1G7WKSWT:01M6Q2SB2SWDJ3BCX49PQFCVXY:385c4901-753e-4dee-aaca-dc5203b453f0:01M6Q2S5THE4CMWREVRGQNQATX",
+        "providerEvent": "delivered",
+        "response": "250 synthetic-mango-5702",
+        "status": "2.0.0",
+
+       at go-live.flow.ts:138
+
+      136 |   for (const table of ['provider_fact_inbox', 'delivery_facts']) {
+      137 |     const [stored] = await site.rows(`SELECT detail_json FROM ${table} WHERE identity_key='${identity}'`);
+    > 138 |     expect(JSON.parse(stored.detail_json)).toEqual({ destination: alice, providerEvent: 'delivered', hard: false,
+          |                                            ^
+      139 |       response: '250 synthetic-mango-5702', status: '2.0.0', mangoReference: decodeProviderReference(args(alice).mango_handoff_key) });
+      140 |   }
+      141 |   const contactIds = (await site.rows('SELECT contact_id FROM contact_email_addresses ORDER BY email')).map(row => row.contact_id);
+        at walk0 (/workspace/run-mango/tests/go-live/go-live.flow.ts:138:44)
+        at /workspace/run-mango/tests/go-live/go-live.journeys.ts:8:3
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f62/runtime/evidence/7f523b30a6bf/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f62/runtime/evidence/7f523b30a6bf/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+  1 failed
+    tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 

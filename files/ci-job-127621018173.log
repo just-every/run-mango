@@ -1,0 +1,16 @@
+COMMAND gh run view 42135020447 --repo just-every/run-mango --job 127621018173 --log-failed
+EXIT 0
+verify	Require the selected coverage and its proof	﻿2026-11-06T00:12:06.5502199Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5503959Z [36;1mset -euo pipefail[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5504953Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5505810Z [36;1mcase "$PUSH_PROOF:$NIGHTLY_PROOF" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5506709Z [36;1m  *failure*|*cancelled*) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5507462Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5508141Z [36;1mcase "$COVERAGE" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5509229Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5510425Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5512118Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5513845Z [36;1m  *) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5514606Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.5979774Z shell: /usr/bin/bash -e {0}
+verify	Require the selected coverage and its proof	2026-11-06T00:12:06.6294196Z ##[error]Process completed with exit code 1.

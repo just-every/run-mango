@@ -1,0 +1,155 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f62",
+  "head": "baaa28d4b5526bd7005548d1e34f8fec3c7e13c7",
+  "main_at_integration": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "counts_before": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "counts_after": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "target": {
+    "id": "SEND-005",
+    "before": "partial",
+    "after": "partial"
+  },
+  "checks": {
+    "go_live": {
+      "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js go-live.journeys.ts",
+      "exit": 0,
+      "tests_passed": 1,
+      "duration": "4.5m",
+      "chromium_executable": "/usr/bin/chromium",
+      "viewport": 1440
+    },
+    "typecheck": {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "candidate_rerun_exit": 0
+    },
+    "first_party": {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    "views": {
+      "commands": [
+        "node src/base/contract-docs.mjs write",
+        "node src/base/contract-docs.mjs check"
+      ],
+      "exit": 0,
+      "restored_from": "origin/main",
+      "views_committed": false,
+      "written_files": [
+        "ACCEPTANCE.md"
+      ]
+    },
+    "lock": {
+      "commands": [
+        "node scripts/edition-authoring/cli.mjs lock",
+        "node scripts/edition-authoring/cli.mjs check"
+      ],
+      "exit": 0
+    },
+    "ledger": {
+      "command": "none",
+      "exit": 0,
+      "reason": "No migrations changed."
+    },
+    "identity_and_trailers": {
+      "candidate_commits": 2,
+      "exit": 0
+    },
+    "parent_status_rows": {
+      "count": 316,
+      "exit": 0
+    },
+    "candidate_committed_views": {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "expected": true,
+      "reason": "Generated views restored from origin/main and reserved for Mac lander."
+    },
+    "packet_no_injected_credentials": {
+      "exit": 0
+    },
+    "changed_prose_no_bare_repository_tokens": {
+      "exit": 0
+    }
+  },
+  "probes": {
+    "signed_original": 204,
+    "signed_identical_replay": 204,
+    "signed_conflicts": 6,
+    "conflict_status": 500,
+    "unchanged_evidence_and_projections": true,
+    "additional_handoffs": 0
+  },
+  "source_digests": {
+    "tests/go-live/go-live.flow.ts": "4713a8b58a026aaafaf0df1e952ea83ee72b3d4949bd4e718a5d8cf3793d0b71",
+    "tests/go-live/go-live.journeys.ts": "1ae64ff21604c515e83691daa1f504f752879283aa931d003db94f5b831816a3",
+    "src/core/features/lifecycle/sendgrid-facts.ts": "ee6f7d964698b6c8e905350cf175e5ecbb813d70dd1ae7110501ef9daa9de58d",
+    "src/core/features/lifecycle/delivery-fact-repository.ts": "0dc3c67f56793428e5ab2cf3e158c6ff99989555d75c94d7bc45cc691f636af2",
+    "src/core/features/lifecycle/delivery.ts": "23be0a4b82a9fd3aa9f85d6b5a00d035f94d322edb89123f907f66218a37e44a"
+  },
+  "product_push": {
+    "status": "pushed",
+    "guard": "cloud-push.py"
+  },
+  "ci": {
+    "discovery": {
+      "runs": [
+        {
+          "conclusion": null,
+          "event": "push",
+          "head_sha": "baaa28d4b5526bd7005548d1e34f8fec3c7e13c7",
+          "html_url": "https://github.com/just-every/run-mango/actions/runs/42135020447",
+          "id": 42135020447,
+          "name": "Verify",
+          "status": "queued"
+        }
+      ],
+      "total_count": 1
+    },
+    "calls_used": 6,
+    "poll_minimum_seconds": 300,
+    "branch_verify_run_id": 42135020447,
+    "branch_verify_event": "push",
+    "branch_verify_head": "baaa28d4b5526bd7005548d1e34f8fec3c7e13c7",
+    "final_status": {
+      "conclusion": "failure",
+      "head_sha": "baaa28d4b5526bd7005548d1e34f8fec3c7e13c7",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42135020447",
+      "status": "completed"
+    },
+    "failed_jobs": [
+      127620926370,
+      127621018173
+    ],
+    "failure_class": "generated-view-only",
+    "generated_view_exception_applies": true,
+    "other_real_test_failure_observed": false,
+    "shards_executed": false,
+    "failed_job_archives_read_once_each": true
+  },
+  "publication_scan": {
+    "status": "delegated_to_mac_lander",
+    "cloud_scan_claimed": false
+  },
+  "recorded_at_epoch": 1793923924,
+  "initial_local_experiments": [
+    {
+      "result": "failed",
+      "reason": "Experimental whole-detail equality did not include the existing derived destinationHash; inherited assertion retained without narrowing."
+    },
+    {
+      "result": "bookkeeping corrected",
+      "reason": "The supplied brief counts were older than current main; both actual tables contain 20 done, 198 partial and 98 missing rows."
+    }
+  ],
+  "handoff": "READY under explicit generated-view-only exception; Mac lander must regenerate views, require exact-head Verify and publication scan, and own landing."
+}

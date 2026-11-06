@@ -1,0 +1,382 @@
+[
+  {
+    "name": "delivered (alice)",
+    "status": 204,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "identical evidence with the explicit provider identity",
+    "status": 204,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed payload",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed kind with restrictive contact effects",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed message",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed occurrence time",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed destination with restrictive contact effects",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "reused provider identity: changed recipient correlation",
+    "status": 500,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "deferred (bob, uncertain hand-off)",
+    "status": 204,
+    "inbox": 1,
+    "deliveryFacts": 1,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 1,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "handoff-unknown"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "soft bounce (bob)",
+    "status": 204,
+    "inbox": 2,
+    "deliveryFacts": 2,
+    "suppressions": 0,
+    "optOuts": 0,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "subscribed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "hard bounce (bob)",
+    "status": 204,
+    "inbox": 3,
+    "deliveryFacts": 3,
+    "suppressions": 1,
+    "optOuts": 1,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "subscribed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "provider unsubscribe (alice)",
+    "status": 204,
+    "inbox": 4,
+    "deliveryFacts": 4,
+    "suppressions": 1,
+    "optOuts": 2,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "unsubscribed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "spam complaint (alice)",
+    "status": 204,
+    "inbox": 5,
+    "deliveryFacts": 5,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "duplicate redelivery of the delivered batch",
+    "status": 204,
+    "inbox": 5,
+    "deliveryFacts": 5,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "older processed event after delivered (alice)",
+    "status": 204,
+    "inbox": 6,
+    "deliveryFacts": 6,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "mutated body (bob changed to carol after signing)",
+    "status": 401,
+    "inbox": 6,
+    "deliveryFacts": 6,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "forged signature (another key)",
+    "status": 401,
+    "inbox": 6,
+    "deliveryFacts": 6,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "stale timestamp (10 minutes old)",
+    "status": 401,
+    "inbox": 6,
+    "deliveryFacts": 6,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  },
+  {
+    "name": "delivered for a message id Mango never issued (carol)",
+    "status": 204,
+    "inbox": 7,
+    "deliveryFacts": 6,
+    "suppressions": 2,
+    "optOuts": 3,
+    "softBounces": 2,
+    "recipients": {
+      "alice@example.test": "delivered+complained",
+      "bob@example.test": "bounced"
+    },
+    "statuses": {
+      "alice@example.test": "suppressed",
+      "bob@example.test": "suppressed",
+      "carol@example.test": "subscribed",
+      "dave@example.test": "subscribed",
+      "erin@example.test": "subscribed"
+    }
+  }
+]
