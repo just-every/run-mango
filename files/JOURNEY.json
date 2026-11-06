@@ -1,0 +1,20 @@
+{
+  "head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "command": [
+    "timeout",
+    "1200",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/go-live/playwright.config.js",
+    "shared-kiosk.journeys.ts",
+    "--workers=1",
+    "--reporter=list"
+  ],
+  "exit": 0,
+  "started_at": "2026-11-06T02:29:53.996177+00:00",
+  "finished_at": "2026-11-06T02:30:48.391749+00:00",
+  "log": "JOURNEY.log"
+}

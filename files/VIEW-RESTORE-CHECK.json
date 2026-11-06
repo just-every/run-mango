@@ -1,0 +1,12 @@
+{
+  "head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "command": [
+    "node",
+    "src/base/contract-docs.mjs",
+    "check"
+  ],
+  "exit": 1,
+  "started_at": "2026-11-06T02:31:08.970795+00:00",
+  "finished_at": "2026-11-06T02:31:09.095902+00:00",
+  "log": "VIEW-RESTORE-CHECK.log"
+}

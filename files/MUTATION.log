@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:3194) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation (43.6s)
+
+
+  1) tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 1793932119205
+    Received:    1793932059275
+
+       at resubscribe.flow.ts:91
+
+      89 |       const confirmedAt=Date.parse(confirmedEvidence.confirmedAt);
+      90 |       expect(confirmationStartedAt).toBeGreaterThan(Date.parse(evidence.occurredAt));
+    > 91 |       expect(confirmedAt).toBeGreaterThanOrEqual(confirmationStartedAt);
+         |                           ^
+      92 |       expect(confirmedAt).toBeLessThanOrEqual(confirmationFinishedAt);
+      93 |       expect(Date.parse(confirmed.contact.emailStatusAt)).toBe(confirmedAt);
+      94 |       const confirmationRecords=()=>site.rows(`SELECT e.occurred_at AS captured_at,e.confirmed_at AS consent_at,
+        at walk0 (/workspace/sd-mango-c-f65/tests/go-live/resubscribe.flow.ts:91:27)
+        at /workspace/sd-mango-c-f65/tests/go-live/shared-kiosk.journeys.ts:8:3
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f65/mutation/evidence/91411683bfba/go-live/shared-kiosk.journeys.ts---d3b4a-ir-affirmative-confirmation/error-context.md
+
+  1 failed
+    tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation 

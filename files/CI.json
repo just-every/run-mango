@@ -1,0 +1,23 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "run_id": 42150859973,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "url": "https://github.com/just-every/run-mango/actions/runs/42150859973",
+  "classification": "permitted_generated_view_exception",
+  "failed_job": 127673537468,
+  "failed_step": "Check generated contract documents",
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "dependent_jobs": "shards skipped; verify aggregation failed on missing build coverage",
+  "local_reproduction": "VIEW-RESTORE-CHECK.json",
+  "log_command": "gh run view 42150859973 --repo just-every/run-mango --job 127673537468 --log-failed",
+  "log_command_exit": 0,
+  "github_call_count": 4,
+  "workflow_dispatches": 0,
+  "reruns": 0,
+  "ready_under_generated_view_exception": true
+}

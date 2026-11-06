@@ -1,0 +1,11 @@
+{
+  "head": "21681da44d37b11e6b798d18cee626b1dcc417c7",
+  "candidate_head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "command": "cloud_run npx -y @runeditrun/rer build",
+  "exit": 0,
+  "relevant_source_unchanged": true,
+  "terminal_output": [
+    "Your application is built",
+    "build: complete (exit 0)"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "base_head": "21681da44d37b11e6b798d18cee626b1dcc417c7",
+  "mutation": "Backdate the real confirmation route request time by sixty seconds",
+  "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --workers=1 --reporter=list",
+  "exit": 1,
+  "killed": true,
+  "source_restored": true,
+  "candidate_head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "relevant_bytes_unchanged": true
+}

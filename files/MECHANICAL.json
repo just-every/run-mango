@@ -1,0 +1,33 @@
+{
+  "head": "a561179164a0e21b71452afd58bbce17c4c29951",
+  "views": {
+    "write": "node src/base/contract-docs.mjs write",
+    "write_exit": 0,
+    "check": "node src/base/contract-docs.mjs check",
+    "check_exit": 0,
+    "write_output": "Wrote 1 contract documents.\n",
+    "check_output": "Contract documents are current.\n",
+    "generated_views_restored": true
+  },
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0,
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "check_exit": 0,
+    "lock_sha256": "a7f61669bfe194f780e23fabd6b2f6bb35f15de160da13006257e4f29af4de37",
+    "final_exact_head_check_exit": 0
+  },
+  "ledger": {
+    "command": "none; no migration changed",
+    "exit": 0
+  },
+  "status_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "table_lines": {
+    "before": 490,
+    "after": 490
+  }
+}
