@@ -1,0 +1,7 @@
+{
+  "head": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "expected": true,
+  "reason": "Generated views intentionally restored from origin/main; the lander regenerates them."
+}

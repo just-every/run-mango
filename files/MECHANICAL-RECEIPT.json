@@ -1,0 +1,86 @@
+{
+  "head": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "tracked_clean": true,
+  "checks": [
+    {
+      "name": "views-write-final",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "views-check-final",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "restore-generated",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "lock-final",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "lock-check-final",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "first-party-final",
+      "command": [
+        "pnpm",
+        "exec",
+        "rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "typecheck-final",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0
+    }
+  ],
+  "ledger": {
+    "command": null,
+    "exit": 0,
+    "reason": "No migration changed"
+  },
+  "file_sha256": {
+    "CONTRACT.md": "af14b3d35b807d820c959122f59e0daafd633783482b3e66e0de0009565a23f6",
+    "tests/go-live/pause.flow.ts": "19c2914321de23ee231843061d5267065b98ff588057af8b2445d6dffd70d5da",
+    "tests/go-live/multistep.journeys.ts": "391812ecbd0c0ef3738c19105ccf3ada584b30f0b5b7c17b56659b025e4f8b6a",
+    "sources.lock.json": "f2879c91b92b999cdd8465a89ef95eb75a5c3c6a7a078a6499a97b324a37d18c"
+  }
+}

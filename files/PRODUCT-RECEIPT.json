@@ -1,0 +1,27 @@
+{
+  "head": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "attempts": 1,
+  "status": "pushed",
+  "branch": "cloud/sd-mango-c-f94",
+  "identity_check": "all candidate commits, complete messages and side parents inspected",
+  "author": "Run Edit Run fleet",
+  "committer": "Run Edit Run fleet",
+  "trailers": [],
+  "status_identifiers_before": 379,
+  "status_identifiers_after": 379,
+  "all_table_rows_before": 490,
+  "all_table_rows_after": 490,
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "point": "CAMP-001 native operator pause and resume occurrence-time retention",
+  "clause_before": "partial",
+  "clause_after": "partial"
+}

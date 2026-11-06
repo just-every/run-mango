@@ -1,0 +1,9 @@
+{
+  "conclusion": "failure",
+  "event": "push",
+  "head_sha": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42193058840",
+  "id": 42193058840,
+  "name": "Verify",
+  "status": "completed"
+}

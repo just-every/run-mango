@@ -1,0 +1,136 @@
+{
+  "operations": [
+    {
+      "action": "paused",
+      "before": 1793956345597,
+      "after": 1793956345597
+    },
+    {
+      "action": "resumed",
+      "before": 1793956363597,
+      "after": 1793956363597
+    },
+    {
+      "action": "paused",
+      "before": 1793959983598,
+      "after": 1793959983598
+    },
+    {
+      "action": "resumed",
+      "before": 1793960038598,
+      "after": 1793960038598
+    }
+  ],
+  "audit": [
+    {
+      "id": "01M6R22XQX7BHEEXG09BBY9RFQ",
+      "operation_key": "01M6R22XQX7BHEEXG09BBY9RFQ",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "paused",
+      "detail_json": "{\"revisionId\":\"01M6R22PX52XP9RA95ZC2QTP68\"}",
+      "occurred_at": 1793956345597,
+      "created_at": 1793956345597
+    },
+    {
+      "id": "01M6R23FAD00Q5ZCDBZPXSXZ04",
+      "operation_key": "01M6R23FAD00Q5ZCDBZPXSXZ04",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "resumed",
+      "detail_json": "{\"revisionId\":\"01M6R22PX52XP9RA95ZC2QTP68\"}",
+      "occurred_at": 1793956363597,
+      "created_at": 1793956363597
+    },
+    {
+      "id": "01M6R5HYFEB3YAW6C1PYEPRPWS",
+      "operation_key": "01M6R5HYFEB3YAW6C1PYEPRPWS",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "paused",
+      "detail_json": "{\"revisionId\":\"01M6R22PX52XP9RA95ZC2QTP68\"}",
+      "occurred_at": 1793959983598,
+      "created_at": 1793959983598
+    },
+    {
+      "id": "01M6R5KM66W21SJSPSZ8VSEJKR",
+      "operation_key": "01M6R5KM66W21SJSPSZ8VSEJKR",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "action": "resumed",
+      "detail_json": "{\"revisionId\":\"01M6R22PX52XP9RA95ZC2QTP68\"}",
+      "occurred_at": 1793960038598,
+      "created_at": 1793960038598
+    }
+  ],
+  "pauses": [
+    {
+      "id": "01M6R22PX5N5V7ZB79CJ8AA387:01M6R22PX52XP9RA95ZC2QTP68:email:operator-pause",
+      "campaign_id": "01M6R22PX5N5V7ZB79CJ8AA387",
+      "revision_id": "01M6R22PX52XP9RA95ZC2QTP68",
+      "channel": "email",
+      "reason": "operator-pause",
+      "detail": "Paused by an operator. Resume explicitly to continue remaining sends.",
+      "paused_at": 1793959983598,
+      "resume_check_at": 1793956345597,
+      "resumed_at": 1793960038598,
+      "created_at": 1793956345597,
+      "updated_at": 1793960038598
+    }
+  ],
+  "history": [
+    {
+      "id": "01M6R5KM66W21SJSPSZ8VSEJKR",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "resumed",
+      "objectType": "campaign",
+      "objectId": "01M6R22PX5N5V7ZB79CJ8AA387",
+      "occurredAt": 1793960038598,
+      "detail": {
+        "revisionId": "01M6R22PX52XP9RA95ZC2QTP68"
+      }
+    },
+    {
+      "id": "01M6R5HYFEB3YAW6C1PYEPRPWS",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "paused",
+      "objectType": "campaign",
+      "objectId": "01M6R22PX5N5V7ZB79CJ8AA387",
+      "occurredAt": 1793959983598,
+      "detail": {
+        "revisionId": "01M6R22PX52XP9RA95ZC2QTP68"
+      }
+    },
+    {
+      "id": "01M6R23FAD00Q5ZCDBZPXSXZ04",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "resumed",
+      "objectType": "campaign",
+      "objectId": "01M6R22PX5N5V7ZB79CJ8AA387",
+      "occurredAt": 1793956363597,
+      "detail": {
+        "revisionId": "01M6R22PX52XP9RA95ZC2QTP68"
+      }
+    },
+    {
+      "id": "01M6R22XQX7BHEEXG09BBY9RFQ",
+      "operatorId": "go-live-owner",
+      "operatorName": "Owner",
+      "actorType": "operator",
+      "action": "paused",
+      "objectType": "campaign",
+      "objectId": "01M6R22PX5N5V7ZB79CJ8AA387",
+      "occurredAt": 1793956345597,
+      "detail": {
+        "revisionId": "01M6R22PX52XP9RA95ZC2QTP68"
+      }
+    }
+  ],
+  "handoffs": 4
+}

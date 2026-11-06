@@ -1,0 +1,97 @@
+
+Running 1 test using 1 worker
+
+(node:2910) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Chosen catalog proof: setup
+Chosen catalog proof: search and product picker
+Chosen catalog proof: HTML round trip
+Chosen catalog proof: current previews
+Chosen catalog proof: fresh hand-off
+Chosen catalog proof: approved identifiers
+Chosen catalog proof: identifiers locked
+Chosen catalog proof: dispatch new price
+Chosen catalog proof: dispatched
+Chosen catalog proof: read outcomes
+Chosen catalog proof: open outcomes
+Chosen catalog proof: terminal availability cases
+Pause journey transport state [
+  {
+    transport_disposition: 'accepted',
+    skip_reason: null,
+    last_error_code: null,
+    attempt_count: 1
+  },
+  {
+    transport_disposition: 'accepted',
+    skip_reason: null,
+    last_error_code: null,
+    attempt_count: 1
+  },
+  {
+    transport_disposition: 'accepted',
+    skip_reason: null,
+    last_error_code: null,
+    attempt_count: 1
+  },
+  {
+    transport_disposition: 'accepted',
+    skip_reason: null,
+    last_error_code: null,
+    attempt_count: 1
+  },
+  {
+    transport_disposition: 'skipped',
+    skip_reason: 'channel-not-subscribed',
+    last_error_code: null,
+    attempt_count: 0
+  },
+  {
+    transport_disposition: 'skipped',
+    skip_reason: 'channel-not-subscribed',
+    last_error_code: null,
+    attempt_count: 0
+  }
+]
+  ✘  1 tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume (1.5m)
+
+
+  1) tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    @@ -282,11 +282,13 @@
+                  "channel": "email",
+                  "revisionId": "01M6R1S4VFHTNPXVE6K6XM2GNC",
+                  "stepId": "1f11f8a9-9979-4c9f-894d-602725f464ba",
+                },
+              },
+    -         "completedQueues": Array [],
+    +         "completedQueues": Array [
+    +           "mango-local-jobs",
+    +         ],
+              "delaySeconds": 2,
+            },
+            Object {
+              "command": Object {
+                "idempotencyKey": "dispatch:1f11f8a9-9979-4c9f-894d-602725f464ba:2026-11-07T11:07:05.199Z",
+
+       at pause.flow.ts:166
+
+      164 |     expect(await json(await control('resume'),409)).toEqual({error:'campaign_not_operator_paused'});
+      165 |     await reloadPage(page);
+    > 166 |     expect(await retained()).toEqual(completed);
+          |                              ^
+      167 |     await checkHistory();
+      168 |     await openPage(page,`${site.runtime.url}/app/settings/activity`);
+      169 |     await page.getByLabel('Object',{exact:true}).fill(campaign.campaignId);
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live/pause.flow.ts:166:30)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live/multistep.journeys.ts:10:3
+
+    Error Context: ../evidence/cf13969a97e9/go-live/multistep.journeys.ts--AUD-c8730-sion-and-consent-and-resume/error-context.md
+
+  1 failed
+    tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume 

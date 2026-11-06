@@ -1,0 +1,199 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "tests/go-live/playwright.config.js",
+      "multistep.journeys.ts",
+      "--reporter=list,json"
+    ],
+    "configFile": "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live/playwright.config.js",
+    "rootDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/evidence/cf13969a97e9/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": [
+          "*.journeys.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/evidence/cf13969a97e9/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live",
+        "snapshotDir": "/home/agent/rer-consolidation/work/sd-mango-c-f94/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": "*.journeys.ts",
+        "timeout": 900000,
+        "use": {
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "headless": true,
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "multistep.journeys.ts",
+      "file": "multistep.journeys.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 96657,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Chosen catalog proof: setup\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: search and product picker\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: HTML round trip\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: current previews\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: fresh hand-off\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: approved identifiers\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: identifiers locked\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: dispatch new price\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: dispatched\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: read outcomes\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: open outcomes\n"
+                    },
+                    {
+                      "text": "Chosen catalog proof: terminal availability cases\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T09:10:55.701Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "pause-occurrence-proof",
+                      "contentType": "application/json",
+                      "body": "ewogICJvcGVyYXRpb25zIjogWwogICAgewogICAgICAiYWN0aW9uIjogInBhdXNlZCIsCiAgICAgICJiZWZvcmUiOiAxNzkzOTU2MzQ1NTk3LAogICAgICAiYWZ0ZXIiOiAxNzkzOTU2MzQ1NTk3CiAgICB9LAogICAgewogICAgICAiYWN0aW9uIjogInJlc3VtZWQiLAogICAgICAiYmVmb3JlIjogMTc5Mzk1NjM2MzU5NywKICAgICAgImFmdGVyIjogMTc5Mzk1NjM2MzU5NwogICAgfSwKICAgIHsKICAgICAgImFjdGlvbiI6ICJwYXVzZWQiLAogICAgICAiYmVmb3JlIjogMTc5Mzk1OTk4MzU5OCwKICAgICAgImFmdGVyIjogMTc5Mzk1OTk4MzU5OAogICAgfSwKICAgIHsKICAgICAgImFjdGlvbiI6ICJyZXN1bWVkIiwKICAgICAgImJlZm9yZSI6IDE3OTM5NjAwMzg1OTgsCiAgICAgICJhZnRlciI6IDE3OTM5NjAwMzg1OTgKICAgIH0KICBdLAogICJhdWRpdCI6IFsKICAgIHsKICAgICAgImlkIjogIjAxTTZSMjJYUVg3QkhFRVhHMDlCQlk5UkZRIiwKICAgICAgIm9wZXJhdGlvbl9rZXkiOiAiMDFNNlIyMlhRWDdCSEVFWEcwOUJCWTlSRlEiLAogICAgICAiYWN0b3JfdHlwZSI6ICJvcGVyYXRvciIsCiAgICAgICJhY3Rvcl9pZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgImFjdGlvbiI6ICJwYXVzZWQiLAogICAgICAiZGV0YWlsX2pzb24iOiAie1wicmV2aXNpb25JZFwiOlwiMDFNNlIyMlBYNTJYUDlSQTk1WkMyUVRQNjhcIn0iLAogICAgICAib2NjdXJyZWRfYXQiOiAxNzkzOTU2MzQ1NTk3LAogICAgICAiY3JlYXRlZF9hdCI6IDE3OTM5NTYzNDU1OTcKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICIwMU02UjIzRkFEMDBRNVpDREJaUFhTWFowNCIsCiAgICAgICJvcGVyYXRpb25fa2V5IjogIjAxTTZSMjNGQUQwMFE1WkNEQlpQWFNYWjA0IiwKICAgICAgImFjdG9yX3R5cGUiOiAib3BlcmF0b3IiLAogICAgICAiYWN0b3JfaWQiOiAiZ28tbGl2ZS1vd25lciIsCiAgICAgICJhY3Rpb24iOiAicmVzdW1lZCIsCiAgICAgICJkZXRhaWxfanNvbiI6ICJ7XCJyZXZpc2lvbklkXCI6XCIwMU02UjIyUFg1MlhQOVJBOTVaQzJRVFA2OFwifSIsCiAgICAgICJvY2N1cnJlZF9hdCI6IDE3OTM5NTYzNjM1OTcsCiAgICAgICJjcmVhdGVkX2F0IjogMTc5Mzk1NjM2MzU5NwogICAgfSwKICAgIHsKICAgICAgImlkIjogIjAxTTZSNUhZRkVCM1lBVzZDMVBZRVBSUFdTIiwKICAgICAgIm9wZXJhdGlvbl9rZXkiOiAiMDFNNlI1SFlGRUIzWUFXNkMxUFlFUFJQV1MiLAogICAgICAiYWN0b3JfdHlwZSI6ICJvcGVyYXRvciIsCiAgICAgICJhY3Rvcl9pZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgImFjdGlvbiI6ICJwYXVzZWQiLAogICAgICAiZGV0YWlsX2pzb24iOiAie1wicmV2aXNpb25JZFwiOlwiMDFNNlIyMlBYNTJYUDlSQTk1WkMyUVRQNjhcIn0iLAogICAgICAib2NjdXJyZWRfYXQiOiAxNzkzOTU5OTgzNTk4LAogICAgICAiY3JlYXRlZF9hdCI6IDE3OTM5NTk5ODM1OTgKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICIwMU02UjVLTTY2VzIxU0pTUFNaOFZTRUpLUiIsCiAgICAgICJvcGVyYXRpb25fa2V5IjogIjAxTTZSNUtNNjZXMjFTSlNQU1o4VlNFSktSIiwKICAgICAgImFjdG9yX3R5cGUiOiAib3BlcmF0b3IiLAogICAgICAiYWN0b3JfaWQiOiAiZ28tbGl2ZS1vd25lciIsCiAgICAgICJhY3Rpb24iOiAicmVzdW1lZCIsCiAgICAgICJkZXRhaWxfanNvbiI6ICJ7XCJyZXZpc2lvbklkXCI6XCIwMU02UjIyUFg1MlhQOVJBOTVaQzJRVFA2OFwifSIsCiAgICAgICJvY2N1cnJlZF9hdCI6IDE3OTM5NjAwMzg1OTgsCiAgICAgICJjcmVhdGVkX2F0IjogMTc5Mzk2MDAzODU5OAogICAgfQogIF0sCiAgInBhdXNlcyI6IFsKICAgIHsKICAgICAgImlkIjogIjAxTTZSMjJQWDVONVY3WkI3OUNKOEFBMzg3OjAxTTZSMjJQWDUyWFA5UkE5NVpDMlFUUDY4OmVtYWlsOm9wZXJhdG9yLXBhdXNlIiwKICAgICAgImNhbXBhaWduX2lkIjogIjAxTTZSMjJQWDVONVY3WkI3OUNKOEFBMzg3IiwKICAgICAgInJldmlzaW9uX2lkIjogIjAxTTZSMjJQWDUyWFA5UkE5NVpDMlFUUDY4IiwKICAgICAgImNoYW5uZWwiOiAiZW1haWwiLAogICAgICAicmVhc29uIjogIm9wZXJhdG9yLXBhdXNlIiwKICAgICAgImRldGFpbCI6ICJQYXVzZWQgYnkgYW4gb3BlcmF0b3IuIFJlc3VtZSBleHBsaWNpdGx5IHRvIGNvbnRpbnVlIHJlbWFpbmluZyBzZW5kcy4iLAogICAgICAicGF1c2VkX2F0IjogMTc5Mzk1OTk4MzU5OCwKICAgICAgInJlc3VtZV9jaGVja19hdCI6IDE3OTM5NTYzNDU1OTcsCiAgICAgICJyZXN1bWVkX2F0IjogMTc5Mzk2MDAzODU5OCwKICAgICAgImNyZWF0ZWRfYXQiOiAxNzkzOTU2MzQ1NTk3LAogICAgICAidXBkYXRlZF9hdCI6IDE3OTM5NjAwMzg1OTgKICAgIH0KICBdLAogICJoaXN0b3J5IjogWwogICAgewogICAgICAiaWQiOiAiMDFNNlI1S002NlcyMVNKU1BTWjhWU0VKS1IiLAogICAgICAib3BlcmF0b3JJZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgIm9wZXJhdG9yTmFtZSI6ICJPd25lciIsCiAgICAgICJhY3RvclR5cGUiOiAib3BlcmF0b3IiLAogICAgICAiYWN0aW9uIjogInJlc3VtZWQiLAogICAgICAib2JqZWN0VHlwZSI6ICJjYW1wYWlnbiIsCiAgICAgICJvYmplY3RJZCI6ICIwMU02UjIyUFg1TjVWN1pCNzlDSjhBQTM4NyIsCiAgICAgICJvY2N1cnJlZEF0IjogMTc5Mzk2MDAzODU5OCwKICAgICAgImRldGFpbCI6IHsKICAgICAgICAicmV2aXNpb25JZCI6ICIwMU02UjIyUFg1MlhQOVJBOTVaQzJRVFA2OCIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgImlkIjogIjAxTTZSNUhZRkVCM1lBVzZDMVBZRVBSUFdTIiwKICAgICAgIm9wZXJhdG9ySWQiOiAiZ28tbGl2ZS1vd25lciIsCiAgICAgICJvcGVyYXRvck5hbWUiOiAiT3duZXIiLAogICAgICAiYWN0b3JUeXBlIjogIm9wZXJhdG9yIiwKICAgICAgImFjdGlvbiI6ICJwYXVzZWQiLAogICAgICAib2JqZWN0VHlwZSI6ICJjYW1wYWlnbiIsCiAgICAgICJvYmplY3RJZCI6ICIwMU02UjIyUFg1TjVWN1pCNzlDSjhBQTM4NyIsCiAgICAgICJvY2N1cnJlZEF0IjogMTc5Mzk1OTk4MzU5OCwKICAgICAgImRldGFpbCI6IHsKICAgICAgICAicmV2aXNpb25JZCI6ICIwMU02UjIyUFg1MlhQOVJBOTVaQzJRVFA2OCIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgImlkIjogIjAxTTZSMjNGQUQwMFE1WkNEQlpQWFNYWjA0IiwKICAgICAgIm9wZXJhdG9ySWQiOiAiZ28tbGl2ZS1vd25lciIsCiAgICAgICJvcGVyYXRvck5hbWUiOiAiT3duZXIiLAogICAgICAiYWN0b3JUeXBlIjogIm9wZXJhdG9yIiwKICAgICAgImFjdGlvbiI6ICJyZXN1bWVkIiwKICAgICAgIm9iamVjdFR5cGUiOiAiY2FtcGFpZ24iLAogICAgICAib2JqZWN0SWQiOiAiMDFNNlIyMlBYNU41VjdaQjc5Q0o4QUEzODciLAogICAgICAib2NjdXJyZWRBdCI6IDE3OTM5NTYzNjM1OTcsCiAgICAgICJkZXRhaWwiOiB7CiAgICAgICAgInJldmlzaW9uSWQiOiAiMDFNNlIyMlBYNTJYUDlSQTk1WkMyUVRQNjgiCiAgICAgIH0KICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICIwMU02UjIyWFFYN0JIRUVYRzA5QkJZOVJGUSIsCiAgICAgICJvcGVyYXRvcklkIjogImdvLWxpdmUtb3duZXIiLAogICAgICAib3BlcmF0b3JOYW1lIjogIk93bmVyIiwKICAgICAgImFjdG9yVHlwZSI6ICJvcGVyYXRvciIsCiAgICAgICJhY3Rpb24iOiAicGF1c2VkIiwKICAgICAgIm9iamVjdFR5cGUiOiAiY2FtcGFpZ24iLAogICAgICAib2JqZWN0SWQiOiAiMDFNNlIyMlBYNU41VjdaQjc5Q0o4QUEzODciLAogICAgICAib2NjdXJyZWRBdCI6IDE3OTM5NTYzNDU1OTcsCiAgICAgICJkZXRhaWwiOiB7CiAgICAgICAgInJldmlzaW9uSWQiOiAiMDFNNlIyMlBYNTJYUDlSQTk1WkMyUVRQNjgiCiAgICAgIH0KICAgIH0KICBdLAogICJoYW5kb2ZmcyI6IDQKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cf592012c95e2491fcec-1f5b6ebaaee0c930574d",
+          "file": "multistep.journeys.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T09:10:55.244Z",
+    "duration": 97379.084,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

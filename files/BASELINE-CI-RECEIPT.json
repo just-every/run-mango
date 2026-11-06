@@ -1,0 +1,27 @@
+{
+  "head": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "observed": "2026-11-06",
+  "runs": [
+    {
+      "id": 42183651100,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42181327459,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42181327367,
+      "name": "Run site",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "head_before": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "head_after": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "exit": 0,
+  "command": "timeout 1200 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium PLAYWRIGHT_JSON_OUTPUT_NAME=<packet>/multistep-exact.json pnpm exec playwright test --config tests/go-live/playwright.config.js multistep.journeys.ts --reporter=list,json"
+}

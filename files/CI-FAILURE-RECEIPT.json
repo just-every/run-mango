@@ -1,0 +1,36 @@
+{
+  "head": "5847086d48f9b743f8211ec825cca729863ebaaf",
+  "run": 42193058840,
+  "event": "push",
+  "conclusion": "failure",
+  "classification": "expected-generated-view-only",
+  "jobs": [
+    {
+      "id": 127809655368,
+      "name": "Build and public command checks",
+      "failed_step": "Check generated contract documents",
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+    },
+    {
+      "id": 127809755383,
+      "name": "verify",
+      "failed_step": "Require the selected coverage and its proof",
+      "reason": "BUILD=failure; SHARDS=skipped after the generated-view check"
+    }
+  ],
+  "archive_read_commands": [
+    "gh run view 42193058840 --repo just-every/run-mango --job 127809655368 --log-failed",
+    "gh run view 42193058840 --repo just-every/run-mango --job 127809755383 --log-failed"
+  ],
+  "archive_read_exits": [
+    0,
+    0
+  ],
+  "github_budget_calls": 6,
+  "repairs": 0,
+  "reruns": 0,
+  "dispatches": 0,
+  "ready_exception": "User instruction permits READY when the only substantive failure is generated ACCEPTANCE.md or docs/CLAIMS.md freshness; dependent job failures and skips follow it."
+}
