@@ -4622,7 +4622,7 @@
       "executable": false
     },
     "src/core/features/insights/campaign-engagement.ts": {
-      "sha256": "e1cf0e0cb97cbb42dc647fdba5644035cc0d4ccbb23ddf429e89d406ba848274",
+      "sha256": "50dff8cdce5db31460cf269bbf1b63f84e98fa4d60366f9691c2be3707f66838",
       "executable": false
     },
     "src/core/features/insights/campaign-performance-csv.ts": {
@@ -4806,7 +4806,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/campaign-engagement.tsx": {
-      "sha256": "8771fac087e147f45bf126a95c8227d5c527a5d05163d32e22a54aa309ef90ab",
+      "sha256": "a580cc0fad3cf9d1601f6e81f41055286573e15ea6b9ec78e53908e74aa75f93",
       "executable": false
     },
     "src/core/features/insights/ui/campaign-performance.tsx": {
@@ -8658,11 +8658,11 @@
       "executable": false
     },
     "tests/campaign-results/reporting-fixture.ts": {
-      "sha256": "5a7f34552efc9bbd03146a1885a8790add7637ac8acf491b0576a9d57cfb334f",
+      "sha256": "3a64ce9b2bec031ff4cc93fc0ea67b6248160bfa17cd661c5cce00843b014240",
       "executable": false
     },
     "tests/campaign-results/reporting-journey.ts": {
-      "sha256": "a34762e5b06cb265d206ac9422a81b9691efbb9b3eb31fca39794a3c730149ce",
+      "sha256": "774588278a7c7615ca20b2956856df5d9c528005cc8ae6df237f25bdf08e1125",
       "executable": false
     },
     "tests/campaign-results/results.flow.ts": {
@@ -8670,7 +8670,7 @@
       "executable": false
     },
     "tests/campaign-results/results.journeys.ts": {
-      "sha256": "af00763493f004c20fecd25602faef2a1086bf32a7dcce98818a0f45079f539a",
+      "sha256": "5100bb73c7eae7b1cfae41c9be62eda2ecf1f007d523a9279b564bdbe5111aee",
       "executable": false
     },
     "tests/campaign-results/retention-fixture.ts": {
