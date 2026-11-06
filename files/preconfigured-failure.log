@@ -1,0 +1,64 @@
+
+Running 1 test using 1 worker
+
+(node:3797) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/local-start/sender-setup.journey.ts:7:1 › [OPER-001] native sender setup preserves configuration access without provider readiness (4.3m)
+
+
+  1) tests/local-start/sender-setup.journey.ts:7:1 › [OPER-001] native sender setup preserves configuration access without provider readiness 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected: "http://127.0.0.1:10485/app"
+    Received: "http://127.0.0.1:10485/setup"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 15000ms
+        11 × locator resolved to <html lang="en">…</html>
+           - unexpected value "http://127.0.0.1:10485/setup"
+        19 × locator resolved to <html lang="en" data-mango-hydrated="true">…</html>
+           - unexpected value "http://127.0.0.1:10485/setup"
+
+
+       at preconfigured-sender.flow.ts:36
+
+      34 |       await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
+      35 |       await page.getByRole('link',{name:'Sign in as Owner'}).click();
+    > 36 |       await expect(page).toHaveURL(runtime.url+'/app');
+         |                          ^
+      37 |       await page.reload();
+      38 |       await expect(page).toHaveURL(runtime.url+'/app');
+      39 |       const setup=await page.request.get(runtime.url+'/setup',{maxRedirects:0});
+        at preconfiguredSenderJourney (/home/agent/rer-consolidation/work/sd-mango-c-f90/run-mango/tests/local-start/preconfigured-sender.flow.ts:36:26)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f90/run-mango/tests/local-start/sender-setup.journey.ts:16:3
+
+    attachment #1: setup-1440 (image/png) ──────────────────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/setup-1440-714357b2f87097d0a307846764c2a28888ee3ec5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: setup-390 (image/png) ───────────────────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/setup-390-60b7d71923e10cea4366d75790911cd5720e48b1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: configured-app-1440 (image/png) ─────────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/configured-app-1440-4936cac84be18d282b4c448252abb73b5db3b5f6.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: configured-app-390 (image/png) ──────────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/configured-app-390-79610738d676e9057d7bd660c909c8d98a8da462.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: reopened-settings-1440 (image/png) ──────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/reopened-settings-1440-32e382f7665ee6a17de992f8ea1ee1c149fe1e18.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: reopened-settings-390 (image/png) ───────────────────────────────────────────────
+    ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/attachments/reopened-settings-390-354af245b46e0b52cd486de45cea893ac4d07672.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../evidence/63b0908e197f/local-start/sender-setup.journey.ts--O-175a6--without-provider-readiness/error-context.md
+
+  1 failed
+    tests/local-start/sender-setup.journey.ts:7:1 › [OPER-001] native sender setup preserves configuration access without provider readiness 

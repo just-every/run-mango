@@ -1,0 +1,11 @@
+{
+  "head": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+  "files": {
+    "src/core/platform/runtime.ts": "6bba0e2fc84664e8e938ee88836b9b30585f66adae92642b67081dc4d73f7df1",
+    "tests/local-start/sender-setup.journey.ts": "440c316f5c84e35f365001af849f53ab6dd31092d8363308e8acbc669e7d6552",
+    "tests/local-start/sender-setup.flow.ts": "3cb3692e66ae80e28f8b40500d8bc9591ab6f54e78c3fd9c65ec649001f37297",
+    "tests/local-start/preconfigured-sender.flow.ts": "ca273d709b4040df6909f59367e582eeeaa3f01eb424579ebff546536ddf2299",
+    "tests/local-start/default-admin.flow.ts": "460d5993cf0680797decde34aa4882264e4a6924c635af172553f0fed1cf6039",
+    "scripts/verification/plan.mjs": "4971b40307e68a63196282834335ebd8740caa71840cdc0b8c8543090fe420a1"
+  }
+}

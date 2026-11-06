@@ -1,0 +1,34 @@
+{
+  "repository": "just-every/run-mango",
+  "runs": [
+    {
+      "id": 42188006645,
+      "name": "Verify",
+      "head_sha": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42188006645"
+    }
+  ],
+  "failed_jobs": [
+    {
+      "id": 127792933605,
+      "name": "Build and public command checks",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Check generated contract documents"
+      ]
+    },
+    {
+      "id": 127793015717,
+      "name": "verify",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require the selected coverage and its proof"
+      ]
+    }
+  ],
+  "classification": "Only generated contract views are stale; aggregate Verify fails as a consequence. Native shards did not run. No test assertion failed in this workflow. No rerun or dispatch requested.",
+  "api_calls_used": 4
+}

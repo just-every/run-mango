@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f90",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f90",
+  "head": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+  "remote_head_verified": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+  "base": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+  "integrated_main": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "product_commits": [
+    "bce1b8ab61ed7bbcd3e126ccfdd5f48e3dbfbe0d",
+    "29799c47d2bb15fd7e6beb404123ad66a40d948e"
+  ],
+  "preserved_inherited_candidate_commits": 5,
+  "clause": {
+    "id": "OPER-001",
+    "before": "partial",
+    "after": "done",
+    "acceptances_exercised": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "before_counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "after_counts": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views-check.log",
+      "phase": "after write, before restoring generated views"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "phase": "after last source and contract edit, and again on committed candidate"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "expected": true,
+      "phase": "after restoring main generated views",
+      "log": "restored-views-check.log"
+    },
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config scripts/verification/local-start.config.mjs sender-setup.journey.ts --reporter=list",
+      "exit": 0,
+      "head": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+      "log": "exact-candidate-journey.log"
+    }
+  ],
+  "migration_ledger": {
+    "command": null,
+    "exit": 0,
+    "reason": "No migration changed"
+  },
+  "ci": {
+    "repository": "just-every/run-mango",
+    "runs": [
+      {
+        "id": 42188006645,
+        "name": "Verify",
+        "head_sha": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42188006645"
+      }
+    ],
+    "failed_jobs": [
+      {
+        "id": 127792933605,
+        "name": "Build and public command checks",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Check generated contract documents"
+        ]
+      },
+      {
+        "id": 127793015717,
+        "name": "verify",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Require the selected coverage and its proof"
+        ]
+      }
+    ],
+    "classification": "Only generated contract views are stale; aggregate Verify fails as a consequence. Native shards did not run. No test assertion failed in this workflow. No rerun or dispatch requested.",
+    "api_calls_used": 4
+  },
+  "publication_scan": {
+    "commit": "29799c47d2bb15fd7e6beb404123ad66a40d948e",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null,
+    "status": "pending guarded fleet lander"
+  },
+  "landing": {
+    "main_written": false,
+    "run_site": "pending guarded landing",
+    "pr": null
+  },
+  "integrity": {
+    "candidate_commits_checked_including_side_parents": 7,
+    "parent_status_ids_retained": 316,
+    "parent_table_lines": 490,
+    "candidate_table_lines": 490,
+    "coauthor_trailers": 0,
+    "added_test_registrations": 0,
+    "removed_assertions": 0,
+    "source_lock_fresh": true
+  },
+  "browser": {
+    "executable": "/usr/bin/chromium",
+    "headless": true,
+    "args": [
+      "--no-sandbox"
+    ],
+    "widths": [
+      1440,
+      390
+    ],
+    "screens": [
+      "setup",
+      "configured-app",
+      "reopened-settings"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "local public-door regression proof, not a Verify repair",
+  "head": "bce1b8ab61ed7bbcd3e126ccfdd5f48e3dbfbe0d",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config scripts/verification/local-start.config.mjs sender-setup.journey.ts --reporter=list",
+  "test": "[OPER-001] native sender setup preserves configuration access without provider readiness",
+  "exit": 1,
+  "failure": "preconfigured-sender.flow.ts:36: expected /app, received /setup after first native owner sign-in",
+  "cause": "createLocalPlatform in src/core/platform/runtime.ts replaces every configured business sender field with an empty string",
+  "repair": "Read the existing MAIL_SENDER_NAME, MAIL_FROM with MAIL_AUTH_FROM compatibility, MAIL_REPLY_TO and MAIL_PHYSICAL_ADDRESS configuration fields. Retain localSender and its unavailable capabilities."
+}
