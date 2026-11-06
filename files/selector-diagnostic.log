@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:5582) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-authoring/design-summary-debug.spec.ts:6:1 › one-off native summary opening probe (34.4s)
+
+
+  1) tests/campaign-authoring/design-summary-debug.spec.ts:6:1 › one-off native summary opening probe 
+
+    TimeoutError: locator.fill: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'Import a 12ui design' }).getByLabel('Brief', { exact: true })
+
+
+       at campaign-authoring/design-summary-journey.ts:35
+
+      33 |   // This brief is authored independently of the layout; only the first image
+      34 |   // description and heading are supplied by the operator.
+    > 35 |   await dialog.getByLabel('Brief', { exact: true }).fill('A pear afternoon\nA bowl of green pears');
+         |                                                     ^
+      36 |   const document = {
+      37 |     version: '2', canvas: { width: 600, height: 500 }, layers: [
+      38 |       { kind: 'heading', content: 'A pear afternoon', box: [20, 20, 560, 40], fontSizePx: 32 },
+        at designSummaryJourney (/workspace/run-mango/tests/campaign-authoring/design-summary-journey.ts:35:53)
+        at /workspace/run-mango/tests/campaign-authoring/design-summary-debug.spec.ts:17:5
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f119/evidence/7f523b30a6bf/main/campaign-authoring-design--9d06e-ative-summary-opening-probe/error-context.md
+
+  1 failed
+    tests/campaign-authoring/design-summary-debug.spec.ts:6:1 › one-off native summary opening probe 

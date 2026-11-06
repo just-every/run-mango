@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f119",
+  "head": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+  "base_main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "product_push": "success, first attempt",
+  "sources": [
+    {
+      "path": "tests/campaign-authoring/design-import.spec.ts",
+      "sha256": "4ba7937affc4634e7342345049bf9008fc4402c9f76cf8bf4d1ded5374aa871d",
+      "bytes": 13645
+    },
+    {
+      "path": "tests/campaign-authoring/design-summary-journey.ts",
+      "sha256": "cb1d1b2e67592e0aa0f325a57fbbe73a3c886034f9adb04bf5796e6c7c64cdc3",
+      "bytes": 7824
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "d733adbaa4fcdd1110e42c8c17cff1aa408ebfa1a1ec4afcbc66aebaf78f56e1",
+      "bytes": 412123
+    }
+  ],
+  "focused_test": {
+    "command": "timeout 1200 pnpm exec playwright test tests/campaign-authoring/design-import.spec.ts --workers=1 --reporter=list",
+    "exit": 0,
+    "passed": 1,
+    "failed": 0,
+    "assertion_width": 1440,
+    "capture_widths": [
+      1440,
+      390
+    ],
+    "duration_seconds": 53.7,
+    "source_matches_committed_candidate": true
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "lock-write.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock-check.log"
+    }
+  ],
+  "views_committed": false,
+  "contract_changed": false,
+  "production_changed": false,
+  "publication_scan": {
+    "commit": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "status": "not run in cloud; fleet lander gate"
+  },
+  "ci": {
+    "conclusion": null,
+    "event": "push",
+    "head_sha": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42231419426",
+    "id": 42231419426,
+    "name": "Verify",
+    "status": "in_progress"
+  },
+  "probes": {
+    "DESIGN-013 acceptance-1": "actual file import with independent brief: only Red pears beside a cobalt vase highlighted; authored and saved HTML retain both alt values with zero marks",
+    "DESIGN-013 acceptance-3": "actual textarea edit and Save full draft: edited unsaved then edited saved summary; exact saved body readback; approvals, recipients and jobs unchanged"
+  },
+  "plan_changes": [
+    "DESIGN-013 remains PARTIAL; acceptance 1 and 3 proof completed; acceptance 2 and 4 remainders held."
+  ],
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "published_ref_confirmed": "8f2dea6d0ab8620f9037094acba21fd4f1f9b180",
+  "candidate_commits": 1,
+  "identity_and_trailers": "All candidate commits, including side parents, inspected: fleet author and committer; no trailers.",
+  "final_worktree_clean": true,
+  "api_calls_task_side": 4,
+  "cleanup": {
+    "browser_and_worker_processes": "none remain from test runs",
+    "stopped_runtime_scratch": "removed after receipts and screenshots were retained",
+    "clone": "retained until evidence publication and CI handoff"
+  }
+}

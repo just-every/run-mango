@@ -1,0 +1,22 @@
+{
+  "campaignState": "draft",
+  "summaryState": "Imported design · edited since import and saved",
+  "highlightedImageDescriptions": [
+    "Red pears beside a cobalt vase"
+  ],
+  "authoredImages": {
+    "alts": [
+      "A bowl of green pears",
+      "Red pears beside a cobalt vase"
+    ],
+    "marks": 0
+  },
+  "savedBodyEqualsEditedBody": true,
+  "savedBodySha256": "509e3d086240a2587eaf4df3a144f4e4e09fb34eea62052e9b69664048906334",
+  "authorityUnchanged": true,
+  "assertionWidth": 1440,
+  "captureWidths": [
+    1440,
+    390
+  ]
+}
