@@ -1,0 +1,10 @@
+{
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "branch": "cloud/sd-mango-c-f80",
+  "remote_ref": "refs/heads/cloud/sd-mango-c-f80",
+  "remote_head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "verified": true,
+  "push_guard": "cloud-push.py",
+  "force": false,
+  "main_pushed": false
+}

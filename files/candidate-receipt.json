@@ -1,0 +1,37 @@
+{
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "branch": "cloud/sd-mango-c-f80",
+  "repository": "just-every/run-mango",
+  "requested_base": "9e7bf0127c20bca03fed884083c3d716d0336110",
+  "merged_main": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "source_tree": "dacb6486214304842dc526b6ad93edaa99681fcc",
+  "existing_setup_assertions_preserved_verbatim": true,
+  "slow_installer_preserved": true,
+  "new_direct_registration_count": 1,
+  "new_runtime": "native persistent D1 with existing installed dependencies",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "clause": {
+    "id": "OPER-001",
+    "before": "partial",
+    "after": "partial",
+    "closed": [
+      "acceptance 4 push-Verify recording"
+    ],
+    "remainder": [
+      "acceptance 1 complete unassigned Admin surface",
+      "acceptance 3 independently preconfigured identity",
+      "hosted and live-provider qualification"
+    ]
+  }
+}

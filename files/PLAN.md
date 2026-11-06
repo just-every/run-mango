@@ -1,0 +1,13 @@
+# sd-mango-c-f80 plan
+
+Repository: just-every/run-mango. Product branch: cloud/sd-mango-c-f80.
+Target: OPER-001, specifically acceptance 4's configuration access before sender setup and honest lack of provider readiness after setup. Preserve acceptance 2's server and hydrated client gates and invalid-input assertions.
+
+1. Inspect the requested base, full clause, current Status row, production dispatcher, settings routes and settings service. Map every selected outcome to the existing journey.
+2. Preserve the base's acceptance 4 assertions. The base already implemented them in the slow fresh-install journey, which push Verify excludes. Share its complete browser flow with a native installation journey registered in the existing native Verify pack. Reuse dependencies for the push journey; keep dependency installation in the existing slow journey.
+3. Run the focused native browser journey at 1440, capturing setup and configured app once at 1440 and 390. Run typecheck and the first-party command-contract check. Verify configuration remains readable before setup while operator documents redirect; save through the existing setup control; reopen and reload; inspect unavailable sender validation and unknown or missing provider evidence.
+4. Keep OPER-001 PARTIAL. Preserve acceptance text, all parent Status rows, acceptance 1's complete unassigned-operator Admin surface and acceptance 3's independently preconfigured identity remainder, hosted and provider qualification, and every carried prerequisite and hold. Do not modify the homepage, design, Base pin, workflows, or provider configuration.
+5. Generate contract views and check them, restore the generated views from main, regenerate the source lock last and check it. Save the first real commit with skip-CI, push through the fleet guard, then merge updated main without rewriting the published save. Resolve the contract first and regenerate the lock after the merge.
+6. Run focused proof on the final committed candidate, inspect every candidate author, committer and message, push only the named cloud branch, discover exact-SHA Verify through REST and poll within the budget. Publish the actual public report, receipts and captures to the separate evidence ref. Leave scanning and landing to the Mac fleet.
+
+No new acceptance points, policy defaults, scope asks or DONE claim are planned. No tests are removed or weakened. The added native registration calls the same assertions as the existing slow registration; it closes the recording gap for the selected outcome without adding fresh dependency installation to push Verify.

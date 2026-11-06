@@ -1,0 +1,23 @@
+{
+  "name": "native",
+  "members": [
+    {
+      "name": "local-start",
+      "stage": "local-start",
+      "files": [
+        "authority.journey.ts",
+        "command-data.journey.ts",
+        "sender-setup.journey.ts"
+      ]
+    },
+    {
+      "name": "go-live",
+      "stage": "go-live",
+      "files": [
+        "mailbox-provider.journeys.ts"
+      ]
+    }
+  ],
+  "browser": true,
+  "timeout": 15
+}

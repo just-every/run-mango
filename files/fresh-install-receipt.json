@@ -1,0 +1,9 @@
+{
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/local-start/config.js local.journey.ts --grep 'fresh install completes sender setup' --workers=1 --output ../evidence/slow-candidate",
+  "exit": 0,
+  "tests": 1,
+  "passed": 1,
+  "total_time": "1.9m",
+  "log": "fresh-install-journey.log"
+}

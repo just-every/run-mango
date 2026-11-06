@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:5883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/local-start/local.journey.ts:9:1 › [OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 (11.2s)
+
+  1 passed (1.9m)

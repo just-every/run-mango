@@ -1,0 +1,40 @@
+{
+  "run": 42177643229,
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "jobs": [
+    {
+      "job": 127759741127,
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42177643229",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127759741127",
+        "--log-failed"
+      ],
+      "exit": 0,
+      "log": "ci-build-failure-excerpt.log"
+    },
+    {
+      "job": 127759807598,
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42177643229",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "127759807598",
+        "--log-failed"
+      ],
+      "exit": 0,
+      "log": "ci-summary-failure-excerpt.log"
+    }
+  ],
+  "github_calls": 5,
+  "excerpt_note": "Actual command and error lines retained; runner environment sections omitted from public packet. No archive retry."
+}

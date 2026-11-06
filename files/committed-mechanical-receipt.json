@@ -1,0 +1,24 @@
+{
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "checks": [
+    {
+      "name": "candidate-views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 1
+    },
+    {
+      "name": "candidate-lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0
+    }
+  ],
+  "expected_generated_views_exception": true
+}

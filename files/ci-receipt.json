@@ -1,0 +1,20 @@
+{
+  "head": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "run": 42177643229,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "url": "https://github.com/just-every/run-mango/actions/runs/42177643229",
+  "github_calls": 5,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "job": 127759741127,
+  "summary_job": 127759807598,
+  "classification": "permitted generated-view-only exception",
+  "browser_shards": "skipped after build dependency failed",
+  "actual_ci_browser_pass_claimed": false,
+  "local_focused_journeys_passed": true,
+  "ready_eligible_under_task_exception": true,
+  "run_site": "main-only, pending Mac lander",
+  "publication_scan": "pending Mac lander",
+  "pr": null
+}
