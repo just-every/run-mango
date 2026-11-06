@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-06T02:12:51.889839+00:00",
+  "native_browser_worker_servers_remaining": [],
+  "dependencies_removed": true,
+  "task_external_runtime_scratch_removed": true,
+  "product_worktree_clean_before_cleanup": true,
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "clone_removal": "After report-only publication and verification; final cleanup removes this task clone only. Report packet is preserved outside clone."
+}

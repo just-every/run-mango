@@ -1,0 +1,13 @@
+ CONTRACT.md                                        |   4 +-
+ sources.lock.json                                  |  26 +++--
+ src/core/features/auth/permissions.ts              |   2 +-
+ src/core/features/design-generation/advance.ts     |   5 +-
+ .../features/design-generation/layout-evidence.ts  |  15 +++
+ src/core/features/design-generation/model.ts       |   5 +-
+ src/core/features/design-generation/repository.ts  |   4 +-
+ src/core/features/design-generation/routes.ts      |  19 +++-
+ tests/campaign-authoring/design-generation.flow.ts | 121 +++++++++++++++++----
+ tests/campaign-authoring/design-retention.ts       |  78 +++++++++++++
+ tests/campaign-authoring/worker.ts                 |  18 +++
+ tests/support/fake-twelve-ui.ts                    |  14 ++-
+ 12 files changed, 265 insertions(+), 46 deletions(-)

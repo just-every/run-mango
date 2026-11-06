@@ -1,0 +1,20 @@
+{
+  "name": "setup",
+  "command": [
+    "timeout",
+    "900",
+    "npx",
+    "-y",
+    "@runeditrun/rer",
+    "setup",
+    "--owner-email",
+    "fleet@runeditrun.com",
+    "--non-interactive"
+  ],
+  "exit": 0,
+  "seconds": 43.408,
+  "started": "2026-11-06T02:01:07.302468+00:00",
+  "ended": "2026-11-06T02:01:50.708963+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

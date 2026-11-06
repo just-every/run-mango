@@ -1,0 +1,125 @@
+{
+  "at": "2026-11-06T02:12:25.288902+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "branch": "cloud/sd-mango-c-f42-fix-1",
+  "tracked_or_untracked_changes": "",
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "prs_created": 0,
+  "actions_calls": 0,
+  "remote_ref_changes_authorized": "evidence ref only",
+  "source_test_manifest": [
+    {
+      "path": "src/core/features/design-generation/model.ts",
+      "sha256": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5"
+    },
+    {
+      "path": "src/core/features/design-generation/concept.ts",
+      "sha256": "42d0a27a99ce53fe0faf1feb125ca5d4e0608668a230ef2fc44489ab294d592e"
+    },
+    {
+      "path": "src/core/features/design-generation/routes.ts",
+      "sha256": "46c3f4c144d015a34f20202d964cbcef0235099dd10b99f35ebb9f4643de34ea"
+    },
+    {
+      "path": "src/core/features/design-generation/advance.ts",
+      "sha256": "a139db7c981eabf58a8885a67c29403cbc279d44a57c44120ef728b71e1137ed"
+    },
+    {
+      "path": "src/core/features/design-generation/repository.ts",
+      "sha256": "b7f8cd50d746e223eea6d8d2a3e015e5e4330be2a7cb32dbe79ff55bca932804"
+    },
+    {
+      "path": "src/core/features/design-generation/layout-evidence.ts",
+      "sha256": "ac2a72385fad55234723d6cfa38510ed523e605b9b576a17889fb0f05c9f0dbc"
+    },
+    {
+      "path": "src/core/features/campaigns/authoring-tokens.ts",
+      "sha256": "4d36e99a87213697f7b9b0eb20b8b3ff6bfd8290177a10ece9f2cd3402ce2c71"
+    },
+    {
+      "path": "src/core/features/campaigns/message-content.ts",
+      "sha256": "fa3ae98ba36c64185ad699e49e1ae5981daaa2bb3f711eea825a0ffdff15e84d"
+    },
+    {
+      "path": "src/core/platform/adapters/twelve-ui.ts",
+      "sha256": "80a3ce254600f4e1d35f614ccf8138e1a5e103ba96ef5b0eb741995f5f880b62"
+    },
+    {
+      "path": "tests/campaign-authoring/design-generation.spec.ts",
+      "sha256": "00835a3edef9571ade4de0db160e588b6988f1ddeb6caf73b47f8bc538dc365c"
+    },
+    {
+      "path": "tests/campaign-authoring/design-generation.flow.ts",
+      "sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa"
+    },
+    {
+      "path": "tests/campaign-authoring/design-retention.ts",
+      "sha256": "5673026012a34f3220947d7d7d39fc57ba2cd63d581cda7d042cf5d1b4f602b1"
+    },
+    {
+      "path": "tests/campaign-authoring/browser-runtime.mjs",
+      "sha256": "0542609977c08a8a88149388d5dc548b76b3bba0bf55e4b844b28601ac1be9df"
+    },
+    {
+      "path": "tests/campaign-authoring/worker.ts",
+      "sha256": "1ade2167215999cbd01fd14a45524ac40e155bf13f316e1792bf7513c66bef29"
+    },
+    {
+      "path": "tests/support/fake-twelve-ui.ts",
+      "sha256": "e9604a38cd3422da6fc218a31c32537e74ada4ed86aab718f02adf36520aad70"
+    },
+    {
+      "path": "tests/portability/runtime.mjs",
+      "sha256": "7299d41ff4e45da0567ff67117ac5eb64fca35d55c702b47d9955b90f1ec705d"
+    },
+    {
+      "path": "tests/portability/flows.ts",
+      "sha256": "2279c92fb76de885687d91fe9408bb2328b99cb06d521c44f1cde94389c120f8"
+    },
+    {
+      "path": "tests/portability/worker.ts",
+      "sha256": "7df58a97a72b0b372c0c3d4ffe5f63b561d9f06ebe0b55706a5a9b0281f177e1"
+    },
+    {
+      "path": "tests/support/navigation.ts",
+      "sha256": "1083ddec75da604d95deaa9f8e08583996f3abc32a5cde6102c36717aa65578d"
+    },
+    {
+      "path": "tests/support/local-session.ts",
+      "sha256": "51c8ef042222b588e56666651b0e479f1c6ddc6570786e40b4fce9d8355fde89"
+    },
+    {
+      "path": "tests/support/browser.mjs",
+      "sha256": "40734a134d20542e23a933adb9bbb42732147d2aa32802ada68140625bf9cfc1"
+    },
+    {
+      "path": "tests/support/fixture-server.mjs",
+      "sha256": "7f8d774554f8f734b3064428569496fded38d7e5fb2ccb73ab1ead262297b645"
+    },
+    {
+      "path": "tests/support/artifacts.mjs",
+      "sha256": "52d1eae977ed6edce56fcc732024d3139580383e3ac538e891b64889163ae1d7"
+    },
+    {
+      "path": "tests/support/queue-consumers.mjs",
+      "sha256": "01995d249e7ee99360d7520dce9d3032182983eb64b09c50a2ad7789815f577b"
+    },
+    {
+      "path": "tests/support/images.ts",
+      "sha256": "e64393e6b5c34dc6448929acb74d9ef0423ee8bab12255579dae84ba80541c04"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569"
+    },
+    {
+      "path": "scripts/verification/ci.mjs",
+      "sha256": "f885f38c3d7e2d494ee454f1f0512ffa1e0919e2da775f49108f3c7d1d670317"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb"
+    }
+  ]
+}

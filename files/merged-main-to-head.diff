@@ -1,0 +1,663 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index 09e64f6..f0e9b88 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4048,7 +4048,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every
+ 
+ ## Status
+ 
+-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration.
++Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. DESIGN-003 was exercised through its registered native design-generation journey from the code and tests at commit `1a33e7d835720bce9889966897fd7d0ade0a0da3` (5 November 2026); this status candidate retains those source and test bytes. Live design-provider qualification remains in the Field proof register.
+ 
+ | Clauses | Done | Partial | Missing | Total |
+ | --- | ---: | ---: | ---: | ---: |
+@@ -4128,7 +4128,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `DESIGN-008` | Save generated design through ordinary authoring | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks. Missing public-door journey: “Save generated design through ordinary authoring — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-009` | Apply a chosen design without stealing focus | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”; “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run” | Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required. Missing public-door journey: “Apply a chosen design without stealing focus — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-010` | Keep paid design candidates | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible. Missing public-door journey: “Keep paid design candidates — complete acceptance”, covering the unasserted outcomes above. |
+-| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: native generation and choice, failed and successful completion, authenticated status and persisted rows after reload and repeated reads | Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request; Exact sanitized brief retained; Issued provider run and layout identifiers; Candidate byte size; Authenticated operator; Independently bounded creation, candidate and completion times retained through reload. Unasserted: Run never deleted beyond existing terminal-state checks; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above. |
++| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: `tests/campaign-authoring/design-generation.flow.ts` records the native outbound brief, chosen PNG and idempotent purchases; exact retained brief, issued identifiers, candidate outcomes, hashes and byte sizes, operator and bounded times; applied, discarded, failed, timed-out and older runs retained through later activity. `tests/campaign-authoring/design-retention.ts` opens original candidate and distinct layout bytes, verifies their native export descriptors and contents, restores every run and candidate row and original bytes, and refuses unsigned and revoked sessions. Every paid request reconciles with its cost fact; repeated reads and export buy nothing. | Original independent Opus5.5 judgment ended 2026-11-05T21:21:17Z: STAYS PARTIAL; R2–R5 MET at exact source `9b9f3867af955c390b39b740b89f96b4ef929ed1`, frozen and unchanged. Original family sd-mango-c-f42 lifetime FIX1 of 2 corrects only R1 quoted-fallback brace sanitization through the existing registered native journey, retaining the failing-before and passing-after provider-edge payloads. R1 remains pending independent new-SHA acceptance with the original report; whole-clause DONE is unawarded. Live-provider qualification remains external and unclaimed; original-family affected gate, final runtime Verify, COMPLETE full-history NEW0, guarded main and exact-main Run site duties remain with fleet. No source acceptance or hold release. |
+ | `DESIGN-011` | Design provider custody | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs. Missing public-door journey: “Design provider custody — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-004` | Design import | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px” | Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged. |
+ | `DESIGN-012` | Compile the imported layout | published | partial | `tests/campaign-authoring/design-import.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email. Missing public-door journey: “Compile the imported layout — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 158128c..8f34af7 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
++      "sha256": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -3702,7 +3702,7 @@
+       "executable": false
+     },
+     "src/core/features/auth/permissions.ts": {
+-      "sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
++      "sha256": "6cb9ff67581eeca2924d97af353b3941ac16c9d3eac42023a7b5f37483d64e2d",
+       "executable": false
+     },
+     "src/core/features/auth/product-roles.ts": {
+@@ -4302,23 +4302,27 @@
+       "executable": false
+     },
+     "src/core/features/design-generation/advance.ts": {
+-      "sha256": "315aa219e0b370badd1b1e761b714477579ad384a4809fdf61f20196f599228a",
++      "sha256": "a139db7c981eabf58a8885a67c29403cbc279d44a57c44120ef728b71e1137ed",
+       "executable": false
+     },
+     "src/core/features/design-generation/concept.ts": {
+       "sha256": "42d0a27a99ce53fe0faf1feb125ca5d4e0608668a230ef2fc44489ab294d592e",
+       "executable": false
+     },
++    "src/core/features/design-generation/layout-evidence.ts": {
++      "sha256": "ac2a72385fad55234723d6cfa38510ed523e605b9b576a17889fb0f05c9f0dbc",
++      "executable": false
++    },
+     "src/core/features/design-generation/model.ts": {
+-      "sha256": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
++      "sha256": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+       "executable": false
+     },
+     "src/core/features/design-generation/repository.ts": {
+-      "sha256": "4344a03b49d5c28bebee0c288d1608e8464ea8cb5aaa9d716d0f1e1e2fb35c5f",
++      "sha256": "b7f8cd50d746e223eea6d8d2a3e015e5e4330be2a7cb32dbe79ff55bca932804",
+       "executable": false
+     },
+     "src/core/features/design-generation/routes.ts": {
+-      "sha256": "d24993e69ed5c0c68f0e454a3d26fa5b0f162e62c647a58cd54dd45093bfc4d5",
++      "sha256": "46c3f4c144d015a34f20202d964cbcef0235099dd10b99f35ebb9f4643de34ea",
+       "executable": false
+     },
+     "src/core/features/design-generation/sweep.ts": {
+@@ -8490,7 +8494,7 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.flow.ts": {
+-      "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
++      "sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.spec.ts": {
+@@ -8501,6 +8505,10 @@
+       "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+       "executable": false
+     },
++    "tests/campaign-authoring/design-retention.ts": {
++      "sha256": "5673026012a34f3220947d7d7d39fc57ba2cd63d581cda7d042cf5d1b4f602b1",
++      "executable": false
++    },
+     "tests/campaign-authoring/email-size-adoption.ts": {
+       "sha256": "9274a168e280f9bca5cab7701de41b47674c823e289abcff05b0dccdcdf8ef08",
+       "executable": false
+@@ -8534,7 +8542,7 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/worker.ts": {
+-      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
++      "sha256": "1ade2167215999cbd01fd14a45524ac40e155bf13f316e1792bf7513c66bef29",
+       "executable": false
+     },
+     "tests/campaign-results/archive-fixture.ts": {
+@@ -9502,7 +9510,7 @@
+       "executable": false
+     },
+     "tests/support/fake-twelve-ui.ts": {
+-      "sha256": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
++      "sha256": "e9604a38cd3422da6fc218a31c32537e74ada4ed86aab718f02adf36520aad70",
+       "executable": false
+     },
+     "tests/support/fixture-app.ts": {
+diff --git a/src/core/features/auth/permissions.ts b/src/core/features/auth/permissions.ts
+index b74d1e4..51bf7ad 100644
+--- a/src/core/features/auth/permissions.ts
++++ b/src/core/features/auth/permissions.ts
+@@ -101,7 +101,7 @@ export function requiredPermission(method: string, path: string): Capability {
+   if(read&&/^\/api\/campaigns\/[^/]+\/approval-requests$/.test(p))return 'campaign.read';
+   if (/^\/api\/campaigns\/[^/]+\/request-approval$/.test(p)) return 'draft.write';
+   if (/^\/api\/campaigns\/[^/]+\/design-jobs$/.test(p)
+-    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc|candidates\/[^/]+\/image)$/.test(p)
++    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc(?:\/[0-9a-f]{64})?|candidates\/[^/]+\/image)$/.test(p)
+     || /^\/api\/(?:campaign-assets|campaign-templates(?:\/[^/]+\/start)?|campaign-authoring(?:\/(?:audience|email-size))?|campaign-starters|campaign-revisions\/[^/]+)$/.test(p)) return 'draft.write';
+   if(p==='/api/decision-desk')return 'draft.write';
+   if (read && (['/api/campaigns'].includes(p)
+diff --git a/src/core/features/design-generation/advance.ts b/src/core/features/design-generation/advance.ts
+index ee3bfb6..1f04cb6 100644
+--- a/src/core/features/design-generation/advance.ts
++++ b/src/core/features/design-generation/advance.ts
+@@ -121,8 +121,9 @@ async function layoutPass(platform: Platform, design: DesignProvider, job: Desig
+   const text = await design.layoutDocument(layout);
+   parseLayerDoc(text);
+   const bytes = new TextEncoder().encode(text);
+-  await platform.blobs.put(designLayoutKey(job.id), bytes, { httpMetadata: { contentType: 'application/json' } });
+-  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: await hex(bytes), attempts: 0, waitCode: null, retryAt: null }, Date.now());
++  const sha256 = await hex(bytes);
++  await platform.blobs.put(designLayoutKey(job.id, sha256), bytes, { httpMetadata: { contentType: 'application/json' } });
++  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: sha256, attempts: 0, waitCode: null, retryAt: null }, Date.now());
+   return {};
+ }
+ 
+diff --git a/src/core/features/design-generation/layout-evidence.ts b/src/core/features/design-generation/layout-evidence.ts
+new file mode 100644
+index 0000000..9fc4aeb
+--- /dev/null
++++ b/src/core/features/design-generation/layout-evidence.ts
+@@ -0,0 +1,15 @@
++import type { Platform } from '@/core/shared/platform';
++import { designLayoutKey, type DesignJob } from './repository';
++
++/** New layouts have digest-addressed keys. A legacy original stays in place and
++ * remains readable by its verified digest after later choices change the pointer.
++ * Reading evidence never copies it or writes a previously erased object back. */
++export async function readLayoutEvidence(platform: Platform, job: DesignJob, sha256: string) {
++  const stored = await platform.blobs.get(designLayoutKey(job.id, sha256));
++  if (stored) return (stored as R2ObjectBody).body;
++  const legacy = await platform.blobs.get(designLayoutKey(job.id));
++  if (!legacy) return null;
++  const bytes = await legacy.arrayBuffer();
++  const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(byte => byte.toString(16).padStart(2, '0')).join('');
++  return digest === sha256 ? new Response(bytes).body : null;
++}
+diff --git a/src/core/features/design-generation/model.ts b/src/core/features/design-generation/model.ts
+index 4810e30..3b462dc 100644
+--- a/src/core/features/design-generation/model.ts
++++ b/src/core/features/design-generation/model.ts
+@@ -63,7 +63,8 @@ export const draftEstimate = (candidates: number) =>
+ export const layoutEstimate = () =>
+   `About ${dollars(designPrices.layoutUsd)} on your 12ui account for the layout, or free within 12ui's daily allowance of ${designPrices.freeLayoutsPerDay} layouts.`;
+ 
+-/** Removes `{{…}}` personalisation and managed tokens: a brief never carries one to the design service (DESIGN-003). */
++/** Removes `{{…}}` personalisation and managed tokens, using the renderer's delimiters so quoted fallback braces
++ * stay inside the removed token (DESIGN-003). */
+ export function briefWithoutTokens(text: string) {
+-  return text.replace(/\{\{[^{}]*\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
++  return text.replace(/\{\{([\s\S]*?)\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+ }
+diff --git a/src/core/features/design-generation/repository.ts b/src/core/features/design-generation/repository.ts
+index 5115db6..33d94db 100644
+--- a/src/core/features/design-generation/repository.ts
++++ b/src/core/features/design-generation/repository.ts
+@@ -22,7 +22,9 @@ const list = (states: readonly DesignJobState[]) => states.map(state => `'${stat
+ 
+ /** Each design run's evidence in R2, beside the campaign images. */
+ export const designCandidateKey = (jobId: string, slot: string) => `design-jobs/${jobId}/candidate-${slot}.png`;
+-export const designLayoutKey = (jobId: string) => `design-jobs/${jobId}/layout.layerdoc.json`;
++export const designLayoutKey = (jobId: string, sha256?: string) => sha256
++  ? `design-jobs/${jobId}/layout-${sha256}.layerdoc.json`
++  : `design-jobs/${jobId}/layout.layerdoc.json`;
+ 
+ export function createDesignRepository(db: D1Database) {
+   const columns: Record<string, string> = { state: 'state', providerRunId: 'provider_run_id', chosenSlot: 'chosen_slot', providerLayoutId: 'provider_layout_id',
+diff --git a/src/core/features/design-generation/routes.ts b/src/core/features/design-generation/routes.ts
+index f62a1f9..46713d3 100644
+--- a/src/core/features/design-generation/routes.ts
++++ b/src/core/features/design-generation/routes.ts
+@@ -6,7 +6,8 @@ import { ulid } from '@/core/shared/ids';
+ import type { Platform } from '@/core/shared/platform';
+ import { designCommand } from './advance';
+ import { briefWithoutTokens, candidateSlots, maxBriefCharacters, maxCandidates, minCandidates, workingStates, type DesignGenerationStatus, type DesignJobView } from './model';
+-import { createDesignRepository, designCandidateKey, designLayoutKey, type DesignJob } from './repository';
++import { createDesignRepository, designCandidateKey, type DesignJob } from './repository';
++import { readLayoutEvidence } from './layout-evidence';
+ 
+ /** A run that has not settled this long after it started (or after a candidate was chosen) fails visibly. */
+ export const designDeadlineMs = 15 * 60_000;
+@@ -14,6 +15,7 @@ export const designDeadlineMs = 15 * 60_000;
+ const campaign = z.object({ id: z.string().min(1).max(128) });
+ const job = z.object({ id: z.string().min(1).max(128) });
+ const candidate = z.object({ id: z.string().min(1).max(128), slot: z.enum(candidateSlots) });
++const layout = job.extend({ sha256: z.string().regex(/^[0-9a-f]{64}$/) });
+ const start = z.object({ brief: z.string().max(maxBriefCharacters), candidates: z.number().int().min(minCandidates).max(maxCandidates) }).strict();
+ const choose = z.object({ slot: z.enum(candidateSlots) }).strict();
+ const close = z.object({ outcome: z.enum(['applied', 'discarded']) }).strict();
+@@ -36,7 +38,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
+     candidates: (await repository.candidates(record.id)).map(item => item.state === 'succeeded'
+       ? { slot: item.slot, state: item.state, imageUrl: `/api/design-jobs/${record.id}/candidates/${item.slot}/image`, width: item.width!, height: item.height!, bytes: item.bytes! }
+       : { slot: item.slot, state: item.state }),
+-    ...(record.layerdocSha256 ? { layerDocUrl: `/api/design-jobs/${record.id}/layerdoc` } : {}),
++    ...(record.layerdocSha256 ? { layerDocUrl: `/api/design-jobs/${record.id}/layerdoc/${record.layerdocSha256}` } : {}),
+   });
+ 
+   routes.get('/campaigns/:id/design-jobs', async context => {
+@@ -119,9 +121,18 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
+     const params = readParams(context, job);
+     if ('error' in params) return params.error;
+     const record = await repository.get(params.data.id);
+-    const object = record?.layerdocSha256 ? await platform.blobs.get(designLayoutKey(record.id)) : null;
++    const object = record?.layerdocSha256 ? await readLayoutEvidence(platform, record, record.layerdocSha256) : null;
+     if (!object) return context.json({ error: 'not_found' }, 404);
+-    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
++    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
++  });
++
++  routes.get('/design-jobs/:id/layerdoc/:sha256', async context => {
++    const params = readParams(context, layout);
++    if ('error' in params) return params.error;
++    const record = await repository.get(params.data.id);
++    const object = record ? await readLayoutEvidence(platform, record, params.data.sha256) : null;
++    if (!object) return context.json({ error: 'not_found' }, 404);
++    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+   });
+ 
+   return routes;
+diff --git a/tests/campaign-authoring/design-generation.flow.ts b/tests/campaign-authoring/design-generation.flow.ts
+index 63306a0..474b324 100644
+--- a/tests/campaign-authoring/design-generation.flow.ts
++++ b/tests/campaign-authoring/design-generation.flow.ts
+@@ -3,12 +3,13 @@ import { openPage, reloadPage } from '../support/navigation';
+ import { localSessionCookieName } from '../support/local-session';
+ import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
+ import { createHash } from 'node:crypto';
+-import { readFileSync } from 'node:fs';
++import { readFileSync, writeFileSync } from 'node:fs';
+ import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
+ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-parse';
+ import { authoringRuntime } from './browser-runtime.mjs';
+ import { png } from '../support/images';
+ import { startFakeTwelveUi } from '../support/fake-twelve-ui';
++import { exportRetainedDesigns, readDesignRecords } from './design-retention';
+ 
+ test.describe.configure({ mode: 'serial', timeout: 240000 });
+ test.use({ timezoneId: 'America/Los_Angeles' });
+@@ -40,7 +41,7 @@ async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>,
+ const useDesign = (run: ReturnType<Page['getByRole']>, page: Page, slot: string) =>
+   run.getByRole('listitem').filter({ has: page.getByRole('img', { name: `Design ${slot}`, exact: true }) }).getByRole('button', { name: 'Use this design', exact: true });
+ 
+-const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', queueConsumers: true, vars: {
++const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, queueConsumers: true, vars: {
+   MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test', DESIGN_PROVIDER_API_KEY: designKey, DESIGN_PROVIDER_ORIGIN: origin } });
+ 
+ 
+@@ -50,7 +51,7 @@ const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-gene
+ 
+ 
+ export const walk0 = async ({ page, request }) => {
+-  const runtime = await authoringRuntime({ suite: 'design-generation', vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
++  const runtime = await authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
+   try {
+     const outbound: string[] = [];
+     page.on('request', item => { if (!item.url().startsWith(runtime.url)) outbound.push(item.url()); });
+@@ -101,6 +102,9 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
+     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
+     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
++    await page.setViewportSize({ width: 390, height: 844 });
++    await page.screenshot({ path: testInfo.outputPath('design-generation-candidates-phone.png'), fullPage: true });
++    await page.setViewportSize({ width: 1440, height: 1000 });
+ 
+     // Choosing prepares the layout in the background, across a reload. The operator keeps typing in the body: when the
+     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
+@@ -173,18 +177,33 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     expect(state.approvals).toEqual([]);
+     expect(state.recipients).toEqual([]);
+     expect(state.jobs).toEqual([]);
+-    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`)).toEqual([{ state: 'applied' }]);
++    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`), { timeout: 30000 }).toEqual([{ state: 'applied' }]);
+     await expect(run).toHaveCount(0);
++    const appliedRows = (await readDesignRecords(api, runtime)).jobs;
++    const applied = appliedRows[0];
++    for (const slot of ['a', 'b']) {
++      const original = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/candidates/${slot}/image`);
++      expect(original.status()).toBe(200);
++      expect(await original.body()).toEqual(Buffer.from(candidateImage));
++    }
++    const originalLayout = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/layerdoc`);
++    expect(originalLayout.status()).toBe(200);
++    expect(await originalLayout.text()).toBe(layerDoc);
++    await reloadPage(page);
++    expect((await readDesignRecords(api, runtime)).jobs).toEqual(appliedRows);
+     // The browser fetched designs only from Mango; only the Worker spoke to the design service.
+     expect(outbound).toEqual([]);
+     expect(fake.requests.length).toBeGreaterThan(0);
+   } finally { await runtime.close(); await fake.close(); }
+ };
+-export const walk2 = async ({ page, request }) => {
+-  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
++export const walk2 = async ({ page, request }, testInfo) => {
++  const candidateB = png(canvas.width, canvas.height, 17);
++  const imageFor = (slot: string) => slot === 'b' ? candidateB : candidateImage;
++  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: { b: candidateB }, layerDoc, drawMs: { c: 3_600_000 }, failedSlots: ['d'], holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+   const runtime = await designRuntime(fake.origin);
+   try {
+     const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
++    const observe = () => readDesignRecords(api, runtime);
+     const operatorResponse = await api.get(`${runtime.url}/api/operator`);
+     expect(operatorResponse.status()).toBe(200);
+     const operator = (await operatorResponse.json()).operator;
+@@ -200,7 +219,7 @@ export const walk2 = async ({ page, request }) => {
+     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
+     // The prefilled brief already went without the draft's token; one typed in goes too.
+     await expect(dialog.getByLabel('Brief')).not.toHaveValue(/\{\{/);
+-    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}';
++    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: "{friend}"}} and {{unsubscribe_url}}';
+     await dialog.getByLabel('Brief').fill(submittedBrief);
+     const retainedBrief = 'Good Things Are Ripening\nHello and';
+     const creationResponse = page.waitForResponse(response => response.request().method() === 'POST'
+@@ -211,7 +230,6 @@ export const walk2 = async ({ page, request }) => {
+     expect(started.status()).toBe(201);
+     expect(started.request().postDataJSON()).toMatchObject({ brief: submittedBrief });
+     const startedJob = (await started.json()).job;
+-    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     expect(startedJob.createdAt).toBeGreaterThanOrEqual(creationBefore);
+     expect(startedJob.createdAt).toBeLessThanOrEqual(creationAfter);
+     const run = page.getByRole('region', { name: 'Design with 12ui' });
+@@ -225,10 +243,15 @@ export const walk2 = async ({ page, request }) => {
+     expect(posts.every(item => item.idempotencyKey)).toBe(true);
+     const created = posts.filter(item => item.path === '/api/v1/create');
+     expect(created).toHaveLength(1);
++    // Preserve the native door and actual provider-edge request before asserting token removal.
++    writeFileSync(testInfo.outputPath('design-generation-r1-probe.json'), JSON.stringify({
++      submittedBrief, expectedRetainedBrief: retainedBrief, retainedBrief: startedJob.brief, outbound: created[0],
++    }, null, 2));
++    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     const concept = (created[0].json as { concept: string }).concept;
+     expect(concept).toContain('Good Things Are Ripening');
+     // Tokens never leave, and nothing from the audience is added: the request carries the brief and Mango's own words only.
+-    expect(concept).not.toMatch(/\{|\}|first_name|unsubscribe_url/);
++    expect(concept).not.toMatch(/\{|\}|first_name|fallback|friend|unsubscribe_url/);
+     expect(JSON.stringify(created[0].json)).not.toMatch(/@example\.test|An earlier draft|Seasonal news/);
+     const slotA = posts.filter(item => item.path.endsWith('/candidates/a'));
+     expect(slotA).toHaveLength(2);
+@@ -236,18 +259,20 @@ export const walk2 = async ({ page, request }) => {
+     expect(fake.purchases.filter(item => item.startsWith('draft:'))).toHaveLength(2);
+     const issuedRun = fake.issued.filter(item => item.kind === 'run');
+     expect(issuedRun).toHaveLength(1);
+-    const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
++    const candidates = async () => (await observe()).candidates.map(row => ({ slot: row.slot, state: row.state, sha256: row.sha256, bytes: row.bytes, createdAt: row.created_at }));
+     const stored = await candidates();
+     expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
+-      sha256: createHash('sha256').update(candidateImage).digest('hex'), bytes: candidateImage.byteLength })));
++      sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })));
+     for (const candidate of stored) {
+       expect(candidate.createdAt).toBeGreaterThanOrEqual(issuedRun[0].at);
+       expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
+     }
+     const retained = async () => {
+-      const rows = await runtime.sql(`SELECT id, campaign_id AS campaignId, state, brief, provider_run_id AS providerRunId,
+-        provider_layout_id AS providerLayoutId, chosen_slot AS chosenSlot, created_by AS createdBy, created_at AS createdAt,
+-        updated_at AS updatedAt, deadline_at AS deadlineAt, error_code AS errorCode FROM design_jobs WHERE id = '${startedJob.id}'`);
++      const rows = (await observe()).jobs.filter(row => row.id === startedJob.id).map(row => ({
++        id: row.id, campaignId: row.campaign_id, state: row.state, brief: row.brief, providerRunId: row.provider_run_id,
++        providerLayoutId: row.provider_layout_id, chosenSlot: row.chosen_slot, createdBy: row.created_by, createdAt: row.created_at,
++        updatedAt: row.updated_at, deadlineAt: row.deadline_at, errorCode: row.error_code,
++      }));
+       expect(rows).toHaveLength(1);
+       const record = rows[0];
+       expect(record).toMatchObject({ id: startedJob.id, campaignId, brief: retainedBrief, providerRunId: issuedRun[0].id,
+@@ -259,7 +284,7 @@ export const walk2 = async ({ page, request }) => {
+         createdAt: record.createdAt, updatedAt: record.updatedAt, deadlineAt: record.deadlineAt, chosenSlot: record.chosenSlot,
+         ...(record.errorCode ? { errorCode: record.errorCode } : {}) });
+       expect(status.candidates).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', width: canvas.width, height: canvas.height,
+-        bytes: candidateImage.byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
++        bytes: imageFor(slot).byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
+       expect(await candidates()).toEqual(stored);
+       return { record, status };
+     };
+@@ -291,10 +316,10 @@ export const walk2 = async ({ page, request }) => {
+     expect(converts()[0].fileSha256).toBe(createHash('sha256').update(candidateImage).digest('hex'));
+     await expect.poll(content).toBe(before);
+     expect((await read()).revision.emailBody).toContain('an earlier draft.');
+-    const costs = () => runtime.sql(`SELECT provider, operation, model_or_channel AS tier, billable_units AS units FROM external_cost_facts WHERE campaign_id = '${campaignId}' ORDER BY operation, id`);
++    const costs = async () => (await observe()).costs.filter(row => row.campaignId === campaignId).map(({ campaignId: ignored, ...cost }) => cost);
+     const draftCost = { provider: '12ui', operation: 'design-draft', tier: 'standard', units: 1 }, layoutCost = { provider: '12ui', operation: 'design-layout', tier: 'fast', units: 1 };
+     expect(await costs()).toEqual([draftCost, draftCost, layoutCost]);
+-    const firstRun = async () => (await runtime.sql(`SELECT state, error_code AS code, chosen_slot AS slot FROM design_jobs WHERE campaign_id = '${campaignId}' ORDER BY created_at LIMIT 1`))[0];
++    const firstRun = async () => { const row = (await observe()).jobs.filter(row => row.campaign_id === campaignId).sort((a,b) => a.created_at-b.created_at)[0]; return {state: row.state, code: row.error_code, slot: row.chosen_slot}; };
+     expect(await firstRun()).toEqual({ state: 'failed', code: 'provider_failed', slot: 'a' });
+ 
+     // Trying again is a new layout under a new key (a replayed key would only replay the failure). Here 12ui says the
+@@ -332,6 +357,10 @@ export const walk2 = async ({ page, request }) => {
+     await reloadPage(page);
+     expect(await retained()).toEqual(readyRecord);
+     expect(await retained()).toEqual(readyRecord);
++    const firstLayoutUrl = readyRecord.status.layerDocUrl;
++    const firstLayout = await api.get(runtime.url + firstLayoutUrl);
++    expect(firstLayout.status()).toBe(200);
++    expect(await firstLayout.text()).toBe(layerDoc);
+ 
+     // A new run while a prepared design is on offer: the brief says the designs stay, and they do, under Earlier designs.
+     // 12ui names a time to ask again: the run says it is waiting, then continues with the same purchase key.
+@@ -384,9 +413,63 @@ export const walk2 = async ({ page, request }) => {
+     await expect(run.getByRole('alert')).toContainText('did not finish in time');
+     // The designs it drew stay usable, and every earlier run with designs is still on offer.
+     await expect(useDesign(run, page, 'B')).toBeVisible();
+-    expect(await runtime.sql(`SELECT state, error_code AS code FROM design_jobs ORDER BY created_at`)).toEqual([
++    expect((await observe()).jobs.sort((a,b) => a.created_at-b.created_at).map(row => ({state: row.state, code: row.error_code}))).toEqual([
+       { state: 'ready', code: null }, { state: 'choosing', code: null }, { state: 'discarded', code: 'provider_quota' }, { state: 'failed', code: 'provider_timeout' },
+     ]);
+     await expect.poll(content).toBe(before);
+-  } finally { await runtime.close(); await fake.close(); }
++    // Preparing another candidate of an older run must not replace its earlier
++    // layout. Both byte-distinct originals survive closing, newer runs and export.
++    const legacy = await request.post(runtime.url + '/_authoring/legacy-layout', { headers: { 'X-Test-Token': runtime.token }, data: { id: startedJob.id } });
++    expect(legacy.status()).toBe(200);
++    const legacyRead = await api.get(runtime.url + firstLayoutUrl);
++    expect(legacyRead.status()).toBe(200);
++    expect(await legacyRead.text()).toBe(layerDoc);
++    const nextLayerDoc = layerDoc.replace('Good Things\\nAre Ripening', 'A second orchard layout');
++    expect(nextLayerDoc).not.toBe(layerDoc);
++    fake.setLayoutDocument(nextLayerDoc);
++    const chosen = await api.post(`${runtime.url}/api/design-jobs/${startedJob.id}/choose`, { headers: { Origin: runtime.url }, data: { slot: 'a' } });
++    expect(chosen.status()).toBe(200);
++    await expect.poll(async () => (await observe()).jobs.find(row => row.id === startedJob.id)?.state, { timeout: 45000 }).toBe('ready');
++    const latestHash = createHash('sha256').update(nextLayerDoc).digest('hex');
++    const nextLayoutUrl = `/api/design-jobs/${startedJob.id}/layerdoc/${latestHash}`;
++    const previous = await api.get(runtime.url + firstLayoutUrl);
++    expect(previous.status()).toBe(200);
++    expect(await previous.text()).toBe(layerDoc);
++    // Record a real failed candidate outcome beside successful paid originals.
++    fake.setDraw('c', 0);
++    const lastRun = await api.post(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`, { headers: { Origin: runtime.url }, data: { brief: 'synthetic-mango-342', candidates: 4 } });
++    expect(lastRun.status()).toBe(201);
++    const lastId = (await lastRun.json()).job.id;
++    await expect.poll(async () => (await observe()).jobs.find(row => row.id === lastId)?.state, { timeout: 45000 }).toBe('choosing');
++    expect((await observe()).candidates.filter(row => row.job_id === lastId).map(({slot,state,sha256,bytes}) => ({slot,state,sha256,bytes}))).toEqual([
++      ...['a','b','c'].map(slot => ({ slot, state: 'succeeded', sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })),
++      { slot: 'd', state: 'failed', sha256: null, bytes: null },
++    ]);
++    for (const operation of ['design-draft','design-layout']) {
++      expect((await costs()).filter(row => row.operation === operation)).toHaveLength(fake.purchases.filter(item => item.startsWith(operation === 'design-draft' ? 'draft:' : 'layout:')).length);
++    }
++    for (const { id, state } of (await observe()).jobs) {
++      const closed = await api.post(`${runtime.url}/api/design-jobs/${id}/close`, { headers: { Origin: runtime.url }, data: { outcome: 'discarded' } });
++      // The quota run was already explicitly dismissed above.
++      expect(closed.status()).toBe(state === 'discarded' ? 409 : 200);
++    }
++    const ended = (await observe()).jobs;
++    expect(ended).toHaveLength(5);
++    expect(ended.every(row => row.state === 'discarded')).toBe(true);
++    await reloadPage(page);
++    await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
++    expect((await observe()).jobs).toEqual(ended);
++    const originals = (await observe()).candidates.filter(row => row.state === 'succeeded').map(row => ({
++      path: `/api/design-jobs/${row.job_id}/candidates/${row.slot}/image`, key: `design-jobs/${row.job_id}/candidate-${row.slot}.png`, bytes: imageFor(row.slot),
++    }));
++    const purchasesBeforeExport = [...fake.purchases];
++    await exportRetainedDesigns(api, runtime, [...originals,
++      { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout.layerdoc.json`, bytes: Buffer.from(layerDoc) },
++      { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
++    ]);
++    expect(fake.purchases).toEqual(purchasesBeforeExport);
++  } finally {
++    writeFileSync(testInfo.outputPath('design-generation-provider-requests.json'), JSON.stringify(fake.requests, null, 2));
++    await runtime.close(); await fake.close();
++  }
+ };
+diff --git a/tests/campaign-authoring/design-retention.ts b/tests/campaign-authoring/design-retention.ts
+new file mode 100644
+index 0000000..0f4d7bd
+--- /dev/null
++++ b/tests/campaign-authoring/design-retention.ts
+@@ -0,0 +1,78 @@
++import { expect, type APIRequestContext } from '@playwright/test';
++import { createHash } from 'node:crypto';
++import { readArchive } from '../../src/vendor/base/portability/index.mjs';
++import { portabilityRuntime } from '../portability/runtime.mjs';
++import { stageArchive, transferRequest } from '../portability/flows';
++
++type Original = { path: string; key: string; bytes: Uint8Array };
++const digest = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
++
++/** Read the fixture's real D1 tables without launching a new Wrangler process
++ * for every observation. This door changes no domain or provider behavior. */
++export async function readDesignRecords(api: APIRequestContext, runtime: any) {
++  const response = await api.get(runtime.url + '/_authoring/design-records', { headers: { 'X-Test-Token': runtime.token } });
++  expect(response.status()).toBe(200);
++  return await response.json() as { jobs: any[]; candidates: any[]; costs: any[] };
++}
++
++/** Open original evidence through the authenticated door, then export and restore
++ * the real native run rows and R2 bytes. No provider answer is reconstructed. */
++export async function exportRetainedDesigns(api: APIRequestContext, runtime: any, originals: Original[]) {
++  const opening = await readDesignRecords(api, runtime);
++  const snapshots = { design_jobs: opening.jobs, design_candidates: opening.candidates };
++  for (const original of originals) {
++    const response = await api.get(runtime.url + original.path);
++    expect(response.status()).toBe(200);
++    expect(await response.body()).toEqual(Buffer.from(original.bytes));
++  }
++  const created = await api.post(runtime.url + '/api/portability/exports', { headers: { Origin: runtime.url }, data: {} });
++  expect(created.status(), await created.text()).toBe(201);
++  const { id } = await created.json();
++  let complete = false;
++  for (let pass = 0; pass < 100 && !complete; pass++) {
++    const next = await api.post(`${runtime.url}/api/portability/exports/${id}/advance`, { headers: { Origin: runtime.url }, data: { maxParts: 16 } });
++    expect(next.status(), await next.text()).toBe(200);
++    complete = (await next.json()).phase === 'complete';
++  }
++  expect(complete).toBe(true);
++  const download = await api.get(`${runtime.url}/api/portability/exports/${id}/download`);
++  expect(download.status()).toBe(200);
++  const records: any[] = [];
++  for await (const record of readArchive(new Response(await download.body()).body!)) records.push(record);
++  const items = records.filter(record => record.kind === 'part').flatMap(part => part.items);
++  for (const [table, rows] of Object.entries(snapshots)) {
++    expect(items.filter(item => item.kind === 'row' && item.table === table).map(item => item.row)).toEqual(rows);
++    const persisted = await readDesignRecords(api, runtime);
++    expect(table === 'design_jobs' ? persisted.jobs : persisted.candidates).toEqual(rows);
++  }
++  for (const original of originals) {
++    const descriptor = records[0].objects.find(object => object.bucket === 'ASSETS_BUCKET' && object.key === original.key);
++    expect(descriptor).toMatchObject({ size: original.bytes.byteLength, sha256: digest(original.bytes) });
++    const chunks = items.filter(item => item.kind === 'object' && item.key === original.key).sort((a, b) => a.offset - b.offset);
++    expect(Buffer.concat(chunks.map(chunk => Buffer.from(chunk.data, 'base64')))).toEqual(Buffer.from(original.bytes));
++  }
++  // The restore target holds matching private authority, but its own owner session.
++  const restored = await portabilityRuntime({ restore: true, key: runtime.token });
++  try {
++    await restored.db.prepare('CREATE TABLE task_authoring_jobs (kind TEXT,payload TEXT)').run();
++    const importId = await stageArchive(restored, records);
++    const closing = records.at(-1);
++    const imported = await transferRequest(restored, `imports/${importId}/finalize`, { contentHash: closing.contentHash, archiveHash: closing.archiveHash });
++    expect(imported.status, await imported.clone().text()).toBe(200);
++    await restored.resume();
++    for (const [table, rows] of Object.entries(snapshots)) {
++      expect((await restored.db.prepare(`SELECT * FROM ${table} ORDER BY ${table === 'design_jobs' ? 'id' : 'job_id, slot'}`).all()).results).toEqual(rows);
++    }
++    for (const original of originals) {
++      const response = await restored.call(original.path, { cookie: restored.cookie });
++      expect(response.status).toBe(200);
++      expect(new Uint8Array(await response.arrayBuffer())).toEqual(original.bytes);
++      expect((await restored.call(original.path)).status).toBe(401);
++    }
++    const signout = await restored.call('/api/auth/signout', { method: 'POST', cookie: restored.cookie, body: {} });
++    expect(signout.status).toBe(204);
++    for (const original of originals) {
++      expect((await restored.call(original.path, { cookie: restored.cookie })).status).toBe(401);
++    }
++  } finally { await restored.close(); }
++}
+diff --git a/tests/campaign-authoring/worker.ts b/tests/campaign-authoring/worker.ts
+index 8e31753..2929e36 100644
+--- a/tests/campaign-authoring/worker.ts
++++ b/tests/campaign-authoring/worker.ts
+@@ -82,12 +82,30 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
+       return Response.json({ok:true});
+     }
+     if(path==='/_authoring/stale') {await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='product'").bind(Date.now()-25*3600000).run();return Response.json({ok:true});}
++    // Arrange the prior release's single-object layout storage. All later
++    // choices, downloads and exports still use the ordinary product routes.
++    if(path==='/_authoring/legacy-layout'&&request.method==='POST') {
++      const {id}=await request.json() as {id:string};
++      const job=await bindings.DB.prepare("SELECT id,layerdoc_sha256 AS sha FROM design_jobs WHERE id=? AND state='ready'").bind(id).first<{id:string;sha:string}>();
++      if(!job?.sha)return new Response('Missing ready fixture',{status:409});
++      const key=`design-jobs/${job.id}/layout-${job.sha}.layerdoc.json`;
++      const original=await platform.blobs.get(key);
++      if(!original)return new Response('Missing original fixture',{status:409});
++      await platform.blobs.put(`design-jobs/${job.id}/layout.layerdoc.json`,await original.arrayBuffer(),{httpMetadata:{contentType:'application/json'}});
++      await platform.blobs.delete(key);
++      return Response.json({ok:true});
++    }
+     if(path==='/_authoring/proposal') {
+       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
+       await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?, 'proposed', 'Recorded suggestion', 'A recorded suggestion', 'Test source evidence', 'Subscribed email contacts', ?, ?, ?, '[]', ?, ?)").bind(id,now,now+86400000,rules,now,now).run();
+       await recordProposalClaims(bindings.DB,id,now);
+       return Response.json({id});
+     }
++    if(path==='/_authoring/design-records') return Response.json({
++      jobs:(await bindings.DB.prepare('SELECT * FROM design_jobs ORDER BY id').all()).results,
++      candidates:(await bindings.DB.prepare('SELECT * FROM design_candidates ORDER BY job_id,slot').all()).results,
++      costs:(await bindings.DB.prepare('SELECT campaign_id AS campaignId,provider,operation,model_or_channel AS tier,billable_units AS units FROM external_cost_facts ORDER BY operation,id').all()).results,
++    });
+     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
+   }
+   const app=createApp(bindings,platform,undefined,true);
+diff --git a/tests/support/fake-twelve-ui.ts b/tests/support/fake-twelve-ui.ts
+index 661d4b0..e8dd440 100644
+--- a/tests/support/fake-twelve-ui.ts
++++ b/tests/support/fake-twelve-ui.ts
+@@ -39,13 +39,13 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   };
+   const replies = new Map<string, unknown>();
+   const runs = new Map<string, { slots: { slot: string; status: string; settles?: number }[] }>();
+-  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed' }>();
++  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed'; document: string }>();
+   let layoutStatus = options.layoutStatus ?? 'succeeded';
++  let layoutDocument = options.layerDoc;
+   const failed = new Set<string>();
+   const refusals = new Map<string, Refusal>();
+   const inflations = new Map<string, number>();
+   const drawMs = { ...options.drawMs };
+-  const layerDocSha = createHash('sha256').update(options.layerDoc).digest('hex');
+   const now = () => Date.now();
+   const runView = (id: string) => {
+     const run = runs.get(id)!;
+@@ -55,7 +55,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   const layoutView = (id: string) => {
+     const layout = layouts.get(id)!;
+     const status = layout.settles <= now() ? layout.status : 'running';
+-    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: layerDocSha, size_bytes: Buffer.byteLength(options.layerDoc) } } : {}) };
++    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: createHash('sha256').update(layout.document).digest('hex'), size_bytes: Buffer.byteLength(layout.document) } } : {}) };
+   };
+   const server = http.createServer(async (request, response) => {
+     const chunks: Buffer[] = [];
+@@ -120,14 +120,14 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+       entry.fileSha256 = createHash('sha256').update(Buffer.from(await file.arrayBuffer())).digest('hex');
+       const id = `cnv-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
+       purchases.push(`layout:${key ?? ''}`);
+-      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus });
++      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus, document: layoutDocument });
+       noteIssued('layout', id);
+       if (key) replies.set(`POST ${path} ${key}`, () => layoutView(id));
+       return send(202, layoutView(id));
+     }
+     const layout = /^\/api\/v1\/convert\/([^/]+)$/.exec(path);
+     if (layout && layouts.has(layout[1])) {
+-      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(options.layerDoc), 'application/vnd.12ui.layerdoc+json;version=2');
++      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(layouts.get(layout[1])!.document), 'application/vnd.12ui.layerdoc+json;version=2');
+       return send(200, layoutView(layout[1]));
+     }
+     return send(404, { error: 'not_found' });
+@@ -137,5 +137,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
+     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
+-    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
++    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; },
++    setLayoutDocument: (document: string) => { layoutDocument = document; },
++    close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+ }

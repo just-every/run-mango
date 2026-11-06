@@ -1,0 +1,15 @@
+{
+  "name": "payload-inspection",
+  "command": [
+    "timeout",
+    "60",
+    "python3",
+    "../packet/inspect-evidence.py"
+  ],
+  "exit": 0,
+  "seconds": 0.049,
+  "started": "2026-11-06T02:06:43.040309+00:00",
+  "ended": "2026-11-06T02:06:43.087806+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

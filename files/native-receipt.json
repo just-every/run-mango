@@ -1,0 +1,25 @@
+{
+  "name": "native",
+  "command": [
+    "timeout",
+    "1000",
+    "env",
+    "MANGO_VERIFY_STAGE=main",
+    "MANGO_VERIFY_FILES=[\"campaign-authoring/design-generation.spec.ts\"]",
+    "MANGO_NO_FIXTURE_SERVER=1",
+    "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+    "MANGO_TEST_WORK_DIR=/home/agent/rer-consolidation/work/ct-judge-mango-design003-fix1-20261105-2221-sol1",
+    "WRANGLER_SEND_METRICS=false",
+    "pnpm",
+    "exec",
+    "rer",
+    "run",
+    "verify:app"
+  ],
+  "exit": 0,
+  "seconds": 153.955,
+  "started": "2026-11-06T02:02:27.572864+00:00",
+  "ended": "2026-11-06T02:05:01.526657+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

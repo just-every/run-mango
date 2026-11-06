@@ -1,0 +1,375 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello and",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-draft-a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73/candidates/b",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-draft-b"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73/candidates/b/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-draft-a"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73/candidates/a/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-e4dc68477fe4ad73",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/convert",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-layout-a",
+    "contentType": "multipart/form-data; boundary=790ca2c6d07cb286e3ddbd6ea00ed954",
+    "fields": {
+      "output": "layerdoc",
+      "model": "fast"
+    },
+    "fileSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/convert",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-layout-a-1",
+    "contentType": "multipart/form-data; boundary=4ce3a5360c6bbb447c37d9b00c262b12"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/convert",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-layout-b-2",
+    "contentType": "multipart/form-data; boundary=4362961b38056f41ab75833938f3e3f9",
+    "fields": {
+      "output": "layerdoc",
+      "model": "fast"
+    },
+    "fileSha256": "01790123278698b5b66a9b96a695f7472e99ca02a4c54e0ffa5e9c4d0b44c75f"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/convert/cnv-d3328ba3e8b95122",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9JPV8SMWX8F71RAHP254G-draft",
+    "contentType": "application/json"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9JPV8SMWX8F71RAHP254G-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nOrchard letter\nGood Things Are Ripening\nSeasonal news from the orchard\nAuthoring test\nHello, an earlier draft.",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9JPV8SMWX8F71RAHP254G-draft-a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023/candidates/b",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9JPV8SMWX8F71RAHP254G-draft-b"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023/candidates/a/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023/candidates/b/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-1f3c3e8dbbff3023",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KEN70BK24QDVS74KPJMQ-draft",
+    "contentType": "application/json"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KFMVJGF82TGP6NK1ERKA-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nOrchard letter\nGood Things Are Ripening\nSeasonal news from the orchard\nAuthoring test\nHello, an earlier draft.",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        },
+        {
+          "slot": "c"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KFMVJGF82TGP6NK1ERKA-draft-a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f/candidates/b",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KFMVJGF82TGP6NK1ERKA-draft-b"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f/candidates/c",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KFMVJGF82TGP6NK1ERKA-draft-c"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f/candidates/a/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f/candidates/b/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-4b9392ab8894f15f",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/convert",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9J4SK0MJRBJRDJWECR02T-layout-a-2",
+    "contentType": "multipart/form-data; boundary=3fba4eb0c05c3b869bac4bf17c123367",
+    "fields": {
+      "output": "layerdoc",
+      "model": "fast"
+    },
+    "fileSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/convert/cnv-95c6bfe2a2bde581",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KHMAXVWPDCK1Z2J9DZQP-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nsynthetic-mango-342",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        },
+        {
+          "slot": "c"
+        },
+        {
+          "slot": "d"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KHMAXVWPDCK1Z2J9DZQP-draft-a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/b",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KHMAXVWPDCK1Z2J9DZQP-draft-b"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/c",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KHMAXVWPDCK1Z2J9DZQP-draft-c"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/d",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6Q9KHMAXVWPDCK1Z2J9DZQP-draft-d"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/a/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/b/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d/candidates/c/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-97063c83a81f004d",
+    "authorized": true
+  }
+]

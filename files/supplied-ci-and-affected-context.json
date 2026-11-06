@@ -1,0 +1,33 @@
+{
+  "provenance": "Commission inline reports and factual terminal supplement; not queried by this judge",
+  "candidate_head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "verify": {
+    "run_id": 42117902278,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "build_job": 127562373516,
+    "aggregate_job": 127562479234,
+    "only_root_failure": "generated ACCEPTANCE.md freshness",
+    "runtime": "skipped",
+    "qualifies_final_runtimegreen": false
+  },
+  "affected_gate": {
+    "family": "sd-mango-c-f42-fix-1-gate-1",
+    "terminal": "2026-11-05T22:30:04Z",
+    "exit": 0,
+    "journey_seconds": 146.331,
+    "qualified_real_home": true,
+    "substitutes_for_independent_judgment": false
+  },
+  "builder_receipts": {
+    "before_exit": 1,
+    "before_seconds": 134.328,
+    "after_exit": 0,
+    "after_seconds": 223.62,
+    "typecheck_exit": 0,
+    "typecheck_seconds": 22.451,
+    "execution_binding": "Final merged working tree before final commit, not exact-new-commit execution; inline builder/gate report says final runtime/test hashes equal.",
+    "independently_downloaded": false
+  }
+}

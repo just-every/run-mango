@@ -1,0 +1,18 @@
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/ct-judge-mango-design003-fix1-20261105-2221-sol1/evidence/7c2195172009/verify/main-jz3jjP
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-06T02:02:28.305Z"}
+main
+
+Running 1 test using 1 worker
+
+(node:2108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal (2.5m)
+
+  1 passed (2.5m)
+VERIFY_STAGE {"name":"main","status":"PASS","startedAt":"2026-11-06T02:02:28.305Z","durationMs":153195,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":153209,"boundary":"coordinator"}

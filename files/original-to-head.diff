@@ -1,0 +1,299 @@
+diff --git a/ACCEPTANCE.md b/ACCEPTANCE.md
+index 5750430..a97de20 100644
+--- a/ACCEPTANCE.md
++++ b/ACCEPTANCE.md
+@@ -581,8 +581,8 @@ Core · published · **partial** · Rules D-1
+ 2. No forecast presents a benchmark from another store.
+ 3. Insufficient own history is stated explicitly instead of a displayed range.
+ 
+-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history”
+-**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: “Forecast provenance — complete acceptance”, covering the unasserted outcomes above.
++**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.
++**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
+ 
+ #### PROP-009 — Proposal states
+ 
+diff --git a/CONTRACT.md b/CONTRACT.md
+index 25f8ce9..f0e9b88 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4052,9 +4052,9 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ 
+ | Clauses | Done | Partial | Missing | Total |
+ | --- | ---: | ---: | ---: | ---: |
+-| Published | 14 | 96 | 0 | 110 |
++| Published | 13 | 97 | 0 | 110 |
+ | Target and push further | 5 | 103 | 98 | 206 |
+-| All | 19 | 199 | 98 | 316 |
++| All | 18 | 200 | 98 | 316 |
+ 
+ | Clause | Title | Kind | Status | Evidence | Gap |
+ | --- | --- | --- | --- | --- | --- |
+@@ -4094,7 +4094,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `PROP-005` | Owner control | published | partial | `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft” | Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above. |
+ | `PROP-006` | Grounded generation | published | partial | `tests/proposals-decision/decision-routes.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Grounded source observations accepted; Own imported data and configured knowledge only; Fabricated or malformed claims rejected; Rejected proposal failed; No substituted composition. Missing public-door journey: “Grounded generation — complete acceptance”, covering the unasserted outcomes above. |
+ | `PROP-007` | Generation failure | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft” | Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved. Missing public-door journey: “Generation failure — complete acceptance”, covering the unasserted outcomes above. |
+-| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history” | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: “Forecast provenance — complete acceptance”, covering the unasserted outcomes above. |
++| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads. | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |
+ | `PROP-009` | Proposal states | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-009] authenticated decisions record actor/time once and all request paths fence expiry and competing decisions”; “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft” | Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time. Missing public-door journey: “Proposal states — complete acceptance”, covering the unasserted outcomes above. |
+ | `AUD-001` | Review snapshot | published | partial | `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable” | Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count. Missing public-door journey: “Review snapshot — complete acceptance”, covering the unasserted outcomes above. |
+ | `AUD-002` | Consent and suppression | published | done | `tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, freeze recipients and merge identities without widening consent” |  |
+@@ -4128,7 +4128,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `DESIGN-008` | Save generated design through ordinary authoring | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks. Missing public-door journey: “Save generated design through ordinary authoring — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-009` | Apply a chosen design without stealing focus | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”; “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run” | Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required. Missing public-door journey: “Apply a chosen design without stealing focus — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-010` | Keep paid design candidates | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible. Missing public-door journey: “Keep paid design candidates — complete acceptance”, covering the unasserted outcomes above. |
+-| `DESIGN-003` | Design data and records | published | done | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: `tests/campaign-authoring/design-generation.flow.ts` proves the sanitized outbound brief, chosen PNG and idempotent purchases; exact retained brief, issued identifiers, candidate outcomes, hashes and byte sizes, operator and bounded times; applied, discarded, failed, timed-out and older runs retained through later activity. `tests/campaign-authoring/design-retention.ts` opens original candidate and distinct layout bytes, verifies their native export descriptors and contents, restores every run and candidate row and original bytes, and refuses unsigned and revoked sessions. Every paid request reconciles with its cost fact; repeated reads and export buy nothing. |  |
++| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: `tests/campaign-authoring/design-generation.flow.ts` records the native outbound brief, chosen PNG and idempotent purchases; exact retained brief, issued identifiers, candidate outcomes, hashes and byte sizes, operator and bounded times; applied, discarded, failed, timed-out and older runs retained through later activity. `tests/campaign-authoring/design-retention.ts` opens original candidate and distinct layout bytes, verifies their native export descriptors and contents, restores every run and candidate row and original bytes, and refuses unsigned and revoked sessions. Every paid request reconciles with its cost fact; repeated reads and export buy nothing. | Original independent Opus5.5 judgment ended 2026-11-05T21:21:17Z: STAYS PARTIAL; R2–R5 MET at exact source `9b9f3867af955c390b39b740b89f96b4ef929ed1`, frozen and unchanged. Original family sd-mango-c-f42 lifetime FIX1 of 2 corrects only R1 quoted-fallback brace sanitization through the existing registered native journey, retaining the failing-before and passing-after provider-edge payloads. R1 remains pending independent new-SHA acceptance with the original report; whole-clause DONE is unawarded. Live-provider qualification remains external and unclaimed; original-family affected gate, final runtime Verify, COMPLETE full-history NEW0, guarded main and exact-main Run site duties remain with fleet. No source acceptance or hold release. |
+ | `DESIGN-011` | Design provider custody | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs. Missing public-door journey: “Design provider custody — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-004` | Design import | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px” | Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged. |
+ | `DESIGN-012` | Compile the imported layout | published | partial | `tests/campaign-authoring/design-import.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email. Missing public-door journey: “Compile the imported layout — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/scripts/verification/plan.mjs b/scripts/verification/plan.mjs
+index 9e78962..58c9646 100644
+--- a/scripts/verification/plan.mjs
++++ b/scripts/verification/plan.mjs
+@@ -20,7 +20,7 @@ export const packs = [
+   {name:'retained-data',members:[member('main',['audience-import/erasure.spec.ts','audience-import/privacy-portability.spec.ts','audience-import/signup-security.spec.ts','audience-import/signup-reservation-clock.spec.ts','portability/privacy.spec.ts']),member('local-start',['retained-archive.journey.ts'])]},
+   {name:'phone',members:[member('newsletter-ui')]},
+   {name:'authoring',members:[member('main',['campaign-authoring/browser.spec.ts','campaign-authoring/design-import.spec.ts','campaign-authoring/design-generation.spec.ts']),member('go-live',['content-checks.journeys.ts','woocommerce.journeys.ts','resend-delivery.journeys.ts','scheduler.journeys.ts'])]},
+-  {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts','proposals-decision/content-editing.spec.ts']),member('local-start',['editor.journey.ts'])]},
++  {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts','proposals-decision/content-editing.spec.ts','proposals-decision/forecast-provenance.spec.ts']),member('local-start',['editor.journey.ts'])]},
+   {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
+   {name:'reports',members:[member('campaign-results'),member('go-live',['managed-mail.journeys.ts','shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
+   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
+diff --git a/sources.lock.json b/sources.lock.json
+index 4b4ec50..8f34af7 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -998,7 +998,7 @@
+       "executable": false
+     },
+     "ACCEPTANCE.md": {
+-      "sha256": "71b489d1c776a03539d9a090e223f64a19c3fdda24f4e7e48a1904c71efa7596",
++      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d",
+       "executable": false
+     },
+     "AGENTS.consumer.md": {
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "8431000fe00a0d2a91a8b9f0a6255885e0e72894aea16f1a6430399e786d2bef",
++      "sha256": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -2638,7 +2638,7 @@
+       "executable": false
+     },
+     "scripts/verification/plan.mjs": {
+-      "sha256": "6fb79aed44d2687e2346394a5a7838339e111a3a1dcaefb637ee6c0221ecbd95",
++      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569",
+       "executable": false
+     },
+     "scripts/verification/public-timing.mjs": {
+@@ -4314,7 +4314,7 @@
+       "executable": false
+     },
+     "src/core/features/design-generation/model.ts": {
+-      "sha256": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
++      "sha256": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+       "executable": false
+     },
+     "src/core/features/design-generation/repository.ts": {
+@@ -8494,7 +8494,7 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.flow.ts": {
+-      "sha256": "b9a257d08cdf88b52de13a5736f9f5aaa0c639113fdd941ea48976f2cd2604f5",
++      "sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.spec.ts": {
+@@ -9409,6 +9409,10 @@
+       "sha256": "aa4267d7fcd6948ddf97a7cbd4e4be5cef29882946b65eeb9d81774af70f2995",
+       "executable": false
+     },
++    "tests/proposals-decision/forecast-provenance.spec.ts": {
++      "sha256": "04831a09ae32f053f0bcd7f3e19cad53dee65855138226fb78cc22900eb8b6ed",
++      "executable": false
++    },
+     "tests/proposals-decision/history.ts": {
+       "sha256": "f0722dd20719119914d1f1cae40f879085ec092924d6cfe8731afbc1d4d874ba",
+       "executable": false
+diff --git a/src/core/features/design-generation/model.ts b/src/core/features/design-generation/model.ts
+index 4810e30..3b462dc 100644
+--- a/src/core/features/design-generation/model.ts
++++ b/src/core/features/design-generation/model.ts
+@@ -63,7 +63,8 @@ export const draftEstimate = (candidates: number) =>
+ export const layoutEstimate = () =>
+   `About ${dollars(designPrices.layoutUsd)} on your 12ui account for the layout, or free within 12ui's daily allowance of ${designPrices.freeLayoutsPerDay} layouts.`;
+ 
+-/** Removes `{{…}}` personalisation and managed tokens: a brief never carries one to the design service (DESIGN-003). */
++/** Removes `{{…}}` personalisation and managed tokens, using the renderer's delimiters so quoted fallback braces
++ * stay inside the removed token (DESIGN-003). */
+ export function briefWithoutTokens(text: string) {
+-  return text.replace(/\{\{[^{}]*\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
++  return text.replace(/\{\{([\s\S]*?)\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+ }
+diff --git a/tests/campaign-authoring/design-generation.flow.ts b/tests/campaign-authoring/design-generation.flow.ts
+index d882407..474b324 100644
+--- a/tests/campaign-authoring/design-generation.flow.ts
++++ b/tests/campaign-authoring/design-generation.flow.ts
+@@ -3,7 +3,7 @@ import { openPage, reloadPage } from '../support/navigation';
+ import { localSessionCookieName } from '../support/local-session';
+ import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
+ import { createHash } from 'node:crypto';
+-import { readFileSync } from 'node:fs';
++import { readFileSync, writeFileSync } from 'node:fs';
+ import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
+ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-parse';
+ import { authoringRuntime } from './browser-runtime.mjs';
+@@ -196,7 +196,7 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     expect(fake.requests.length).toBeGreaterThan(0);
+   } finally { await runtime.close(); await fake.close(); }
+ };
+-export const walk2 = async ({ page, request }) => {
++export const walk2 = async ({ page, request }, testInfo) => {
+   const candidateB = png(canvas.width, canvas.height, 17);
+   const imageFor = (slot: string) => slot === 'b' ? candidateB : candidateImage;
+   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: { b: candidateB }, layerDoc, drawMs: { c: 3_600_000 }, failedSlots: ['d'], holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+@@ -219,7 +219,7 @@ export const walk2 = async ({ page, request }) => {
+     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
+     // The prefilled brief already went without the draft's token; one typed in goes too.
+     await expect(dialog.getByLabel('Brief')).not.toHaveValue(/\{\{/);
+-    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}';
++    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: "{friend}"}} and {{unsubscribe_url}}';
+     await dialog.getByLabel('Brief').fill(submittedBrief);
+     const retainedBrief = 'Good Things Are Ripening\nHello and';
+     const creationResponse = page.waitForResponse(response => response.request().method() === 'POST'
+@@ -230,7 +230,6 @@ export const walk2 = async ({ page, request }) => {
+     expect(started.status()).toBe(201);
+     expect(started.request().postDataJSON()).toMatchObject({ brief: submittedBrief });
+     const startedJob = (await started.json()).job;
+-    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     expect(startedJob.createdAt).toBeGreaterThanOrEqual(creationBefore);
+     expect(startedJob.createdAt).toBeLessThanOrEqual(creationAfter);
+     const run = page.getByRole('region', { name: 'Design with 12ui' });
+@@ -244,10 +243,15 @@ export const walk2 = async ({ page, request }) => {
+     expect(posts.every(item => item.idempotencyKey)).toBe(true);
+     const created = posts.filter(item => item.path === '/api/v1/create');
+     expect(created).toHaveLength(1);
++    // Preserve the native door and actual provider-edge request before asserting token removal.
++    writeFileSync(testInfo.outputPath('design-generation-r1-probe.json'), JSON.stringify({
++      submittedBrief, expectedRetainedBrief: retainedBrief, retainedBrief: startedJob.brief, outbound: created[0],
++    }, null, 2));
++    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     const concept = (created[0].json as { concept: string }).concept;
+     expect(concept).toContain('Good Things Are Ripening');
+     // Tokens never leave, and nothing from the audience is added: the request carries the brief and Mango's own words only.
+-    expect(concept).not.toMatch(/\{|\}|first_name|unsubscribe_url/);
++    expect(concept).not.toMatch(/\{|\}|first_name|fallback|friend|unsubscribe_url/);
+     expect(JSON.stringify(created[0].json)).not.toMatch(/@example\.test|An earlier draft|Seasonal news/);
+     const slotA = posts.filter(item => item.path.endsWith('/candidates/a'));
+     expect(slotA).toHaveLength(2);
+@@ -464,5 +468,8 @@ export const walk2 = async ({ page, request }) => {
+       { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
+     ]);
+     expect(fake.purchases).toEqual(purchasesBeforeExport);
+-  } finally { await runtime.close(); await fake.close(); }
++  } finally {
++    writeFileSync(testInfo.outputPath('design-generation-provider-requests.json'), JSON.stringify(fake.requests, null, 2));
++    await runtime.close(); await fake.close();
++  }
+ };
+diff --git a/tests/proposals-decision/forecast-provenance.spec.ts b/tests/proposals-decision/forecast-provenance.spec.ts
+new file mode 100644
+index 0000000..fd323fb
+--- /dev/null
++++ b/tests/proposals-decision/forecast-provenance.spec.ts
+@@ -0,0 +1,90 @@
++import {expect,test} from '@playwright/test';
++import {decisionRuntime,generated} from './runtime';
++import {history} from './history';
++import type {GeneratedProposalWire} from '../../src/core/features/proposals/generation';
++
++test('[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads',async()=>{
++  test.setTimeout(300000);
++  const runtime=await decisionRuntime();
++  try {
++    await history(runtime);
++    const own=await generated(runtime);
++    // Three owned campaigns, eight recipients each, three orders netting 800
++    // minor units each, and two eligible recipients in the proposed email.
++    const expected={status:'available',metric:'expected-revenue',currency:'USD',valueMinor:200,
++      historicalNetRevenueMinor:2400,proposedRecipientSteps:2,sampleSize:24,campaignCount:3,eventCount:3,
++      campaignIds:['history-0','history-1','history-2'],
++      sourceEventIds:['historic-order-0','historic-order-1','historic-order-2']};
++    const original=(await runtime.call(`/api/proposals/${own.proposalId}`)).body;
++    expect(original.forecast).toMatchObject(expected);
++    expect(original.forecast.recipientStepIds).toEqual(Array.from({length:3},(_,campaign)=>
++      Array.from({length:8},(_,recipient)=>`historic-${campaign}-${recipient}`)).flat());
++    expect(original.proposal).toMatchObject({state:'proposed',campaignId:own.campaignId});
++    expect(original.composition.revision.state).toBe('draft');
++    expect(await runtime.db.prepare('SELECT metric,value_minor,campaign_ids_json,source_event_ids_json,sample_size FROM proposal_forecasts WHERE proposal_id=?')
++      .bind(own.proposalId).first()).toEqual({metric:'expected-revenue',value_minor:200,
++        campaign_ids_json:JSON.stringify(expected.campaignIds),source_event_ids_json:JSON.stringify(expected.sourceEventIds),sample_size:24});
++
++    const campaigns=(await runtime.db.prepare('SELECT * FROM campaigns ORDER BY id').all()).results;
++    const revisions=(await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results;
++    const recipients=(await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results;
++    expect(recipients).toHaveLength(24);
++    const benchmark='Synthetic Mango foreign store reports a 42 percent recovery rate and USD 900 expected revenue. This forecast uses that other-store benchmark.';
++    const attempts:Array<{field:string;alter:(output:GeneratedProposalWire)=>void}>=[
++      {field:'summary',alter:output=>{output.summary.text+=' '+benchmark;}},
++      {field:'audience explanation',alter:output=>{output.audience.explanation.text+=' '+benchmark;}},
++      {field:'timing explanation',alter:output=>{output.steps[0].whyThisTime.text+=' '+benchmark;}},
++      {field:'provider forecast',alter:output=>{
++        // Deliberately violate the provider wire contract at the network edge.
++        Object.assign(output,{forecast:{status:'available',metric:'expected-revenue',valueMinor:90000,currency:'USD',
++          method:benchmark,campaignIds:['synthetic-mango-foreign-1'],sourceEventIds:['synthetic-mango-foreign-2'],sampleSize:100}});
++      }},
++    ];
++    for(const attempt of attempts) {
++      runtime.controls.alter=output=>{
++        // Keep the valid owned citations and all other output unchanged: only
++        // the unsupported benchmark is introduced in each attempt.
++        const claims=[output.summary,output.audience.explanation,...output.steps.map(step=>step.whyThisTime)];
++        const citations=structuredClone(claims.map(claim=>claim.citations));
++        const supplied=(runtime.controls.lastRequest!.evidence as {items:Array<{key:string;observedValueJson:string}>}).items;
++        for(const claim of claims)for(const citation of claim.citations)
++          expect(supplied).toContainEqual(expect.objectContaining(citation));
++        attempt.alter(output);
++        expect(claims.map(claim=>claim.citations)).toEqual(citations);
++      };
++      const refused=await runtime.call('/api/proposals/generate',{});
++      expect(refused,attempt.field).toMatchObject({status:409,body:{kind:'failed',error:'invalid_ai_output'}});
++      const id=refused.body.proposalId;
++      for(let read=0;read<2;read++) {
++        const detail=await runtime.call(`/api/proposals/${id}`);
++        expect(detail.status).toBe(200);
++        expect(detail.body.proposal).toMatchObject({id,state:'failed',campaignId:null,generationError:'invalid_ai_output',summary:''});
++        expect(detail.body.forecast.status).toBe('unavailable');
++        expect(detail.body.forecast.valueMinor).toBeUndefined();
++        expect(detail.body.composition).toBeUndefined();
++        expect(detail.body.steps).toEqual([]);
++        expect(JSON.stringify(detail.body)).not.toContain(benchmark);
++        expect(await runtime.db.prepare('SELECT campaign_id,decision_context_json FROM proposals WHERE id=?').bind(id).first())
++          .toEqual({campaign_id:null,decision_context_json:'{}'});
++        expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM proposal_forecasts WHERE proposal_id=?').bind(id).first()).toEqual({count:0});
++        expect((await runtime.call(`/api/proposals/${id}/adopt`,{})).status).toBe(409);
++        const desk=await runtime.call('/api/decision-desk');
++        expect(desk.status).toBe(200);
++        expect(desk.body.proposals.map((entry:any)=>entry.proposal.id)).toEqual([own.proposalId]);
++        expect(desk.body.proposals[0].forecast).toEqual(original.forecast);
++        const control=await runtime.call(`/api/proposals/${own.proposalId}`);
++        expect(control.status).toBe(200);
++        expect(control.body.forecast).toEqual(original.forecast);
++        expect(control.body.forecast).toMatchObject(expected);
++        expect((await runtime.db.prepare('SELECT * FROM campaigns ORDER BY id').all()).results).toEqual(campaigns);
++        expect((await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results).toEqual(revisions);
++        expect((await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results).toEqual(recipients);
++        expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM campaign_approval_requests').first()).toEqual({count:0});
++        expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM step_dispatches').first()).toEqual({count:0});
++        expect(runtime.jobs).toEqual([]);
++      }
++      console.log(`PROBE PROP-008 acceptance-2 ${attempt.field}: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority`);
++    }
++    console.log('PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch');
++  } finally {await runtime.close();}
++});

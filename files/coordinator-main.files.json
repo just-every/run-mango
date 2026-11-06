@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "file": "tests/campaign-authoring/design-generation.spec.ts",
+      "attempts": 1,
+      "durationMs": 151240,
+      "statuses": {
+        "passed": 1
+      }
+    }
+  ]
+}

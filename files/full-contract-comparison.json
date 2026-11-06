@@ -1,0 +1,96 @@
+{
+  "full_documents_read": [
+    {
+      "ref": "original",
+      "sha": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+      "path": "CONTRACT.md",
+      "bytes": 488452,
+      "sha256": "8431000fe00a0d2a91a8b9f0a6255885e0e72894aea16f1a6430399e786d2bef"
+    },
+    {
+      "ref": "original",
+      "sha": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+      "path": "ACCEPTANCE.md",
+      "bytes": 442972,
+      "sha256": "71b489d1c776a03539d9a090e223f64a19c3fdda24f4e7e48a1904c71efa7596"
+    },
+    {
+      "ref": "original",
+      "sha": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "ref": "pinned",
+      "sha": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+      "path": "CONTRACT.md",
+      "bytes": 490212,
+      "sha256": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24"
+    },
+    {
+      "ref": "pinned",
+      "sha": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+      "path": "ACCEPTANCE.md",
+      "bytes": 443986,
+      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d"
+    },
+    {
+      "ref": "pinned",
+      "sha": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "ref": "merged-main",
+      "sha": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+      "path": "CONTRACT.md",
+      "bytes": 489429,
+      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05"
+    },
+    {
+      "ref": "merged-main",
+      "sha": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+      "path": "ACCEPTANCE.md",
+      "bytes": 443986,
+      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d"
+    },
+    {
+      "ref": "merged-main",
+      "sha": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "ref": "fresh-main",
+      "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+      "path": "CONTRACT.md",
+      "bytes": 489381,
+      "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d"
+    },
+    {
+      "ref": "fresh-main",
+      "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+      "path": "ACCEPTANCE.md",
+      "bytes": 443948,
+      "sha256": "d08e551ab2d69f883a2355c871f146fe6c1878fc072ae4145064802bc8f042ab"
+    },
+    {
+      "ref": "fresh-main",
+      "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    }
+  ],
+  "clause_count": 316,
+  "semantic_clause_changes": {
+    "original": [],
+    "pinned": [],
+    "merged-main": [],
+    "fresh-main": []
+  },
+  "rulings_equal_fresh_main": true
+}

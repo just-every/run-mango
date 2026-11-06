@@ -1,0 +1,18 @@
+ ACCEPTANCE.md                                      |  18 +--
+ CONTRACT.md                                        |  14 +--
+ sources.lock.json                                  |  36 +++---
+ src/core/features/auth/permissions.ts              |   2 +-
+ src/core/features/design-generation/advance.ts     |   5 +-
+ .../features/design-generation/layout-evidence.ts  |  15 +++
+ src/core/features/design-generation/model.ts       |   5 +-
+ src/core/features/design-generation/repository.ts  |   4 +-
+ src/core/features/design-generation/routes.ts      |  19 +++-
+ tests/campaign-authoring/design-generation.flow.ts | 121 +++++++++++++++++----
+ tests/campaign-authoring/design-retention.ts       |  78 +++++++++++++
+ tests/campaign-authoring/worker.ts                 |  18 +++
+ tests/go-live/edge.ts                              |   9 +-
+ tests/go-live/paid-signup-journey.ts               |  86 +++------------
+ tests/go-live/paid-tier-journey.ts                 |  38 +------
+ .../proposals-decision/forecast-provenance.spec.ts |  25 -----
+ tests/support/fake-twelve-ui.ts                    |  14 ++-
+ 17 files changed, 303 insertions(+), 204 deletions(-)

@@ -1,0 +1,16 @@
+{
+  "name": "source-lock-check",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "scripts/edition-authoring/cli.mjs",
+    "check"
+  ],
+  "exit": 0,
+  "seconds": 0.213,
+  "started": "2026-11-06T02:05:34.713419+00:00",
+  "ended": "2026-11-06T02:05:34.925019+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

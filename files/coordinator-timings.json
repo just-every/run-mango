@@ -1,0 +1,36 @@
+{
+  "startedAt": "2026-11-06T02:02:28.297Z",
+  "finishedAt": "2026-11-06T02:05:01.501Z",
+  "durationMs": 153204,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "main",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "main",
+      "status": "PASS",
+      "startedAt": "2026-11-06T02:02:28.305Z",
+      "durationMs": 153195,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/campaign-authoring/design-generation.spec.ts",
+            "attempts": 1,
+            "durationMs": 151240,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "views-check",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "src/base/contract-docs.mjs",
+    "check"
+  ],
+  "exit": 1,
+  "seconds": 0.121,
+  "started": "2026-11-06T02:05:34.551274+00:00",
+  "ended": "2026-11-06T02:05:34.671012+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

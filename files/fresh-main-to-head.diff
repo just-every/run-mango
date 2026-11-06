@@ -1,0 +1,1113 @@
+diff --git a/ACCEPTANCE.md b/ACCEPTANCE.md
+index e1d4279..a97de20 100644
+--- a/ACCEPTANCE.md
++++ b/ACCEPTANCE.md
+@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
+ 
+ | Tier | Done | Partial | Missing | Total |
+ | --- | ---: | ---: | ---: | ---: |
+-| Core | 20 | 198 | 89 | 307 |
++| Core | 18 | 200 | 89 | 307 |
+ | Agent surface | 0 | 0 | 9 | 9 |
+ | Later | 0 | 0 | 0 | 0 |
+-| Full target | 20 | 198 | 98 | 316 |
++| Full target | 18 | 200 | 98 | 316 |
+ 
+ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+ 
+@@ -581,7 +581,7 @@ Core · published · **partial** · Rules D-1
+ 2. No forecast presents a benchmark from another store.
+ 3. Insufficient own history is stated explicitly instead of a displayed range.
+ 
+-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.; provider benchmarks with owned history identifiers are also refused without changing existing forecast records, and valid own-history generation succeeds again after those refusals with draft-only authority.
++**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.
+ **Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
+ 
+ #### PROP-009 — Proposal states
+@@ -4470,7 +4470,7 @@ Core · target · **missing** · Rules D-2
+ 
+ #### PUB-005 — Paid signup page and payer consent
+ 
+-Core · target · **done** · Rules D-2
++Core · target · **partial** · Rules D-2
+ 
+ **Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
+ 
+@@ -4480,12 +4480,12 @@ Core · target · **done** · Rules D-2
+ 3. Checkout returns the reader to a Mango explanation of the next step.
+ 4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
+ 
+-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-tier-journey.ts`
+-**Gap.** None.
++**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
++**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above.
+ 
+ #### PUB-006 — Paid-reader consent and restrictions
+ 
+-Core · target · **done** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
++Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
+ 
+ **Requirement.** A paying reader joins the mailing audience only with their own channel confirmation.
+ 
+@@ -4496,8 +4496,8 @@ Core · target · **done** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
+ 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
+ 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
+ 
+-**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures.
+-**Gap.** None.
++**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
++**Gap.** Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either).
+ 
+ ### Installation services
+ 
+diff --git a/CONTRACT.md b/CONTRACT.md
+index d9a8149..f0e9b88 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4048,13 +4048,13 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every
+ 
+ ## Status
+ 
+-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration.
++Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. DESIGN-003 was exercised through its registered native design-generation journey from the code and tests at commit `1a33e7d835720bce9889966897fd7d0ade0a0da3` (5 November 2026); this status candidate retains those source and test bytes. Live design-provider qualification remains in the Field proof register.
+ 
+ | Clauses | Done | Partial | Missing | Total |
+ | --- | ---: | ---: | ---: | ---: |
+ | Published | 13 | 97 | 0 | 110 |
+-| Target and push further | 7 | 101 | 98 | 206 |
+-| All | 20 | 198 | 98 | 316 |
++| Target and push further | 5 | 103 | 98 | 206 |
++| All | 18 | 200 | 98 | 316 |
+ 
+ | Clause | Title | Kind | Status | Evidence | Gap |
+ | --- | --- | --- | --- | --- | --- |
+@@ -4094,7 +4094,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `PROP-005` | Owner control | published | partial | `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft” | Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above. |
+ | `PROP-006` | Grounded generation | published | partial | `tests/proposals-decision/decision-routes.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Grounded source observations accepted; Own imported data and configured knowledge only; Fabricated or malformed claims rejected; Rejected proposal failed; No substituted composition. Missing public-door journey: “Grounded generation — complete acceptance”, covering the unasserted outcomes above. |
+ | `PROP-007` | Generation failure | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft” | Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved. Missing public-door journey: “Generation failure — complete acceptance”, covering the unasserted outcomes above. |
+-| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.; provider benchmarks with owned history identifiers are also refused without changing existing forecast records, and valid own-history generation succeeds again after those refusals with draft-only authority. | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |
++| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads. | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |
+ | `PROP-009` | Proposal states | published | partial | `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-009] authenticated decisions record actor/time once and all request paths fence expiry and competing decisions”; “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft” | Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time. Missing public-door journey: “Proposal states — complete acceptance”, covering the unasserted outcomes above. |
+ | `AUD-001` | Review snapshot | published | partial | `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable” | Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count. Missing public-door journey: “Review snapshot — complete acceptance”, covering the unasserted outcomes above. |
+ | `AUD-002` | Consent and suppression | published | done | `tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, freeze recipients and merge identities without widening consent” |  |
+@@ -4128,7 +4128,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `DESIGN-008` | Save generated design through ordinary authoring | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks. Missing public-door journey: “Save generated design through ordinary authoring — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-009` | Apply a chosen design without stealing focus | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”; “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run” | Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required. Missing public-door journey: “Apply a chosen design without stealing focus — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-010` | Keep paid design candidates | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible. Missing public-door journey: “Keep paid design candidates — complete acceptance”, covering the unasserted outcomes above. |
+-| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: native generation and choice, failed and successful completion, authenticated status and persisted rows after reload and repeated reads | Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request; Exact sanitized brief retained; Issued provider run and layout identifiers; Candidate byte size; Authenticated operator; Independently bounded creation, candidate and completion times retained through reload. Unasserted: Run never deleted beyond existing terminal-state checks; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above. |
++| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: `tests/campaign-authoring/design-generation.flow.ts` records the native outbound brief, chosen PNG and idempotent purchases; exact retained brief, issued identifiers, candidate outcomes, hashes and byte sizes, operator and bounded times; applied, discarded, failed, timed-out and older runs retained through later activity. `tests/campaign-authoring/design-retention.ts` opens original candidate and distinct layout bytes, verifies their native export descriptors and contents, restores every run and candidate row and original bytes, and refuses unsigned and revoked sessions. Every paid request reconciles with its cost fact; repeated reads and export buy nothing. | Original independent Opus5.5 judgment ended 2026-11-05T21:21:17Z: STAYS PARTIAL; R2–R5 MET at exact source `9b9f3867af955c390b39b740b89f96b4ef929ed1`, frozen and unchanged. Original family sd-mango-c-f42 lifetime FIX1 of 2 corrects only R1 quoted-fallback brace sanitization through the existing registered native journey, retaining the failing-before and passing-after provider-edge payloads. R1 remains pending independent new-SHA acceptance with the original report; whole-clause DONE is unawarded. Live-provider qualification remains external and unclaimed; original-family affected gate, final runtime Verify, COMPLETE full-history NEW0, guarded main and exact-main Run site duties remain with fleet. No source acceptance or hold release. |
+ | `DESIGN-011` | Design provider custody | published | partial | `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft” | Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs. Missing public-door journey: “Design provider custody — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-004` | Design import | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px” | Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged. |
+ | `DESIGN-012` | Compile the imported layout | published | partial | `tests/campaign-authoring/design-import.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email. Missing public-door journey: “Compile the imported layout — complete acceptance”, covering the unasserted outcomes above. |
+@@ -4350,8 +4350,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `PUB-002` | Paid newsletters | target | partial | `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` · `tests/go-live/paid-tier-journey.ts` · `tests/portability.spec.ts` · `tests/local-start/retained-archive.journey.ts` | Stripe test-mode checkout through the Owner connection with a restricted test key remains unproved; the Nectar rail is not connected (INT-004). Payer signup and consent capture remain PUB-005’s separate obligation, with its own unfinished acceptance. A Stripe Tax source read is not provider proof. |
+ | `PUB-003` | Recommendations | target | missing |  | not implemented |
+ | `PUB-004` | Direct sponsorships | target | missing |  | not implemented |
+-| `PUB-005` | Paid signup page and payer consent | target | done | `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-tier-journey.ts` |  |
+-| `PUB-006` | Paid-reader consent and restrictions | target | done | `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures. |  |
++| `PUB-005` | Paid signup page and payer consent | target | partial | `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” | Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above. |
++| `PUB-006` | Paid-reader consent and restrictions | target | partial | `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” | Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either). |
+ | `HEALTH-001` | Bounded dependency readiness | target | partial | `tests/production-entry.spec.ts` | Binding-edge health cases are exercised. Real elapsed workerd cancellation, actual Queue latency, hosted isolate behavior and the deploy probe are not established by those cases. |
+ | `MAIL-001` | Selected Managed service mail | target | partial | `tests/go-live/managed-mail.journeys.ts` | Configured Managed service-mail journeys exercise the selected relay. Full hosted revocation and service-availability acceptance remains unproved. |
+ | `SURFACE-001` | The marketing registry and conformance journey | target | missing |  | The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 26ff5ea..8f34af7 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -998,7 +998,7 @@
+       "executable": false
+     },
+     "ACCEPTANCE.md": {
+-      "sha256": "d08e551ab2d69f883a2355c871f146fe6c1878fc072ae4145064802bc8f042ab",
++      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d",
+       "executable": false
+     },
+     "AGENTS.consumer.md": {
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
++      "sha256": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -3702,7 +3702,7 @@
+       "executable": false
+     },
+     "src/core/features/auth/permissions.ts": {
+-      "sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
++      "sha256": "6cb9ff67581eeca2924d97af353b3941ac16c9d3eac42023a7b5f37483d64e2d",
+       "executable": false
+     },
+     "src/core/features/auth/product-roles.ts": {
+@@ -4302,23 +4302,27 @@
+       "executable": false
+     },
+     "src/core/features/design-generation/advance.ts": {
+-      "sha256": "315aa219e0b370badd1b1e761b714477579ad384a4809fdf61f20196f599228a",
++      "sha256": "a139db7c981eabf58a8885a67c29403cbc279d44a57c44120ef728b71e1137ed",
+       "executable": false
+     },
+     "src/core/features/design-generation/concept.ts": {
+       "sha256": "42d0a27a99ce53fe0faf1feb125ca5d4e0608668a230ef2fc44489ab294d592e",
+       "executable": false
+     },
++    "src/core/features/design-generation/layout-evidence.ts": {
++      "sha256": "ac2a72385fad55234723d6cfa38510ed523e605b9b576a17889fb0f05c9f0dbc",
++      "executable": false
++    },
+     "src/core/features/design-generation/model.ts": {
+-      "sha256": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
++      "sha256": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+       "executable": false
+     },
+     "src/core/features/design-generation/repository.ts": {
+-      "sha256": "4344a03b49d5c28bebee0c288d1608e8464ea8cb5aaa9d716d0f1e1e2fb35c5f",
++      "sha256": "b7f8cd50d746e223eea6d8d2a3e015e5e4330be2a7cb32dbe79ff55bca932804",
+       "executable": false
+     },
+     "src/core/features/design-generation/routes.ts": {
+-      "sha256": "d24993e69ed5c0c68f0e454a3d26fa5b0f162e62c647a58cd54dd45093bfc4d5",
++      "sha256": "46c3f4c144d015a34f20202d964cbcef0235099dd10b99f35ebb9f4643de34ea",
+       "executable": false
+     },
+     "src/core/features/design-generation/sweep.ts": {
+@@ -8490,7 +8494,7 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.flow.ts": {
+-      "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
++      "sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+       "executable": false
+     },
+     "tests/campaign-authoring/design-generation.spec.ts": {
+@@ -8501,6 +8505,10 @@
+       "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+       "executable": false
+     },
++    "tests/campaign-authoring/design-retention.ts": {
++      "sha256": "5673026012a34f3220947d7d7d39fc57ba2cd63d581cda7d042cf5d1b4f602b1",
++      "executable": false
++    },
+     "tests/campaign-authoring/email-size-adoption.ts": {
+       "sha256": "9274a168e280f9bca5cab7701de41b47674c823e289abcff05b0dccdcdf8ef08",
+       "executable": false
+@@ -8534,7 +8542,7 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/worker.ts": {
+-      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
++      "sha256": "1ade2167215999cbd01fd14a45524ac40e155bf13f316e1792bf7513c66bef29",
+       "executable": false
+     },
+     "tests/campaign-results/archive-fixture.ts": {
+@@ -8842,7 +8850,7 @@
+       "executable": false
+     },
+     "tests/go-live/edge.ts": {
+-      "sha256": "0b8c8779d397da950d00dd65888357369af3a974ac5a94a194b634db8a281290",
++      "sha256": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270",
+       "executable": false
+     },
+     "tests/go-live/email-size-imports.ts": {
+@@ -8942,11 +8950,11 @@
+       "executable": false
+     },
+     "tests/go-live/paid-signup-journey.ts": {
+-      "sha256": "bdb510612eb2799af3fd93750bf17439c7a45b8f2f1a8b0743681bd3142dc52e",
++      "sha256": "210d564f2b290f2b072dec01bcb0b00e41d8252b9389aef74431d13674ddd951",
+       "executable": false
+     },
+     "tests/go-live/paid-tier-journey.ts": {
+-      "sha256": "9f861060a969a606d5b8f4bb523289637f1249e04f02b92cd6cd799a745529de",
++      "sha256": "6e0327d82a10b666e1b069ca2535fed325dbb0ed3dd6dfa8277d3ea290c4095f",
+       "executable": false
+     },
+     "tests/go-live/pause.flow.ts": {
+@@ -9402,7 +9410,7 @@
+       "executable": false
+     },
+     "tests/proposals-decision/forecast-provenance.spec.ts": {
+-      "sha256": "4b208dde75c6d90ef7f83478b4d6fbaa77b245d4a5b6b5d22fbe8cf1f0934b33",
++      "sha256": "04831a09ae32f053f0bcd7f3e19cad53dee65855138226fb78cc22900eb8b6ed",
+       "executable": false
+     },
+     "tests/proposals-decision/history.ts": {
+@@ -9502,7 +9510,7 @@
+       "executable": false
+     },
+     "tests/support/fake-twelve-ui.ts": {
+-      "sha256": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
++      "sha256": "e9604a38cd3422da6fc218a31c32537e74ada4ed86aab718f02adf36520aad70",
+       "executable": false
+     },
+     "tests/support/fixture-app.ts": {
+diff --git a/src/core/features/auth/permissions.ts b/src/core/features/auth/permissions.ts
+index b74d1e4..51bf7ad 100644
+--- a/src/core/features/auth/permissions.ts
++++ b/src/core/features/auth/permissions.ts
+@@ -101,7 +101,7 @@ export function requiredPermission(method: string, path: string): Capability {
+   if(read&&/^\/api\/campaigns\/[^/]+\/approval-requests$/.test(p))return 'campaign.read';
+   if (/^\/api\/campaigns\/[^/]+\/request-approval$/.test(p)) return 'draft.write';
+   if (/^\/api\/campaigns\/[^/]+\/design-jobs$/.test(p)
+-    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc|candidates\/[^/]+\/image)$/.test(p)
++    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc(?:\/[0-9a-f]{64})?|candidates\/[^/]+\/image)$/.test(p)
+     || /^\/api\/(?:campaign-assets|campaign-templates(?:\/[^/]+\/start)?|campaign-authoring(?:\/(?:audience|email-size))?|campaign-starters|campaign-revisions\/[^/]+)$/.test(p)) return 'draft.write';
+   if(p==='/api/decision-desk')return 'draft.write';
+   if (read && (['/api/campaigns'].includes(p)
+diff --git a/src/core/features/design-generation/advance.ts b/src/core/features/design-generation/advance.ts
+index ee3bfb6..1f04cb6 100644
+--- a/src/core/features/design-generation/advance.ts
++++ b/src/core/features/design-generation/advance.ts
+@@ -121,8 +121,9 @@ async function layoutPass(platform: Platform, design: DesignProvider, job: Desig
+   const text = await design.layoutDocument(layout);
+   parseLayerDoc(text);
+   const bytes = new TextEncoder().encode(text);
+-  await platform.blobs.put(designLayoutKey(job.id), bytes, { httpMetadata: { contentType: 'application/json' } });
+-  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: await hex(bytes), attempts: 0, waitCode: null, retryAt: null }, Date.now());
++  const sha256 = await hex(bytes);
++  await platform.blobs.put(designLayoutKey(job.id, sha256), bytes, { httpMetadata: { contentType: 'application/json' } });
++  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: sha256, attempts: 0, waitCode: null, retryAt: null }, Date.now());
+   return {};
+ }
+ 
+diff --git a/src/core/features/design-generation/layout-evidence.ts b/src/core/features/design-generation/layout-evidence.ts
+new file mode 100644
+index 0000000..9fc4aeb
+--- /dev/null
++++ b/src/core/features/design-generation/layout-evidence.ts
+@@ -0,0 +1,15 @@
++import type { Platform } from '@/core/shared/platform';
++import { designLayoutKey, type DesignJob } from './repository';
++
++/** New layouts have digest-addressed keys. A legacy original stays in place and
++ * remains readable by its verified digest after later choices change the pointer.
++ * Reading evidence never copies it or writes a previously erased object back. */
++export async function readLayoutEvidence(platform: Platform, job: DesignJob, sha256: string) {
++  const stored = await platform.blobs.get(designLayoutKey(job.id, sha256));
++  if (stored) return (stored as R2ObjectBody).body;
++  const legacy = await platform.blobs.get(designLayoutKey(job.id));
++  if (!legacy) return null;
++  const bytes = await legacy.arrayBuffer();
++  const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(byte => byte.toString(16).padStart(2, '0')).join('');
++  return digest === sha256 ? new Response(bytes).body : null;
++}
+diff --git a/src/core/features/design-generation/model.ts b/src/core/features/design-generation/model.ts
+index 4810e30..3b462dc 100644
+--- a/src/core/features/design-generation/model.ts
++++ b/src/core/features/design-generation/model.ts
+@@ -63,7 +63,8 @@ export const draftEstimate = (candidates: number) =>
+ export const layoutEstimate = () =>
+   `About ${dollars(designPrices.layoutUsd)} on your 12ui account for the layout, or free within 12ui's daily allowance of ${designPrices.freeLayoutsPerDay} layouts.`;
+ 
+-/** Removes `{{…}}` personalisation and managed tokens: a brief never carries one to the design service (DESIGN-003). */
++/** Removes `{{…}}` personalisation and managed tokens, using the renderer's delimiters so quoted fallback braces
++ * stay inside the removed token (DESIGN-003). */
+ export function briefWithoutTokens(text: string) {
+-  return text.replace(/\{\{[^{}]*\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
++  return text.replace(/\{\{([\s\S]*?)\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+ }
+diff --git a/src/core/features/design-generation/repository.ts b/src/core/features/design-generation/repository.ts
+index 5115db6..33d94db 100644
+--- a/src/core/features/design-generation/repository.ts
++++ b/src/core/features/design-generation/repository.ts
+@@ -22,7 +22,9 @@ const list = (states: readonly DesignJobState[]) => states.map(state => `'${stat
+ 
+ /** Each design run's evidence in R2, beside the campaign images. */
+ export const designCandidateKey = (jobId: string, slot: string) => `design-jobs/${jobId}/candidate-${slot}.png`;
+-export const designLayoutKey = (jobId: string) => `design-jobs/${jobId}/layout.layerdoc.json`;
++export const designLayoutKey = (jobId: string, sha256?: string) => sha256
++  ? `design-jobs/${jobId}/layout-${sha256}.layerdoc.json`
++  : `design-jobs/${jobId}/layout.layerdoc.json`;
+ 
+ export function createDesignRepository(db: D1Database) {
+   const columns: Record<string, string> = { state: 'state', providerRunId: 'provider_run_id', chosenSlot: 'chosen_slot', providerLayoutId: 'provider_layout_id',
+diff --git a/src/core/features/design-generation/routes.ts b/src/core/features/design-generation/routes.ts
+index f62a1f9..46713d3 100644
+--- a/src/core/features/design-generation/routes.ts
++++ b/src/core/features/design-generation/routes.ts
+@@ -6,7 +6,8 @@ import { ulid } from '@/core/shared/ids';
+ import type { Platform } from '@/core/shared/platform';
+ import { designCommand } from './advance';
+ import { briefWithoutTokens, candidateSlots, maxBriefCharacters, maxCandidates, minCandidates, workingStates, type DesignGenerationStatus, type DesignJobView } from './model';
+-import { createDesignRepository, designCandidateKey, designLayoutKey, type DesignJob } from './repository';
++import { createDesignRepository, designCandidateKey, type DesignJob } from './repository';
++import { readLayoutEvidence } from './layout-evidence';
+ 
+ /** A run that has not settled this long after it started (or after a candidate was chosen) fails visibly. */
+ export const designDeadlineMs = 15 * 60_000;
+@@ -14,6 +15,7 @@ export const designDeadlineMs = 15 * 60_000;
+ const campaign = z.object({ id: z.string().min(1).max(128) });
+ const job = z.object({ id: z.string().min(1).max(128) });
+ const candidate = z.object({ id: z.string().min(1).max(128), slot: z.enum(candidateSlots) });
++const layout = job.extend({ sha256: z.string().regex(/^[0-9a-f]{64}$/) });
+ const start = z.object({ brief: z.string().max(maxBriefCharacters), candidates: z.number().int().min(minCandidates).max(maxCandidates) }).strict();
+ const choose = z.object({ slot: z.enum(candidateSlots) }).strict();
+ const close = z.object({ outcome: z.enum(['applied', 'discarded']) }).strict();
+@@ -36,7 +38,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
+     candidates: (await repository.candidates(record.id)).map(item => item.state === 'succeeded'
+       ? { slot: item.slot, state: item.state, imageUrl: `/api/design-jobs/${record.id}/candidates/${item.slot}/image`, width: item.width!, height: item.height!, bytes: item.bytes! }
+       : { slot: item.slot, state: item.state }),
+-    ...(record.layerdocSha256 ? { layerDocUrl: `/api/design-jobs/${record.id}/layerdoc` } : {}),
++    ...(record.layerdocSha256 ? { layerDocUrl: `/api/design-jobs/${record.id}/layerdoc/${record.layerdocSha256}` } : {}),
+   });
+ 
+   routes.get('/campaigns/:id/design-jobs', async context => {
+@@ -119,9 +121,18 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
+     const params = readParams(context, job);
+     if ('error' in params) return params.error;
+     const record = await repository.get(params.data.id);
+-    const object = record?.layerdocSha256 ? await platform.blobs.get(designLayoutKey(record.id)) : null;
++    const object = record?.layerdocSha256 ? await readLayoutEvidence(platform, record, record.layerdocSha256) : null;
+     if (!object) return context.json({ error: 'not_found' }, 404);
+-    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
++    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
++  });
++
++  routes.get('/design-jobs/:id/layerdoc/:sha256', async context => {
++    const params = readParams(context, layout);
++    if ('error' in params) return params.error;
++    const record = await repository.get(params.data.id);
++    const object = record ? await readLayoutEvidence(platform, record, params.data.sha256) : null;
++    if (!object) return context.json({ error: 'not_found' }, 404);
++    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+   });
+ 
+   return routes;
+diff --git a/tests/campaign-authoring/design-generation.flow.ts b/tests/campaign-authoring/design-generation.flow.ts
+index 63306a0..474b324 100644
+--- a/tests/campaign-authoring/design-generation.flow.ts
++++ b/tests/campaign-authoring/design-generation.flow.ts
+@@ -3,12 +3,13 @@ import { openPage, reloadPage } from '../support/navigation';
+ import { localSessionCookieName } from '../support/local-session';
+ import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
+ import { createHash } from 'node:crypto';
+-import { readFileSync } from 'node:fs';
++import { readFileSync, writeFileSync } from 'node:fs';
+ import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
+ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-parse';
+ import { authoringRuntime } from './browser-runtime.mjs';
+ import { png } from '../support/images';
+ import { startFakeTwelveUi } from '../support/fake-twelve-ui';
++import { exportRetainedDesigns, readDesignRecords } from './design-retention';
+ 
+ test.describe.configure({ mode: 'serial', timeout: 240000 });
+ test.use({ timezoneId: 'America/Los_Angeles' });
+@@ -40,7 +41,7 @@ async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>,
+ const useDesign = (run: ReturnType<Page['getByRole']>, page: Page, slot: string) =>
+   run.getByRole('listitem').filter({ has: page.getByRole('img', { name: `Design ${slot}`, exact: true }) }).getByRole('button', { name: 'Use this design', exact: true });
+ 
+-const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', queueConsumers: true, vars: {
++const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, queueConsumers: true, vars: {
+   MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test', DESIGN_PROVIDER_API_KEY: designKey, DESIGN_PROVIDER_ORIGIN: origin } });
+ 
+ 
+@@ -50,7 +51,7 @@ const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-gene
+ 
+ 
+ export const walk0 = async ({ page, request }) => {
+-  const runtime = await authoringRuntime({ suite: 'design-generation', vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
++  const runtime = await authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
+   try {
+     const outbound: string[] = [];
+     page.on('request', item => { if (!item.url().startsWith(runtime.url)) outbound.push(item.url()); });
+@@ -101,6 +102,9 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
+     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
+     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
++    await page.setViewportSize({ width: 390, height: 844 });
++    await page.screenshot({ path: testInfo.outputPath('design-generation-candidates-phone.png'), fullPage: true });
++    await page.setViewportSize({ width: 1440, height: 1000 });
+ 
+     // Choosing prepares the layout in the background, across a reload. The operator keeps typing in the body: when the
+     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
+@@ -173,18 +177,33 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     expect(state.approvals).toEqual([]);
+     expect(state.recipients).toEqual([]);
+     expect(state.jobs).toEqual([]);
+-    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`)).toEqual([{ state: 'applied' }]);
++    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`), { timeout: 30000 }).toEqual([{ state: 'applied' }]);
+     await expect(run).toHaveCount(0);
++    const appliedRows = (await readDesignRecords(api, runtime)).jobs;
++    const applied = appliedRows[0];
++    for (const slot of ['a', 'b']) {
++      const original = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/candidates/${slot}/image`);
++      expect(original.status()).toBe(200);
++      expect(await original.body()).toEqual(Buffer.from(candidateImage));
++    }
++    const originalLayout = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/layerdoc`);
++    expect(originalLayout.status()).toBe(200);
++    expect(await originalLayout.text()).toBe(layerDoc);
++    await reloadPage(page);
++    expect((await readDesignRecords(api, runtime)).jobs).toEqual(appliedRows);
+     // The browser fetched designs only from Mango; only the Worker spoke to the design service.
+     expect(outbound).toEqual([]);
+     expect(fake.requests.length).toBeGreaterThan(0);
+   } finally { await runtime.close(); await fake.close(); }
+ };
+-export const walk2 = async ({ page, request }) => {
+-  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
++export const walk2 = async ({ page, request }, testInfo) => {
++  const candidateB = png(canvas.width, canvas.height, 17);
++  const imageFor = (slot: string) => slot === 'b' ? candidateB : candidateImage;
++  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: { b: candidateB }, layerDoc, drawMs: { c: 3_600_000 }, failedSlots: ['d'], holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+   const runtime = await designRuntime(fake.origin);
+   try {
+     const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
++    const observe = () => readDesignRecords(api, runtime);
+     const operatorResponse = await api.get(`${runtime.url}/api/operator`);
+     expect(operatorResponse.status()).toBe(200);
+     const operator = (await operatorResponse.json()).operator;
+@@ -200,7 +219,7 @@ export const walk2 = async ({ page, request }) => {
+     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
+     // The prefilled brief already went without the draft's token; one typed in goes too.
+     await expect(dialog.getByLabel('Brief')).not.toHaveValue(/\{\{/);
+-    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}';
++    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: "{friend}"}} and {{unsubscribe_url}}';
+     await dialog.getByLabel('Brief').fill(submittedBrief);
+     const retainedBrief = 'Good Things Are Ripening\nHello and';
+     const creationResponse = page.waitForResponse(response => response.request().method() === 'POST'
+@@ -211,7 +230,6 @@ export const walk2 = async ({ page, request }) => {
+     expect(started.status()).toBe(201);
+     expect(started.request().postDataJSON()).toMatchObject({ brief: submittedBrief });
+     const startedJob = (await started.json()).job;
+-    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     expect(startedJob.createdAt).toBeGreaterThanOrEqual(creationBefore);
+     expect(startedJob.createdAt).toBeLessThanOrEqual(creationAfter);
+     const run = page.getByRole('region', { name: 'Design with 12ui' });
+@@ -225,10 +243,15 @@ export const walk2 = async ({ page, request }) => {
+     expect(posts.every(item => item.idempotencyKey)).toBe(true);
+     const created = posts.filter(item => item.path === '/api/v1/create');
+     expect(created).toHaveLength(1);
++    // Preserve the native door and actual provider-edge request before asserting token removal.
++    writeFileSync(testInfo.outputPath('design-generation-r1-probe.json'), JSON.stringify({
++      submittedBrief, expectedRetainedBrief: retainedBrief, retainedBrief: startedJob.brief, outbound: created[0],
++    }, null, 2));
++    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     const concept = (created[0].json as { concept: string }).concept;
+     expect(concept).toContain('Good Things Are Ripening');
+     // Tokens never leave, and nothing from the audience is added: the request carries the brief and Mango's own words only.
+-    expect(concept).not.toMatch(/\{|\}|first_name|unsubscribe_url/);
++    expect(concept).not.toMatch(/\{|\}|first_name|fallback|friend|unsubscribe_url/);
+     expect(JSON.stringify(created[0].json)).not.toMatch(/@example\.test|An earlier draft|Seasonal news/);
+     const slotA = posts.filter(item => item.path.endsWith('/candidates/a'));
+     expect(slotA).toHaveLength(2);
+@@ -236,18 +259,20 @@ export const walk2 = async ({ page, request }) => {
+     expect(fake.purchases.filter(item => item.startsWith('draft:'))).toHaveLength(2);
+     const issuedRun = fake.issued.filter(item => item.kind === 'run');
+     expect(issuedRun).toHaveLength(1);
+-    const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
++    const candidates = async () => (await observe()).candidates.map(row => ({ slot: row.slot, state: row.state, sha256: row.sha256, bytes: row.bytes, createdAt: row.created_at }));
+     const stored = await candidates();
+     expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
+-      sha256: createHash('sha256').update(candidateImage).digest('hex'), bytes: candidateImage.byteLength })));
++      sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })));
+     for (const candidate of stored) {
+       expect(candidate.createdAt).toBeGreaterThanOrEqual(issuedRun[0].at);
+       expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
+     }
+     const retained = async () => {
+-      const rows = await runtime.sql(`SELECT id, campaign_id AS campaignId, state, brief, provider_run_id AS providerRunId,
+-        provider_layout_id AS providerLayoutId, chosen_slot AS chosenSlot, created_by AS createdBy, created_at AS createdAt,
+-        updated_at AS updatedAt, deadline_at AS deadlineAt, error_code AS errorCode FROM design_jobs WHERE id = '${startedJob.id}'`);
++      const rows = (await observe()).jobs.filter(row => row.id === startedJob.id).map(row => ({
++        id: row.id, campaignId: row.campaign_id, state: row.state, brief: row.brief, providerRunId: row.provider_run_id,
++        providerLayoutId: row.provider_layout_id, chosenSlot: row.chosen_slot, createdBy: row.created_by, createdAt: row.created_at,
++        updatedAt: row.updated_at, deadlineAt: row.deadline_at, errorCode: row.error_code,
++      }));
+       expect(rows).toHaveLength(1);
+       const record = rows[0];
+       expect(record).toMatchObject({ id: startedJob.id, campaignId, brief: retainedBrief, providerRunId: issuedRun[0].id,
+@@ -259,7 +284,7 @@ export const walk2 = async ({ page, request }) => {
+         createdAt: record.createdAt, updatedAt: record.updatedAt, deadlineAt: record.deadlineAt, chosenSlot: record.chosenSlot,
+         ...(record.errorCode ? { errorCode: record.errorCode } : {}) });
+       expect(status.candidates).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', width: canvas.width, height: canvas.height,
+-        bytes: candidateImage.byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
++        bytes: imageFor(slot).byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
+       expect(await candidates()).toEqual(stored);
+       return { record, status };
+     };
+@@ -291,10 +316,10 @@ export const walk2 = async ({ page, request }) => {
+     expect(converts()[0].fileSha256).toBe(createHash('sha256').update(candidateImage).digest('hex'));
+     await expect.poll(content).toBe(before);
+     expect((await read()).revision.emailBody).toContain('an earlier draft.');
+-    const costs = () => runtime.sql(`SELECT provider, operation, model_or_channel AS tier, billable_units AS units FROM external_cost_facts WHERE campaign_id = '${campaignId}' ORDER BY operation, id`);
++    const costs = async () => (await observe()).costs.filter(row => row.campaignId === campaignId).map(({ campaignId: ignored, ...cost }) => cost);
+     const draftCost = { provider: '12ui', operation: 'design-draft', tier: 'standard', units: 1 }, layoutCost = { provider: '12ui', operation: 'design-layout', tier: 'fast', units: 1 };
+     expect(await costs()).toEqual([draftCost, draftCost, layoutCost]);
+-    const firstRun = async () => (await runtime.sql(`SELECT state, error_code AS code, chosen_slot AS slot FROM design_jobs WHERE campaign_id = '${campaignId}' ORDER BY created_at LIMIT 1`))[0];
++    const firstRun = async () => { const row = (await observe()).jobs.filter(row => row.campaign_id === campaignId).sort((a,b) => a.created_at-b.created_at)[0]; return {state: row.state, code: row.error_code, slot: row.chosen_slot}; };
+     expect(await firstRun()).toEqual({ state: 'failed', code: 'provider_failed', slot: 'a' });
+ 
+     // Trying again is a new layout under a new key (a replayed key would only replay the failure). Here 12ui says the
+@@ -332,6 +357,10 @@ export const walk2 = async ({ page, request }) => {
+     await reloadPage(page);
+     expect(await retained()).toEqual(readyRecord);
+     expect(await retained()).toEqual(readyRecord);
++    const firstLayoutUrl = readyRecord.status.layerDocUrl;
++    const firstLayout = await api.get(runtime.url + firstLayoutUrl);
++    expect(firstLayout.status()).toBe(200);
++    expect(await firstLayout.text()).toBe(layerDoc);
+ 
+     // A new run while a prepared design is on offer: the brief says the designs stay, and they do, under Earlier designs.
+     // 12ui names a time to ask again: the run says it is waiting, then continues with the same purchase key.
+@@ -384,9 +413,63 @@ export const walk2 = async ({ page, request }) => {
+     await expect(run.getByRole('alert')).toContainText('did not finish in time');
+     // The designs it drew stay usable, and every earlier run with designs is still on offer.
+     await expect(useDesign(run, page, 'B')).toBeVisible();
+-    expect(await runtime.sql(`SELECT state, error_code AS code FROM design_jobs ORDER BY created_at`)).toEqual([
++    expect((await observe()).jobs.sort((a,b) => a.created_at-b.created_at).map(row => ({state: row.state, code: row.error_code}))).toEqual([
+       { state: 'ready', code: null }, { state: 'choosing', code: null }, { state: 'discarded', code: 'provider_quota' }, { state: 'failed', code: 'provider_timeout' },
+     ]);
+     await expect.poll(content).toBe(before);
+-  } finally { await runtime.close(); await fake.close(); }
++    // Preparing another candidate of an older run must not replace its earlier
++    // layout. Both byte-distinct originals survive closing, newer runs and export.
++    const legacy = await request.post(runtime.url + '/_authoring/legacy-layout', { headers: { 'X-Test-Token': runtime.token }, data: { id: startedJob.id } });
++    expect(legacy.status()).toBe(200);
++    const legacyRead = await api.get(runtime.url + firstLayoutUrl);
++    expect(legacyRead.status()).toBe(200);
++    expect(await legacyRead.text()).toBe(layerDoc);
++    const nextLayerDoc = layerDoc.replace('Good Things\\nAre Ripening', 'A second orchard layout');
++    expect(nextLayerDoc).not.toBe(layerDoc);
++    fake.setLayoutDocument(nextLayerDoc);
++    const chosen = await api.post(`${runtime.url}/api/design-jobs/${startedJob.id}/choose`, { headers: { Origin: runtime.url }, data: { slot: 'a' } });
++    expect(chosen.status()).toBe(200);
++    await expect.poll(async () => (await observe()).jobs.find(row => row.id === startedJob.id)?.state, { timeout: 45000 }).toBe('ready');
++    const latestHash = createHash('sha256').update(nextLayerDoc).digest('hex');
++    const nextLayoutUrl = `/api/design-jobs/${startedJob.id}/layerdoc/${latestHash}`;
++    const previous = await api.get(runtime.url + firstLayoutUrl);
++    expect(previous.status()).toBe(200);
++    expect(await previous.text()).toBe(layerDoc);
++    // Record a real failed candidate outcome beside successful paid originals.
++    fake.setDraw('c', 0);
++    const lastRun = await api.post(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`, { headers: { Origin: runtime.url }, data: { brief: 'synthetic-mango-342', candidates: 4 } });
++    expect(lastRun.status()).toBe(201);
++    const lastId = (await lastRun.json()).job.id;
++    await expect.poll(async () => (await observe()).jobs.find(row => row.id === lastId)?.state, { timeout: 45000 }).toBe('choosing');
++    expect((await observe()).candidates.filter(row => row.job_id === lastId).map(({slot,state,sha256,bytes}) => ({slot,state,sha256,bytes}))).toEqual([
++      ...['a','b','c'].map(slot => ({ slot, state: 'succeeded', sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })),
++      { slot: 'd', state: 'failed', sha256: null, bytes: null },
++    ]);
++    for (const operation of ['design-draft','design-layout']) {
++      expect((await costs()).filter(row => row.operation === operation)).toHaveLength(fake.purchases.filter(item => item.startsWith(operation === 'design-draft' ? 'draft:' : 'layout:')).length);
++    }
++    for (const { id, state } of (await observe()).jobs) {
++      const closed = await api.post(`${runtime.url}/api/design-jobs/${id}/close`, { headers: { Origin: runtime.url }, data: { outcome: 'discarded' } });
++      // The quota run was already explicitly dismissed above.
++      expect(closed.status()).toBe(state === 'discarded' ? 409 : 200);
++    }
++    const ended = (await observe()).jobs;
++    expect(ended).toHaveLength(5);
++    expect(ended.every(row => row.state === 'discarded')).toBe(true);
++    await reloadPage(page);
++    await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
++    expect((await observe()).jobs).toEqual(ended);
++    const originals = (await observe()).candidates.filter(row => row.state === 'succeeded').map(row => ({
++      path: `/api/design-jobs/${row.job_id}/candidates/${row.slot}/image`, key: `design-jobs/${row.job_id}/candidate-${row.slot}.png`, bytes: imageFor(row.slot),
++    }));
++    const purchasesBeforeExport = [...fake.purchases];
++    await exportRetainedDesigns(api, runtime, [...originals,
++      { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout.layerdoc.json`, bytes: Buffer.from(layerDoc) },
++      { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
++    ]);
++    expect(fake.purchases).toEqual(purchasesBeforeExport);
++  } finally {
++    writeFileSync(testInfo.outputPath('design-generation-provider-requests.json'), JSON.stringify(fake.requests, null, 2));
++    await runtime.close(); await fake.close();
++  }
+ };
+diff --git a/tests/campaign-authoring/design-retention.ts b/tests/campaign-authoring/design-retention.ts
+new file mode 100644
+index 0000000..0f4d7bd
+--- /dev/null
++++ b/tests/campaign-authoring/design-retention.ts
+@@ -0,0 +1,78 @@
++import { expect, type APIRequestContext } from '@playwright/test';
++import { createHash } from 'node:crypto';
++import { readArchive } from '../../src/vendor/base/portability/index.mjs';
++import { portabilityRuntime } from '../portability/runtime.mjs';
++import { stageArchive, transferRequest } from '../portability/flows';
++
++type Original = { path: string; key: string; bytes: Uint8Array };
++const digest = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
++
++/** Read the fixture's real D1 tables without launching a new Wrangler process
++ * for every observation. This door changes no domain or provider behavior. */
++export async function readDesignRecords(api: APIRequestContext, runtime: any) {
++  const response = await api.get(runtime.url + '/_authoring/design-records', { headers: { 'X-Test-Token': runtime.token } });
++  expect(response.status()).toBe(200);
++  return await response.json() as { jobs: any[]; candidates: any[]; costs: any[] };
++}
++
++/** Open original evidence through the authenticated door, then export and restore
++ * the real native run rows and R2 bytes. No provider answer is reconstructed. */
++export async function exportRetainedDesigns(api: APIRequestContext, runtime: any, originals: Original[]) {
++  const opening = await readDesignRecords(api, runtime);
++  const snapshots = { design_jobs: opening.jobs, design_candidates: opening.candidates };
++  for (const original of originals) {
++    const response = await api.get(runtime.url + original.path);
++    expect(response.status()).toBe(200);
++    expect(await response.body()).toEqual(Buffer.from(original.bytes));
++  }
++  const created = await api.post(runtime.url + '/api/portability/exports', { headers: { Origin: runtime.url }, data: {} });
++  expect(created.status(), await created.text()).toBe(201);
++  const { id } = await created.json();
++  let complete = false;
++  for (let pass = 0; pass < 100 && !complete; pass++) {
++    const next = await api.post(`${runtime.url}/api/portability/exports/${id}/advance`, { headers: { Origin: runtime.url }, data: { maxParts: 16 } });
++    expect(next.status(), await next.text()).toBe(200);
++    complete = (await next.json()).phase === 'complete';
++  }
++  expect(complete).toBe(true);
++  const download = await api.get(`${runtime.url}/api/portability/exports/${id}/download`);
++  expect(download.status()).toBe(200);
++  const records: any[] = [];
++  for await (const record of readArchive(new Response(await download.body()).body!)) records.push(record);
++  const items = records.filter(record => record.kind === 'part').flatMap(part => part.items);
++  for (const [table, rows] of Object.entries(snapshots)) {
++    expect(items.filter(item => item.kind === 'row' && item.table === table).map(item => item.row)).toEqual(rows);
++    const persisted = await readDesignRecords(api, runtime);
++    expect(table === 'design_jobs' ? persisted.jobs : persisted.candidates).toEqual(rows);
++  }
++  for (const original of originals) {
++    const descriptor = records[0].objects.find(object => object.bucket === 'ASSETS_BUCKET' && object.key === original.key);
++    expect(descriptor).toMatchObject({ size: original.bytes.byteLength, sha256: digest(original.bytes) });
++    const chunks = items.filter(item => item.kind === 'object' && item.key === original.key).sort((a, b) => a.offset - b.offset);
++    expect(Buffer.concat(chunks.map(chunk => Buffer.from(chunk.data, 'base64')))).toEqual(Buffer.from(original.bytes));
++  }
++  // The restore target holds matching private authority, but its own owner session.
++  const restored = await portabilityRuntime({ restore: true, key: runtime.token });
++  try {
++    await restored.db.prepare('CREATE TABLE task_authoring_jobs (kind TEXT,payload TEXT)').run();
++    const importId = await stageArchive(restored, records);
++    const closing = records.at(-1);
++    const imported = await transferRequest(restored, `imports/${importId}/finalize`, { contentHash: closing.contentHash, archiveHash: closing.archiveHash });
++    expect(imported.status, await imported.clone().text()).toBe(200);
++    await restored.resume();
++    for (const [table, rows] of Object.entries(snapshots)) {
++      expect((await restored.db.prepare(`SELECT * FROM ${table} ORDER BY ${table === 'design_jobs' ? 'id' : 'job_id, slot'}`).all()).results).toEqual(rows);
++    }
++    for (const original of originals) {
++      const response = await restored.call(original.path, { cookie: restored.cookie });
++      expect(response.status).toBe(200);
++      expect(new Uint8Array(await response.arrayBuffer())).toEqual(original.bytes);
++      expect((await restored.call(original.path)).status).toBe(401);
++    }
++    const signout = await restored.call('/api/auth/signout', { method: 'POST', cookie: restored.cookie, body: {} });
++    expect(signout.status).toBe(204);
++    for (const original of originals) {
++      expect((await restored.call(original.path, { cookie: restored.cookie })).status).toBe(401);
++    }
++  } finally { await restored.close(); }
++}
+diff --git a/tests/campaign-authoring/worker.ts b/tests/campaign-authoring/worker.ts
+index 8e31753..2929e36 100644
+--- a/tests/campaign-authoring/worker.ts
++++ b/tests/campaign-authoring/worker.ts
+@@ -82,12 +82,30 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
+       return Response.json({ok:true});
+     }
+     if(path==='/_authoring/stale') {await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='product'").bind(Date.now()-25*3600000).run();return Response.json({ok:true});}
++    // Arrange the prior release's single-object layout storage. All later
++    // choices, downloads and exports still use the ordinary product routes.
++    if(path==='/_authoring/legacy-layout'&&request.method==='POST') {
++      const {id}=await request.json() as {id:string};
++      const job=await bindings.DB.prepare("SELECT id,layerdoc_sha256 AS sha FROM design_jobs WHERE id=? AND state='ready'").bind(id).first<{id:string;sha:string}>();
++      if(!job?.sha)return new Response('Missing ready fixture',{status:409});
++      const key=`design-jobs/${job.id}/layout-${job.sha}.layerdoc.json`;
++      const original=await platform.blobs.get(key);
++      if(!original)return new Response('Missing original fixture',{status:409});
++      await platform.blobs.put(`design-jobs/${job.id}/layout.layerdoc.json`,await original.arrayBuffer(),{httpMetadata:{contentType:'application/json'}});
++      await platform.blobs.delete(key);
++      return Response.json({ok:true});
++    }
+     if(path==='/_authoring/proposal') {
+       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
+       await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?, 'proposed', 'Recorded suggestion', 'A recorded suggestion', 'Test source evidence', 'Subscribed email contacts', ?, ?, ?, '[]', ?, ?)").bind(id,now,now+86400000,rules,now,now).run();
+       await recordProposalClaims(bindings.DB,id,now);
+       return Response.json({id});
+     }
++    if(path==='/_authoring/design-records') return Response.json({
++      jobs:(await bindings.DB.prepare('SELECT * FROM design_jobs ORDER BY id').all()).results,
++      candidates:(await bindings.DB.prepare('SELECT * FROM design_candidates ORDER BY job_id,slot').all()).results,
++      costs:(await bindings.DB.prepare('SELECT campaign_id AS campaignId,provider,operation,model_or_channel AS tier,billable_units AS units FROM external_cost_facts ORDER BY operation,id').all()).results,
++    });
+     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
+   }
+   const app=createApp(bindings,platform,undefined,true);
+diff --git a/tests/go-live/edge.ts b/tests/go-live/edge.ts
+index cd7fc95..bd04a7f 100644
+--- a/tests/go-live/edge.ts
++++ b/tests/go-live/edge.ts
+@@ -12,7 +12,6 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
+ // a DMARC record). Each mail send is recorded exactly as Mango serialized it.
+ export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any>; at:number };
+ type Answer = { type: number; data: string };
+-type StripePrice = {id: string; type: string; active: boolean; unit_amount: number; currency: string; recurring: {interval: string; interval_count: number}};
+ 
+ const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
+ const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
+@@ -26,9 +25,7 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+   const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
+   const domainSetup = {exists: true, creates: 0, dnsPass: true, trackingCname: true, trackingHttps: true};
+   // Stripe test-mode shapes for the paid tier: prices, Checkout sessions, subscriptions and customers.
+-  const stripe = {outage: false, requests: [] as {method: string; path: string}[],
+-    prices: {price_synthetic: {id: 'price_synthetic', type: 'recurring', active: true, unit_amount: 1000, currency: 'usd', recurring: {interval: 'month', interval_count: 1}}} as Record<string, StripePrice>,
+-    sessions: [] as {authorization: string; form: URLSearchParams; idempotencyKey: string}[],
++  const stripe = {outage: false, sessions: [] as {authorization: string; form: URLSearchParams; idempotencyKey: string}[],
+     subscriptions: {} as Record<string, {status: string; customer: string; metadata: Record<string, string>}>, customers: {} as Record<string, {email: string; name: string}>};
+   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
+     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
+@@ -89,10 +86,8 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
+     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
+     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+-    if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
+     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});
+-    const priceId = original.pathname.startsWith('/v1/prices/') ? original.pathname.slice('/v1/prices/'.length) : '';
+-    if (original.hostname === 'api.stripe.com' && stripe.prices[priceId] && request.method === 'GET') return json(response, 200, stripe.prices[priceId]);
++    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/prices/price_synthetic' && request.method === 'GET') return json(response, 200, {id: 'price_synthetic', type: 'recurring', active: true, unit_amount: 1000, currency:'usd', recurring:{interval:'month',interval_count:1}});
+     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/checkout/sessions' && request.method === 'POST') {
+       const idempotencyKey=String(request.headers['idempotency-key']);
+       let index=stripe.sessions.findIndex(session=>session.idempotencyKey===idempotencyKey);
+diff --git a/tests/go-live/paid-signup-journey.ts b/tests/go-live/paid-signup-journey.ts
+index fa07f50..f706544 100644
+--- a/tests/go-live/paid-signup-journey.ts
++++ b/tests/go-live/paid-signup-journey.ts
+@@ -4,27 +4,12 @@ import {type Installation,json,confirmedContact,draftCampaign,approve,dispatch}
+ import {signupCounterWindow} from './kiosk-harness';
+ import type {providerEdge} from './edge';
+ import {openPage} from '../support/navigation';
+-import type {PaidTier} from '../../src/core/features/store/stripe/paid-tier';
+ 
+ /** [PUB-005][FORM-008][FORM-010] Hosted page and real Worker doors; only Stripe and mail are network fakes. */
+-export async function paidSignupJourney({site,page,info,owner,edge,post,replacement}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>;replacement:PaidTier}) {
++export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>}) {
+   const payer='synthetic-mango-51@example.test',unsubscribed='synthetic-mango-52@example.test',suppressed='synthetic-mango-53@example.test';
+   const url=site.runtime.url+'/subscribe?paid=1';
+-  const oldDescription=await json(await site.call('/paid/info'),200);
+-  expect(await json(await site.call('/api/settings/stripe/paid-tier',{method:'PUT',cookie:owner,body:replacement}),200)).toEqual({paidTier:replacement});
+-  const beforeStale={requests:edge.stripe.requests.length,sessions:edge.stripe.sessions.length,evidence:await site.count('consent_evidence'),sends:edge.sends.length};
+-  expect(await json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.151'},body:{email:payer,consent:true,disclosure:oldDescription.disclosure,requestId:crypto.randomUUID()}}),400)).toMatchObject({error:'signup_refused'});
+-  expect(edge.stripe.requests).toHaveLength(beforeStale.requests);
+-  expect(edge.stripe.sessions).toHaveLength(beforeStale.sessions);
+-  expect(await site.count('consent_evidence')).toBe(beforeStale.evidence);
+-  expect(edge.sends).toHaveLength(beforeStale.sends);
+-  const oldSelectors=new URLSearchParams({priceId:'price_synthetic',tier:oldDescription.paidTopic}).toString();
+-  const freshInfo=await site.call('/paid/info?'+oldSelectors);
+-  expect(freshInfo.headers.get('cache-control')).toBe('no-store');
+-  const description=await json(freshInfo,200);
+-  expect(description).toMatchObject({paidTopic:replacement.paidTopic,price:'$27.00 every 3 weeks'});
+-  expect(description.disclosure).not.toBe(oldDescription.disclosure);
+-  expect(await json(await site.call('/paid/info'),200)).toEqual(description);
++  const description=await json(await site.call('/paid/info'),200);
+   const confirmations=(email:string)=>edge.sends.filter(send=>send.to===email&&send.body.subject==='Confirm your Mango Garden subscription');
+   const contact=async(email:string)=>(await site.rows(`SELECT id,email_status FROM contacts WHERE email='${email}'`))[0];
+   let payerIndex=51;
+@@ -33,7 +18,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+     edge.stripe.customers[customer]={email,name:'Garden paid reader'};
+     edge.stripe.subscriptions[subscription]={customer,status:'active',metadata:{mango_paid_tier:'1'}};
+     const event={id:`evt_syntheticMango${n}`,type:'checkout.session.completed',created:Math.floor((await site.control('/_golive/clock')).now/1000),livemode:false,
+-      data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:2916,total_details:{amount_tax:216}}}};
++      data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:1080,total_details:{amount_tax:80}}}};
+     for(let i=0;i<2;i++)expect((await post(event)).status).toBe(204);
+   }
+   await page.context().setExtraHTTPHeaders({'CF-Connecting-IP':'198.51.100.151'});
+@@ -46,11 +31,10 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+     }else await route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="en"><title>Synthetic checkout</title><h1>Stripe Checkout test edge</h1><form method="post"><button>Complete checkout</button></form></html>'});
+   });
+   for(const width of [1440]) {
+-    await page.setViewportSize({width,height:1000});await openPage(page,url+'&'+oldSelectors);
+-    await expect(page.getByRole('heading',{name:replacement.paidTopic,exact:true})).toBeVisible();
++    await page.setViewportSize({width,height:1000});await openPage(page,url);
++    await expect(page.getByRole('heading',{name:'Members',exact:true})).toBeVisible();
+     await expect(page.locator('main')).toContainText(description.price);
+     await expect(page.locator('main')).toContainText('Stripe Tax');
+-    await expect(page.getByRole('checkbox')).toHaveAccessibleName(description.consentText+' (required)');
+     await expect(page.getByRole('checkbox')).not.toBeChecked();
+     expect(await page.locator('input').evaluateAll(inputs=>inputs.some(input=>/card|payment/i.test((input as HTMLInputElement).name)))).toBe(false);
+     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
+@@ -58,14 +42,10 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+     await page.screenshot({path:info.outputPath(`paid-signup-${width}.png`),fullPage:true});
+   }
+-  await page.setViewportSize({width:390,height:1000});
+-  await page.screenshot({path:info.outputPath('paid-signup-390.png'),fullPage:true});
+-  await page.setViewportSize({width:1440,height:1000});
+   await page.getByLabel('Email address',{exact:true}).fill(payer);
+   await page.getByRole('checkbox').check();
+   await page.getByRole('button',{name:'Continue to Stripe Checkout',exact:true}).click();
+   await expect(page.getByRole('heading',{name:'Stripe Checkout test edge',exact:true})).toBeVisible();
+-  expect(Object.fromEntries(edge.stripe.sessions.at(-1)!.form)).toMatchObject({'line_items[0][price]':replacement.priceId,'automatic_tax[enabled]':'true','customer_email':payer});
+   await page.getByRole('button',{name:'Complete checkout',exact:true}).click();
+   await expect(page.getByRole('heading',{name:'What happens next',exact:true})).toBeVisible();
+   for(const width of [1440]) {
+@@ -76,9 +56,6 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+     await page.screenshot({path:info.outputPath(`paid-signup-return-${width}.png`),fullPage:true});
+   }
+-  await page.setViewportSize({width:390,height:1000});
+-  await page.screenshot({path:info.outputPath('paid-signup-return-390.png'),fullPage:true});
+-  await page.setViewportSize({width:1440,height:1000});
+   expect(confirmations(payer)).toHaveLength(1);
+   expect((await contact(payer)).email_status).toBe('pending');
+   expect((await site.rows(`SELECT capture_method,confirmed_at FROM consent_evidence WHERE destination='${payer}'`))).toEqual([{capture_method:'paid-checkout',confirmed_at:null}]);
+@@ -87,51 +64,11 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+   expect(evidence.capture_source).toBe(site.origin+'/subscribe?paid=1');
+   expect(evidence.consent_version.length).toBeGreaterThan(0);
+   expect(evidence.consent_text).toBe(description.consentText);
+-  const paidControl=['synthetic-mango-54','example.test'].join('@'),freeControl=['free-reader','example.test'].join('@');
+-  await confirmedContact(site,edge,owner,paidControl,'Confirmed garden supporter');
+-  await start(paidControl);await complete(paidControl);
+-  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie:owner,body:{files:[{name:'synthetic-mango-53.csv',preset:'csv-cleaned',csv:`Email Address,First Name\n${suppressed},Suppressed reader`}]}}),200);
+-  let {job}=await json(await site.call('/api/audience/imports',{method:'POST',cookie:owner,body:{fingerprint:preview.fingerprint}}),200);
+-  while(['queued','applying'].includes(job.state))({job}=await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie:owner,body:{}}),200));
+-  await site.control('/_golive/clock',{advanceMs:2001});
+-  await start(suppressed);await complete(suppressed);
+-  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
+-  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
+-  for(const email of [payer,suppressed,paidControl]) {
+-    const reader=await contact(email);
+-    expect(await site.rows(`SELECT state FROM paid_subscriptions WHERE contact_id='${reader.id}'`)).toEqual([{state:'active'}]);
+-  }
+-  // Real review, approval and queue handoffs with eligible controls prove that
+-  // neither pending consent nor suppression is bypassed by either issue type.
+-  for(const kind of ['paid','free'] as const) {
+-    await site.control('/_golive/clock',{advanceMs:86400001});
+-    await site.control('/_golive/sender-evidence');
+-    const sendAt=new Date((await site.control('/_golive/clock')).now+3600000);
+-    const name=`Paid signup ${kind} consent boundary`;
+-    const issue=await draftCampaign(site,owner,name,[payer,suppressed,paidControl,freeControl],sendAt);
+-    if(kind==='paid')await json(await site.call(`/api/campaign-revisions/${issue.revisionId}`,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[
+-      {sourceType:'contact',field:'email',comparator:'in',value:[payer,suppressed,paidControl,freeControl]},
+-      {sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true},
+-    ]})}}),200);
+-    const expected=kind==='paid'?[paidControl]:[paidControl,freeControl].sort();
+-    expect(await json(await site.call(`/api/campaigns/${issue.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:issue.revisionId}}),200))
+-      .toMatchObject({candidateCount:kind==='paid'?1:4,eligibleCount:expected.length});
+-    await approve(site,owner,issue);await site.control('/_golive/clock',{advanceMs:3600001});
+-    const recipients=await dispatch(site,issue.campaignId,sendAt);
+-    expect(recipients.map(row=>row.email).sort()).toEqual(expected);
+-    expect(recipients.filter(row=>row.transport_disposition==='accepted').map(row=>row.email).sort()).toEqual(expected);
+-    expect(edge.sends.filter(send=>String(send.body.subject).startsWith(name)).map(send=>send.to).sort()).toEqual(expected);
+-    expect(await site.rows(`SELECT f.id FROM delivery_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id WHERE r.campaign_id='${issue.campaignId}' AND r.destination IN ('${payer}','${suppressed}')`)).toEqual([]);
+-  }
+-  expect((await contact(payer)).email_status).toBe('pending');expect(confirmations(payer)).toHaveLength(1);
+-  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
+-  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
+   const before=(await json(await site.call('/api/settings/stripe',{cookie:owner}),200)).paidReaders;
+   expect(before.consentMissing).toBeGreaterThan(0);
+   const due=new Date((await site.control('/_golive/clock')).now+3600000);
+   const campaign=await draftCampaign(site,owner,'Paid signup first issue',[payer,'free-reader@example.test'],due);
+-  const rule={version:1,operator:'all',predicates:[{sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true},
+-    {sourceType:'contact',field:'email',comparator:'in',value:[payer,freeControl]}]};
++  const rule={version:1,operator:'all',predicates:[{sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true}]};
+   await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify(rule)}}),200);
+   expect(await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}}),200)).toMatchObject({candidateCount:0,eligibleCount:0});
+   const confirmation=confirmations(payer)[0];
+@@ -142,9 +79,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+   expect((await dispatch(site,campaign.campaignId,due)).filter(row=>row.transport_disposition==='accepted').map(row=>row.email)).toEqual([payer]);
+   expect(edge.sends.filter(send=>String(send.body.subject).startsWith('Paid signup first issue')).map(send=>send.to)).toEqual([payer]);
+   // A subscribed and confirmed reader needs no second confirmation.
+-  async function start(email:string,requestId=crypto.randomUUID()) {
+-    return json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.152'},body:{email,consent:true,disclosure:description.disclosure,requestId}}),200);
+-  }
++  const start=async(email:string,requestId=crypto.randomUUID())=>json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.152'},body:{email,consent:true,disclosure:description.disclosure,requestId}}),200);
+   await site.control('/_golive/clock',{advanceMs:2001});
+   const acceptedCount=async()=>(await site.rows("SELECT COALESCE(SUM(count),0) AS n FROM oa_limits WHERE key='signup-global'"))[0].n;
+   const beforeSubscribed=await acceptedCount();
+@@ -164,6 +99,13 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
+   expect((await fetch(site.local(returningLink))).status).toBe(200);expect((await contact(unsubscribed)).email_status).toBe('unsubscribed');
+   expect((await fetch(site.local(returningLink),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
+   expect((await contact(unsubscribed)).email_status).toBe('subscribed');
++  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie:owner,body:{files:[{name:'synthetic-mango-53.csv',preset:'csv-cleaned',csv:`Email Address,First Name\n${suppressed},Suppressed reader`}]}}),200);
++  let {job}=await json(await site.call('/api/audience/imports',{method:'POST',cookie:owner,body:{fingerprint:preview.fingerprint}}),200);
++  while(['queued','applying'].includes(job.state))({job}=await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie:owner,body:{}}),200));
++  await site.control('/_golive/clock',{advanceMs:2001});
++  await start(suppressed);await complete(suppressed);
++  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
++  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
+   // ct 23 October: erasure also removes the paid-signup address and evidence.
+   const erasedPayer = await contact(payer);
+   const freshOwner = await site.open();
+diff --git a/tests/go-live/paid-tier-journey.ts b/tests/go-live/paid-tier-journey.ts
+index 54ea904..7910288 100644
+--- a/tests/go-live/paid-tier-journey.ts
++++ b/tests/go-live/paid-tier-journey.ts
+@@ -10,19 +10,11 @@ import {openPage} from '../support/navigation';
+ export async function paidTierJourney(input: {site: Installation; page: Page; info: TestInfo; owner: string; admin: string; author: string; restrictedKey: string;
+   edge: Awaited<ReturnType<typeof providerEdge>>; post: (event: unknown) => Promise<Response>}) {
+   const {site, page, info, owner, edge, post} = input;
+-  const checkoutEmail = ['paid-reader', 'example.test'].join('@');
+   const tier = {paidTopic: 'Members', freeTopic: 'newsletter', priceId: 'price_synthetic', automaticTax: true};
+-  const unsaved = {...tier, paidTopic: 'Garden supporters', priceId: 'price_syntheticMango82'};
+-  edge.stripe.prices[unsaved.priceId] = {id: unsaved.priceId, type: 'recurring', active: true, unit_amount: 2700, currency: 'usd', recurring: {interval: 'week', interval_count: 3}};
+-  const selectors = new URLSearchParams({priceId: unsaved.priceId, tier: unsaved.paidTopic, paidTopic: unsaved.paidTopic}).toString();
+-  const beforeAbsent = edge.stripe.requests.length;
+   for (const cookie of [input.admin, input.author]) expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie, body: tier})).status).toBe(403);
+   expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie: owner, body: {...tier, automaticTax: false}})).status).toBe(400);
+-  expect((await json(await site.call('/api/settings/stripe', {cookie: owner}), 200)).paidTier).toBeNull();
+-  expect(await json(await site.call('/paid/info?' + selectors), 404)).toEqual({error: 'paid_tier_unavailable'});
+-  expect((await site.call('/paid/checkout', {method: 'POST', body: {email: checkoutEmail}})).status).toBe(409);
++  expect((await site.call('/paid/checkout', {method: 'POST', body: {email: 'paid-reader@example.test'}})).status).toBe(409);
+   expect((await site.call('/subscribe?paid=1')).status).toBe(404);
+-  expect(edge.stripe.requests).toHaveLength(beforeAbsent);
+   await page.setViewportSize({width: 1440, height: 1000});
+   await openPage(page, site.runtime.url + '/app/settings');
+   await page.getByLabel('Paid topic', {exact: true}).fill(tier.paidTopic);
+@@ -32,33 +24,9 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
+   await expect(page.getByRole('status').filter({hasText: 'Paid tier saved.'})).toBeVisible();
+   expect((await json(await site.call('/api/settings/stripe', {cookie: owner}), 200)).paidTier).toEqual(tier);
+ 
+-  const saved = await site.rows('SELECT * FROM paid_tier');
+-  const beforeRefusedSave = edge.stripe.requests.length;
+-  for (const cookie of [input.admin, input.author, undefined]) {
+-    await json(await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie, body: unsaved}), cookie ? 403 : 401);
+-    expect(await site.rows('SELECT * FROM paid_tier')).toEqual(saved);
+-  }
+-  expect(edge.stripe.requests).toHaveLength(beforeRefusedSave);
+-  const description = await json(await site.call('/paid/info?' + selectors), 200);
+-  expect(description).toMatchObject({paidTopic: tier.paidTopic, price: '$10.00 every month'});
+-  expect(await json(await site.call('/paid/info'), 200)).toEqual(description);
+-  const beforeOverrides = {requests: edge.stripe.requests.length, sessions: edge.stripe.sessions.length,
+-    evidence: await site.count('consent_evidence'), sends: edge.sends.length};
+-  const email = ['synthetic-mango-81', 'example.test'].join('@');
+-  for (const override of [{priceId: unsaved.priceId}, {tier: unsaved}, {paidTier: unsaved}, {price: 1},
+-    {paidTopic: unsaved.paidTopic}, {line_items: [{price: unsaved.priceId, quantity: 1}]}, {automaticTax: false}]) {
+-    expect(await json(await site.call('/paid/checkout', {method: 'POST', headers: {'CF-Connecting-IP': '198.51.100.154'}, body: {email, consent: true,
+-      disclosure: description.disclosure, requestId: crypto.randomUUID(), ...override}}), 400)).toEqual({error: 'invalid_checkout'});
+-    expect(edge.stripe.requests).toHaveLength(beforeOverrides.requests);
+-    expect(edge.stripe.sessions).toHaveLength(beforeOverrides.sessions);
+-    expect(await site.count('consent_evidence')).toBe(beforeOverrides.evidence);
+-    expect(edge.sends).toHaveLength(beforeOverrides.sends);
+-    expect(await site.rows('SELECT * FROM paid_tier')).toEqual(saved);
+-  }
+-
+   // The public checkout door creates a subscription-mode session with Stripe Tax
+   // through the stored restricted key; Mango never handles card data.
+-  const checkout = await json(await site.call('/paid/checkout?' + selectors, {method: 'POST', body: {email: checkoutEmail}}), 200);
++  const checkout = await json(await site.call('/paid/checkout', {method: 'POST', body: {email: 'paid-reader@example.test'}}), 200);
+   expect(checkout.url).toMatch(/^https:\/\/checkout\.stripe\.com\//);
+   const session = edge.stripe.sessions.at(-1)!;
+   expect(session.authorization).toBe(`Bearer ${input.restrictedKey}`);
+@@ -216,5 +184,5 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
+     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
+     await throttle.send('Emulation.setCPUThrottlingRate',{rate:1});await throttle.detach();
+   }
+-  await paidSignupJourney({site,page,info,owner,edge,post,replacement:unsaved});
++  await paidSignupJourney({site,page,info,owner,edge,post});
+ }
+diff --git a/tests/proposals-decision/forecast-provenance.spec.ts b/tests/proposals-decision/forecast-provenance.spec.ts
+index b74681b..fd323fb 100644
+--- a/tests/proposals-decision/forecast-provenance.spec.ts
++++ b/tests/proposals-decision/forecast-provenance.spec.ts
+@@ -29,7 +29,6 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
+     const revisions=(await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results;
+     const recipients=(await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results;
+     expect(recipients).toHaveLength(24);
+-    const forecasts=(await runtime.db.prepare('SELECT * FROM proposal_forecasts ORDER BY id').all()).results;
+     const benchmark='Synthetic Mango foreign store reports a 42 percent recovery rate and USD 900 expected revenue. This forecast uses that other-store benchmark.';
+     const attempts:Array<{field:string;alter:(output:GeneratedProposalWire)=>void}>=[
+       {field:'summary',alter:output=>{output.summary.text+=' '+benchmark;}},
+@@ -40,10 +39,6 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
+         Object.assign(output,{forecast:{status:'available',metric:'expected-revenue',valueMinor:90000,currency:'USD',
+           method:benchmark,campaignIds:['synthetic-mango-foreign-1'],sourceEventIds:['synthetic-mango-foreign-2'],sampleSize:100}});
+       }},
+-      {field:'provider benchmark with owned history identifiers',alter:output=>{
+-        // Owned identifiers do not authorize a provider to supply a benchmark.
+-        Object.assign(output,{forecast:{...expected,method:benchmark}});
+-      }},
+     ];
+     for(const attempt of attempts) {
+       runtime.controls.alter=output=>{
+@@ -81,7 +76,6 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
+         expect(control.status).toBe(200);
+         expect(control.body.forecast).toEqual(original.forecast);
+         expect(control.body.forecast).toMatchObject(expected);
+-        expect((await runtime.db.prepare('SELECT * FROM proposal_forecasts ORDER BY id').all()).results).toEqual(forecasts);
+         expect((await runtime.db.prepare('SELECT * FROM campaigns ORDER BY id').all()).results).toEqual(campaigns);
+         expect((await runtime.db.prepare('SELECT * FROM campaign_revisions ORDER BY id').all()).results).toEqual(revisions);
+         expect((await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results).toEqual(recipients);
+@@ -91,25 +85,6 @@ test('[PROP-008] foreign-store benchmarks fail without authority while own-histo
+       }
+       console.log(`PROBE PROP-008 acceptance-2 ${attempt.field}: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority`);
+     }
+-    runtime.controls.alter=undefined;
+-    const recovered=await generated(runtime);
+-    for(let read=0;read<2;read++) {
+-      const control=await runtime.call(`/api/proposals/${recovered.proposalId}`);
+-      expect(control.status).toBe(200);
+-      expect(control.body.forecast).toMatchObject(expected);
+-      expect(control.body.forecast.recipientStepIds).toEqual(original.forecast.recipientStepIds);
+-      expect(control.body.proposal).toMatchObject({state:'proposed',campaignId:recovered.campaignId});
+-      expect(control.body.composition.revision.state).toBe('draft');
+-      const desk=await runtime.call('/api/decision-desk');
+-      expect(desk.status).toBe(200);
+-      expect(desk.body.proposals.map((entry:any)=>entry.proposal.id).sort()).toEqual([own.proposalId,recovered.proposalId].sort());
+-      expect(desk.body.proposals.find((entry:any)=>entry.proposal.id===own.proposalId).forecast).toEqual(original.forecast);
+-      expect((await runtime.db.prepare('SELECT * FROM recipient_steps ORDER BY id').all()).results).toEqual(recipients);
+-      expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM campaign_approval_requests').first()).toEqual({count:0});
+-      expect(await runtime.db.prepare('SELECT COUNT(*) AS count FROM step_dispatches').first()).toEqual({count:0});
+-      expect(runtime.jobs).toEqual([]);
+-    }
+-    console.log('PROBE PROP-008 recovery control: valid native generation after all benchmark refusals -> HTTP 201, independently expected owned revenue forecast, draft only, original forecast unchanged, no recipient or dispatch authority');
+     console.log('PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch');
+   } finally {await runtime.close();}
+ });
+diff --git a/tests/support/fake-twelve-ui.ts b/tests/support/fake-twelve-ui.ts
+index 661d4b0..e8dd440 100644
+--- a/tests/support/fake-twelve-ui.ts
++++ b/tests/support/fake-twelve-ui.ts
+@@ -39,13 +39,13 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   };
+   const replies = new Map<string, unknown>();
+   const runs = new Map<string, { slots: { slot: string; status: string; settles?: number }[] }>();
+-  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed' }>();
++  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed'; document: string }>();
+   let layoutStatus = options.layoutStatus ?? 'succeeded';
++  let layoutDocument = options.layerDoc;
+   const failed = new Set<string>();
+   const refusals = new Map<string, Refusal>();
+   const inflations = new Map<string, number>();
+   const drawMs = { ...options.drawMs };
+-  const layerDocSha = createHash('sha256').update(options.layerDoc).digest('hex');
+   const now = () => Date.now();
+   const runView = (id: string) => {
+     const run = runs.get(id)!;
+@@ -55,7 +55,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   const layoutView = (id: string) => {
+     const layout = layouts.get(id)!;
+     const status = layout.settles <= now() ? layout.status : 'running';
+-    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: layerDocSha, size_bytes: Buffer.byteLength(options.layerDoc) } } : {}) };
++    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: createHash('sha256').update(layout.document).digest('hex'), size_bytes: Buffer.byteLength(layout.document) } } : {}) };
+   };
+   const server = http.createServer(async (request, response) => {
+     const chunks: Buffer[] = [];
+@@ -120,14 +120,14 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+       entry.fileSha256 = createHash('sha256').update(Buffer.from(await file.arrayBuffer())).digest('hex');
+       const id = `cnv-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
+       purchases.push(`layout:${key ?? ''}`);
+-      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus });
++      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus, document: layoutDocument });
+       noteIssued('layout', id);
+       if (key) replies.set(`POST ${path} ${key}`, () => layoutView(id));
+       return send(202, layoutView(id));
+     }
+     const layout = /^\/api\/v1\/convert\/([^/]+)$/.exec(path);
+     if (layout && layouts.has(layout[1])) {
+-      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(options.layerDoc), 'application/vnd.12ui.layerdoc+json;version=2');
++      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(layouts.get(layout[1])!.document), 'application/vnd.12ui.layerdoc+json;version=2');
+       return send(200, layoutView(layout[1]));
+     }
+     return send(404, { error: 'not_found' });
+@@ -137,5 +137,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
+   return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
+     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
+-    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
++    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; },
++    setLayoutDocument: (document: string) => { layoutDocument = document; },
++    close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+ }

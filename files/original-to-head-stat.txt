@@ -1,0 +1,8 @@
+ ACCEPTANCE.md                                      |  4 +-
+ CONTRACT.md                                        |  8 +-
+ scripts/verification/plan.mjs                      |  2 +-
+ sources.lock.json                                  | 14 ++--
+ src/core/features/design-generation/model.ts       |  5 +-
+ tests/campaign-authoring/design-generation.flow.ts | 19 +++--
+ .../proposals-decision/forecast-provenance.spec.ts | 90 ++++++++++++++++++++++
+ 7 files changed, 122 insertions(+), 20 deletions(-)

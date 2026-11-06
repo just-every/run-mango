@@ -1,0 +1,50 @@
+{
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "submitted": "Good Things Are Ripening\nHello {{first_name | fallback: \"{friend}\"}} and {{unsubscribe_url}}",
+  "retained": "Good Things Are Ripening\nHello and",
+  "outbound": {
+    "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello and",
+    "aspect": "portrait",
+    "mode": "inspiration",
+    "candidates": [
+      {
+        "slot": "a"
+      },
+      {
+        "slot": "b"
+      }
+    ]
+  },
+  "request_count": 53,
+  "post_count": 22,
+  "captured_create_json_count": 4,
+  "all_create_json_without_contact_audience_token_values": true,
+  "conversions": [
+    {
+      "fields": {
+        "output": "layerdoc",
+        "model": "fast"
+      },
+      "fileSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+    },
+    {
+      "fields": null,
+      "fileSha256": null
+    },
+    {
+      "fields": {
+        "output": "layerdoc",
+        "model": "fast"
+      },
+      "fileSha256": "01790123278698b5b66a9b96a695f7472e99ca02a4c54e0ffa5e9c4d0b44c75f"
+    },
+    {
+      "fields": {
+        "output": "layerdoc",
+        "model": "fast"
+      },
+      "fileSha256": "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+    }
+  ],
+  "note": "A refused conversion has no recorded fields because the existing fake refuses before multipart parsing. No empty real-payload inference."
+}

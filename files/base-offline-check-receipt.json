@@ -1,0 +1,17 @@
+{
+  "name": "base-offline-check",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "scripts/edition-authoring/cli.mjs",
+    "verify-base",
+    "--offline"
+  ],
+  "exit": 0,
+  "seconds": 0.142,
+  "started": "2026-11-06T02:05:34.966821+00:00",
+  "ended": "2026-11-06T02:05:35.107449+00:00",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "home_matches_account_home": true
+}

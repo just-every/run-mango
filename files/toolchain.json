@@ -1,0 +1,6 @@
+{
+  "node": "24.19.0",
+  "rer": "0.2.85",
+  "pnpm": "10.12.4",
+  "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)"
+}
