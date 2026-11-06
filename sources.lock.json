@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "8a47e0c2daf98dbd303e0889a0d9f418a11967a7673d5a277e8cc49f04e4eb14",
       "executable": false
     },
     "DEMO.md": {
@@ -8922,7 +8922,7 @@
       "executable": false
     },
     "tests/go-live/multistep.journeys.ts": {
-      "sha256": "158e0b9326eb3cb48b50ab724618d656c11b39aab21b8593d1f642ea73da3f17",
+      "sha256": "a5bad26d02a7a5f92afef5a5b6c3802695eb7d9eca80777505a12c11325df4ab",
       "executable": false
     },
     "tests/go-live/open-estimates-restore.ts": {
@@ -8954,7 +8954,7 @@
       "executable": false
     },
     "tests/go-live/pause.flow.ts": {
-      "sha256": "4655bcfdc2805fb0101fc9a0ef08b960081d3ea192d1b0a0deaa5bf02c16e109",
+      "sha256": "68d96a63b13d22b55636dea2bfc622c771378f4ba96930ea4213b0af78857e92",
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {

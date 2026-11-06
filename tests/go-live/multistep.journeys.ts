@@ -7,5 +7,7 @@ test("[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck curr
   if(page.isClosed()) page=await page.context().newPage();
   await section0({page} as any, info);
   if(page.isClosed()) page=await page.context().newPage();
-  await section1({page} as any, info);
+  await test.step('CAMP-001 pause and resume retain original actor and occurrence time',async()=>{
+    await section1({page} as any, info);
+  });
 });
