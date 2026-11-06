@@ -1,0 +1,23 @@
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f78/runtime/evidence/2b6543893adc/verify/main-zXcEwq
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-06T06:05:18.592Z"}
+main
+
+Running 1 test using 1 worker
+
+(node:3255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-006 acceptances-2-3 summary, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 summary, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 audience explanation, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 audience explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 timing explanation, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 acceptances-2-3 timing explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+PROBE PROP-006 valid control: native generation after all six citation refusals -> HTTP 201 with retained grounded proposal, owned-history forecast and draft only; existing work unchanged, no approval or dispatch
+  ✓  1 tests/proposals-decision/grounding-citations.spec.ts:17:1 › [PROP-006] forged citations and altered observations fail without composition or campaign authority, then valid generation recovers (37.6s)
+
+  1 passed (42.8s)
+VERIFY_STAGE {"name":"main","status":"PASS","startedAt":"2026-11-06T06:05:18.592Z","durationMs":44121,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":44146,"boundary":"coordinator"}

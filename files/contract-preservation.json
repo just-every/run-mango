@@ -1,0 +1,23 @@
+{
+  "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+  "base": "980b25d4b34d19493662d2662ba8f5123c194aef",
+  "status_counts": {
+    "before": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "after": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    }
+  },
+  "parent_table_rows": 490,
+  "candidate_table_rows": 490,
+  "dropped_parent_ids": [],
+  "acceptance_text_changed": false,
+  "production_source_changed": false,
+  "generated_views_committed": false,
+  "source_lock_fresh": true
+}

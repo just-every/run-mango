@@ -1,0 +1,491 @@
+{
+  "playwright_registrations_before": 87,
+  "playwright_registrations_after": 88,
+  "main_before": 48,
+  "main_after": 49,
+  "limit": 200,
+  "configurations": [
+    {
+      "configuration": ".",
+      "registrations": 49,
+      "tests": [
+        {
+          "file": "audience-controls/segments.spec.ts",
+          "line": 6,
+          "title": "[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, freeze recipients and merge identities without widening consent"
+        },
+        {
+          "file": "audience-import/erasure.spec.ts",
+          "line": 24,
+          "title": "CONT-013 public erasure resumes, keeps each restriction, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable"
+        },
+        {
+          "file": "audience-import/erasure.spec.ts",
+          "line": 99,
+          "title": "CONT-013 erasure removes an address inside URLs and storage keys and keeps longer addresses that contain it"
+        },
+        {
+          "file": "audience-import/erasure.spec.ts",
+          "line": 117,
+          "title": "CONT-013 a capture IP shared with another person never touches their separate import"
+        },
+        {
+          "file": "audience-import/privacy-portability.spec.ts",
+          "line": 23,
+          "title": "CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody"
+        },
+        {
+          "file": "audience-import/privacy-portability.spec.ts",
+          "line": 23,
+          "title": "CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody after a pre-upgrade mapping cursor"
+        },
+        {
+          "file": "audience-import/privacy-portability.spec.ts",
+          "line": 116,
+          "title": "CONT-004/010 legacy detached opt-outs and suppressions refuse a lossy CSV and still exclude later imports"
+        },
+        {
+          "file": "audience-import/signup-reservation-clock.spec.ts",
+          "line": 43,
+          "title": "security: ascending old streamed-body groups spend only the actual D1 reservation hour"
+        },
+        {
+          "file": "audience-import/signup-reservation-clock.spec.ts",
+          "line": 87,
+          "title": "security: delayed bodies share the actual D1 network hour despite older ingress clocks"
+        },
+        {
+          "file": "audience-import/signup-reservation-clock.spec.ts",
+          "line": 110,
+          "title": "security: application clock skew cannot move the durable admission clock or reopen its final slot"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 19,
+          "title": "security: confirmation scanner GET and HEAD write nothing; affirmative POST alone consumes token"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 30,
+          "title": "security: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 79,
+          "title": "security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 86,
+          "title": "security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 102,
+          "title": "security: sender and Turnstile preflight fail closed before contact storage; valid challenge is single use"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 122,
+          "title": "security: IPv4 mapped IPv6 shares the IPv4 budget"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 126,
+          "title": "security: production rejects one-sided Turnstile and publishes only the public widget key and action"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 144,
+          "title": "security: confirmation POST preserves expiry, optout and suppression guards"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 159,
+          "title": "security: explicit ledger reconsent remains logged and confirmable after optout, but suppression never dispatches"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 170,
+          "title": "[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot"
+        },
+        {
+          "file": "audience-import/signup-security.spec.ts",
+          "line": 200,
+          "title": "[CONT-027] repeated public requests share the durable UTC destination allowance across restart and reopen on a new database day"
+        },
+        {
+          "file": "audience-import/signup.spec.ts",
+          "line": 6,
+          "title": "[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[CAMP-012] an image past its per-minute allowance answers 429 without affecting other images"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[DOCS-001] every manifest page renders with one h1, section navigation, previous and next, and no cookie or foreign request"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[DOCS-001] lists the page sections under On this page and links the header to the app"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[DOCS-001] the docs home answers at /docs and /docs/; unknown, miscased, nested and index slugs are a 404 in the shared frame"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[DOCS-001] the docs fit the screen at desktop and phone widths and the phone shows a Contents disclosure"
+        },
+        {
+          "file": "contract.js",
+          "line": 7,
+          "title": "[DOCS-001] documentation is public while the operator app still requires a session"
+        },
+        {
+          "file": "campaign-authoring/browser.spec.ts",
+          "line": 6,
+          "title": "[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft"
+        },
+        {
+          "file": "campaign-authoring/canonical-save.spec.ts",
+          "line": 14,
+          "title": "[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree"
+        },
+        {
+          "file": "campaign-authoring/canonical-save.spec.ts",
+          "line": 76,
+          "title": "[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it"
+        },
+        {
+          "file": "campaign-authoring/design-generation.spec.ts",
+          "line": 4,
+          "title": "[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal"
+        },
+        {
+          "file": "campaign-authoring/design-import.spec.ts",
+          "line": 22,
+          "title": "[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px"
+        },
+        {
+          "file": "campaign-authoring/local-images.spec.ts",
+          "line": 11,
+          "title": "[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval"
+        },
+        {
+          "file": "portability/privacy.spec.ts",
+          "line": 13,
+          "title": "CONT-030/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor"
+        },
+        {
+          "file": "portability/privacy.spec.ts",
+          "line": 66,
+          "title": "CONT-030/DATA-001 invalid archive authority is refused before any durable admission mutation"
+        },
+        {
+          "file": "portability/privacy.spec.ts",
+          "line": 80,
+          "title": "CONT-030/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one"
+        },
+        {
+          "file": "portability/privacy.spec.ts",
+          "line": 125,
+          "title": "CONT-030/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows"
+        },
+        {
+          "file": "portability.spec.ts",
+          "line": 5,
+          "title": "[DATA-001][CONT-013] upgrade and restore populated records and assets, then enforce the current erasure fence"
+        },
+        {
+          "file": "production-entry.spec.ts",
+          "line": 6,
+          "title": "[BASE-OPS-001][OPER-001] production entry keeps local authority private and reports healthy, failed and recovering dependencies"
+        },
+        {
+          "file": "proposals-decision/content-editing.spec.ts",
+          "line": 4,
+          "title": "[PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority"
+        },
+        {
+          "file": "proposals-decision/decision-routes.spec.ts",
+          "line": 6,
+          "title": "[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes"
+        },
+        {
+          "file": "proposals-decision/forecast-provenance.spec.ts",
+          "line": 6,
+          "title": "[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads"
+        },
+        {
+          "file": "proposals-decision/grounding-citations.spec.ts",
+          "line": 17,
+          "title": "[PROP-006] forged citations and altered observations fail without composition or campaign authority, then valid generation recovers"
+        },
+        {
+          "file": "rendering.spec.ts",
+          "line": 6,
+          "title": "[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authenticates its actual generated operator transport"
+        },
+        {
+          "file": "shopify/connection.spec.ts",
+          "line": 4,
+          "title": "[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry"
+        }
+      ]
+    },
+    {
+      "configuration": "campaign-results",
+      "registrations": 2,
+      "tests": [
+        {
+          "file": "performance.journeys.ts",
+          "line": 5,
+          "title": "[REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export"
+        },
+        {
+          "file": "results.journeys.ts",
+          "line": 7,
+          "title": "[CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement"
+        }
+      ]
+    },
+    {
+      "configuration": "go-live",
+      "registrations": 22,
+      "tests": [
+        {
+          "file": "contact-links.journeys.ts",
+          "line": 11,
+          "title": "[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking"
+        },
+        {
+          "file": "content-checks.journeys.ts",
+          "line": 14,
+          "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out"
+        },
+        {
+          "file": "delivery-recovery.journeys.ts",
+          "line": 3,
+          "title": "[SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends"
+        },
+        {
+          "file": "delivery.journeys.ts",
+          "line": 7,
+          "title": "[SEND-003][SEND-004] shared provider pacing survives a native restart and the open screen follows durable receipts"
+        },
+        {
+          "file": "delivery.journeys.ts",
+          "line": 10,
+          "title": "[MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation"
+        },
+        {
+          "file": "delivery.journeys.ts",
+          "line": 13,
+          "title": "[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch"
+        },
+        {
+          "file": "go-live.journeys.ts",
+          "line": 6,
+          "title": "[SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore"
+        },
+        {
+          "file": "mailbox-provider.journeys.ts",
+          "line": 5,
+          "title": "[DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports"
+        },
+        {
+          "file": "managed-mail.journeys.ts",
+          "line": 4,
+          "title": "[SEND-001][SEND-008][OPER-001] managed access mail and owner marketing mail preserve handoff and reconciliation authority"
+        },
+        {
+          "file": "multistep.journeys.ts",
+          "line": 5,
+          "title": "[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume"
+        },
+        {
+          "file": "open-estimates.journeys.ts",
+          "line": 9,
+          "title": "[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased"
+        },
+        {
+          "file": "opt-out-reasons.journeys.ts",
+          "line": 11,
+          "title": "[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery"
+        },
+        {
+          "file": "personalisation.journeys.ts",
+          "line": 9,
+          "title": "[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation"
+        },
+        {
+          "file": "presend-checks.journeys.ts",
+          "line": 5,
+          "title": "[BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion"
+        },
+        {
+          "file": "resend-delivery.journeys.ts",
+          "line": 3,
+          "title": "[SEND-001][SEND-005][SEND-006][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery"
+        },
+        {
+          "file": "roles.journeys.ts",
+          "line": 12,
+          "title": "[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history"
+        },
+        {
+          "file": "scheduler.journeys.ts",
+          "line": 12,
+          "title": "[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth"
+        },
+        {
+          "file": "shared-kiosk.journeys.ts",
+          "line": 5,
+          "title": "[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation"
+        },
+        {
+          "file": "source-freshness.journeys.ts",
+          "line": 5,
+          "title": "[STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority"
+        },
+        {
+          "file": "sync-integrations.journeys.ts",
+          "line": 13,
+          "title": "[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression"
+        },
+        {
+          "file": "typed-tests.journeys.ts",
+          "line": 10,
+          "title": "[CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowance and recorded destinations"
+        },
+        {
+          "file": "woocommerce.journeys.ts",
+          "line": 11,
+          "title": "[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery"
+        }
+      ]
+    },
+    {
+      "configuration": "local-start",
+      "registrations": 7,
+      "tests": [
+        {
+          "file": "authority.journey.ts",
+          "line": 7,
+          "title": "[CONT-006] forced setup retains suppression and opt-out authority while invalidating prior native sessions"
+        },
+        {
+          "file": "command-data.journey.ts",
+          "line": 9,
+          "title": "[DATA-001] rer upgrades a retained backup, exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset"
+        },
+        {
+          "file": "editor.journey.ts",
+          "line": 8,
+          "title": "[MGMT-002] native owner editor mounts at 1440, refuses visitors and loses its grant on sign-out"
+        },
+        {
+          "file": "local.journey.ts",
+          "line": 11,
+          "title": "[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440"
+        },
+        {
+          "file": "local.journey.ts",
+          "line": 82,
+          "title": "[OPER-001] a production build with local credentials present emits no local variable file or secret"
+        },
+        {
+          "file": "retained-archive.journey.ts",
+          "line": 63,
+          "title": "[DATA-001] a backup from the listed version restores every archived row and original asset through rer import"
+        },
+        {
+          "file": "retained-archive.journey.ts",
+          "line": 74,
+          "title": "[DATA-001] a Platform-migrated installation restores the listed version's Platform backup without Wrangler"
+        }
+      ]
+    },
+    {
+      "configuration": "move-in",
+      "registrations": 2,
+      "tests": [
+        {
+          "file": "archive.journeys.ts",
+          "line": 5,
+          "title": "[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients"
+        },
+        {
+          "file": "held.journeys.ts",
+          "line": 6,
+          "title": "[CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives"
+        }
+      ]
+    },
+    {
+      "configuration": "newsletter-ui",
+      "registrations": 1,
+      "tests": [
+        {
+          "file": "representative-pages.journeys.ts",
+          "line": 62,
+          "title": "[BASE-ACCESS-002] [MOBILE-001] representative public and every operator page fit with accessible phone states"
+        }
+      ]
+    },
+    {
+      "configuration": "verification",
+      "registrations": 5,
+      "tests": [
+        {
+          "file": "authority.journey.ts",
+          "line": 7,
+          "title": "[CONT-006] forced setup retains suppression and opt-out authority while invalidating prior native sessions"
+        },
+        {
+          "file": "command-data.journey.ts",
+          "line": 9,
+          "title": "[DATA-001] rer upgrades a retained backup, exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset"
+        },
+        {
+          "file": "editor.journey.ts",
+          "line": 8,
+          "title": "[MGMT-002] native owner editor mounts at 1440, refuses visitors and loses its grant on sign-out"
+        },
+        {
+          "file": "retained-archive.journey.ts",
+          "line": 63,
+          "title": "[DATA-001] a backup from the listed version restores every archived row and original asset through rer import"
+        },
+        {
+          "file": "retained-archive.journey.ts",
+          "line": 74,
+          "title": "[DATA-001] a Platform-migrated installation restores the listed version's Platform backup without Wrangler"
+        }
+      ]
+    }
+  ]
+}

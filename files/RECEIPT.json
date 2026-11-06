@@ -1,0 +1,108 @@
+{
+  "tag": "sd-mango-c-f78",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f78",
+  "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+  "product_push": {
+    "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f78",
+    "exit": 0,
+    "attempts": 1,
+    "remote_head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba"
+  },
+  "checks": [
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_VERIFY_FILES=[proposals-decision/grounding-citations.spec.ts] node scripts/verification/run.mjs --stage main",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "receipt": "verify-local-receipt.json"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "first-party-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "views-check.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "generated_views_committed": false
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "lock-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check after restoring generated views",
+      "exit": 1,
+      "expected": true,
+      "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+      "log": "views-restored-check.log",
+      "reason": "Generated views intentionally excluded from cloud candidate; same ACCEPTANCE.md freshness-only failure as CI"
+    }
+  ],
+  "clause": {
+    "id": "PROP-006",
+    "before": "partial",
+    "after": "partial",
+    "selected_cases_proved": 6,
+    "status_counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    }
+  },
+  "candidate_verify": {
+    "run_id": 42172209579,
+    "event": "push",
+    "head_sha": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+    "status": "completed",
+    "conclusion": "failure",
+    "observed_at": "2026-11-06T06:10:21Z",
+    "generated_view_exception": true,
+    "only_root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "failed_job_id": 127742472880,
+    "dependent_failed_job_id": 127742539049,
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42172209579"
+  },
+  "publication_scan": {
+    "status": "NOT RUN",
+    "custody": "maintained Mac lander"
+  },
+  "pr": null,
+  "ui_changed": false,
+  "migrations_changed": false,
+  "provider_qualification_claimed": false,
+  "github_budget": {
+    "budgeted_invocations": 6,
+    "poll_interval_seconds": 301,
+    "failed_log_invocations": 2,
+    "reruns": 0,
+    "dispatches": 0
+  }
+}

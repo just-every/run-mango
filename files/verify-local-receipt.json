@@ -1,0 +1,36 @@
+{
+  "startedAt": "2026-11-06T06:05:18.575Z",
+  "finishedAt": "2026-11-06T06:06:02.717Z",
+  "durationMs": 44142,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "main",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "main",
+      "status": "PASS",
+      "startedAt": "2026-11-06T06:05:18.592Z",
+      "durationMs": 44121,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/proposals-decision/grounding-citations.spec.ts",
+            "attempts": 1,
+            "durationMs": 37590,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

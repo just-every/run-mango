@@ -1,0 +1,13 @@
+{
+  "head": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+  "added_email_shaped_strings": 0,
+  "conflict_markers": 0,
+  "coauthor_trailers": 0,
+  "files": [
+    "CONTRACT.md",
+    "scripts/verification/plan.mjs",
+    "sources.lock.json",
+    "tests/proposals-decision/grounding-citations.spec.ts"
+  ],
+  "publication_scan": "NOT RUN in cloud; maintained Mac lander owns full-history publication scanning"
+}

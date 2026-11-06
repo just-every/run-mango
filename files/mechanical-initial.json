@@ -1,0 +1,20 @@
+[
+  {
+    "name": "views-write",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "write"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "views-check",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "check"
+    ],
+    "exit": 0
+  }
+]
