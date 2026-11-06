@@ -1,0 +1,25 @@
+verify	Require the selected coverage and its proof	﻿2026-11-06T02:59:41.1613397Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1614414Z [36;1mset -euo pipefail[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1615075Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1616017Z [36;1mcase "$PUSH_PROOF:$NIGHTLY_PROOF" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1616848Z [36;1m  *failure*|*cancelled*) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1617648Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1618278Z [36;1mcase "$COVERAGE" in[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1619190Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1620390Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1622396Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1623906Z [36;1m  *) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1624506Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1940577Z shell: /usr/bin/bash -e {0}
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1942445Z env:
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1943144Z   PLAN: success
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1943840Z   BUILD: failure
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1944529Z   SHARDS: skipped
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1945129Z   LIGHT: skipped
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1945855Z   PUSH_PROOF: skipped
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1946512Z   NIGHTLY_PROOF: skipped
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1947256Z   COVERAGE: full
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1947869Z   HAS_SHARDS: true
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1948459Z   SKIP: false
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.1949144Z ##[endgroup]
+verify	Require the selected coverage and its proof	2026-11-06T02:59:41.2438239Z ##[error]Process completed with exit code 1.

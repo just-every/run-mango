@@ -1,0 +1,53 @@
+{
+  "approvalStatus": 409,
+  "blockers": [
+    {
+      "kind": "schedule.steps",
+      "status": "blocked",
+      "detail": "Each step requires a resolved UTC instant before its send-by deadline.",
+      "blocking": true
+    },
+    {
+      "kind": "message.links",
+      "status": "blocked",
+      "detail": "Blocked links: https://garden.example.test/spring (uses host garden.example.test, which is not on the allowed list); Blocked images: https://garden.example.test/beds.jpg (uses host garden.example.test, which is not on the allowed list)",
+      "blocking": true,
+      "blockedHosts": [
+        {
+          "host": "garden.example.test",
+          "links": [
+            "https://garden.example.test/spring",
+            "https://garden.example.test/beds.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message.personalisation",
+      "status": "blocked",
+      "detail": "Invalid personalisation or missing fallback: Unrecognised merge tag *|FOO|*, Unrecognised merge tag *|FOO|*",
+      "blocking": true
+    },
+    {
+      "kind": "message.links.resolved",
+      "status": "blocked",
+      "detail": "Blocked transmitted links: https://garden.example.test/spring (Link host garden.example.test is not allowed.); https://garden.example.test/beds.jpg (Link host garden.example.test is not allowed.)",
+      "blocking": true,
+      "blockedHosts": [
+        {
+          "host": "garden.example.test",
+          "links": [
+            "https://garden.example.test/spring",
+            "https://garden.example.test/beds.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "audience.eligible",
+      "status": "blocked",
+      "blocking": true,
+      "detail": "No eligible candidate can be scheduled."
+    }
+  ]
+}

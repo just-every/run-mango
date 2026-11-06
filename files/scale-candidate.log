@@ -1,0 +1,19 @@
+
+Running 1 test using 1 worker
+
+(node:17205) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+CSV_REVIEW rows=250000 requests=10 state=preparing records=50000
+CSV_REVIEW rows=250000 requests=20 state=preparing records=100000
+CSV_REVIEW rows=250000 requests=30 state=preparing records=150000
+CSV_REVIEW rows=250000 requests=40 state=preparing records=200000
+CSV_REVIEW rows=250000 requests=50 state=verifying records=250000
+CSV_REVIEW rows=250000 requests=60 state=verifying records=250000
+CSV_REVIEW rows=250000 requests=70 state=verifying records=250000
+CSV_REVIEW rows=250000 requests=80 state=verifying records=250000
+CSV_REVIEW rows=250000 requests=90 state=verifying records=250000
+  ✓  1 tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (25.9m)
+
+  Slow test file: tests/move-in/archive.journeys.ts (25.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 passed (25.9m)

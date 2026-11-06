@@ -1,0 +1,22 @@
+{
+  "run_id": "cloud-sd-mango-c-f64-scale-save",
+  "head": "3b75797db39bcf48379cd02bc75da6c12678c4d2",
+  "command": [
+    "timeout",
+    "1200",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/move-in/playwright.config.js",
+    "archive.journeys.ts"
+  ],
+  "started_at": "2026-11-06T02:06:49.405441+00:00",
+  "worktree_clean_before": true,
+  "exit": 130,
+  "finished_at": "2026-11-06T02:11:36.664642+00:00",
+  "wall_seconds": 287.2536696899997,
+  "head_after": "3b75797db39bcf48379cd02bc75da6c12678c4d2",
+  "worktree_clean_after": true
+}

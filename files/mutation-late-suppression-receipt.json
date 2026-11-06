@@ -1,0 +1,22 @@
+{
+  "run_id": "cloud-sd-mango-c-f64-mutation-late-suppression",
+  "head": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+  "command": [
+    "timeout",
+    "300",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/move-in/playwright.config.js",
+    "archive.journeys.ts"
+  ],
+  "started_at": "2026-11-06T02:54:32.954314+00:00",
+  "worktree_clean_before": false,
+  "exit": 1,
+  "finished_at": "2026-11-06T02:55:06.693783+00:00",
+  "wall_seconds": 33.73297114400066,
+  "head_after": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+  "worktree_clean_after": false
+}

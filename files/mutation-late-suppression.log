@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:15956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (31.9s)
+
+
+  1) tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "created": 4999,
+        "input": 5002,
+        "rejected": 2,
+    -   "suppressed": 1,
+    +   "suppressed": 0,
+        "updated": 0,
+      }
+
+       at csv-capacity-journey.ts:33
+
+      31 |     }while(preview.state!=='reviewable');
+      32 |     expect(requests).toBeGreaterThan(1);
+    > 33 |     expect(preview.counts).toMatchObject({input:total,created:total-3,updated:0,rejected:2,suppressed:1});
+         |                            ^
+      34 |     expect(preview.counts.input-preview.counts.created-preview.counts.updated-preview.counts.rejected).toBe(1);
+      35 |     expect((await site.call('/api/audience/import-preparations/not-reviewed/rows',{cookie})).status).toBe(400);
+      36 |     expect((await site.call(`/api/audience/import-preparations/${preview.fingerprint}/rows?offset=-1`,{cookie})).status).toBe(400);
+        at csvCapacityJourney (/home/agent/rer-consolidation/work/sd-mango-c-f64/run-mango/tests/move-in/csv-capacity-journey.ts:33:28)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f64/run-mango/tests/move-in/archive.journeys.ts:10:3
+
+    Error Context: ../evidence/e4e6124fa860/move-in/archive.journeys.ts--MOVE--da976-out-resurrecting-recipients/error-context.md
+
+  1 failed
+    tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients 

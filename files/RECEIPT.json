@@ -1,0 +1,251 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f64",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f64",
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "base": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+  "clause": "CONT-010",
+  "status_before": "partial",
+  "status_after": "done",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "local_checks": {
+    "typecheck-candidate": {
+      "run_id": "cloud-sd-mango-c-f64-typecheck-candidate",
+      "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "started_at": "2026-11-06T02:59:14.399928+00:00",
+      "worktree_clean_before": true,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:59:30.740014+00:00",
+      "wall_seconds": 16.333104807999916,
+      "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "worktree_clean_after": true
+    },
+    "source-candidate": {
+      "run_id": "cloud-sd-mango-c-f64-source-candidate",
+      "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "command": [
+        "pnpm",
+        "run",
+        "source:check"
+      ],
+      "started_at": "2026-11-06T02:59:30.828985+00:00",
+      "worktree_clean_before": true,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:59:31.778884+00:00",
+      "wall_seconds": 0.9441339760005576,
+      "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "worktree_clean_after": true
+    },
+    "first-party-exact": {
+      "run_id": "cloud-sd-mango-c-f64-first-party-exact",
+      "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "started_at": "2026-11-06T02:59:31.837231+00:00",
+      "worktree_clean_before": true,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:59:32.899387+00:00",
+      "wall_seconds": 1.0566252819999136,
+      "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "worktree_clean_after": true
+    },
+    "build-candidate": {
+      "run_id": "cloud-sd-mango-c-f64-build-candidate",
+      "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "command": [
+        "timeout",
+        "900",
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "build"
+      ],
+      "started_at": "2026-11-06T02:59:32.986174+00:00",
+      "worktree_clean_before": true,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:59:42.667345+00:00",
+      "wall_seconds": 9.673671085000024,
+      "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "worktree_clean_after": true
+    }
+  },
+  "scale_run": {
+    "run_id": "cloud-sd-mango-c-f64-scale-candidate",
+    "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "command": [
+      "timeout",
+      "1800",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "tests/move-in/playwright.config.js",
+      "archive.journeys.ts"
+    ],
+    "started_at": "2026-11-06T02:59:42.727943+00:00",
+    "worktree_clean_before": true,
+    "exit": 0,
+    "finished_at": "2026-11-06T03:25:39.271153+00:00",
+    "wall_seconds": 1556.537766071,
+    "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "worktree_clean_after": true
+  },
+  "capacity": {
+    "rows": 250000,
+    "previewRequests": 92,
+    "startRequests": 1,
+    "counts": {
+      "byKind": {
+        "created;non-subscribed;non-subscribed;none;ordinary": 249996,
+        "created;non-subscribed;suppressed;none;ordinary": 1,
+        "other;non-subscribed;suppressed;none;ordinary": 1,
+        "rejected;non-subscribed;non-subscribed;rejected;ordinary": 2
+      },
+      "duplicates": 0,
+      "effects": 249997,
+      "input": 250000,
+      "mapped": 249997,
+      "rejected": 2,
+      "unique": 250000,
+      "unmapped": 1,
+      "created": 249997,
+      "updated": 0,
+      "unsubscribed": 0,
+      "suppressed": 1
+    },
+    "job": {
+      "id": "54576229-7b8c-469e-9be5-fde7ce19b974",
+      "destination": "mango",
+      "namespace": "mango-audience-v1",
+      "mappingVersion": "mango-audience-v1",
+      "principalId": "go-live-owner",
+      "fingerprint": "1f1997def390b0192b469342e728bd271c402ad8ab68c69a5f2414b35bcbfb5e",
+      "total": 250000,
+      "checkpoint": 20,
+      "fence": 2,
+      "state": "applying",
+      "error": null,
+      "erasedRecords": 0
+    },
+    "reportReads": 2,
+    "wallMs": 905703.362844,
+    "treePeakRssKiB": 3556616,
+    "workerPeakRssKiB": 1099828,
+    "driverPeakRssKiB": 450912,
+    "nativeContactsWritten": 18,
+    "handoffs": 0
+  },
+  "erasure": {
+    "reference": "a245d78a-ca3c-41f6-8b5a-46223cbc618a",
+    "state": "complete",
+    "replayStatus": 400,
+    "reportStatus": 409,
+    "resumeStatus": 409,
+    "remainingContacts": 17
+  },
+  "verify": {
+    "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "run_id": 42153721516,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42153721516",
+    "root_failed_job": 127682852524,
+    "root_failed_step": "Check generated contract documents",
+    "root_command": "node src/base/contract-docs.mjs check",
+    "failure": "ACCEPTANCE.md and docs/CLAIMS.md generated content differs; run contract-docs write.",
+    "aggregate_failed_job": 127682912271,
+    "dependent_jobs": "shards and proof jobs skipped after build failure",
+    "exception": "Explicit fleet generated-view-only failure exception; lander regenerates views and runs Verify on the landing candidate.",
+    "raw_green": false,
+    "description": "Verify completed with the expected generated-view-only failure: ACCEPTANCE.md and docs/CLAIMS.md differ from generated output; dependent jobs were skipped. The explicit fleet exception applies. This is not described as a raw green workflow.",
+    "failed_job_archive": "candidate-ci-build-failed.log",
+    "reruns": 0,
+    "product_repairs": 0,
+    "aggregate_failed_job_archive": "candidate-ci-aggregate-failed.log",
+    "aggregate_failure": "BUILD=failure, SHARDS=skipped, full coverage requires successful build; no independent assertion failure",
+    "github_calls_used": 5,
+    "archive_transport_errors": []
+  },
+  "mechanical": {
+    "lock": {
+      "command": "node scripts/edition-authoring/cli.mjs lock and check",
+      "exit": 0
+    },
+    "views": {
+      "command": "node src/base/contract-docs.mjs write and check",
+      "exit": 0,
+      "restored_from_origin_main": [
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ]
+    },
+    "ledger": {
+      "command": null,
+      "exit": 0,
+      "reason": "No migration changed"
+    }
+  },
+  "mutations": [
+    {
+      "mutation": "late-suppression",
+      "source": "src/core/features/audience/import-preparation-source.ts",
+      "before": "if(restrictiveRank[row.smsStatus]>restrictiveRank[prior.smsStatus])",
+      "after": "if(false&&restrictiveRank[row.smsStatus]>restrictiveRank[prior.smsStatus])",
+      "exit": 1,
+      "killed": true,
+      "log": "mutation-late-suppression.log"
+    },
+    {
+      "mutation": "rejected-reason",
+      "source": "src/core/features/move-in/csv-review.ts",
+      "before": "cell(entry.rejection??row.reason??row.warnings.join('; '))",
+      "after": "cell('')",
+      "exit": 1,
+      "killed": true,
+      "log": "mutation-rejected-reason.log"
+    }
+  ],
+  "publication_scan": {
+    "status": "pending-guarded-lander",
+    "complete": false,
+    "findings": null,
+    "historyScanned": null
+  },
+  "landing": {
+    "status": "branch-only",
+    "main_equals_candidate": false,
+    "run_site_candidate": null
+  },
+  "holds": [
+    "CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold",
+    "Owner Twilio A2P and US carrier registration",
+    "Real SMS transport and qualification",
+    "Broader SCALE-001 installation, timing, segment and delivery duties",
+    "Carried provider, device, account, cross-seed and Base prerequisites",
+    "Existing rer 0.2.95 adoption and release requirements"
+  ],
+  "pr": null
+}

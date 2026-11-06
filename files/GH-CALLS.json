@@ -1,0 +1,26 @@
+{
+  "budget": 10,
+  "completed": [
+    {
+      "at": null,
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=cc6321c2372d631d9607df9af8ad1dd9f7878e84&per_page=100",
+      "note": "Initial main health discovery; exact call timestamp not retained"
+    },
+    {
+      "at": "2026-11-06T03:03:05Z",
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=c0e6fc6380af7c9c4fa6247698839918d93089c2&per_page=100"
+    },
+    {
+      "at": "2026-11-06T03:08:28Z",
+      "command": "gh api repos/just-every/run-mango/actions/runs/42153721516/jobs"
+    },
+    {
+      "at": "2026-11-06T03:13:47.621030+00:00",
+      "command": "gh run view 42153721516 --repo just-every/run-mango --job 127682852524 --log-failed"
+    },
+    {
+      "at": "2026-11-06T03:19:10.913479+00:00",
+      "command": "gh run view 42153721516 --repo just-every/run-mango --job 127682912271 --log-failed"
+    }
+  ]
+}

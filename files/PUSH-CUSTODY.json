@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-06T03:14:50.543732+00:00",
+  "repository": "just-every/run-mango",
+  "remote_refs": {
+    "refs/heads/cloud/sd-mango-c-f64": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "refs/heads/main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84"
+  },
+  "product_push_guard": "python3 /home/agent/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f64",
+  "product_branch_pushed": true,
+  "main_pushed": false
+}

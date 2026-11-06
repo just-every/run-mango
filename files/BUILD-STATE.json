@@ -1,0 +1,30 @@
+{
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "phase": "candidate-proven",
+  "scale_exit": 0,
+  "verify": {
+    "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "run_id": 42153721516,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42153721516",
+    "root_failed_job": 127682852524,
+    "root_failed_step": "Check generated contract documents",
+    "root_command": "node src/base/contract-docs.mjs check",
+    "failure": "ACCEPTANCE.md and docs/CLAIMS.md generated content differs; run contract-docs write.",
+    "aggregate_failed_job": 127682912271,
+    "dependent_jobs": "shards and proof jobs skipped after build failure",
+    "exception": "Explicit fleet generated-view-only failure exception; lander regenerates views and runs Verify on the landing candidate.",
+    "raw_green": false,
+    "description": "Verify completed with the expected generated-view-only failure: ACCEPTANCE.md and docs/CLAIMS.md differ from generated output; dependent jobs were skipped. The explicit fleet exception applies. This is not described as a raw green workflow.",
+    "failed_job_archive": "candidate-ci-build-failed.log",
+    "reruns": 0,
+    "product_repairs": 0,
+    "aggregate_failed_job_archive": "candidate-ci-aggregate-failed.log",
+    "aggregate_failure": "BUILD=failure, SHARDS=skipped, full coverage requires successful build; no independent assertion failure",
+    "github_calls_used": 5,
+    "archive_transport_errors": []
+  },
+  "status": "branch-only-pending-lander"
+}

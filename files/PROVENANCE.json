@@ -1,0 +1,198 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f64",
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "shallow": "false",
+  "clean": true,
+  "generated_views_equal_main": true,
+  "candidate_commits": [
+    {
+      "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+      "subject": "Complete CONT-010 with buyer-scale CSV review proof",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "49ddd9346369c45a6e5bc8a11230e04835376b06",
+      "subject": "Avoid repeated header validation during CSV preparation [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "3b75797db39bcf48379cd02bc75da6c12678c4d2",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "3b75797db39bcf48379cd02bc75da6c12678c4d2",
+      "subject": "Prepare large CSV reviews in bounded native steps [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "421cbf3e3b2c179826414eaa3810a4e3f39856b1",
+          "status_ids": 316,
+          "retained": true
+        },
+        {
+          "head": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "421cbf3e3b2c179826414eaa3810a4e3f39856b1",
+      "subject": "Stream CSV parsing and reconcile phone import outcomes [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "7eeba3fc46a79e1557ad720f9249c6e2e581c6a2",
+      "subject": "Explain every reconciled CSV row outcome",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "c04aa7f11a71b5c1c639ed93c0f189310852efff",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "c04aa7f11a71b5c1c639ed93c0f189310852efff",
+      "subject": "Reconcile CSV outcomes and prove consent-safe updates and undo [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "6dde3743821de8e3977652ec05c86153c10c648f",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "6dde3743821de8e3977652ec05c86153c10c648f",
+      "subject": "Check phone import retry and authenticated report custody [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "c423633958f57f15d2cfc38efc99b9c4e2be3bc3",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    },
+    {
+      "head": "c423633958f57f15d2cfc38efc99b9c4e2be3bc3",
+      "subject": "Prove phone-only CSV validation and rejected-row readback [skip ci]",
+      "identity": [
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com",
+        "Run Edit Run fleet",
+        "fleet@runeditrun.com"
+      ],
+      "trailers": "",
+      "status_ids": 316,
+      "parents": [
+        {
+          "head": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+          "status_ids": 316,
+          "retained": true
+        }
+      ]
+    }
+  ],
+  "changed_files": [
+    "CONTRACT.md",
+    "docs/backup-and-export.md",
+    "docs/importing-contacts.md",
+    "docs/moving-in.md",
+    "seed.json",
+    "sources.lock.json",
+    "src/core/features/audience/csv.ts",
+    "src/core/features/audience/erasure/discovery.ts",
+    "src/core/features/audience/erasure/scope.ts",
+    "src/core/features/audience/erasure/service.ts",
+    "src/core/features/audience/import-limits.ts",
+    "src/core/features/audience/import-normalize.ts",
+    "src/core/features/audience/import-preparation-read.ts",
+    "src/core/features/audience/import-preparation-source.ts",
+    "src/core/features/audience/import-preparation-types.ts",
+    "src/core/features/audience/import-preparation.ts",
+    "src/core/features/audience/import-recorded.ts",
+    "src/core/features/audience/import-routes.ts",
+    "src/core/features/audience/import-service.ts",
+    "src/core/features/audience/ui/audience-import-preview.tsx",
+    "src/core/features/audience/ui/audience-import-types.ts",
+    "src/core/features/audience/ui/audience-import.tsx",
+    "src/core/features/move-in/csv-review.ts",
+    "tests/move-in/archive.journeys.ts",
+    "tests/move-in/csv-capacity-journey.ts",
+    "tests/move-in/csv-capacity-metrics.ts",
+    "tests/move-in/csv-rules-journey.ts",
+    "tests/move-in/phone-csv-journey.ts"
+  ]
+}

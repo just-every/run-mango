@@ -1,0 +1,20 @@
+[
+  {
+    "mutation": "late-suppression",
+    "source": "src/core/features/audience/import-preparation-source.ts",
+    "before": "if(restrictiveRank[row.smsStatus]>restrictiveRank[prior.smsStatus])",
+    "after": "if(false&&restrictiveRank[row.smsStatus]>restrictiveRank[prior.smsStatus])",
+    "exit": 1,
+    "killed": true,
+    "log": "mutation-late-suppression.log"
+  },
+  {
+    "mutation": "rejected-reason",
+    "source": "src/core/features/move-in/csv-review.ts",
+    "before": "cell(entry.rejection??row.reason??row.warnings.join('; '))",
+    "after": "cell('')",
+    "exit": 1,
+    "killed": true,
+    "log": "mutation-rejected-reason.log"
+  }
+]

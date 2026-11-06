@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:16316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (40.0s)
+
+
+  1) tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients 
+
+    Error: expect(received).toMatch(expected)
+
+    Expected pattern: /E\.164.*country calling code.*rejected/
+    Received string:  "| synthetic-mango-capacity.csv | 3 | non-subscribed |  | rejected |"
+
+       at csv-capacity-journey.ts:85
+
+      83 |       expect(outcomes.filter(line=>line.endsWith('| created |'))).toHaveLength(total-3);
+      84 |       expect(outcomes.filter(line=>line.endsWith('| rejected |'))).toHaveLength(2);
+    > 85 |       expect(outcomes.find(line=>line.startsWith(`| ${file} | 3 |`))).toMatch(/E\.164.*country calling code.*rejected/);
+         |                                                                       ^
+      86 |       expect(outcomes.find(line=>line.startsWith(`| ${file} | 5 |`))).toMatch(/email address or E\.164 phone number is required.*rejected/);
+      87 |       expect(outcomes.find(line=>line.startsWith(`| ${file} | 2 |`))).toContain('| created |');
+      88 |       expect(outcomes.find(line=>line.startsWith(`| ${file} | ${total+1} |`))).toContain('| skipped |');
+        at csvCapacityJourney (/home/agent/rer-consolidation/work/sd-mango-c-f64/run-mango/tests/move-in/csv-capacity-journey.ts:85:71)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f64/run-mango/tests/move-in/archive.journeys.ts:10:3
+
+    Error Context: ../evidence/e4e6124fa860/move-in/archive.journeys.ts--MOVE--da976-out-resurrecting-recipients/error-context.md
+
+  1 failed
+    tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients 

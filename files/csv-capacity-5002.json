@@ -1,0 +1,45 @@
+{
+  "rows": 5002,
+  "previewRequests": 6,
+  "startRequests": 1,
+  "counts": {
+    "byKind": {
+      "created;non-subscribed;non-subscribed;none;ordinary": 4998,
+      "created;non-subscribed;suppressed;none;ordinary": 1,
+      "other;non-subscribed;suppressed;none;ordinary": 1,
+      "rejected;non-subscribed;non-subscribed;rejected;ordinary": 2
+    },
+    "duplicates": 0,
+    "effects": 4999,
+    "input": 5002,
+    "mapped": 4999,
+    "rejected": 2,
+    "unique": 5002,
+    "unmapped": 1,
+    "created": 4999,
+    "updated": 0,
+    "unsubscribed": 0,
+    "suppressed": 1
+  },
+  "job": {
+    "id": "1f309304-0eab-4e25-94de-9d78ea3b60ba",
+    "destination": "mango",
+    "namespace": "mango-audience-v1",
+    "mappingVersion": "mango-audience-v1",
+    "principalId": "go-live-owner",
+    "fingerprint": "15bf481f60445cba5e5eb31d9c32eb23d35fc4286ee4aecad00d9b3d14cf7704",
+    "total": 5002,
+    "checkpoint": 20,
+    "fence": 2,
+    "state": "applying",
+    "error": null,
+    "erasedRecords": 0
+  },
+  "reportReads": 2,
+  "wallMs": 39424.990209,
+  "treePeakRssKiB": 3084248,
+  "workerPeakRssKiB": 747708,
+  "driverPeakRssKiB": 203352,
+  "nativeContactsWritten": 18,
+  "handoffs": 0
+}

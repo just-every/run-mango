@@ -1,0 +1,82 @@
+{
+  "receipt": "complete",
+  "chunksLeft": 0,
+  "entriesKept": 42,
+  "authorityBefore": [
+    {
+      "path": "/api/audience/archives",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5CG6CERVS7W2QK6NC36F",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5CG6CERVS7W2QK6NC36F",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5DQ0E1ZS3KGZ20HV2P2X",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5DQ0E1ZS3KGZ20HV2P2X",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    }
+  ],
+  "authorityAfter": [
+    {
+      "path": "/api/audience/archives",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5CG6CERVS7W2QK6NC36F",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5CG6CERVS7W2QK6NC36F",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5DQ0E1ZS3KGZ20HV2P2X",
+      "role": "support",
+      "status": 403,
+      "error": "role_forbidden"
+    },
+    {
+      "path": "/api/audience/archives/01M6QE5DQ0E1ZS3KGZ20HV2P2X",
+      "role": "signed-out",
+      "status": 401,
+      "error": "unauthenticated"
+    }
+  ],
+  "controlFacts": 3
+}

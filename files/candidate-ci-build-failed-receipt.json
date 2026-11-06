@@ -1,0 +1,19 @@
+{
+  "run_id": 42153721516,
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "job_id": 127682852524,
+  "command": [
+    "gh",
+    "run",
+    "view",
+    "42153721516",
+    "--repo",
+    "just-every/run-mango",
+    "--job",
+    "127682852524",
+    "--log-failed"
+  ],
+  "started_at": "2026-11-06T03:13:47.621030+00:00",
+  "exit": 0,
+  "log": "candidate-ci-build-failed.log"
+}

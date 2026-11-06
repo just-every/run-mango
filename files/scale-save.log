@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:8945) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+CSV_REVIEW rows=250000 requests=10 state=preparing records=50000
+  ✘  1 tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (4.8m)
+
+  1 interrupted
+    tests/move-in/archive.journeys.ts:8:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients 

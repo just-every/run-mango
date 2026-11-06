@@ -1,0 +1,161 @@
+{
+  "canonicalId": "01M6QE01AVS1QMEFPRN1A5Y0YK",
+  "updateCounts": {
+    "byKind": {
+      "contact": 5
+    },
+    "duplicates": 0,
+    "effects": 2,
+    "input": 5,
+    "mapped": 2,
+    "rejected": 2,
+    "unique": 5,
+    "unmapped": 1,
+    "created": 1,
+    "updated": 1,
+    "unsubscribed": 0,
+    "suppressed": 0
+  },
+  "rerunJob": "1fe0970b-7695-4cee-81bd-eaa38a294260",
+  "undo": "undone",
+  "consentCounts": {
+    "byKind": {
+      "contact": 5
+    },
+    "duplicates": 0,
+    "effects": 4,
+    "input": 5,
+    "mapped": 4,
+    "rejected": 1,
+    "unique": 5,
+    "unmapped": 0,
+    "created": 4,
+    "updated": 0,
+    "unsubscribed": 0,
+    "suppressed": 0
+  },
+  "restrictions": [
+    {
+      "channel": "email",
+      "before": "unsubscribed",
+      "incoming": "subscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "email",
+      "before": "unsubscribed",
+      "incoming": "pending",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "email",
+      "before": "unsubscribed",
+      "incoming": "non-subscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "email",
+      "before": "unsubscribed",
+      "incoming": "unsubscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "email",
+      "before": "unsubscribed",
+      "incoming": "suppressed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "email",
+      "before": "suppressed",
+      "incoming": "subscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "email",
+      "before": "suppressed",
+      "incoming": "pending",
+      "after": "suppressed"
+    },
+    {
+      "channel": "email",
+      "before": "suppressed",
+      "incoming": "non-subscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "email",
+      "before": "suppressed",
+      "incoming": "unsubscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "email",
+      "before": "suppressed",
+      "incoming": "suppressed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "unsubscribed",
+      "incoming": "subscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "sms",
+      "before": "unsubscribed",
+      "incoming": "pending",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "sms",
+      "before": "unsubscribed",
+      "incoming": "non-subscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "sms",
+      "before": "unsubscribed",
+      "incoming": "unsubscribed",
+      "after": "unsubscribed"
+    },
+    {
+      "channel": "sms",
+      "before": "unsubscribed",
+      "incoming": "suppressed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "suppressed",
+      "incoming": "subscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "suppressed",
+      "incoming": "pending",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "suppressed",
+      "incoming": "non-subscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "suppressed",
+      "incoming": "unsubscribed",
+      "after": "suppressed"
+    },
+    {
+      "channel": "sms",
+      "before": "suppressed",
+      "incoming": "suppressed",
+      "after": "suppressed"
+    }
+  ],
+  "restrictionUndo": "undone",
+  "handoffs": 0
+}
