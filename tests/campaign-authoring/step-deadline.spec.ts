@@ -14,7 +14,7 @@ const days = [
 ];
 
 test('[CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue', async ({browser, request}, info) => {
-  test.setTimeout(600000);
+  test.setTimeout(240000);
   const runtime = await authoringRuntime({suite:'step-deadline'});
   const context = await browser.newContext({viewport:{width:1440,height:1000}, timezoneId:'Asia/Tokyo'});
   try {
