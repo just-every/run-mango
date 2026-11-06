@@ -125,4 +125,3 @@ export async function startPreparedCsv(key:string,json:string,raw:D1ImportContex
   if(to<pages.length)return {preparing:true as const,checkpoint:to,total:pages.length};
   return {job:await publishD1ImportPreparation(manifest.id,{...context,reviewedFingerprint:manifest.fingerprint})};
 }
-

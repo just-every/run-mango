@@ -51,6 +51,8 @@ export function* normalizedImportRows(input: ImportInput, incumbentSources:Recor
     const headers = iterateCsvRows(file.csv).next().value ?? [];
     const mapping = file.preset === 'mango' ? {} : resolveHeaderMapping(headers, file.mapping);
     const mappingEntries=Object.entries(mapping);
+    const originalHeaders=headers.map(header=>header.trim().toLowerCase());
+    const smsStatusHeaders=originalHeaders.filter(isSmsStatusHeader),emailStatusHeaders=originalHeaders.filter(isStatusHeader);
     const propertyColumns=Object.fromEntries(mappingEntries.filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]));
     let index = 0;
     for (const original of iterateCsvRecords(file.csv)) {
@@ -73,7 +75,7 @@ export function* normalizedImportRows(input: ImportInput, incumbentSources:Recor
           row.smsStatus = statusAliases[smsStatus] ?? smsStatus;
           if (!Object.hasOwn(restrictiveRank, row.smsStatus)) throw new Error('Unknown source SMS status.');
           // Explicit mapping cannot conceal another SMS column's restriction.
-          for(const [,raw] of Object.entries(original).filter(([header,value])=>Boolean(value)&&isSmsStatusHeader(header))){
+          for(const raw of smsStatusHeaders.map(header=>original[header]).filter(Boolean)){
             const normalized=raw.trim().toLowerCase().replace(/[_\s]+/g,'-'),status=statusAliases[normalized]??normalized;
             if(!Object.hasOwn(restrictiveRank,status))throw new Error('Unknown source SMS status.');
             if(restrictiveRank[status]>restrictiveRank[row.smsStatus])row.smsStatus=status;
@@ -90,7 +92,7 @@ export function* normalizedImportRows(input: ImportInput, incumbentSources:Recor
           // A row with no name leaves the contact's name as it is (import-snapshot).
           row.displayName = values.display_name || [values.first_name,values.last_name].filter(Boolean).join(' ');
           const sourceStatuses = [values.email_status, values.status,
-            ...Object.entries(original).filter(([header]) => isStatusHeader(header)).map(([, value]) => value),
+            ...emailStatusHeaders.map(header=>original[header]),
           ].filter(Boolean).map(value => value.trim().toLowerCase().replace(/[_\s]+/g, '-'));
           // A mapping never hides another source column's opt-out or suppression.
           for (const rawStatus of sourceRow?[]:sourceStatuses) {

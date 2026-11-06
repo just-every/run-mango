@@ -36,6 +36,8 @@ export async function csvCapacityJourney(page:Page,info:TestInfo){
     const last=await json(await site.call(`/api/audience/import-preparations/${preview.fingerprint}/rows?offset=${total-25}`,{cookie}),200);
     expect(last).toMatchObject({total,offset:total-25});expect(last.rows).toHaveLength(25);
     expect(last.rows.at(-1)).toMatchObject({file,row:total+1,phone:phone(1),smsStatus:'suppressed'});
+    const originalChunks=await site.rows(`SELECT ordinal,content FROM audience_import_plan_chunks WHERE fingerprint='${preview.fingerprint}' ORDER BY ordinal`);
+    expect(originalChunks.map(row=>row.content).join('')).toBe(input.files[0].csv);
     const repeated=await json(await site.call('/api/audience/import-preparations',{method:'POST',cookie,body:input}),200);
     expect(repeated).toEqual(preview);
     await page.setViewportSize({width:1440,height:1000});
@@ -104,6 +106,7 @@ export async function csvCapacityJourney(page:Page,info:TestInfo){
     let {receipt}=await json(await site.call(`/api/contacts/${subject.id}`,{method:'DELETE',cookie}),202);
     while(receipt.state==='pending'){const response=await site.call(`/api/audience/erasures/${receipt.reference}/resume`,{method:'POST',cookie});expect([200,202]).toContain(response.status);({receipt}=await response.json());}
     expect(receipt.state).toBe('complete');
+    expect(await site.rows(`SELECT ordinal FROM audience_import_plan_chunks WHERE fingerprint='${preview.fingerprint}'`)).toEqual([]);
     const afterErasure=await site.rows('SELECT * FROM contacts ORDER BY id');
     const replay=await json(await site.call('/api/audience/import-preparations',{method:'POST',cookie,body:input}),400);
     expect(replay.detail).toMatch(/erasure retired/);
