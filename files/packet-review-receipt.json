@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "utc": "2026-11-06T02:17:55.210129+00:00",
+  "task": "ct-judge-mango-oper003-20261105-1615-sol1",
+  "repository": "just-every/run-mango",
+  "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "selected_files": [
+    {
+      "path": "REPORT.md",
+      "bytes": 24424,
+      "sha256": "1a3e5f3e4f13579c316af6b51ff535c5edb26217cf9eabe877a3f1472d513b82"
+    },
+    {
+      "path": "VERDICT.md",
+      "bytes": 20249,
+      "sha256": "e87ab9f05107e0e686b7a02a094b8af0ae55b2315783d25b5e5d68e0a9a1dac9"
+    },
+    {
+      "path": "PLAN.md",
+      "bytes": 2451,
+      "sha256": "030182c41df299fbc3a6ece5eaa1fad3a2ec51796386eb1f1f0645a07c418e4d"
+    },
+    {
+      "path": "FROZEN-RUBRIC.md",
+      "bytes": 2316,
+      "sha256": "7df9ecf3c4ab949000dc33cb22d076eae1012ceacca422dfa0e60ecc8bed97a4"
+    },
+    {
+      "path": "command-receipts.jsonl",
+      "bytes": 2507,
+      "sha256": "97cf17a87cf9fab980bd4385eb71abc22e1caf2f45dcbe6c6076022a3c71ad2b"
+    },
+    {
+      "path": "source-receipt.json",
+      "bytes": 1617,
+      "sha256": "3fa19f393196145dbff6cb9c574eac9dd65b315ec987576c25a521d5c63fb4b4"
+    },
+    {
+      "path": "contract-receipt.json",
+      "bytes": 1351,
+      "sha256": "7a5579fda1b8a46f328460eaa2c3161ba78e14cf5a6357b3510c89d2840536ff"
+    },
+    {
+      "path": "inspection-receipt.json",
+      "bytes": 9554,
+      "sha256": "336dff93b44218735fe842183ad6d4d04f9dd131dcbe5b3eb23e769836c51150"
+    },
+    {
+      "path": "browser-receipt.json",
+      "bytes": 2940,
+      "sha256": "fd2f322fa30b2954db42a234fd16410dbe504484602066ca3561e01dac320199"
+    },
+    {
+      "path": "product-custody-receipt.json",
+      "bytes": 543,
+      "sha256": "cfc68899322a0b7ce0fa669c2e43614b9099412d4e6e53a93497eb7f68462c64"
+    },
+    {
+      "path": "setup.log",
+      "bytes": 2959145,
+      "sha256": "21afbfb59b2842c3103d18e23577bec740f56970479101185c24759da046dc82"
+    },
+    {
+      "path": "proposals.log",
+      "bytes": 697,
+      "sha256": "a2fa2a82d1c2e7d60f1620fbee464b1328890afef1bd327b4bcf4f69ea017ff4"
+    },
+    {
+      "path": "roles.log",
+      "bytes": 1121,
+      "sha256": "be4f11ee4f9fc168a4eeecf01c3b9049e6107cfb2031c5046a8bbd770a4f2164"
+    },
+    {
+      "path": "contract-check.log",
+      "bytes": 67,
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    },
+    {
+      "path": "lock-check.log",
+      "bytes": 410909,
+      "sha256": "72634e8eefb460a22ca7db16c6f50dd9a9d31e419eac592b2ff724244cceb02b"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 230,
+      "sha256": "2d911078a776670513504e1d7caafa13eeb1d6a9a95ae570e12a4624ad06340a"
+    },
+    {
+      "path": "captures/roles-retained-review-1440.png",
+      "bytes": 263165,
+      "sha256": "7122f0851eda73573d223d00fee7846571421d1ff0870cc437939938b708dae2"
+    },
+    {
+      "path": "captures/roles-retained-review-390.png",
+      "bytes": 218770,
+      "sha256": "cc6ad4543bf67e6685af0236bfd416d042d9f8cf9ec68d8272b0b6ec944ce6da"
+    },
+    {
+      "path": "captures/roles-retained-campaign-1440.png",
+      "bytes": 255620,
+      "sha256": "1ae91c65fdd1d646b8663efeedf80915024be247acb6687f2cc650147e661dc5"
+    },
+    {
+      "path": "captures/roles-retained-campaign-390.png",
+      "bytes": 211886,
+      "sha256": "e768ccb4b4487492b48e5d5d89208f4f50bcf3b991d3056b531d21e322b81834"
+    },
+    {
+      "path": "captures/roles-retained-activity-1440.png",
+      "bytes": 47202,
+      "sha256": "ca8329a1995511924c71cc831c8532c1568dba67792f1425bfb010515b066d8e"
+    },
+    {
+      "path": "captures/roles-retained-activity-390.png",
+      "bytes": 37986,
+      "sha256": "6135e0a676df43f8f3e6e840e36f066f6aabcc7325c08034aca6f1817ae87fa5"
+    }
+  ],
+  "symlinks": false,
+  "injected_value_matches": 0,
+  "credential_shape_matches": 0,
+  "scope": "Explicit packet files only; not a product publication scan or full-history NEW 0 receipt.",
+  "report_only_ref": "refs/heads/evidence/ct-judge-mango-oper003-20261105-1615-sol1"
+}

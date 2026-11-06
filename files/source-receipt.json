@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "head": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "branch": "cloud/sd-mango-c-f26",
+  "utc": "2026-11-06T02:05:46.508387+00:00",
+  "product_mutations": false,
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "bytes": 487731,
+      "sha256": "85e3e26db766c9d9f48d7ca8995432efa99a724cb70fe456e0160bb7b73b09a7"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "bytes": 441749,
+      "sha256": "b8abfeab2aa83a317807bd45b17fd0e9c00465ee4cd804840ddca9c8b400f11f"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8"
+    },
+    {
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "path": "tests/proposals-decision/decision-routes.spec.ts",
+      "bytes": 10743,
+      "sha256": "4c3977a22f0317ccaf2e2d61d3f15ae9b8a04b68904f1a4c16b513d22f3b705b"
+    },
+    {
+      "path": "tests/go-live/roles.journeys.ts",
+      "bytes": 21319,
+      "sha256": "8ec153e8ba392705971928418364a19babae96d6380e8b0df7afab4dcc96fdd0"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "bytes": 14451,
+      "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "bytes": 5614,
+      "sha256": "6396dbee1e003793d2b442ec14c2f0aa3aa852a5291fe7678b17ad6e7ecc5d45"
+    }
+  ],
+  "source_status_counts": {
+    "partial": 200,
+    "done": 18,
+    "missing": 98
+  },
+  "source_total": 316
+}

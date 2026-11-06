@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "utc": "2026-11-06T02:16:26.028675+00:00",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f26",
+  "head": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "tracked_and_untracked_status": "",
+  "pinned_inspected_hashes_unchanged": true,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "product_prs": 0,
+  "ci_calls": 0,
+  "awarded_delta": 0,
+  "accepted_source": [],
+  "disposable_clone_cleanup": "after evidence transport and validation; separate final cleanup receipt will be kept outside the clone"
+}

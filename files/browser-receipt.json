@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "utc": "2026-11-06T02:14:00.652124+00:00",
+  "browser": "/usr/bin/chromium",
+  "headless": true,
+  "args": [
+    "--no-sandbox"
+  ],
+  "captures": [
+    {
+      "path": "captures/roles-retained-review-1440.png",
+      "screen": "review",
+      "viewport_width": 1440,
+      "viewport_height": 1000,
+      "bytes": 263165,
+      "sha256": "7122f0851eda73573d223d00fee7846571421d1ff0870cc437939938b708dae2",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    },
+    {
+      "path": "captures/roles-retained-review-390.png",
+      "screen": "review",
+      "viewport_width": 390,
+      "viewport_height": 1000,
+      "bytes": 218770,
+      "sha256": "cc6ad4543bf67e6685af0236bfd416d042d9f8cf9ec68d8272b0b6ec944ce6da",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    },
+    {
+      "path": "captures/roles-retained-campaign-1440.png",
+      "screen": "campaign",
+      "viewport_width": 1440,
+      "viewport_height": 1000,
+      "bytes": 255620,
+      "sha256": "1ae91c65fdd1d646b8663efeedf80915024be247acb6687f2cc650147e661dc5",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    },
+    {
+      "path": "captures/roles-retained-campaign-390.png",
+      "screen": "campaign",
+      "viewport_width": 390,
+      "viewport_height": 1000,
+      "bytes": 211886,
+      "sha256": "e768ccb4b4487492b48e5d5d89208f4f50bcf3b991d3056b531d21e322b81834",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    },
+    {
+      "path": "captures/roles-retained-activity-1440.png",
+      "screen": "activity",
+      "viewport_width": 1440,
+      "viewport_height": 1000,
+      "bytes": 47202,
+      "sha256": "ca8329a1995511924c71cc831c8532c1568dba67792f1425bfb010515b066d8e",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    },
+    {
+      "path": "captures/roles-retained-activity-390.png",
+      "screen": "activity",
+      "viewport_width": 390,
+      "viewport_height": 1000,
+      "bytes": 37986,
+      "sha256": "6135e0a676df43f8f3e6e840e36f066f6aabcc7325c08034aca6f1817ae87fa5",
+      "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+      "synthetic_fixture_only": true
+    }
+  ],
+  "purpose": "Functional retention of attributed names and timestamps; no design or visual-quality judgment.",
+  "inspection_utc": "2026-11-06T02:16:25.978458+00:00",
+  "inspected_captures": 6,
+  "functional_observation": "Review and campaign detail retain Lena Chen as author and Maya Torres as approver with timestamps at both widths. Activity retains Maya Torres and a timestamp in each saved final-filter capture; the executed journey also asserts the author filter and exact datetimes for both actors."
+}

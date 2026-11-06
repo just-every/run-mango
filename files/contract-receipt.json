@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "utc": "2026-11-06T02:10:13.624260+00:00",
+  "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
+  "full_input_bytes": {
+    "CONTRACT.md": 487731,
+    "ACCEPTANCE.md": 441749
+  },
+  "contract_clauses": 316,
+  "acceptance_clauses": 316,
+  "requirement_acceptance_differences": [],
+  "scope_reviewed": [
+    "OPER-003"
+  ],
+  "clause": {
+    "title": "Removal does not rewrite history",
+    "requirement": "Removing an operator preserves Mango\u2019s authorship and decision history.",
+    "acceptance": "1. Every proposal remains attributed to the removed operator.\n2. Campaign approvals, revisions, approval requests, transitions and audit entries retain the removed author\u2019s and approver\u2019s identity.\n3. Review, campaign detail and activity expose that retained attribution at desktop and phone widths."
+  },
+  "contract_citation": "Core; BASE-ACCESS-002; BASE-AUDIT-001",
+  "stale_acceptance_total_counts": {
+    "done": 17,
+    "partial": 201,
+    "missing": 98,
+    "total": 316
+  },
+  "pinned_source_counts": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98,
+    "total": 316
+  },
+  "individual_candidate_delta": {
+    "done": 1,
+    "partial": -1,
+    "missing": 0
+  },
+  "awarded_delta": 0,
+  "fresh_main_counts": "unestablished; no main read or mutation authorized for this exact-source judgment"
+}
