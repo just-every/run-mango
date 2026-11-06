@@ -1,0 +1,12 @@
+Supplied by brief; no GitHub log refetch or CI polling performed.
+Repository: just-every/run-mango
+Candidate: f6d74f43f3602f5a14ba42375e795cdb9b5522af
+Candidate ref: cloud/sd-mango-c-f102-rebase-f6d74f43f3602f5a14ba42375e795cdb9b5522af
+Builder source: 1cbe7e47c9a4d89d2c8ae4de015f764c32c1ff83 (earlier affected PASS; not replayed)
+Verify run: 42203290365 attempt 1, campaigns shard
+Only failed registration requested: tests/go-live/presend-checks.journeys.ts:5:1
+[BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion
+harness.ts:44 expect(response.status,text).toBe(200), actual 409
+Actual body: {"status":"blocked","blockers":[{"kind":"message.links.resolved","status":"blocked","detail":"Blocked transmitted links: https://shop.example.test/market (Link host shop.example.test could not be resolved and checked.)","blocking":true,"blockedHosts":[]}]}
+Other three go-live cases passed in supplied saved failure. They are outside this paired reproduction and are not run here.
+COMPLETE history publication scan NEW0 passed per supplied brief; not rescanned.

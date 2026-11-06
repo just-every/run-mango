@@ -1,0 +1,18 @@
+{
+  "recorded_at": "2026-11-06T11:14:22.867074+00:00",
+  "processes": [
+    {
+      "pid": 4532,
+      "ppid": 527,
+      "comm": "bash",
+      "cwd": "/home/agent/rer-consolidation/work/sd-mango102-ci-triage-1/clone"
+    },
+    {
+      "pid": 4535,
+      "ppid": 4532,
+      "comm": "python3",
+      "cwd": "/home/agent/rer-consolidation/work/sd-mango102-ci-triage-1/clone"
+    }
+  ],
+  "note": "Read-only /proc snapshot of tasks using the owned clone/runtime directory while main test runs. No process argv or environment collected."
+}

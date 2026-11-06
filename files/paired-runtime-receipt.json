@@ -1,0 +1,96 @@
+{
+  "result": "NOT REPRODUCED",
+  "candidate": {
+    "label": "candidate",
+    "head": "f6d74f43f3602f5a14ba42375e795cdb9b5522af",
+    "status_before": "",
+    "started_at": "2026-11-06T11:07:09.264280+00:00",
+    "runner": "e7631b8f140c",
+    "node": "v22.20.0",
+    "node_exec": "/home/agent/.rer/node/node-v22.20.0-linux-x64/bin/node",
+    "pnpm": "10.12.4",
+    "playwright": "Version 1.64.1",
+    "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+    "command": "cloud_run node scripts/verification/run.mjs",
+    "test_selection": {
+      "MANGO_VERIFY_STAGE": "go-live",
+      "MANGO_VERIFY_FILES": [
+        "presend-checks.journeys.ts"
+      ]
+    },
+    "runtime_options": {
+      "CI": "true",
+      "WRANGLER_SEND_METRICS": "false",
+      "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+      "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium"
+    },
+    "attempts_authorized": 1,
+    "retries_from_checked_in_config": 0,
+    "finished_at": "2026-11-06T11:10:25.640893+00:00",
+    "exit_code": 0,
+    "status_after": "",
+    "timing": {
+      "status": "passed",
+      "files": [
+        {
+          "file": "tests/go-live/presend-checks.journeys.ts",
+          "attempts": 1,
+          "durationMs": 192542,
+          "statuses": {
+            "passed": 1
+          }
+        }
+      ]
+    }
+  },
+  "main": {
+    "label": "main",
+    "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "status_before": "",
+    "started_at": "2026-11-06T11:11:04.421741+00:00",
+    "runner": "e7631b8f140c",
+    "node": "v22.20.0",
+    "node_exec": "/home/agent/.rer/node/node-v22.20.0-linux-x64/bin/node",
+    "pnpm": "10.12.4",
+    "playwright": "Version 1.64.1",
+    "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+    "command": "cloud_run node scripts/verification/run.mjs",
+    "test_selection": {
+      "MANGO_VERIFY_STAGE": "go-live",
+      "MANGO_VERIFY_FILES": [
+        "presend-checks.journeys.ts"
+      ]
+    },
+    "runtime_options": {
+      "CI": "true",
+      "WRANGLER_SEND_METRICS": "false",
+      "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+      "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium"
+    },
+    "attempts_authorized": 1,
+    "retries_from_checked_in_config": 0,
+    "finished_at": "2026-11-06T11:14:18.719733+00:00",
+    "exit_code": 0,
+    "status_after": "",
+    "timing": {
+      "status": "passed",
+      "files": [
+        {
+          "file": "tests/go-live/presend-checks.journeys.ts",
+          "attempts": 1,
+          "durationMs": 191121,
+          "statuses": {
+            "passed": 1
+          }
+        }
+      ]
+    }
+  },
+  "same_runner_toolchain_browser_command": true,
+  "retries": 0,
+  "total_registered_test_executions": 2,
+  "original_failure_cause": "not established",
+  "infrastructure_verdict": false,
+  "product_acceptance": false,
+  "new_github_actions_runs": []
+}

@@ -1,0 +1,1624 @@
+=== tests/go-live/presend-checks.journeys.ts (candidate; compare source-identity.json) ===
+   1: import {test} from '@playwright/test';
+   2: import {walk0 as section0} from "./presend-checks.flow";
+   3: import {walk0 as section1} from "./email-size.flow";
+   4: 
+   5: test("[BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion", async ({page}, info) => {
+   6:   test.setTimeout(900000);
+   7:   await section0({page} as any, info);
+   8:   await section1({page} as any, info);
+   9: });
+
+=== tests/go-live/email-size.flow.ts (candidate; compare source-identity.json) ===
+   1: const width = 1440;
+   2: import {oversizedReuse} from './email-size-reuse';
+   3: import {oversizedImports} from './email-size-imports';
+   4: import {expect} from '@playwright/test';
+   5: import {contract} from '../contract.js';
+   6: import {providerEdge} from './edge';
+   7: import {eventSigner} from './sendgrid-events';
+   8: import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch} from './harness';
+   9: import {openPage,reloadPage} from '../support/navigation';
+  10: 
+  11: 
+  12: 
+  13: export const walk0 = async({page},info)=>{
+  14:   const edge=await providerEdge(),site=await installation(edge,eventSigner());
+  15:   try {
+  16:     const cookie=await site.open();
+  17:     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
+  18:     await site.control('/_golive/sender-evidence');
+  19:     await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie,body:{hosts:'shop.example.test'}}),200);
+  20:     const email='summer-reader@example.test',name='Iris & Renée <Garden>';
+  21:     await confirmedContact(site,edge,cookie,email,name);
+  22:     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+  23:     await oversizedImports(site,cookie,page,info,'<p>'+ '🌱'.repeat(28160)+'</p>');
+  24:     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
+  25:     const campaign=await draftCampaign(site,cookie,'Summer garden journal',[email],due);
+  26:     const patch=(body:unknown)=>site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body});
+  27:     const body='<h1>Summer garden journal</h1><p>Hello {{displayName | fallback: Garden friend}}</p>'+('<p>Garden notes: herbs, seedlings and the summer market. </p>'.repeat(500))+'<p><a href="https://shop.example.test/market">Market details</a></p>'+ '<p>'+'{{displayName | fallback: friend}} '.repeat(800)+'</p>';
+  28:     await json(await patch({emailBody:body,trackingEnabled:true}),200);
+  29:     const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+  30:     expect(detail.revision.emailBody.length).toBeGreaterThan(20000);
+  31:     const template=await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:campaign.revisionId,name:'Large garden letter'}}),201);
+  32:     for(const path of [`/api/campaign-templates/${template.id}/start`,`/api/campaigns/${campaign.campaignId}/duplicate`]) {
+  33:       const copy=await json(await site.call(path,{method:'POST',cookie,body:{}}),201);
+  34:       expect((await json(await site.call(`/api/campaigns/${copy.campaignId}`,{cookie}),200)).revision).toMatchObject({emailBody:detail.revision.emailBody,state:'draft',approvedAt:null});
+  35:     }
+  36:     const plainMeasured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailText:'🌱'.repeat(28160)}}),200);
+  37:     expect(plainMeasured.exceedsLimit).toBe(true);
+  38:     expect(plainMeasured.textBytes).toBeGreaterThan(plainMeasured.limitBytes);
+  39:     expect(plainMeasured.htmlBytes).toBeLessThanOrEqual(plainMeasured.limitBytes);
+  40:     expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).revision).toEqual(detail.revision);
+  41:     const measured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailBody:body,preheader:detail.revision.preheader,physicalAddress:sender.physicalAddress,trackingEnabled:true}}),200);
+  42:     expect(measured.exceedsLimit).toBe(false);
+  43:     expect(measured.largestBlocks.length).toBeGreaterThan(0);
+  44:     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+  45:      {
+  46:       await page.setViewportSize({width,height:1000});
+  47:       // The debounced meter is asynchronous even after document hydration.
+  48:       const report=page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaign-authoring/email-size`&&response.request().method()==='POST');
+  49:       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+  50:       await page.getByRole('button',{name:'HTML mode',exact:true}).click();
+  51:       await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(body);
+  52:       const measuredResponse=await report;
+  53:       await info.attach(`meter-response-${width}`,{body:JSON.stringify({status:measuredResponse.status(),matchesSavedBody:measuredResponse.request().postDataJSON().emailBody===detail.revision.emailBody,requestBodyCharacters:measuredResponse.request().postDataJSON().emailBody?.length}),contentType:'application/json'});
+  54:       expect(measuredResponse.request().postDataJSON().emailBody).toBe(detail.revision.emailBody);
+  55:       expect(measuredResponse.status()).toBe(200);
+  56:       expect(await measuredResponse.json()).toMatchObject({exceedsLimit:false});
+  57:       await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Email size');
+  58:       await page.locator('.editor-panel').screenshot({path:info.outputPath(`large-email-${width}.png`)});
+  59:       await page.getByRole('status',{name:'Email sent size'}).screenshot({path:info.outputPath(`email-size-meter-${width}.png`)});
+  60:       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  61:     }
+  62:     const oversized='<h1>Summer garden journal</h1><p>'+'🌱'.repeat(28160)+'</p>';
+  63:     const refused=await json(await patch({emailBody:oversized}),400);
+  64:     expect(refused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
+  65:     expect(refused.detail).toContain('Largest blocks');
+  66:     expect(refused.size.htmlBytes).toBeGreaterThan(refused.size.limitBytes);
+  67:     expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).revision.emailBody).toBe(detail.revision.emailBody);
+  68:      {
+  69:       await page.setViewportSize({width,height:1000});
+  70:       await page.getByRole('textbox',{name:'Email body',exact:true}).fill(oversized);
+  71:       await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+  72:       await expect(page.getByText(/Email is too large\./).first()).toBeVisible();
+  73:       await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(oversized);
+  74:       await page.locator('.editor-panel').screenshot({path:info.outputPath(`email-refused-${width}.png`)});
+  75:     }
+  76:     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);
+  77:     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+  78:     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();
+  79:     await approve(site,cookie,campaign);
+  80:     await site.control('/_golive/clock',{advanceMs:3600001});
+  81:     const recipients=await dispatch(site,campaign.campaignId,due);
+  82:     expect(recipients[0].transport_disposition).toBe('accepted');
+  83:     const sent=edge.sends.findLast(send=>send.body.headers?.['List-Unsubscribe']);
+  84:     const html=sent!.body.content.find((part:any)=>part.type==='text/html').value;
+  85:     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(measured.htmlBytes);
+  86:     expect(html).toContain('Iris &amp; Renée &lt;Garden&gt;');
+  87:     expect(html).toContain('/l/');
+  88:     expect(html).not.toContain('{{');
+  89:     // A new saved name after approval must not allow an oversized handoff.
+  90:     await site.control('/_golive/clock',{advanceMs:25*3600000});
+  91:     await site.control('/_golive/sender-evidence');
+  92:     const nextClock=await site.control('/_golive/clock'),nextDue=new Date(nextClock.now+3600000);
+  93:     const next=await draftCampaign(site,cookie,'Personal garden journal',[email],nextDue);
+  94:     await json(await site.call(`/api/campaign-revisions/${next.revisionId}`,{method:'PATCH',cookie,body:{emailBody:'<p>'+'{{displayName | fallback: friend}} '.repeat(1000)+'</p>'}}),200);
+  95:     await approve(site,cookie,next);
+  96:     // Fresh affirmative evidence changes the name, then the same reader confirms it.
+  97:     await site.control('/_golive/clock',{advanceMs:10000});
+  98:     await confirmedContact(site,edge,cookie,email,'A very long garden reader name & family '.repeat(4));
+  99:     await site.control('/_golive/clock',{advanceMs:3600001});
+ 100:     const skipped=await dispatch(site,next.campaignId,nextDue);
+ 101:     expect(skipped[0]).toMatchObject({transport_disposition:'skipped',skip_reason:'email-too-large'});
+ 102:     expect(edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe'])).toHaveLength(1);
+ 103:     await oversizedReuse(site,cookie,page,info,campaign,template.id);
+ 104:   } finally {await page.close();await site.runtime.close();await edge.close();}
+ 105: };
+
+=== tests/go-live/harness.ts (candidate; compare source-identity.json) ===
+   1: import { localSessionCookieName } from '../support/local-session';
+   2: import { expect } from '@playwright/test';
+   3: import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
+   4: import { providerEdge } from './edge';
+   5: import { eventSigner } from './sendgrid-events';
+   6: 
+   7: export const publicOrigin = 'https://mango.example.test';
+   8: export const sender = { displayName: 'Mango Garden', fromEmail: 'news@example.test', replyToEmail: 'reply@example.test',
+   9:   physicalAddress: '12 Market Lane, Brisbane QLD 4000, Australia' };
+  10: export const consent = { channel: 'email', brandOrLegalSender: 'Mango Garden', messageCategory: 'newsletter', frequencyDisclosure: 'Monthly',
+  11:   destinationJurisdiction: 'AU', captureMethod: 'operator-entry', captureSource: 'Market stall sign-up sheet', consentText: 'Send me the Mango Garden letter.', consentVersion: 'v1' };
+  12: 
+  13: type Edge = Awaited<ReturnType<typeof providerEdge>>;
+  14: type Signer = ReturnType<typeof eventSigner>;
+  15: 
+  16: /** One Mango installation: the Vite/D1 runtime, its owner session and the shared provider edge. */
+  17: export async function installation(edge: Edge, signer: Signer, options: { reuseEmptySchema?: boolean; networkHosts?: string[]; managed?: 'none' | 'connected'; origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; ai?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
+  18:   const smsPolicyAt=options.smsPolicyAt??Date.now();
+  19:   const runtime = await authoringRuntime({ suite: 'go-live', fixtureWorker: 'tests/go-live/worker.ts', startupTimeout: 180000, queueConsumers: true,
+  20:     reuseEmptySchema: options.reuseEmptySchema, token: options.token, stateDirectory: options.stateDirectory, parallelQueue: options.parallelQueue, vars: { GO_LIVE_EXTRA_HOSTS: JSON.stringify(options.networkHosts ?? []), GO_LIVE_MANAGED: options.managed ?? '', GO_LIVE_SMS_POLICY_AT: String(smsPolicyAt), GO_LIVE_MAIL_PROVIDER: options.mailProvider??'sendgrid', GO_LIVE_RESEND_COVERAGE: options.resendCoverage??'complete', GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
+  21:       GO_LIVE_PUBLIC_ORIGIN: options.origin ?? publicOrigin, GO_LIVE_PROVIDER_KEY: options.providerKey ?? 'go-live-provider-key',
+  22:       GO_LIVE_COMMERCE: options.commerce ? '1' : '0', GO_LIVE_AI: options.ai ? '1' : '0', GO_LIVE_SMS: options.sms === true ? '1' : options.sms === 'missing-retention' ? 'missing-retention' : '0', GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
+  23:   const origin = options.origin ?? publicOrigin;
+  24:   const control = async (path: string, body: unknown = {}) => {
+  25:     const response = await fetch(runtime.url + path, { method: 'POST', headers: { 'X-Test-Token': runtime.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  26:     expect(response.status, `${path}: ${await response.clone().text()}`).toBe(200);
+  27:     return response.json();
+  28:   };
+  29:   const rows = (sql: string) => control('/_golive/rows', { sql }) as Promise<Array<Record<string, any>>>;
+  30:   const count = async (table: string) => Number((await rows(`SELECT count(*) AS n FROM ${table}`))[0].n);
+  31:   const open = async (email = 'owner@example.test', id = 'go-live-owner') => `${options.managed ? '__Host-operator_session' : localSessionCookieName(runtime.url)}=${(await control('/_golive/open', { email, id })).token}`;
+  32:   const call = async (path: string, init: { method?: string; body?: unknown; cookie?: string; headers?: Record<string, string>; raw?: BodyInit } = {}) => fetch(runtime.url + path, {
+  33:     method: init.method ?? 'GET', redirect: 'manual', headers: { Origin: origin, ...(init.cookie ? { Cookie: init.cookie } : {}),
+  34:       ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }), ...init.headers },
+  35:     body: init.raw ?? (init.body === undefined ? undefined : JSON.stringify(init.body)) });
+  36:   return { runtime, control, rows, count, open, call, origin,
+  37:     /** The installation's public HTTPS link, reached at this runtime. */
+  38:     local: (link: string) => { const url = new URL(link); expect(url.origin).toBe(origin); return runtime.url + url.pathname + url.search; } };
+  39: }
+  40: export type Installation = Awaited<ReturnType<typeof installation>>;
+  41: 
+  42: export async function json(response: Response, status: number) {
+  43:   const text = await response.text();
+  44:   expect(response.status, text).toBe(status);
+  45:   return text ? JSON.parse(text) : null;
+  46: }
+  47: 
+  48: /** Operator-entered consent, confirmed by the contact through the emailed link (confirmed opt-in). */
+  49: export async function confirmedContact(site: Installation, edge: Edge, cookie: string, email: string, displayName: string) {
+  50:   await availableTransport(site);
+  51:   const clock=await site.control('/_golive/clock');
+  52:   await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { ...consent, contact: { email, displayName }, occurredAt: new Date(clock.now).toISOString() } }), 201);
+  53:   const message = edge.sends.findLast(send => send.to === email && send.body.subject === 'Confirm your Mango Garden subscription');
+  54:   const link = /https:\/\/\S+\/consent\/confirm\/\S+/.exec(message!.body.content.find((part: any) => part.type === 'text/plain').value)![0];
+  55:   expect((await fetch(site.local(link), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
+  56:   return link;
+  57: }
+  58: 
+  59: export function rule(emails: string[]) {
+  60:   return JSON.stringify({ version: 1, operator: 'any', predicates: emails.map(value => ({ sourceType: 'contact', field: 'email', comparator: 'eq', value })) });
+  61: }
+  62: 
+  63: export async function draftCampaign(site: Installation, cookie: string, name: string, emails: string[], scheduledAt: Date) {
+  64:   const { campaignId, revisionId } = await json(await site.call('/api/campaigns', { method: 'POST', cookie, body: {} }), 201);
+  65:   await json(await site.call(`/api/campaign-revisions/${revisionId}`, { method: 'PATCH', cookie, body: {
+  66:     name, emailSubject: `${name}: what is growing this month`, preheader: 'Seeds, beds and a spring market',
+  67:     emailBody: '<p>The spring beds are in. Come and see us at the market.</p>', audienceRule: 'Named contacts',
+  68:     inclusionRuleJson: rule(emails), exclusionRulesJson: '[]', messageCategory: 'newsletter',
+  69:     steps: [{ channel: 'email', timezone: 'Australia/Brisbane', scheduledAt: scheduledAt.toISOString(),
+  70:       sendByAt: new Date(scheduledAt.getTime() + 2 * 3600_000).toISOString(), whyThisTime: 'Owner chose this time' }] } }), 200);
+  71:   return { campaignId, revisionId };
+  72: }
+  73: 
+  74: export async function approve(site: Installation, cookie: string, campaign: { campaignId: string; revisionId: string }) {
+  75:   return json(await site.call(`/api/campaigns/${campaign.campaignId}/approve`, { method: 'POST', cookie,
+  76:     body: { revisionId: campaign.revisionId, idempotencyKey: `approve-${campaign.revisionId}` } }), 200);
+  77: }
+  78: 
+  79: /** Runs the scheduled handler once the step is due, then waits for the queue consumer to settle every recipient. */
+  80: export async function dispatch(site: Installation, campaignId: string, due: Date, stepId?:string) {
+  81:   const step=stepId ? ` AND step_id='${stepId}'` : '';
+  82:   while ((await site.control('/_golive/clock')).now <= due.getTime()) await new Promise(resolve => setTimeout(resolve, 250));
+  83:   await site.control('/_golive/cron');
+  84:   let deliveryState:unknown;
+  85:   try {
+  86:     await expect.poll(async () => {
+  87:       const rows=await site.rows(`SELECT id,transport_disposition,skip_reason,last_error_code,last_error_detail,next_attempt_at,lease_expires_at FROM recipient_steps WHERE campaign_id='${campaignId}'${step}`);
+  88:       deliveryState=rows;
+  89:       return rows.filter(row=>row.transport_disposition==='queued').length;
+  90:     },{ timeout: 60000, intervals: [250] }).toBe(0);
+  91:   } catch(error) {throw new Error(`Native delivery did not settle: ${JSON.stringify(deliveryState)}`,{cause:error});}
+  92:   return site.rows(`SELECT id, destination AS email, transport_disposition, skip_reason, provider_message_id FROM recipient_steps
+  93:     WHERE campaign_id='${campaignId}'${step} ORDER BY destination`);
+  94: }
+  95: 
+  96: export async function signedPost(site: Installation, path: string, body: Buffer, headers: Record<string, string>) {
+  97:   return (await fetch(site.runtime.url + path, { method: 'POST', headers, body })).status;
+  98: }
+  99: 
+ 100: /** Wait for the actual persisted account budget, never grant a test bypass. */
+ 101: export async function availableTransport(site:Installation) {
+ 102:   const [rows,clock]=await Promise.all([site.rows('SELECT MAX(next_at) AS due FROM provider_pacing'),site.control('/_golive/clock')]);
+ 103:   const delay=Number(rows[0]?.due??0)-clock.now;
+ 104:   if(delay>0)await new Promise(resolve=>setTimeout(resolve,Math.ceil(delay)+20));
+ 105: }
+
+=== tests/go-live/worker.ts (candidate; compare source-identity.json) ===
+   1: import {loadSendingConnection} from '../../src/core/features/sending/load-connection';
+   2: import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
+   3: import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
+   4: import {advanceClock} from './clock';
+   5: import {pacedAdapter} from '../../src/core/features/lifecycle/transport-pacing';
+   6: import {controlledDatabase,controlledQueue,arm,release,status,capturedEmissions,replay} from './delivery-controls';
+   7: import {createProductionPlatform} from '../../src/core/platform/runtime';
+   8: import productionWorker from '../../src/core/app/worker';
+   9: import { productionBindings, receiptUrl, receiptRecipient } from './production-bindings';
+  10: // Test-only Worker entry for the go-live journey, served by the same Vite and
+  11: // Cloudflare plugin runtime as rer dev. It composes Mango's real SendGrid
+  12: // adapter, sender verification, approval, queue dispatch, webhook, unsubscribe
+  13: // and portability routes. Only network calls are substituted: requests to
+  14: // api.sendgrid.com and cloudflare-dns.com go to the journey's provider edge,
+  15: // and the trusted receipt connector reports what a receiving mailbox observed.
+  16: import { createFixturePlatform } from '../support/local-platform';
+  17: import { testIdentity } from '../support/test-identity';
+  18: import type { LocalAppBindings } from '../support/fixture-app';
+  19: import { createApp, createAppServices } from '../../src/core/app/app';
+  20: import { dispatchDocuments } from '../../src/core/app/document-dispatch';
+  21: import { createResendAdapter } from '../../src/core/platform/adapters/resend';
+  22: import { createSendgridAdapter } from '../../src/core/platform/adapters/sendgrid';
+  23: import { createSenderVerification } from '../../src/core/features/sender-verification/service';
+  24: import { digest } from '../../src/core/features/sender-verification/identity';
+  25: import { receiptConfiguration } from '../../src/core/features/sender-verification/receipt-configuration';
+  26: import { tags } from '../../src/core/features/sender-verification/dns';
+  27: import type { Challenge } from '../../src/core/features/sender-verification/types';
+  28: import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
+  29: 
+  30: type Bindings = LocalAppBindings & { GO_LIVE_EXTRA_HOSTS?: string; GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
+  31:   GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; GO_LIVE_MANAGED?: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_AI?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
+  32: 
+  33: // Observations only: each count is recorded after the actual production consumer returns.
+  34: const completedQueues=new Map<string,string[]>();
+  35: const network = globalThis.fetch;
+  36: let edge = '';
+  37: let extraHosts: string[] = [];
+  38: globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  39:   const request = new Request(input, init), url = new URL(request.url);
+  40:   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
+  41:   if (!['links.example.test', 'api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname) && !extraHosts.includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
+  42:   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
+  43:   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,
+  44:     body: ['GET', 'HEAD'].includes(request.method) ? undefined : await request.arrayBuffer(), signal: request.signal });
+  45: }) as typeof fetch;
+  46: 
+  47: function receiver(bindings: Bindings) {
+  48:   return { id: receiptConfiguration(receiptUrl,receiptRecipient).id, recipient: receiptRecipient, async acquire(challenge: Challenge) {
+  49:     return { receiptId: `receipt-${challenge.id}`, originalDigest: await digest(['original', challenge.id]), receivedAt: Date.now(),
+  50:       from: challenge.request.sender, to: challenge.recipient, providerMessageId: challenge.providerMessageId!, requestDigest: challenge.requestDigest,
+  51:       nonce: challenge.nonce, signedBody: { digest: await digest(challenge.request.content.text), complete: true, nonce: challenge.nonce },
+  52:       authentication: { spf: { result: 'pass', mailFromDomain: bindings.GO_LIVE_MAIL_PROVIDER==='resend'?'send.example.test':'em123.example.test' },
+  53:         dkim: { result: 'pass', domain: 'example.test', selector: bindings.GO_LIVE_MAIL_PROVIDER==='resend'?'resend':'s1', keyDigest: await digest(tags(`v=DKIM1; k=rsa; p=${bindings.GO_LIVE_DKIM_KEY}`)) },
+  54:         dmarc: { result: 'pass', fromDomain: 'example.test', semantics: 'rfc9989' as const } } };
+  55:   } };
+  56: }
+  57: 
+  58: async function compose(bindings: Bindings) {
+  59:   edge = bindings.GO_LIVE_EDGE_ORIGIN;
+  60:   extraHosts = JSON.parse(bindings.GO_LIVE_EXTRA_HOSTS ?? '[]');
+  61:   const platform = bindings.GO_LIVE_MANAGED ? createProductionPlatform(productionBindings(bindings)) : createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
+  62:   if (!bindings.GO_LIVE_MANAGED) Object.assign(platform.config, { mailProvider: 'sendgrid', mailProviderApiKey: bindings.GO_LIVE_PROVIDER_KEY,
+  63:     mailWebhookSecret: bindings.GO_LIVE_WEBHOOK_KEY, publicBaseUrl: new URL(bindings.GO_LIVE_PUBLIC_ORIGIN),
+  64:     mailboxReceiptUrl: receiptUrl, mailboxReceiptRecipient: receiptRecipient,
+  65:     emailHandoffsPerMinute: 50, testEmailAllowlist: ['tester@example.test', 'receiver@example.test'] });
+  66:   const smsEnabled=bindings.GO_LIVE_SMS==='1'||bindings.GO_LIVE_SMS==='missing-retention';
+  67:   if(bindings.GO_LIVE_AI==='1'||bindings.GO_LIVE_COMMERCE==='1'||smsEnabled||bindings.GO_LIVE_MAIL_PROVIDER==='resend') {
+  68:     const production=createProductionPlatform(productionBindings(bindings));
+  69:     platform.config.allowedLinkHosts=production.config.allowedLinkHosts;
+  70:     platform.linkInspector=production.linkInspector;
+  71:     platform.config.deliveryPolicies=production.config.deliveryPolicies;
+  72:     Object.assign(platform.config,{mailProvider:production.config.mailProvider,mailProviderApiKey:production.config.mailProviderApiKey,mailWebhookSecret:production.config.mailWebhookSecret,mailWebhookId:production.config.mailWebhookId});
+  73:     if(bindings.GO_LIVE_COMMERCE==='1') {
+  74:       platform.commerce=production.commerce;
+  75:       platform.config.modules.commerce=production.config.modules.commerce;
+  76:     }
+  77:     if(bindings.GO_LIVE_AI==='1') {
+  78:       platform.ai=production.ai;
+  79:       platform.config.modules.ai=production.config.modules.ai;
+  80:     }
+  81:     if(smsEnabled) {
+  82:       platform.sms=production.sms;
+  83:       platform.config.modules.sms=production.config.modules.sms;
+  84:     }
+  85:   }
+  86:   await loadSenderSettings(platform);
+  87:   await loadWooCommerce(platform);
+  88:   const verification = createSenderVerification({ database: platform.database, config: platform.config, receiver: receiver(bindings) });
+  89:   if (bindings.GO_LIVE_MANAGED === 'none') return {platform, verification};
+  90:   const mailer=platform.config.mailProvider==='resend'
+  91:     ? createResendAdapter({apiKey:platform.config.mailProviderApiKey,webhookSecret:platform.config.mailWebhookSecret,webhookId:platform.config.mailWebhookId,verification,retentionPolicy:platform.config.deliveryPolicies?.resend})
+  92:     : createSendgridAdapter({apiKey:platform.config.mailProviderApiKey,webhookPublicKey:platform.config.mailWebhookSecret,verification});
+  93:   platform.mailer=pacedAdapter(mailer,platform.database,platform.config);
+  94:   platform.senderVerification=verification;
+  95:   await loadSendingConnection(platform);
+  96:   return { platform, verification };
+  97: }
+  98: 
+  99: async function control(request: Request, bindings: Bindings) {
+ 100:   if (request.headers.get('X-Test-Token') !== bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden', { status: 403 });
+ 101:   const path=new URL(request.url).pathname;
+ 102:   if(path==='/_golive/clock') {
+ 103:     const body=await request.json() as {advanceMs?:number;hold?:boolean};
+ 104:     return Response.json(advanceClock(body.advanceMs,body.hold));
+ 105:   }
+ 106:   if(path==='/_golive/barrier') {
+ 107:     const body=await request.json() as {action:'arm'|'release'|'status';point:'step-start'|'approval'|'handoff'|'click-index'|'outage-pause'|'sms-frequency';identity:string};
+ 108:     if(body.action==='arm')arm(body.point,body.identity);
+ 109:     if(body.action==='release')release();
+ 110:     return Response.json(status());
+ 111:   }
+ 112:   if(path==='/_golive/emissions')return Response.json(capturedEmissions().map(item=>({...item,completedQueues:completedQueues.get(JSON.stringify(item.command))??[]})));
+ 113:   if(path==='/_golive/replay') {
+ 114:     const {index,parallel}=await request.json() as {index:number;parallel?:boolean};
+ 115:     const queue=parallel?bindings.GO_LIVE_PARALLEL_JOBS:bindings.MANGO_JOBS;
+ 116:     if(!queue)throw new Error('Parallel native Queue is not enabled for this installation.');
+ 117:     await replay(queue,index);return Response.json({ok:true});
+ 118:   }
+ 119:   const { platform, verification } = await compose(bindings), db=bindings.DB;
+ 120:   if (path === '/_golive/open') {
+ 121:     const { email, id } = await request.json() as { email: string; id: string };
+ 122:     await testIdentity(platform).importLocalDemoOperator({ id, email, displayName: 'Owner' }, new Date());
+ 123:     return Response.json({ token: (await testIdentity(platform).createTestSession(id)).token });
+ 124:   }
+ 125:   // The protected deployment runner's prepare, send and observe steps.
+ 126:   if (path === '/_golive/sender-evidence') {
+ 127:     const challenge = await verification.prepareChallenge({ recipient: 'receiver@example.test', subject: 'Mango sender check', text: 'Sender authentication diagnostic.' });
+ 128:     await verification.sendChallenge(challenge.id, platform.mailer);
+ 129:     return Response.json(await verification.acquireObservation(challenge.id));
+ 130:   }
+ 131:   // The deployed scheduled handler: due steps are queued for the real consumer.
+ 132:   if (path === '/_golive/cron') {
+ 133:     const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
+ 134:     const pending:Promise<unknown>[]=[];
+ 135:     productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
+ 136:       {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
+ 137:     await Promise.all(pending);
+ 138:     return Response.json({ok:true});
+ 139:   }
+ 140:   // The unsubscribe link a letter to this contact would carry, without sending one.
+ 141:   if (path === '/_golive/unsubscribe-link') {
+ 142:     const { contactId } = await request.json() as { contactId: string };
+ 143:     const issued = await createAppServices(platform).audienceService.issueUnsubscribeToken(contactId, 'email');
+ 144:     return Response.json({ url: new URL(`/unsubscribe/${issued.token}`, platform.config.publicBaseUrl).href });
+ 145:   }
+ 146:   if (path === '/_golive/rows') {
+ 147:     const { sql } = await request.json() as { sql: string };
+ 148:     if (!/^SELECT\s/i.test(sql)) return new Response('Read-only', { status: 400 });
+ 149:     return Response.json((await db.prepare(sql).all()).results);
+ 150:   }
+ 151:   return new Response('Not found', { status: 404 });
+ 152: }
+ 153: 
+ 154: const worker = {
+ 155:   async fetch(request: Request, bindings: Bindings, context: ExecutionContext) {
+ 156:     bindings={...bindings,DB:controlledDatabase(bindings.DB),MANGO_JOBS:controlledQueue(bindings.MANGO_JOBS)};
+ 157:     if (new URL(request.url).pathname.startsWith('/_golive/')) return control(request, bindings);
+ 158:     if (new URL(request.url).pathname === '/auth/local/cli-session' && !bindings.GO_LIVE_MANAGED) {
+ 159:       // Exercise the real rer local-owner proof door; removal still requires fresh authority.
+ 160:       const origin = new URL(request.url).origin;
+ 161:       return withDevIdentity(worker, {
+ 162:         bindings: environment => ({...environment, AUTH_LOCAL:'true', AUTH_ORIGIN:origin, RER_DEV_KEY:environment.LOCAL_BOOTSTRAP_TOKEN}),
+ 163:         config: environment => ({origin, OWNER_EMAIL:'owner@example.test', SESSION_SECRET:environment.LOCAL_BOOTSTRAP_TOKEN, local:true}),
+ 164:       }).fetch(request, bindings, context);
+ 165:     }
+ 166:     // Vite's loopback proxy replaces Host. This authenticated test-transport
+ 167:     // header represents a request arriving on a configured public hostname;
+ 168:     // it changes no application authority, records or provider response.
+ 169:     const transportHost = request.headers.get('X-GoLive-Host');
+ 170:     if (transportHost && request.headers.get('X-Test-Token') === bindings.LOCAL_BOOTSTRAP_TOKEN) {
+ 171:       const url = new URL(request.url), headers = new Headers(request.headers);
+ 172:       headers.set('Host', transportHost); headers.delete('X-GoLive-Host'); headers.delete('X-Test-Token');
+ 173:       request = new Request(new URL(url.pathname + url.search, 'https://' + transportHost), new Request(request, {headers}));
+ 174:     }
+ 175:     const { platform } = await compose(bindings);
+ 176:     if (bindings.GO_LIVE_MANAGED) {
+ 177:       // The loopback test transport represents the public HTTPS origin.
+ 178:       const url = new URL(request.url), headers = new Headers(request.headers);
+ 179:       headers.set('Host', new URL(bindings.GO_LIVE_PUBLIC_ORIGIN).host);
+ 180:       if (headers.get('Origin') === url.origin) headers.set('Origin', bindings.GO_LIVE_PUBLIC_ORIGIN);
+ 181:       request = new Request(new URL(url.pathname + url.search, bindings.GO_LIVE_PUBLIC_ORIGIN), new Request(request, {headers}));
+ 182:     }
+ 183:     // Links carry the HTTPS public origin while this runtime listens on loopback, so the
+ 184:     // app's origin check is trusted locally; Base's transfer handler still checks its own.
+ 185:     return dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));
+ 186:   },
+ 187:   scheduled(controller:ScheduledController,bindings:Bindings,context:ExecutionContext) {
+ 188:     edge=bindings.GO_LIVE_EDGE_ORIGIN;
+ 189:     bindings={...bindings,DB:controlledDatabase(bindings.DB),MANGO_JOBS:controlledQueue(bindings.MANGO_JOBS)};
+ 190:     return productionWorker.scheduled(controller,productionBindings(bindings),context);
+ 191:   },
+ 192:   async queue(batch: MessageBatch, bindings: Bindings) {
+ 193:     edge=bindings.GO_LIVE_EDGE_ORIGIN;
+ 194:     bindings={...bindings,DB:controlledDatabase(bindings.DB),MANGO_JOBS:controlledQueue(bindings.MANGO_JOBS)};
+ 195:     await productionWorker.queue(batch,productionBindings(bindings));
+ 196:     for(const message of batch.messages) {
+ 197:       const key=JSON.stringify(message.body);
+ 198:       completedQueues.set(key,[...(completedQueues.get(key)??[]),batch.queue]);
+ 199:     }
+ 200:   },
+ 201: } satisfies ExportedHandler<Bindings>;
+ 202: 
+ 203: export default worker;
+
+=== tests/go-live/edge.ts (candidate; compare source-identity.json) ===
+   1: import {providerBehavior} from './provider-behavior';
+   2: import {marketingAdmission} from './marketing-admission';
+   3: import {smsProviderEdge} from './sms-provider-edge';
+   4: import {resendProviderEdge} from './resend-provider-edge';
+   5: import { generateKeyPairSync, randomBytes } from 'node:crypto';
+   6: import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+   7: 
+   8: // Test-only network edge. The go-live Worker forwards every request Mango makes
+   9: // to api.sendgrid.com and cloudflare-dns.com here; anything else it refuses.
+  10: // It answers like SendGrid's v3 API and a DNS-over-HTTPS resolver for a sending
+  11: // domain authenticated with SendGrid (SPF via the mail CNAME, two DKIM CNAMEs,
+  12: // a DMARC record). Each mail send is recorded exactly as Mango serialized it.
+  13: export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any>; at:number };
+  14: type Answer = { type: number; data: string };
+  15: type StripePrice = {id: string; type: string; active: boolean; unit_amount: number; currency: string; recurring: {interval: string; interval_count: number}};
+  16: 
+  17: const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
+  18: const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
+  19: 
+  20: export async function providerEdge(options:{incumbent?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>;commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>; woo?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>;sending?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>}={}) {
+  21:   const behavior=providerBehavior();
+  22:   const admission=marketingAdmission();
+  23:   const sms=smsProviderEdge();
+  24:   const keys = [dkimKey(), dkimKey()];
+  25:   const resend=resendProviderEdge(keys[0]);
+  26:   const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
+  27:   const domainSetup = {exists: true, creates: 0, dnsPass: true, trackingCname: true, trackingHttps: true};
+  28:   // Stripe test-mode shapes for the paid tier: prices, Checkout sessions, subscriptions and customers.
+  29:   const stripe = {outage: false, requests: [] as {method: string; path: string}[],
+  30:     prices: {price_synthetic: {id: 'price_synthetic', type: 'recurring', active: true, unit_amount: 1000, currency: 'usd', recurring: {interval: 'month', interval_count: 1}}} as Record<string, StripePrice>,
+  31:     sessions: [] as {authorization: string; form: URLSearchParams; idempotencyKey: string}[],
+  32:     subscriptions: {} as Record<string, {status: string; customer: string; metadata: Record<string, string>}>, customers: {} as Record<string, {email: string; name: string}>};
+  33:   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
+  34:     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
+  35:     dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
+  36:     dkim2: { valid: true, type: 'cname', host: 's2._domainkey.example.test', data: 's2.domainkey.u99.wl.sendgrid.net' } } };
+  37:   const zone: Record<string, Answer[]> = {
+  38:     'mango-test.myshopify.com': [{type:1,data:'203.0.113.10'}],
+  39:     'shop.example.test':[{type:1,data:'203.0.113.10'}],
+  40:     'send.example.test':[{type:16,data:quoted('v=spf1 ip4:192.0.2.1 -all')}],
+  41:     'resend._domainkey.example.test':[{type:16,data:quoted(`v=DKIM1; k=rsa; p=${keys[0]}`)}],
+  42:     'em123.example.test': [{ type: 5, data: 'u99.wl.sendgrid.net.' }],
+  43:     'u99.wl.sendgrid.net': [{ type: 16, data: quoted('v=spf1 ip4:192.0.2.1 -all') }],
+  44:     's1._domainkey.example.test': [{ type: 5, data: 's1.domainkey.u99.wl.sendgrid.net.' }],
+  45:     's2._domainkey.example.test': [{ type: 5, data: 's2.domainkey.u99.wl.sendgrid.net.' }],
+  46:     's1.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[0]}`) }],
+  47:     's2.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[1]}`) }],
+  48:     '_dmarc.example.test': [{ type: 16, data: quoted('v=DMARC1; p=quarantine; psd=n') }],
+  49:   };
+  50:   for (const address of Object.keys(options.links ?? {})) zone[new URL(address).hostname] = [{type:1,data:'203.0.113.10'}];
+  51:   const codes: Record<string, number> = { CNAME: 5, TXT: 16, MX: 15, A:1, AAAA:28 };
+  52:   function resolve(name: string, type: string) {
+  53:     const answers: Array<Answer & { name: string; TTL: number }> = [];
+  54:     let target = name.toLowerCase().replace(/\.$/, '');
+  55:     for (let hops = 0; hops < 8; hops++) {
+  56:       const records = zone[target] ?? [];
+  57:       const alias = records.find(row => row.type === 5);
+  58:       if (alias && type !== 'CNAME') { answers.push({ name: target, TTL: 300, ...alias }); target = alias.data.replace(/\.$/, ''); continue; }
+  59:       answers.push(...records.filter(row => row.type === codes[type]).map(row => ({ name: target, TTL: 300, ...row })));
+  60:       break;
+  61:     }
+  62:     return answers.length ? { Status: 0, Answer: answers }
+  63:       : { Status: 3, Authority: [{ name: 'example.test', type: 6, TTL: 300, data: 'ns.example.test host.example.test 1 300 300 300 300' }] };
+  64:   }
+  65:   const body = async (request: IncomingMessage) => { const chunks: Buffer[] = []; for await (const chunk of request) chunks.push(chunk); return Buffer.concat(chunks).toString('utf8'); };
+  66:   const json = (response: ServerResponse, status: number, value: unknown, headers: Record<string, string> = {}) => {
+  67:     response.writeHead(status, { 'Content-Type': 'application/json', ...headers }); response.end(JSON.stringify(value));
+  68:   };
+  69:   const server = createServer(async (request, response) => {
+  70:     const original = new URL(String(request.headers['x-edge-original-url']));
+  71:     if (original.hostname === 'relay.example.test' && original.pathname === '/mail' && request.method === 'POST') {
+  72:       relaySends.push({body: JSON.parse(await body(request)), authorization: String(request.headers.authorization)});
+  73:       response.writeHead(202); response.end(); return;
+  74:     }
+  75:     behavior.requests.push({method:request.method??'',path:original.pathname,at:Date.now()});
+  76:     if(await options.incumbent?.(original,request,response))return;
+  77:     if(await options.woo?.(original,request,response))return;
+  78:     if(await options.sending?.(original,request,response))return;
+  79:     if(await sms.handle(original,request,response))return;
+  80:     if(await resend.handle(original,request,response))return;
+  81:     const linked = options.links?.[original.href];
+  82:     if(linked && request.method==='HEAD') {response.writeHead(linked.status ?? (linked.location ? 302 : 200), linked.location ? {Location:linked.location} : {});response.end();return;}
+  83:     if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
+  84:     if(original.hostname==='mango-test.myshopify.com' && options.commerce) {
+  85:       if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}
+  86:       return json(response,200,options.commerce(JSON.parse(await body(request))));
+  87:     }
+  88:     if (original.hostname === 'links.example.test' && request.method === 'HEAD') {response.writeHead(domainSetup.trackingHttps ? 200 : 503); response.end(); return;}
+  89:     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
+  90:     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
+  91:     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+  92:     if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
+  93:     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});
+  94:     const priceId = original.pathname.startsWith('/v1/prices/') ? original.pathname.slice('/v1/prices/'.length) : '';
+  95:     if (original.hostname === 'api.stripe.com' && stripe.prices[priceId] && request.method === 'GET') return json(response, 200, stripe.prices[priceId]);
+  96:     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/checkout/sessions' && request.method === 'POST') {
+  97:       const idempotencyKey=String(request.headers['idempotency-key']);
+  98:       let index=stripe.sessions.findIndex(session=>session.idempotencyKey===idempotencyKey);
+  99:       if(index<0){stripe.sessions.push({authorization:String(request.headers.authorization),form:new URLSearchParams(await body(request)),idempotencyKey});index=stripe.sessions.length-1;}
+ 100:       return json(response, 200, {id: `cs_synthetic_${index+1}`, url: `https://checkout.stripe.com/c/pay/cs_synthetic_${index+1}`});
+ 101:     }
+ 102:     const stripeObject = /^\/v1\/(subscriptions|customers)\/([A-Za-z0-9_]+)$/.exec(original.pathname);
+ 103:     const known = stripeObject && (stripeObject[1] === 'subscriptions' ? stripe.subscriptions : stripe.customers)[stripeObject[2]];
+ 104:     if (original.hostname === 'api.stripe.com' && known && request.method === 'GET') return json(response, 200, {id: stripeObject![2], ...known});
+ 105:     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/charges/ch_fixture' && request.method === 'GET') return json(response, 200, {id:'ch_fixture', customer:'cus_fixture'});
+ 106:     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers/cus_fixture' && request.method === 'GET') return json(response, 200, {id:'cus_fixture', email:'stripe-reader@example.test', name:'Taylor Orchard'});
+ 107:     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers' && request.method === 'GET') return json(response, 200, {data: []});
+ 108:     if (original.hostname === 'api.sendgrid.com') {
+ 109:       if (original.pathname === '/v3/scopes' && request.method === 'GET') return json(response,behavior.healthStatus(),behavior.healthStatus()===200?{scopes:['mail.send']}:{errors:[{message:'Provider unavailable'}]});
+ 110:       if (original.pathname === '/v3/whitelabel/domains' && request.method === 'GET') return json(response, 200, original.searchParams.get('offset') === '0' && domainSetup.exists ? [domain] : []);
+ 111:       if (original.pathname === '/v3/whitelabel/domains' && request.method === 'POST') {const input = JSON.parse(await body(request)); if (input.domain !== 'example.test' || input.automatic_security !== true) return json(response,400,{}); domainSetup.creates++; domain.id=124; domainSetup.exists=true; return json(response,201,domain);}
+ 112:       if (/^\/v3\/whitelabel\/domains\/\d+\/validate$/.test(original.pathname) && request.method === 'POST') return json(response,200,{valid:true});
+ 113:       if (original.pathname === '/v3/whitelabel/domains/123' && request.method === 'GET') return json(response, 200, domain);
+ 114:       // The Email Activity API is a paid add-on; this account does not have it.
+ 115:       if (original.pathname.startsWith('/v3/messages')) return json(response, 403, { errors: [{ message: 'access forbidden' }] });
+ 116:       if (original.pathname === '/v3/mail/send' && request.method === 'POST') {
+ 117:         const sent = JSON.parse(await body(request)), to = String(sent.personalizations?.[0]?.to?.[0]?.email ?? '');
+ 118:         // Timestamp the real request arrival even when provider admission is held.
+ 119:         const at=Date.now(),marketing=Boolean(sent.headers?.['List-Unsubscribe']);
+ 120:         if(marketing)await admission.admit();
+ 121:         const refusal=behavior.nextRefusal(to);
+ 122:         behavior.attempts.push({to,status:refusal?.status??202,at});
+ 123:         if(refusal)return json(response,refusal.status,{errors:[{message:'Synthetic provider rejection with private detail'}]},refusal.retryAfter===undefined?{}:{'Retry-After':String(refusal.retryAfter)});
+ 124:         const messageId = randomBytes(11).toString('base64url');
+ 125:         // SendGrid accepted it either way; a lost response leaves Mango uncertain.
+ 126:         sends.push({ at,to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
+ 127:         if(marketing)admission.accepted(to);
+ 128:         await behavior.responseDelay(marketing);
+ 129:         if (lost.has(to)) return response.destroy();
+ 130:         response.writeHead(202, { 'X-Message-Id': messageId }); return response.end();
+ 131:       }
+ 132:     }
+ 133:     unexpected.push(`${request.method} ${original.href}`);
+ 134:     json(response, 599, { error: 'unexpected edge request' });
+ 135:   });
+ 136:   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+ 137:   const address = server.address();
+ 138:   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
+ 139:   return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,stripe,
+ 140:     marketingGate:admission.create,
+ 141:     loseResponseFor: (address: string) => lost.add(address),
+ 142:     close: () => new Promise<void>(resolve => { admission.release(); server.closeAllConnections(); server.close(() => resolve()); }) };
+ 143: }
+
+=== tests/support/local-platform.ts (candidate; compare source-identity.json) ===
+   1: import { createLocalPlatform } from '../../src/core/platform/runtime';
+   2: import type { AppBindings } from '../../src/core/shared/platform';
+   3: 
+   4: // Existing fixture identities retain their recorded hash authority explicitly.
+   5: // Production/local application entrypoints must supply their own configuration.
+   6: export function createFixturePlatform(bindings: AppBindings, signingKey: string) {
+   7:   const platform = createLocalPlatform({ ...bindings, MANGO_LOCAL_HASH_AUTHORITY: 'contact-salt-v1', CONTACT_HASH_SALT: signingKey }, signingKey);
+   8:   // Operator fixtures represent an installation that has completed sender setup.
+   9:   // Fresh rer journeys use the real local entrypoint and its incomplete identity.
+  10:   platform.config.mailSender = {
+  11:     displayName: 'Mango local',
+  12:     fromEmail: 'newsletter@example.test',
+  13:     replyToEmail: 'reply@example.test',
+  14:     physicalAddress: '123 Test Street, Brisbane QLD 4000, Australia',
+  15:   };
+  16:   return platform;
+  17: }
+
+=== tests/support/browser.mjs (candidate; compare source-identity.json) ===
+   1: export const launchOptions = {
+   2:   ...(process.env.MANGO_CHROMIUM_EXECUTABLE ? {executablePath:process.env.MANGO_CHROMIUM_EXECUTABLE} : {}),
+   3:   args:['--use-mock-keychain','--password-store=basic','--no-sandbox'],
+   4: };
+
+=== src/core/platform/runtime.ts (candidate; compare source-identity.json) ===
+   1: import { pacedAdapter } from '@/core/features/lifecycle/transport-pacing';
+   2: import { readDeliveryPolicies } from '@/core/features/lifecycle/transport-policy';
+   3: import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
+   4: import { createSendgridAdapter } from './adapters/sendgrid';
+   5: import { createDatabase } from '@/core/platform/db/client';
+   6: import { localBindings } from './local-bindings';
+   7: import { createSenderVerification } from '@/core/features/sender-verification/service';
+   8: import type {
+   9:   AppBindings,
+  10:   AppConfig,
+  11:   Platform,
+  12:   SenderAdapter,
+  13: } from '@/core/shared/platform';
+  14: 
+  15: import { createMobileMessageAdapter } from './adapters/mobile-message';
+  16: import { createOpenAiAdapter } from './adapters/openai';
+  17: import { createResendAdapter } from './adapters/resend';
+  18: import { createRerAdapter } from './adapters/rer';
+  19: import { createShopifyAdapter } from './adapters/shopify';
+  20: import { createTwelveUiAdapter } from './adapters/twelve-ui';
+  21: import { createBlobStore } from './blobs';
+  22: import { optionalModuleInputs, readDesignModule, readProductionConfig, unavailableModule } from './config';
+  23: import { createJobDispatcher } from './jobs';
+  24: import { createLinkInspector } from './link-inspector';
+  25: import { createPublicTokenSigner } from './public-tokens';
+  26: import { localContactHashSalt } from './local-contact-authority';
+  27: import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
+  28: 
+  29: /** Local mail is silently suppressed, including consent confirmations. */
+  30: function localSender(): SenderAdapter {
+  31:   const unavailable = () => {
+  32:     throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
+  33:   };
+  34:   return {
+  35:     channel: 'email',
+  36:     async capabilities() {
+  37:       return {
+  38:         configured: false,
+  39:         canSendMarketing: false,
+  40:         effectiveDeduplication: false,
+  41:         effectiveReconciliation: false,
+  42:         deduplicationWindowMs: 0,
+  43:         reconciliationWindowMs: 0,
+  44:         detail: 'Sending is off on a copy running on your computer. Drafts, previews, imports and signup work here; deploy Mango with a mail provider to send letters.',
+  45:       };
+  46:     },
+  47:     async validateSender() {
+  48:       return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
+  49:     },
+  50:     async send(request) {
+  51:       if (request.purpose !== 'consent-confirmation') unavailable();
+  52:       return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
+  53:     },
+  54:     reconcile: unavailable,
+  55:     verifyWebhook: unavailable,
+  56:   };
+  57: }
+  58: 
+  59: /** The design adapter exists only when its module is enabled (DESIGN-001); otherwise nothing is constructed or contacted. */
+  60: function designAdapter(module: AppConfig['modules']['design']) {
+  61:   return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
+  62: }
+  63: 
+  64: export function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'>): Platform {
+  65:   return {
+  66:     database: createDatabase(environment.DB),
+  67:     config,
+  68:     ...adapters,
+  69:     jobs: createJobDispatcher(environment.MANGO_JOBS),
+  70:     blobs: createBlobStore(environment.ASSETS_BUCKET),
+  71:     linkInspector: createLinkInspector(config.allowedLinkHosts),
+  72:     publicTokens: createPublicTokenSigner(config.sessionSigningKey),
+  73:   };
+  74: }
+  75: 
+  76: export function createProductionPlatform(environment: AppBindings): Platform {
+  77:   const config = readProductionConfig(environment);
+  78:   config.deliveryPolicies = readDeliveryPolicies(environment.MANGO_DELIVERY_POLICY_JSON);
+  79:   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
+  80:     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
+  81:   const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'> = {
+  82:     ...designAdapter(config.modules.design),
+  83:     mailer: config.mailProvider === 'rer' ? createRerAdapter(config)
+  84:       : config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
+  85:       apiKey: config.mailProviderApiKey,
+  86:       webhookSecret: config.mailWebhookSecret,
+  87:       webhookId: config.mailWebhookId,
+  88:       verification,
+  89:       retentionPolicy:config.deliveryPolicies?.resend,
+  90:     }),
+  91:   };
+  92:   if (config.modules.commerce.enabled) {
+  93:     adapters.commerce = createShopifyAdapter({
+  94:       storeUrl: config.modules.commerce.config.storeUrl,
+  95:       accessToken: config.modules.commerce.config.apiToken,
+  96:       webhookSecret: config.modules.commerce.config.webhookSecret,
+  97:       exclusiveShop: config.modules.commerce.config.exclusiveShop,
+  98:       observations: config.modules.commerce.config.observations,
+  99:       database: createDatabase(environment.DB),
+ 100:     });
+ 101:   }
+ 102:   if (config.modules.ai.enabled) {
+ 103:     adapters.ai = createOpenAiAdapter({
+ 104:       apiKey: config.modules.ai.config.providerApiKey,
+ 105:       model: config.modules.ai.config.model,
+ 106:     });
+ 107:   }
+ 108:   if (config.modules.sms.enabled) {
+ 109:     adapters.sms = createMobileMessageAdapter({
+ 110:       credentials: config.modules.sms.config.providerApiKey,
+ 111:       webhookSecret: config.modules.sms.config.webhookSecret,
+ 112:       retentionPolicy:config.deliveryPolicies?.['mobile-message'],
+ 113:     });
+ 114:   }
+ 115:   const database=createDatabase(environment.DB);
+ 116:   adapters.mailer=pacedAdapter(adapters.mailer,database,config);
+ 117:   if (config.authMail) {
+ 118:     const transactional = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
+ 119:     adapters.confirmationMailer = pacedAdapter(createRerAdapter(transactional), database, transactional);
+ 120:   }
+ 121:   if(adapters.sms) adapters.sms=pacedAdapter(adapters.sms,database,config);
+ 122:   return { ...compose(environment, config, adapters), senderVerification: verification };
+ 123: }
+ 124: 
+ 125: export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
+ 126:   environment = localBindings(environment);
+ 127:   if (environment.MANGO_LOCAL_CONFIG_VERSION === '2') localSigningKey = environment.SESSION_SIGNING_KEY;
+ 128:   // A copy running on a computer may try design generation with the owner's own key in .dev.vars (decision D8a).
+ 129:   const design = readDesignModule(environment, { local: true });
+ 130:   return compose(environment, {
+ 131:     sessionSigningKey: localSigningKey,
+ 132:     initialOperatorEmails: (environment.INITIAL_OPERATOR_EMAILS ?? "").split(",").filter(Boolean),
+ 133:     authSetupToken: environment.AUTH_SETUP_TOKEN,
+ 134:     contactHashSalt: localContactHashSalt(environment),
+ 135:     modules: {
+ 136:       commerce: unavailableModule('Commerce', optionalModuleInputs.commerce),
+ 137:       sms: unavailableModule('SMS', optionalModuleInputs.sms),
+ 138:       ai: unavailableModule('AI', optionalModuleInputs.ai),
+ 139:       design,
+ 140:     },
+ 141:     mailProviderApiKey: '',
+ 142:     mailAuthFrom: 'auth@localhost.test',
+ 143:     mailWebhookSecret: '',
+ 144:     mailWebhookId: '',
+ 145:     publicBaseUrl: new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1'),
+ 146:     appVersion: 'local',
+ 147:     local: true,
+ 148:     allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1')),
+ 149:     testEmailAllowlist: ['local@example.test'],
+ 150:     providerReconciliationIntervalMinutes: 15,
+ 151:     unresolvedProviderOutcomeHours: 1,
+ 152:     emailHandoffsPerMinute: 1,
+ 153:     deliverabilityReportingWindowDays: 30,
+ 154:     mailSender: {
+ 155:       // Local installations start with no sender identity; /setup collects the real one.
+ 156:       displayName: '',
+ 157:       fromEmail: '',
+ 158:       replyToEmail: '',
+ 159:       physicalAddress: '',
+ 160:     },
+ 161:   }, {
+ 162:     ...designAdapter(design),
+ 163:     mailer: localSender(),
+ 164:   });
+ 165: }
+
+=== src/core/platform/link-inspector.ts (candidate; compare source-identity.json) ===
+   1: import { contactLink } from '@/core/features/campaigns/contact-links';
+   2: import { allowedLinkHost } from '@/core/features/settings/link-hosts-validation';
+   3: import type { LinkInspection, LinkInspector } from '@/core/shared/platform';
+   4: 
+   5: const resolver = 'https://cloudflare-dns.com/dns-query';
+   6: const maxRedirects = 3;
+   7: const timeoutMs = 5_000;
+   8: 
+   9: function privateAddress(value: string) {
+  10:   const address = value.toLowerCase();
+  11:   if (address === '::1' || address.startsWith('fc') || address.startsWith('fd') || address.startsWith('fe80:')) return true;
+  12:   const parts = address.split('.').map(Number);
+  13:   if (parts.length !== 4 || parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)) return false;
+  14:   const [first, second] = parts;
+  15:   return first === 0 || first === 10 || first === 127 || first >= 224
+  16:     || (first === 100 && second >= 64 && second <= 127)
+  17:     || (first === 169 && second === 254)
+  18:     || (first === 172 && second >= 16 && second <= 31)
+  19:     || (first === 192 && second === 168)
+  20:     || (first === 198 && (second === 18 || second === 19));
+  21: }
+  22: 
+  23: async function addressesFor(host: string, request: typeof fetch): Promise<string[]> {
+  24:   const found = new Set<string>();
+  25:   for (const type of ['A', 'AAAA']) {
+  26:     const response = await request(`${resolver}?name=${encodeURIComponent(host)}&type=${type}`, {
+  27:       headers: { Accept: 'application/dns-json' },
+  28:       redirect: 'manual',
+  29:       signal: AbortSignal.timeout(timeoutMs),
+  30:     });
+  31:     if (!response.ok) throw new Error(`DNS resolver returned HTTP ${response.status}.`);
+  32:     const body = await response.json() as { Answer?: Array<{ data?: unknown }> };
+  33:     for (const answer of body.Answer ?? []) if (typeof answer.data === 'string') found.add(answer.data);
+  34:   }
+  35:   return [...found];
+  36: }
+  37: 
+  38: export function createLinkInspector(allowedHosts: string[], request: typeof fetch = fetch): LinkInspector {
+  39:   return {
+  40:     async inspect(value: string): Promise<LinkInspection> {
+  41:       if (contactLink(value)) return {ok: true, detail: 'Validated contact link; no network host.'};
+  42:       let current: URL;
+  43:       try {
+  44:         current = new URL(value);
+  45:       } catch {
+  46:         return { ok: false, detail: 'Link is not an absolute URL.' };
+  47:       }
+  48:       for (let redirect = 0; redirect <= maxRedirects; redirect += 1) {
+  49:         const via = redirect ? 'Link redirects to ' : 'Link uses ';
+  50:         if (current.protocol !== 'https:') return { ok: false, detail: `${via}the ${current.protocol} scheme; it must use HTTPS.` };
+  51:         if (!allowedLinkHost(current.hostname, allowedHosts)) return { ok: false, blockedHost: current.hostname, detail: redirect ? `Link redirects to host ${current.hostname}, which is not allowed.` : `Link host ${current.hostname} is not allowed.` };
+  52:         if (privateAddress(current.hostname)) return { ok: false, detail: `Link host ${current.hostname} is a private-network address.` };
+  53:         try {
+  54:           const addresses = await addressesFor(current.hostname, request);
+  55:           if (addresses.length === 0) return { ok: false, detail: `Link host ${current.hostname} did not resolve.` };
+  56:           if (addresses.some(privateAddress)) return { ok: false, detail: `Link host ${current.hostname} resolves to a private-network address.` };
+  57:           const response = await request(current, { method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(timeoutMs) });
+  58:           if (response.status >= 300 && response.status < 400) {
+  59:             const location = response.headers.get('Location');
+  60:             if (!location) return { ok: false, detail: 'Link redirect has no Location header.' };
+  61:             current = new URL(location, current);
+  62:             continue;
+  63:           }
+  64:           if (!response.ok) return { ok: false, detail: `Link returned HTTP ${response.status}.` };
+  65:           return { ok: true, finalUrl: current.toString(), detail: 'Link and every redirect target are reachable and allowed.' };
+  66:         } catch {
+  67:           return { ok: false, detail: `Link host ${current.hostname} could not be resolved and checked.` };
+  68:         }
+  69:       }
+  70:       return { ok: false, detail: `Link exceeded the ${maxRedirects} redirect limit.` };
+  71:     },
+  72:   };
+  73: }
+  74: 
+  75: /** Import-time image read: the same DNS/private-address policy as link checks,
+  76:  * with no redirects and a bounded body. No credentials or cookies are sent. */
+  77: export async function readInspectedImage(value: string, allowedHosts: string[], limit: number, request: typeof fetch = fetch) {
+  78:   const url = new URL(value);
+  79:   if (url.protocol !== 'https:' || url.username || url.password || url.port || !allowedLinkHost(url.hostname, allowedHosts)) throw new Error('Image host is not permitted.');
+  80:   if (privateAddress(url.hostname)) throw new Error('Image host is a private-network address.');
+  81:   const addresses = await addressesFor(url.hostname, request);
+  82:   if (!addresses.length) throw new Error('Image host did not resolve.');
+  83:   if (addresses.some(privateAddress)) throw new Error('Image host resolves to a private-network address.');
+  84:   const response = await request(url, {redirect:'manual', signal:AbortSignal.timeout(timeoutMs)});
+  85:   if (!response.ok) { await response.body?.cancel(); throw new Error(`Image returned HTTP ${response.status}.`); }
+  86:   if (Number(response.headers.get('Content-Length') ?? 0) > limit) { await response.body?.cancel(); throw new Error('Image exceeds the byte limit.'); }
+  87:   const reader = response.body?.getReader(), chunks: Uint8Array[] = [];
+  88:   let total = 0;
+  89:   if (reader) try { for (;;) {
+  90:     const {done,value} = await reader.read(); if (done) break;
+  91:     total += value.length;
+  92:     if (total > limit) throw new Error('Image exceeds the byte limit.');
+  93:     chunks.push(value);
+  94:   } } catch (error) { await reader.cancel().catch(() => undefined); throw error; }
+  95:   const bytes = new Uint8Array(total); let offset = 0;
+  96:   for (const chunk of chunks) { bytes.set(chunk,offset); offset += chunk.length; }
+  97:   return bytes;
+  98: }
+
+=== src/core/features/lifecycle/checks.ts (candidate; compare source-identity.json) ===
+   1: import {reputationFigures,reputationRule} from './reputation-figures';
+   2: import {CatalogUnavailable} from '@/core/features/campaigns/catalog-blocks';
+   3: import { emailContentAdvisories } from '@/core/features/campaigns/email-advisories';
+   4: import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
+   5: import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
+   6: import { formatEmailSize } from '@/core/features/campaigns/email-size';
+   7: import { contactLink } from '@/core/features/campaigns/contact-links';
+   8: import { blockedLinkHosts } from './link-checks';
+   9: import { blockedImage, blockedLink } from '@/core/features/campaigns/link-reasons';
+  10: import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
+  11: import { textLinkDestinations } from '@/core/features/campaigns/message-links';
+  12: import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
+  13: import {activeProviderHolds} from './provider-holds';
+  14: import {reputationRestricted} from './reputation-guard';
+  15: import { smsProgrammeSchema, smsWindow } from '@/core/features/sms/policy';
+  16: import { smsSegments } from '@/core/features/sms/segments';
+  17: import { emailSubjectAdvisory } from './advisory-policy';
+  18: import { emailConsentScope } from './email-consent-scope';
+  19: import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
+  20: import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
+  21: import { senderReasonText } from '@/core/features/sender-verification/reason-text';
+  22: import { invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
+  23: import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+  24: import { parseStructuredRules } from './rules';
+  25: import { prepareApprovalChecks } from './checks-preparation';
+  26: import type { ApprovalCheck, LifecycleRepository } from './repository';
+  27: import type { CampaignRevisionSnapshot, FrozenCandidate, LifecyclePlatform, SenderCapabilities } from './types';
+  28: 
+  29: function check(kind: string, passed: boolean, detail: string, blocking = true): ApprovalCheck {
+  30:   return { kind, status: passed ? 'passed' : 'blocked', detail, blocking: blocking && !passed };
+  31: }
+  32: 
+  33: function validIanaTimeZone(value: string) {
+  34:   if (/^[+-]/.test(value)) return false;
+  35:   try {
+  36:     new Intl.DateTimeFormat('en-AU', { timeZone: value });
+  37:     return true;
+  38:   } catch {
+  39:     return false;
+  40:   }
+  41: }
+  42: 
+  43: function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[], ownOrigin: URL, demoOrigin?: string) {
+  44:   const { revision, links, steps } = snapshot;
+  45:   const selected = new Set(steps.map((step) => step.channel));
+  46:   const findings: ApprovalCheck[] = [];
+  47:   findings.push(check('campaign.name', Boolean(revision.name.trim()), 'Add a campaign name before approval.'));
+  48:   findings.push(check('audience.structured-rule', parseStructuredRules(revision.inclusionRuleJson, revision.exclusionRulesJson).ok,
+  49:     'Audience inclusion and exclusions must use complete Mango structured rule version 1 conditions; prose is never executed.'));
+  50:   findings.push(check('schedule.steps', steps.length > 0 && steps.every((step) => step.sendByAt > step.scheduledAt),
+  51:     'Each step requires a resolved UTC instant before its send-by deadline.'));
+  52:   findings.push(check('schedule.timezone', steps.every((step) => validIanaTimeZone(step.timezone)),
+  53:     'Each step requires a valid IANA time zone.'));
+  54: 
+  55:   const htmlPolicy = inspectEmailHtml(revision.emailBody, undefined, demoOrigin);
+  56:   const blockedLinks = [...new Set([...links.map((link) => link.destinationUrl), ...htmlPolicy.rejectedLinks])]
+  57:     .flatMap((destination) => { const blocked = blockedLink(destination, allowedHosts, demoOrigin); return blocked ? [{destination, ...blocked}] : []; });
+  58:   const blockedImages = htmlPolicy.images.flatMap((source) => { const blocked = blockedImage(source, allowedHosts, ownOrigin); return blocked ? [{destination: source, ...blocked}] : []; });
+  59:   const directHosts = [...blockedLinks, ...blockedImages].flatMap(({destination, host}) => host ? [{destination, inspection: {ok: false, detail: '', blockedHost: host}}] : []);
+  60:   findings.push({...check('message.links', blockedLinks.length + blockedImages.length === 0,
+  61:     blockedLinks.length + blockedImages.length ? `Blocked links: ${blockedLinks.map((item) => `${item.destination} (${item.reason})`).join('; ')}${blockedImages.length ? `${blockedLinks.length ? '; ' : ''}Blocked images: ${blockedImages.map((item) => `${item.destination} (${item.reason})`).join('; ')}` : ''}` : `Every destination is an allowed HTTPS or contact link${demoOrigin ? ', or a page of this demo' : ''}.`),
+  62:     blockedHosts: blockedLinkHosts(directHosts)});
+  63: 
+  64:   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
+  65:     ? htmlPolicy.issues.join(' ')
+  66:     : 'Email HTML uses the allowed tags, attributes, inline styles and validated destinations, and hides no text.'));
+  67:   const missingFallback = invalidMessagePersonalisation(revision);
+  68:   findings.push(check('message.personalisation', missingFallback.length === 0,
+  69:     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
+  70: 
+  71:   if (selected.has('email')) {
+  72:     findings.push(...emailContentAdvisories(revision));
+  73:     const advisory = emailSubjectAdvisory(revision.emailSubject);
+  74:     if (advisory) findings.push(advisory);
+  75:     const emailComplete = Boolean(
+  76:       revision.emailSubject.trim() && revision.emailBody.trim() && revision.emailText.trim() && revision.preheader.trim()
+  77:       && revision.senderName.trim() && revision.fromEmail.trim() && revision.replyToEmail.trim() && revision.physicalAddress.trim(),
+  78:     );
+  79:     const required = {subject:revision.emailSubject, 'message body':htmlToText(authoredBody(revision.emailBody)).replace(/\{\{(?:physical_address|unsubscribe_url)\}\}/g, '').replace(/Unsubscribe|[()]/g, '').trim(), 'plain-text body':revision.emailText, preheader:revision.preheader, 'sender name':revision.senderName, 'from email':revision.fromEmail, 'reply-to email':revision.replyToEmail, 'postal address':revision.physicalAddress};
+  80:     const missingContent = Object.entries(required).filter(([,value]) => !value.trim()).map(([name]) => name);
+  81:     findings.push(check('message.email-identity', emailComplete && !missingContent.length, missingContent.length ? `Add the missing ${missingContent.join(', ')} before approval.` : 'All required email content and identity fields are present.'));
+  82:     const hasUnsubscribe = htmlPolicy.anchors.some(anchor => anchor.href === '{{unsubscribe_url}}' && anchor.label.length > 0) && revision.emailText.includes('{{unsubscribe_url}}');
+  83:     findings.push(check('message.email-unsubscribe', hasUnsubscribe, 'HTML requires a visibly labelled managed unsubscribe link; plain text must carry the same managed URL.'));
+  84:     const hasPhysicalAddress = revision.emailBody.includes('{{physical_address}}') && revision.emailText.includes('{{physical_address}}');
+  85:     findings.push(check('message.email-address', hasPhysicalAddress, 'HTML and plain-text email bodies must both carry the managed physical postal address.'));
+  86:     const htmlDestinations = new Set(htmlPolicy.anchors.filter(anchor => anchor.href !== '{{unsubscribe_url}}').map(anchor => anchor.href.replaceAll('&amp;', '&')));
+  87:     const textDestinations = new Set([...textLinkDestinations(revision.emailText), ...links.filter(link => contactLink(link.destinationUrl) && revision.emailText.includes(`(${link.destinationUrl})`)).map(link => link.destinationUrl)]);
+  88:     const savedDestinations = new Set(links.map(link => link.destinationUrl));
+  89:     const missing = [...new Set([...htmlDestinations, ...textDestinations, ...savedDestinations])].filter(destination => !htmlDestinations.has(destination) || !textDestinations.has(destination) || !savedDestinations.has(destination));
+  90:     findings.push(check('message.multipart-equivalence', missing.length === 0,
+  91:       missing.length ? `HTML links, plain-text URLs and saved destinations differ: ${missing.join(', ')}` : 'HTML links and plain-text URLs match the exact saved destination set.'));
+  92: 
+  93:   }
+  94:   if (selected.has('sms')) {
+  95:     findings.push(check('message.sms-compliance',Boolean(revision.smsBody.trim()),'A non-empty SMS body is required. Mango appends the exact configured programme, sender, frequency, jurisdiction and STOP/HELP disclosure.'));
+  96:   }
+  97:   return findings;
+  98: }
+  99: 
+ 100: function adapterChecks(
+ 101:   channel: 'email' | 'sms',
+ 102:   capabilities: SenderCapabilities,
+ 103:   requiredReconciliationMs: number,
+ 104: ) {
+ 105:   const prefix = channel === 'email' ? 'mail.sender.v1' : 'sms.sender.v1';
+ 106:   // Without a provider there is nothing else to check; one blocker says so.
+ 107:   if (!capabilities.configured) return [check(`${prefix}.configured`, false, capabilities.detail)];
+ 108:   if (capabilities.handoffPolicy === 'single-attempt') return [
+ 109:     check(`${prefix}.configured`, capabilities.configured && capabilities.canSendMarketing, capabilities.detail),
+ 110:     check(`${prefix}.single-attempt`, channel === 'email' && capabilities.provider === 'sendgrid',
+ 111:       'At-most-once handoff; definite nonacceptance is retry-safe, uncertainty requires operator review and is never automatically retried.'),
+ 112:   ];
+ 113:   return [
+ 114:     check(`${prefix}.configured`, capabilities.configured && capabilities.canSendMarketing, capabilities.detail),
+ 115:     check(`${prefix}.deduplication`, capabilities.effectiveDeduplication,
+ 116:       capabilities.effectiveDeduplication ? 'Provider-effective idempotency is available.' : 'Provider-effective idempotency is unavailable.'),
+ 117:     check(`${prefix}.reconciliation`, capabilities.effectiveReconciliation && capabilities.reconciliationWindowMs >= requiredReconciliationMs,
+ 118:       `Provider lookup window ${capabilities.reconciliationWindowMs}ms; Mango requires at least ${requiredReconciliationMs}ms.`),
+ 119:     check(`${prefix}.deduplication-window`, capabilities.deduplicationWindowMs >= requiredReconciliationMs,
+ 120:       `Provider deduplication window ${capabilities.deduplicationWindowMs}ms; Mango requires at least ${requiredReconciliationMs}ms.`),
+ 121:   ];
+ 122: }
+ 123: 
+ 124: export async function runApprovalChecks(input: {
+ 125:   snapshot: CampaignRevisionSnapshot;
+ 126:   candidates: FrozenCandidate[];
+ 127:   platform: LifecyclePlatform;
+ 128:   repository: LifecycleRepository;
+ 129:   now: Date;
+ 130:   prepared?: Awaited<ReturnType<typeof prepareApprovalChecks>>;
+ 131: }) {
+ 132:   const { snapshot, platform, now } = input;
+ 133:   // Read independent settings together, while retaining the previous error
+ 134:   // precedence when more than one operation fails.
+ 135:   const value = <T,>(result: PromiseSettledResult<T>): T => {
+ 136:     if (result.status === 'rejected') throw result.reason;
+ 137:     return result.value;
+ 138:   };
+ 139:   const prepared = input.prepared ?? await prepareApprovalChecks(snapshot, platform);
+ 140:   const selected = new Set(snapshot.steps.map((step) => step.channel));
+ 141:   const baseReconciliationWindow = platform.config.unresolvedProviderOutcomeHours * 60 * 60_000
+ 142:     + platform.config.providerReconciliationIntervalMinutes * 2 * 60_000;
+ 143:   const requiredWindow = (channel: 'email' | 'sms') => baseReconciliationWindow + Math.max(
+ 144:     0,
+ 145:     ...snapshot.steps.filter((step) => step.channel === channel)
+ 146:       .map((step) => step.sendByAt.getTime() - step.scheduledAt.getTime()),
+ 147:   );
+ 148:   const [results, smsResults] = await Promise.all([prepared.results, Promise.allSettled([
+ 149:     selected.has('sms') && platform.sms ? Promise.all([
+ 150:       platform.sms.capabilities(),
+ 151:       Promise.all([...new Set(input.candidates.flatMap((item) => item.channels.sms?.country ?? []))]
+ 152:         .map((country) => platform.sms!.validateSender(snapshot.revision.smsSender, country))),
+ 153:     ]) : undefined,
+ 154:   ])]);
+ 155:   const smsResult = smsResults[0];
+ 156:   const [mailResult, linkResult] = results;
+ 157:   const [mailCapabilities, mailInspection] = value(mailResult);
+ 158:   const demoOrigin = demoLinkOrigin(platform.config);
+ 159:   const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()), platform.config.publicBaseUrl, demoOrigin);
+ 160:   const sms = value(smsResult);
+ 161:   const smsCapabilities = sms?.[0];
+ 162:   const smsValidations = sms?.[1] ?? [];
+ 163:   if (selected.has('sms') && !platform.sms) {
+ 164:     const smsModule = platform.config.modules.sms;
+ 165:     checks.push(check('sms.sender.v1.configured', false, smsModule.enabled
+ 166:       ? 'The SMS adapter is unavailable despite complete module configuration.'
+ 167:       : smsModule.detail));
+ 168:   }
+ 169:   const linkInspections = value(linkResult);
+ 170:   const blockedDestinations = linkInspections.filter(({ inspection }) => !inspection.ok);
+ 171:   checks.push({...check('message.links.resolved', blockedDestinations.length === 0,
+ 172:     blockedDestinations.length
+ 173:       ? `Blocked transmitted links: ${blockedDestinations.map(({ destination, inspection }) => `${destination} (${inspection.detail})`).join('; ')}`
+ 174:       : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks${demoOrigin ? ' or are pages of this demo' : ''}.`),
+ 175:     blockedHosts: blockedLinkHosts(blockedDestinations)});
+ 176:   const configured = platform.config.mailSender;
+ 177:   if (selected.has('email')) {
+ 178:     try{
+ 179:     const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true,audienceContactIds:input.candidates.filter(candidate=>candidate.channels.email).map(candidate=>candidate.contactId)},false);
+ 180:     checks.push(check('message.email-size',!size.exceedsLimit,formatEmailSize(size)));
+ 181:     const sizeAdvisory=emailSizeAdvisory(size);
+ 182:     if(sizeAdvisory)checks.push(sizeAdvisory);
+ 183:     }catch(error){if(error instanceof CatalogUnavailable)checks.push(check('message.catalog',false,error.message));else throw error;}
+ 184:     const inspection = mailInspection!;
+ 185:     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
+ 186:     if(mailCapabilities.deliveryEventsVerified!==undefined)checks.push(check('delivery-events-missing',mailCapabilities.deliveryEventsVerified,'A signed delivered event for the Owner sender check is required.'));
+ 187:     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);
+ 188:     checks.push(check('provider.restrictions',holds.length===0,holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):'No observed provider restriction.'));
+ 189:     if (mailCapabilities.configured) {
+ 190:       checks.push(check('message.email-sender', inspection.ready && Boolean(inspection.lease), senderReasonText(inspection.reason)));
+ 191:       const authentication = inspection.authentication;
+ 192:       checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
+ 193:         'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
+ 194:     }
+ 195:     checks.push(check('message.email-configured-identity',
+ 196:       revisionMatchesSender(snapshot.revision, configured),
+ 197:       'The saved sender identity must exactly match the configured business identity.'));
+ 198:     const consentScope = emailConsentScope(input.candidates, snapshot.revision);
+ 199:     checks.push(check('message.email-consent-scope', consentScope.passed, consentScope.detail));
+ 200:     const reputation = await input.repository.reputation(snapshot.revision.fromEmail, 'email',
+ 201:       new Date(now.getTime() - platform.config.deliverabilityReportingWindowDays * 86_400_000));
+ 202:     const internalBlock = reputationRestricted(reputation);
+ 203:     checks.push(check('message.sending-reputation', !internalBlock,
+ 204:       `${reputationFigures(reputation,platform.config.deliverabilityReportingWindowDays)} ${reputationRule}`));
+ 205:   }
+ 206:   if (selected.has('sms')) {
+ 207:     const smsModule=platform.config.modules.sms,policy=smsModule.enabled?smsProgrammeSchema.safeParse(smsModule.config.programme):undefined;
+ 208:     const configured=policy?.success?policy.data:undefined;
+ 209:     checks.push(check('message.sms-programme',Boolean(configured && smsModule.enabled && snapshot.revision.smsSender===smsModule.config.confirmationSender && snapshot.revision.messageCategory===configured.category), configured&&smsModule.enabled?`Managed disclosure appended to every SMS: ${smsComplianceBlock(configured,smsModule.config.confirmationSender)}`:'Configure the SMS sender and programme before approval.'));
+ 210:     const disclosed=configured&&smsModule.enabled?managedSmsText(snapshot.revision.smsBody,configured,smsModule.config.confirmationSender):snapshot.revision.smsBody;
+ 211:     checks.push(check('message.sms-segments',smsSegments(disclosed).segments<=10, `Draft plus managed disclosure estimate: ${smsSegments(disclosed).segments} ${smsSegments(disclosed).encoding} segments before recipient personalisation and tracked links. Final text is counted again at handoff; provider limit is 10 parts.`));
+ 212:     checks.push(check('message.sms-policy',Boolean(configured && input.candidates.every(candidate=>{const sms=candidate.channels.sms;if(!sms)return true;const decision=smsWindow(configured,now,sms.timeZone??null,sms.timeZoneEvidenceSource??null,sms.timeZoneEvidenceAt?.getTime()??null);return decision.allowed||decision.reason==='sms-quiet-window';})), 'Current provider, jurisdiction and recipient window evidence and fresh recipient location are required; handoff waits for their intersection.'));
+ 213:     if (smsCapabilities) {
+ 214:       checks.push(...adapterChecks('sms', smsCapabilities, requiredWindow('sms')));
+ 215:       const holds=await activeProviderHolds(platform.database,'mobile-message','sms',snapshot.revision.smsSender);
+ 216:       checks.push(check('sms.provider-restrictions',holds.length===0,holds.length?holds.map(h=>String(h.detail)).join('; '):'No observed provider restriction.'));
+ 217:       checks.push(check('message.sms-sender', smsValidations.every((item) => item.ready),
+ 218:         smsValidations.length ? smsValidations.map((item) => item.detail).join('; ') : 'Recipient jurisdiction is missing; registered sender cannot be confirmed.'));
+ 219:     }
+ 220:     checks.push(check('message.sms-location-evidence', input.candidates.every((candidate) => {
+ 221:       const sms = candidate.channels.sms;
+ 222:       return !sms || Boolean(sms.country && sms.timeZone && sms.timeZoneEvidenceAt && sms.timeZoneEvidenceSource);
+ 223:     }), 'Every SMS candidate requires recorded recipient-local country and time-zone evidence.'));
+ 224:     checks.push(check('message.sms-consent-scope', input.candidates.every((candidate) => {
+ 225:       const sms = candidate.channels.sms;
+ 226:       return !sms || Boolean(
+ 227:         sms.consents.some((consent) =>
+ 228:           consent.destination === sms.destination
+ 229:           && consent.smsProgramme === configured?.programme
+ 230:           && consent.brandOrLegalSender === configured?.brand
+ 231:           && consent.frequencyDisclosure === configured?.frequency
+ 232:           && consent.category === snapshot.revision.messageCategory
+ 233:           && consent.jurisdiction === sms.country),
+ 234:       );
+ 235:     }), 'Every SMS destination must have subscribed consent for this programme, category, and jurisdiction.'));
+ 236:   }
+ 237:   return { checks, mailCapabilities, smsCapabilities, senderLease: mailInspection?.lease };
+ 238: }
+
+=== scripts/verification/plan.mjs (candidate; compare source-identity.json) ===
+   1: // Playwright positional arguments are regexes: select each whole declared path.
+   2: const filePattern = file => '(?:^|/)' + file.split('.').join(String.fromCharCode(92) + '.') + '$';
+   3: const pnpm = (name, args) => ({ name, command: 'pnpm', args });
+   4: export const configs = {
+   5:   main: 'playwright.config.js',
+   6:   'local-start': 'scripts/verification/local-start.config.mjs',
+   7:   'local-start-slow': 'tests/local-start/config.js',
+   8:   'newsletter-ui': 'tests/newsletter-ui/playwright.config.js',
+   9:   'campaign-results': 'tests/campaign-results/playwright.config.js',
+  10:   'go-live': 'tests/go-live/playwright.config.js',
+  11:   'move-in': 'tests/move-in/playwright.config.js',
+  12: };
+  13: export const stageNames = ['static', ...Object.keys(configs)];
+  14: const member = (stage, files) => ({name: stage, stage, files});
+  15: // Whole journeys stay together. Two workers use separate installations;
+  16: // migrations and commands inside each installation remain ordered.
+  17: export const packs = [
+  18:   // Keep main's newer safety journeys without extending the candidate's slow packs.
+  19:   {name:'retained-authoring',members:[member('main',['campaign-authoring/canonical-save.spec.ts','campaign-authoring/local-images.spec.ts','campaign-assets.spec.ts'])]},
+  20:   {name:'retained-data',members:[member('main',['audience-import/erasure.spec.ts','audience-import/privacy-portability.spec.ts','audience-import/signup-security.spec.ts','audience-import/signup-reservation-clock.spec.ts','portability/privacy.spec.ts']),member('local-start',['retained-archive.journey.ts'])]},
+  21:   {name:'phone',members:[member('newsletter-ui')]},
+  22:   {name:'authoring',members:[member('main',['campaign-authoring/browser.spec.ts','campaign-authoring/step-deadline.spec.ts','campaign-authoring/design-import.spec.ts','campaign-authoring/design-generation.spec.ts']),member('go-live',['content-checks.journeys.ts','woocommerce.journeys.ts','resend-delivery.journeys.ts','scheduler.journeys.ts'])]},
+  23:   {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts','proposals-decision/content-editing.spec.ts','proposals-decision/forecast-provenance.spec.ts','proposals-decision/grounding-citations.spec.ts']),member('local-start',['editor.journey.ts'])]},
+  24:   {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
+  25:   {name:'reports',members:[member('campaign-results'),member('go-live',['managed-mail.journeys.ts','shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
+  26:   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
+  27:   {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
+  28:   {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts'])]},
+  29:   {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts'])]},
+  30: ];
+  31: 
+  32: export function options(args, env = {}) {
+  33:   const result = {stage:env.MANGO_VERIFY_STAGE, shard:env.MANGO_VERIFY_SHARD, files:env.MANGO_VERIFY_FILES ? JSON.parse(env.MANGO_VERIFY_FILES) : undefined, testsOnly:false};
+  34:   for(let index=0;index<args.length;index++) {
+  35:     const flag=args[index];
+  36:     if(flag==='--help')result.help=true;
+  37:     else if(flag==='--tests-only')result.testsOnly=true;
+  38:     else if(flag==='--stage'||flag==='--shard')result[flag.slice(2)]=args[++index];
+  39:     else throw new Error(`Unknown verification option: ${flag}`);
+  40:   }
+  41:   if(result.stage&&!stageNames.includes(result.stage))throw new Error(`Unknown verification stage: ${result.stage}`);
+  42:   if(result.testsOnly&&result.stage)throw new Error('--tests-only cannot select a stage.');
+  43:   if(result.shard&&!/^([1-9]\d*)\/([1-9]\d*)$/.test(result.shard))throw new Error('Shard must be i/n.');
+  44:   return result;
+  45: }
+  46: export function verificationGroups({stage,shard,files,testsOnly}, cpuBudget) {
+  47:   const browser=(stage,files,shard)=>({
+  48:     ...pnpm(stage,['exec','playwright','test','--config',configs[stage],...(files??[]).map(filePattern),`--workers=${['main','go-live','campaign-results','move-in','local-start'].includes(stage)?Math.min(2,cpuBudget):1}`,'--reporter=list,./scripts/verification/reporter.mjs',...(shard?[`--shard=${shard}`]:[])]),timingRequired:true,
+  49:   });
+  50:   const staticGroups=[
+  51:     [{name:'command-contract',command:process.execPath,args:['node_modules/@runeditrun/rer/bin/rer.mjs','check','--profile','first-party']},pnpm('source',['run','source:check'])],
+  52:     [pnpm('typecheck',['run','typecheck']),pnpm('build',['run','build'])],
+  53:     [pnpm('integration',['run','integration:check']),{name:'deploy-optional-secrets',command:process.execPath,args:['--test','operations/deploy-optional-secrets.test.mjs']}],
+  54:   ];
+  55:   if(stage==='static')return staticGroups;
+  56:   if(stage)return [[browser(stage,files??(stage==='local-start-slow'?['local.journey.ts']:undefined),shard)]];
+  57:   return [...(testsOnly?[]:staticGroups),...Object.keys(configs).filter(name=>name!=='local-start-slow').map(name=>[browser(name)])];
+  58: }
+  59: export function matrix(tier) {
+  60:   if(!['push','slow','all'].includes(tier))throw new Error('Matrix tier must be push, slow or all.');
+  61:   const slow={name:'local-start-slow',members:[member('local-start-slow',['local.journey.ts'])]};
+  62:   return {include:(tier==='push'?packs:tier==='slow'?[slow]:packs.map(row=>row.name==='native'?{...row,members:[...row.members,...slow.members]}:row)).map(row=>({...row,browser:true,timeout:tier==='all'&&row.name==='native'?30:15}))};
+  63: }
+
+=== .github/workflows/verify.yml (candidate; compare source-identity.json) ===
+   1: name: Verify
+   2: 
+   3: on:
+   4:   push:
+   5:     branches: ['**']
+   6:   pull_request:
+   7:   workflow_dispatch:
+   8:   workflow_call:
+   9:     inputs:
+  10:       tier:
+  11:         type: string
+  12:         default: push
+  13:       timeout:
+  14:         type: number
+  15:         default: 12
+  16: 
+  17: permissions:
+  18:   contents: read
+  19: 
+  20: concurrency:
+  21:   group: verify-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.event.pull_request.number || github.ref }}
+  22:   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  23: 
+  24: jobs:
+  25:   plan:
+  26:     runs-on: ubuntu-24.04
+  27:     timeout-minutes: 1
+  28:     permissions:
+  29:       contents: read
+  30:       actions: read
+  31:     outputs:
+  32:       matrix: ${{ steps.plan.outputs.matrix }}
+  33:       skip: ${{ steps.plan.outputs.skip }}
+  34:       coverage: ${{ steps.plan.outputs.coverage }}
+  35:       tier: ${{ steps.plan.outputs.tier }}
+  36:       readers: ${{ steps.plan.outputs.readers }}
+  37:       has_shards: ${{ steps.plan.outputs.has_shards }}
+  38:     steps:
+  39:       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+  40:         with:
+  41:           persist-credentials: false
+  42:           fetch-depth: 2
+  43:       - name: Check reusable workflow permissions
+  44:         run: node scripts/ci/verify-ci.mjs --check-workflows
+  45:       - name: Look up complete nightly marker
+  46:         id: nightly
+  47:         if: ${{ github.event_name == 'schedule' || inputs.tier == 'nightly' }}
+  48:         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+  49:         with:
+  50:           path: ${{ runner.temp }}/nightly-green
+  51:           key: nightly-green-${{ github.sha }}
+  52:           lookup-only: true
+  53:       - id: plan
+  54:         env:
+  55:           TIER: ${{ inputs.tier || 'push' }}
+  56:           GITHUB_TOKEN: ${{ github.token }}
+  57:           NIGHTLY_CACHE_HIT: ${{ steps.nightly.outputs.cache-hit }}
+  58:           REUSABLE: ${{ toJSON(inputs) != '{}' }}
+  59:         run: node scripts/ci/mango-plan.mjs
+  60: 
+  61:   build:
+  62:     name: Build and public command checks
+  63:     needs: plan
+  64:     if: ${{ needs.plan.outputs.has_shards == 'true' }}
+  65:     runs-on: ubuntu-24.04
+  66:     timeout-minutes: 12
+  67:     env:
+  68:       CI: 'true'
+  69:       WRANGLER_SEND_METRICS: 'false'
+  70:       PLAYWRIGHT_SKIP_BROWSER_GC: '1'
+  71:     steps:
+  72:       # Job env is evaluated before the runner context is available.
+  73:       - name: Set runner-owned browser cache
+  74:         run: printf 'PLAYWRIGHT_BROWSERS_PATH=%s/ms-playwright\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+  75:       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+  76:         with:
+  77:           persist-credentials: false
+  78:       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+  79:         with:
+  80:           node-version: '22.20.0'
+  81:           package-manager-cache: false
+  82:       - name: Check generated contract documents
+  83:         run: node src/base/contract-docs.mjs check
+  84:       - name: Check edition source lock freshness
+  85:         if: ${{ 'static' == 'static' && hashFiles('edition.json', 'sources.lock.json') != '' }}
+  86:         run: node scripts/edition-authoring/cli.mjs check
+  87:       - run: npm install --global pnpm@10.12.4
+  88:       - name: Set runner-owned pnpm store
+  89:         run: pnpm config set store-dir "$RUNNER_TEMP/pnpm-store"
+  90:       - name: Prepare runner-owned browser and apt caches
+  91:         if: true
+  92:         run: |
+  93:           set -euo pipefail
+  94:           id
+  95:           printf 'Runner HOME=%s\n' "$HOME"
+  96:           if [ -e "$HOME/.cache" ]; then
+  97:             stat -c 'Home cache: %n uid=%u gid=%g mode=%a' "$HOME/.cache"
+  98:           else
+  99:             printf 'Home cache: absent\n'
+ 100:           fi
+ 101:           mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 102:       # Save completed packages; apt keeps partial downloads private to _apt.
+ 103:       - name: Cache frozen dependencies and Chromium
+ 104:         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+ 105:         with:
+ 106:           path: |
+ 107:             ${{ runner.temp }}/pnpm-store
+ 108:             ${{ runner.temp }}/ms-playwright
+ 109:             ${{ runner.temp }}/rer-apt/archives/*.deb
+ 110:           # Old snapshots contain absolute HOME paths; do not restore them here.
+ 111:           key: seed-ubuntu24-temp-store-${{ runner.arch }}-browser-${{ true }}-${{ hashFiles('pnpm-lock.yaml') }}
+ 112:           restore-keys: |
+ 113:             seed-ubuntu24-temp-store-${{ runner.arch }}-browser-true-
+ 114:       - name: Install frozen dependencies and reserve native runtime disk
+ 115:         shell: bash
+ 116:         run: |
+ 117:           # Native rer journeys require 15 GiB. Only remove .NET if needed,
+ 118:           # overlapping it with install instead of reclaiming every toolchain.
+ 119:           reclaim_pid=
+ 120:           free_kib=$(df -Pk "$GITHUB_WORKSPACE" | awk 'END { print $4 }')
+ 121:           if [ "$free_kib" -lt "$((20 * 1024 * 1024))" ]; then
+ 122:             sudo rm -rf -- /usr/share/dotnet &
+ 123:             reclaim_pid=$!
+ 124:           fi
+ 125:           pnpm install --frozen-lockfile
+ 126:           if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
+ 127:       - run: pnpm run deps
+ 128:       - name: Install and probe Chromium before system dependencies
+ 129:         if: true
+ 130:         run: |
+ 131:           set -euo pipefail
+ 132:           stat -c 'Before browser: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 133:           pnpm exec playwright install chromium
+ 134:           probe() { node --input-type=module -e "import { chromium } from '@playwright/test'; try { const browser = await chromium.launch({headless: true}); await browser.close(); } catch (error) { console.error(error); process.exit(/EACCES|permission denied/i.test(String(error)) ? 77 : 1); }"; }
+ 135:           if probe; then
+ 136:             :
+ 137:           else
+ 138:             status=$?
+ 139:             if [ "$status" -eq 77 ]; then exit "$status"; fi
+ 140:             sudo env "PATH=$PATH" "APT_ARCHIVES=$RUNNER_TEMP/rer-apt/archives" python3 scripts/ci/install-chromium-deps.py
+ 141:             stat -c 'After apt: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 142:             probe
+ 143:           fi
+ 144:       - name: Build and check the public command once
+ 145:         env:
+ 146:           MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/static
+ 147:         run: node scripts/verification/ci.mjs static
+ 148:       - name: Share the verified production build
+ 149:         uses: actions/upload-artifact@v4
+ 150:         with:
+ 151:           name: production-build
+ 152:           path: dist
+ 153:           retention-days: 1
+ 154: 
+ 155:   shards:
+ 156:     name: shards (${{ matrix.name }})
+ 157:     needs: [plan, build]
+ 158:     if: ${{ needs.plan.outputs.has_shards == 'true' }}
+ 159:     runs-on: ubuntu-24.04
+ 160:     timeout-minutes: ${{ inputs.timeout || matrix.timeout || 12 }}
+ 161:     strategy:
+ 162:       fail-fast: false
+ 163:       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+ 164:     env:
+ 165:       CI: 'true'
+ 166:       WRANGLER_SEND_METRICS: 'false'
+ 167:       PLAYWRIGHT_SKIP_BROWSER_GC: '1'
+ 168:     steps:
+ 169:       # Job env is evaluated before the runner context is available.
+ 170:       - name: Set runner-owned browser cache
+ 171:         run: printf 'PLAYWRIGHT_BROWSERS_PATH=%s/ms-playwright\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+ 172:       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+ 173:         with:
+ 174:           persist-credentials: false
+ 175:       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+ 176:         with:
+ 177:           node-version: '22.20.0'
+ 178:           package-manager-cache: false
+ 179:       - name: Check edition source lock freshness
+ 180:         if: ${{ matrix.name == 'static' && hashFiles('edition.json', 'sources.lock.json') != '' }}
+ 181:         run: node scripts/edition-authoring/cli.mjs check
+ 182:       - run: npm install --global pnpm@10.12.4
+ 183:       - name: Set runner-owned pnpm store
+ 184:         run: pnpm config set store-dir "$RUNNER_TEMP/pnpm-store"
+ 185:       - name: Prepare runner-owned browser and apt caches
+ 186:         if: matrix.browser
+ 187:         run: |
+ 188:           set -euo pipefail
+ 189:           id
+ 190:           printf 'Runner HOME=%s\n' "$HOME"
+ 191:           if [ -e "$HOME/.cache" ]; then
+ 192:             stat -c 'Home cache: %n uid=%u gid=%g mode=%a' "$HOME/.cache"
+ 193:           else
+ 194:             printf 'Home cache: absent\n'
+ 195:           fi
+ 196:           mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 197:       # Save completed packages; apt keeps partial downloads private to _apt.
+ 198:       - name: Cache frozen dependencies and Chromium
+ 199:         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+ 200:         with:
+ 201:           path: |
+ 202:             ${{ runner.temp }}/pnpm-store
+ 203:             ${{ runner.temp }}/ms-playwright
+ 204:             ${{ runner.temp }}/rer-apt/archives/*.deb
+ 205:           # Old snapshots contain absolute HOME paths; do not restore them here.
+ 206:           key: seed-ubuntu24-temp-store-${{ runner.arch }}-browser-${{ matrix.browser }}-${{ hashFiles('pnpm-lock.yaml') }}
+ 207:           restore-keys: |
+ 208:             seed-ubuntu24-temp-store-${{ runner.arch }}-browser-true-
+ 209:       - name: Install frozen dependencies and reserve native runtime disk
+ 210:         shell: bash
+ 211:         run: |
+ 212:           # Native rer journeys require 15 GiB. Only remove .NET if needed,
+ 213:           # overlapping it with install instead of reclaiming every toolchain.
+ 214:           reclaim_pid=
+ 215:           free_kib=$(df -Pk "$GITHUB_WORKSPACE" | awk 'END { print $4 }')
+ 216:           if [ "$free_kib" -lt "$((20 * 1024 * 1024))" ]; then
+ 217:             sudo rm -rf -- /usr/share/dotnet &
+ 218:             reclaim_pid=$!
+ 219:           fi
+ 220:           pnpm install --frozen-lockfile
+ 221:           if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
+ 222:       - run: pnpm run deps
+ 223:       - name: Install and probe Chromium before system dependencies
+ 224:         if: matrix.browser
+ 225:         run: |
+ 226:           set -euo pipefail
+ 227:           stat -c 'Before browser: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 228:           pnpm exec playwright install chromium
+ 229:           probe() { node --input-type=module -e "import { chromium } from '@playwright/test'; try { const browser = await chromium.launch({headless: true}); await browser.close(); } catch (error) { console.error(error); process.exit(/EACCES|permission denied/i.test(String(error)) ? 77 : 1); }"; }
+ 230:           if probe; then
+ 231:             :
+ 232:           else
+ 233:             status=$?
+ 234:             if [ "$status" -eq 77 ]; then exit "$status"; fi
+ 235:             sudo env "PATH=$PATH" "APT_ARCHIVES=$RUNNER_TEMP/rer-apt/archives" python3 scripts/ci/install-chromium-deps.py
+ 236:             stat -c 'After apt: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+ 237:             probe
+ 238:           fi
+ 239:       - name: Restore the verified production build
+ 240:         uses: actions/download-artifact@v4
+ 241:         with:
+ 242:           name: production-build
+ 243:           path: dist
+ 244:       - name: Run this shard
+ 245:         env:
+ 246:           SHARD: ${{ matrix.name }}
+ 247:           MANGO_VERIFY_MEMBERS: ${{ toJSON(matrix.members) }}
+ 248:           MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/${{ matrix.name }}
+ 249:         run: node scripts/verification/ci.mjs "$SHARD"
+ 250:       - name: Keep this shard's timings and diagnostics
+ 251:         if: ${{ always() }}
+ 252:         uses: actions/upload-artifact@v4
+ 253:         with:
+ 254:           name: verify-${{ matrix.name }}
+ 255:           path: ${{ runner.temp }}/mango-verification/${{ matrix.name }}/evidence
+ 256:           if-no-files-found: ignore
+ 257:           retention-days: 7
+ 258: 
+ 259:   light:
+ 260:     needs: plan
+ 261:     if: ${{ needs.plan.outputs.coverage == 'light' }}
+ 262:     runs-on: ubuntu-24.04
+ 263:     timeout-minutes: 12
+ 264:     env:
+ 265:       CI: 'true'
+ 266:       WRANGLER_SEND_METRICS: 'false'
+ 267:     steps:
+ 268:       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+ 269:         with:
+ 270:           persist-credentials: false
+ 271:       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+ 272:         with:
+ 273:           node-version: '22.20.0'
+ 274:           package-manager-cache: false
+ 275:       - run: npm install --global pnpm@10.12.4
+ 276:       - run: pnpm config set store-dir "$RUNNER_TEMP/pnpm-store"
+ 277:       - run: pnpm install --frozen-lockfile
+ 278:       - run: pnpm run deps
+ 279:       - name: Run the changed files' reviewed readers and build the run site
+ 280:         env:
+ 281:           LIGHT_READERS: ${{ needs.plan.outputs.readers }}
+ 282:         run: node scripts/ci/verify-ci.mjs --light
+ 283: 
+ 284:   full-push-proof:
+ 285:     needs: [plan, build, shards]
+ 286:     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && needs.plan.outputs.tier == 'push' && needs.plan.outputs.coverage == 'full' && needs.build.result == 'success' && needs.shards.result == 'success' }}
+ 287:     runs-on: ubuntu-24.04
+ 288:     timeout-minutes: 1
+ 289:     steps:
+ 290:       - run: test '${{ needs.shards.result }}' = success
+ 291: 
+ 292:   nightly-proof:
+ 293:     needs: [plan, build, shards]
+ 294:     if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (needs.plan.outputs.tier == 'nightly' || needs.plan.outputs.tier == 'all') && needs.plan.outputs.coverage == 'full' && needs.build.result == 'success' && needs.shards.result == 'success' }}
+ 295:     runs-on: ubuntu-24.04
+ 296:     timeout-minutes: 1
+ 297:     steps:
+ 298:       - name: Mark successful complete nightly coverage
+ 299:         run: mkdir -p "$RUNNER_TEMP/nightly-green" && printf '%s\n' '${{ github.sha }}' > "$RUNNER_TEMP/nightly-green/sha"
+ 300:       - uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684
+ 301:         with:
+ 302:           path: ${{ runner.temp }}/nightly-green
+ 303:           key: nightly-green-${{ github.sha }}
+ 304: 
+ 305:   verify:
+ 306:     needs: [plan, build, shards, light, full-push-proof, nightly-proof]
+ 307:     if: ${{ always() }}
+ 308:     runs-on: ubuntu-24.04
+ 309:     timeout-minutes: 1
+ 310:     steps:
+ 311:       - name: Require the selected coverage and its proof
+ 312:         env:
+ 313:           PLAN: ${{ needs.plan.result }}
+ 314:           BUILD: ${{ needs.build.result }}
+ 315:           SHARDS: ${{ needs.shards.result }}
+ 316:           LIGHT: ${{ needs.light.result }}
+ 317:           PUSH_PROOF: ${{ needs.full-push-proof.result }}
+ 318:           NIGHTLY_PROOF: ${{ needs.nightly-proof.result }}
+ 319:           COVERAGE: ${{ needs.plan.outputs.coverage }}
+ 320:           HAS_SHARDS: ${{ needs.plan.outputs.has_shards }}
+ 321:           SKIP: ${{ needs.plan.outputs.skip }}
+ 322:         run: |
+ 323:           set -euo pipefail
+ 324:           test "$PLAN" = success
+ 325:           case "$PUSH_PROOF:$NIGHTLY_PROOF" in
+ 326:             *failure*|*cancelled*) exit 1 ;;
+ 327:           esac
+ 328:           case "$COVERAGE" in
+ 329:             reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;
+ 330:             light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;
+ 331:             full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;
+ 332:             *) exit 1 ;;
+ 333:           esac
+
+=== src/core/features/lifecycle/checks-preparation.ts (candidate; identical on main) ===
+   1: import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+   2: import { inspectRevisionLinks } from './link-checks';
+   3: import { unavailableInspection } from '@/core/features/sender-verification/service';
+   4: import type { CampaignRevisionSnapshot, LifecyclePlatform } from './types';
+   5: 
+   6: /** Live checks that do not depend on the evaluated recipient set. */
+   7: export async function prepareApprovalChecks(snapshot: CampaignRevisionSnapshot, platform: LifecyclePlatform) {
+   8:   await loadSenderSettings(platform);
+   9:   const results = Promise.allSettled([
+  10:     Promise.all([
+  11:       platform.mailer.capabilities(),
+  12:       snapshot.steps.some(step => step.channel === 'email')
+  13:         ? platform.mailer.inspectSender?.(`${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>`)
+  14:           ?? Promise.resolve(unavailableInspection('verification-not-configured'))
+  15:         : undefined,
+  16:     ]),
+  17:     inspectRevisionLinks(snapshot, platform),
+  18:   ]);
+  19:   return {results};
+  20: }
+
+=== src/core/features/lifecycle/link-checks.ts (candidate; identical on main) ===
+   1: import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
+   2: import {catalogBlocks,insertCatalogHtml,catalogTextValues} from '@/core/features/campaigns/catalog-blocks';
+   3: import { textLinkDestinations } from '@/core/features/campaigns/message-links';
+   4: import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
+   5: import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
+   6: import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+   7: import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
+   8: import { loadLinkHosts } from '@/core/features/settings/link-hosts';
+   9: import type { LinkInspection } from '@/core/shared/platform';
+  10: import type { LifecyclePlatform } from './types';
+  11: 
+  12: export type LinkCheckInput = {
+  13:   revision: {emailBody: string; emailText: string; smsBody: string};
+  14:   links: ReadonlyArray<{destinationUrl: string}>;
+  15: };
+  16: 
+  17: export function blockedLinkHosts(destinations: Array<{destination: string; inspection: LinkInspection}>) {
+  18:   const hosts = new Map<string, Set<string>>();
+  19:   for (const {destination, inspection} of destinations) if (!inspection.ok && inspection.blockedHost) {
+  20:     const links = hosts.get(inspection.blockedHost) ?? new Set<string>();
+  21:     links.add(destination);
+  22:     hosts.set(inspection.blockedHost, links);
+  23:   }
+  24:   return [...hosts].map(([host, links]) => ({host, links: [...links]}));
+  25: }
+  26: 
+  27: /** Review, approval and test-send inspect the same transmitted destinations. */
+  28: export async function inspectRevisionLinks(snapshot: LinkCheckInput, platform: LifecyclePlatform) {
+  29:   await loadLinkHosts(platform);
+  30:   const demoOrigin = demoLinkOrigin(platform.config);
+  31:   // A demo serves its own pages and sends nothing, so they need no network inspection (demo-links.ts).
+  32:   const demoPage = (destination: string) => safeEmailLink(destination, false, demoOrigin) && new URL(destination).origin === demoOrigin;
+  33:   if(catalogBlocks(snapshot.revision.emailBody).length){try{const values=await liveCatalogValues(platform,snapshot.revision.emailBody);snapshot={...snapshot,revision:{...snapshot.revision,emailBody:insertCatalogHtml(snapshot.revision.emailBody,values),emailText:catalogTextValues(snapshot.revision.emailText,values)}};const issues=inspectEmailHtml(snapshot.revision.emailBody,undefined,demoOrigin).issues;if(issues.length)return [{destination:'Chosen catalog presentation',inspection:{ok:false,detail:issues.join(' ')}}];}catch{return [{destination:'Chosen catalog products',inspection:{ok:false,detail:'The chosen catalog values could not be read.'}}];}}
+  34:   const destinations = new Set(snapshot.links.map(link => link.destinationUrl));
+  35:   for (const destination of inspectEmailHtml(snapshot.revision.emailBody, undefined, demoOrigin).destinations) destinations.add(destination);
+  36:   const authored = `${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`;
+  37:   for (const destination of textLinkDestinations(authored)) destinations.add(destination);
+  38:   return Promise.all([...destinations].map(async destination => {
+  39:     const ownMedia = ownMediaName(destination, platform.config.publicBaseUrl);
+  40:     return {destination, inspection: contactLink(destination)
+  41:       ? {ok: true, detail: 'Validated contact link; no host or network inspection required.'}
+  42:       : ownMedia
+  43:       ? await inspectOwnMedia(platform.database.$client, platform.blobs, ownMedia)
+  44:       : demoPage(destination)
+  45:       ? {ok: true, detail: 'A page of this demo; no network inspection required.'}
+  46:       : await platform.linkInspector.inspect(destination)};
+  47:   }));
+  48: }
+
+=== src/core/features/settings/sender-persistence.ts (candidate; identical on main) ===
+   1: import type { Platform } from '@/core/shared/platform';
+   2: import { senderIdentitySchema, type SenderIdentity } from './sender-validation';
+   3: import { SenderAuthorityChanged, senderWriteGuard, type SenderWriteAuthority } from './sender-authority';
+   4: 
+   5: type SenderPlatform = Pick<Platform, 'database' | 'config'>;
+   6: 
+   7: /** Environment identity initializes installations; a saved identity is authoritative. */
+   8: export async function loadSenderSettings(platform: SenderPlatform): Promise<SenderIdentity> {
+   9:   const saved = await platform.database.$client.prepare(`SELECT display_name AS displayName, from_email AS fromEmail,
+  10:     reply_to_email AS replyToEmail, physical_address AS physicalAddress FROM sender_settings WHERE id = 'business'`).first<SenderIdentity>();
+  11:   if (saved) Object.assign(platform.config.mailSender, senderIdentitySchema.parse(saved));
+  12:   return platform.config.mailSender;
+  13: }
+  14: 
+  15: export async function saveSenderSettings(platform: SenderPlatform, value: unknown, authority: SenderWriteAuthority) {
+  16:   const identity = senderIdentitySchema.parse(value);
+  17:   const now = Date.now(), db = platform.database.$client;
+  18:   const guardValues = [authority.sessionId, authority.operatorId, authority.version, now];
+  19:   // D1 batches are atomic: no reader can observe new identity with old evidence.
+  20:   const results = await db.batch([
+  21:     db.prepare(`INSERT INTO sender_settings (id,display_name,from_email,reply_to_email,physical_address,updated_by,created_at,updated_at)
+  22:       SELECT 'business',?,?,?,?,?,?,? WHERE ${senderWriteGuard} ON CONFLICT(id) DO UPDATE SET display_name=excluded.display_name,
+  23:       from_email=excluded.from_email,reply_to_email=excluded.reply_to_email,physical_address=excluded.physical_address,
+  24:       updated_by=excluded.updated_by,updated_at=excluded.updated_at
+  25:       WHERE display_name <> excluded.display_name OR from_email <> excluded.from_email
+  26:         OR reply_to_email <> excluded.reply_to_email OR physical_address <> excluded.physical_address`)
+  27:       .bind(identity.displayName, identity.fromEmail, identity.replyToEmail, identity.physicalAddress, authority.operatorId, now, now, ...guardValues),
+  28:     db.prepare(`UPDATE sender_verification_state SET generation=generation+1,observation_id=NULL,
+  29:       revoked_at=NULL,reason='sender-settings-changed',updated_at=? WHERE changes()=1`).bind(now),
+  30:     db.prepare(`SELECT 1 AS authorized WHERE ${senderWriteGuard}`).bind(...guardValues),
+  31:   ]);
+  32:   if (!results[2].results.length) throw new SenderAuthorityChanged();
+  33:   return loadSenderSettings(platform);
+  34: }
+  35: 
+  36: /** Used inside the atomic provider handoff fence, after all asynchronous checks. */
+  37: export function savedSenderRevisionGuard(revisionAlias: string) {
+  38:   return `(NOT EXISTS (SELECT 1 FROM sender_settings WHERE id='business') OR EXISTS
+  39:     (SELECT 1 FROM sender_settings cfg WHERE cfg.id='business'
+  40:       AND cfg.display_name=${revisionAlias}.sender_name
+  41:       AND lower(cfg.from_email)=lower(${revisionAlias}.from_email)
+  42:       AND lower(cfg.reply_to_email)=lower(${revisionAlias}.reply_to_email)
+  43:       AND cfg.physical_address=${revisionAlias}.physical_address))`;
+  44: }

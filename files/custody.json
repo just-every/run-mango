@@ -1,0 +1,65 @@
+{
+  "tag": "sd-mango102-ci-triage-1",
+  "declared_repository": "just-every/run-mango",
+  "candidate": {
+    "ref": "cloud/sd-mango-c-f102-rebase-f6d74f43f3602f5a14ba42375e795cdb9b5522af",
+    "head": "f6d74f43f3602f5a14ba42375e795cdb9b5522af"
+  },
+  "fresh_main": {
+    "ref": "origin/main",
+    "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "drift_from_brief": false
+  },
+  "diagnostic_branch": {
+    "name": "cloud/sd-mango102-ci-triage-1",
+    "base": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "created_locally": true,
+    "pushed": false
+  },
+  "product_commits": 0,
+  "product_files_changed": 0,
+  "pr_created": false,
+  "ci": {
+    "supplied_run_id": 42203290365,
+    "attempt": 1,
+    "shard": "campaigns",
+    "supplied_result": "failed",
+    "new_run_ids": [],
+    "api_calls": 0,
+    "polled": false,
+    "logs_refetched": false,
+    "dispatch_rerun_retry": false
+  },
+  "publication_scan": "COMPLETE NEW0 passed per brief; no new scan",
+  "preserved_judgments": {
+    "BUILD-008": "done",
+    "BUILD-012": "partial",
+    "DESIGN-007": "partial"
+  },
+  "status_changes": [],
+  "contract_counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "contract_counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "scope_exclusions": [
+    "full campaigns shard",
+    "other go-live registrations",
+    "provider qualification",
+    "DESIGN007 rebuild",
+    "CI acceptance",
+    "main/site gates",
+    "deployment",
+    "product fix",
+    "admission",
+    "lifecycle/hold/budget changes"
+  ],
+  "recorded_at": "2026-11-06T11:12:34.828555+00:00"
+}

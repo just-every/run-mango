@@ -1,0 +1,8 @@
+ ACCEPTANCE.md                                      |   4 +-
+ CONTRACT.md                                        |   2 +-
+ sources.lock.json                                  |  14 +-
+ .../design-concurrency-journey.ts                  | 185 +++++++++++++++++++++
+ tests/campaign-authoring/design-generation.spec.ts |   3 +-
+ tests/campaign-authoring/worker.ts                 |  15 +-
+ tests/support/fake-twelve-ui.ts                    |  20 ++-
+ 7 files changed, 232 insertions(+), 11 deletions(-)

@@ -1,0 +1,59 @@
+{
+  "tag": "sd-mango102-ci-triage-1",
+  "recorded_at": "2026-11-06T11:11:30.253379+00:00",
+  "setup_build_commands": [
+    {
+      "revision": "candidate",
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "log": "candidate-setup.log",
+      "note": "Initial VM Node 24 bootstrap; rer acquired pinned Node 22."
+    },
+    {
+      "revision": "candidate",
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "log": "candidate-setup-node22.log",
+      "node": "22.20.0"
+    },
+    {
+      "revision": "candidate",
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "log": "candidate-build.log",
+      "node": "22.20.0"
+    },
+    {
+      "revision": "main",
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "log": "main-setup.log",
+      "node": "22.20.0"
+    },
+    {
+      "revision": "main",
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "log": "main-build.log",
+      "node": "22.20.0"
+    }
+  ],
+  "setup_flags": {
+    "owner_email": "fleet@runeditrun.com",
+    "non_interactive": true
+  },
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "github_api_calls": 0,
+  "ci_observers": 0,
+  "ci_log_reads": 0,
+  "ci_dispatch_rerun_retry": 0,
+  "publication_scans": 0,
+  "scope": "Only requested named case, once per revision; no code/test/tool edits inside product repository.",
+  "evidence_preparation": {
+    "first_publish_exit": 1,
+    "diagnostic": "EVIDENCE_FAILED unsafe packet filename",
+    "cause": "Selected standard Playwright .last-run.json uses a forbidden leading dot.",
+    "resolution": "Renamed both selected copies to last-run.json and updated artifact manifests; actual payload bytes unchanged. No push was attempted by refused publication."
+  }
+}

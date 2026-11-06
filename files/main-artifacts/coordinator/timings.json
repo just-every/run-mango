@@ -1,0 +1,36 @@
+{
+  "startedAt": "2026-11-06T11:11:05.489Z",
+  "finishedAt": "2026-11-06T11:14:18.655Z",
+  "durationMs": 193166,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "go-live",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "go-live",
+      "status": "PASS",
+      "startedAt": "2026-11-06T11:11:05.504Z",
+      "durationMs": 193141,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/go-live/presend-checks.journeys.ts",
+            "attempts": 1,
+            "durationMs": 191121,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

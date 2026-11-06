@@ -1,0 +1,38 @@
+{
+  "candidate": {
+    "head": "f6d74f43f3602f5a14ba42375e795cdb9b5522af",
+    "summary_rows": [
+      "| Published | 13 | 97 | 0 | 110 |",
+      "| Target and push further | 7 | 101 | 98 | 206 |"
+    ],
+    "status_table_clause_count": 316,
+    "status_counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "selected_statuses": {
+      "BUILD-008": "done",
+      "BUILD-012": "partial",
+      "DESIGN-007": "partial"
+    }
+  },
+  "main": {
+    "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "summary_rows": [
+      "| Published | 13 | 97 | 0 | 110 |",
+      "| Target and push further | 7 | 101 | 98 | 206 |"
+    ],
+    "status_table_clause_count": 316,
+    "status_counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "selected_statuses": {
+      "BUILD-008": "done",
+      "BUILD-012": "partial",
+      "DESIGN-007": "partial"
+    }
+  }
+}

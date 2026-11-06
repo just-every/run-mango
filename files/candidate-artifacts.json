@@ -1,0 +1,102 @@
+[
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/last-run.json",
+    "bytes": 45,
+    "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/approved-preview-1440.png",
+    "bytes": 123558,
+    "sha256": "3e5e062901d3421b0484fef76cde1b723619f32d8f119ff24c512cdd872983d4"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/approved-preview-390.png",
+    "bytes": 92826,
+    "sha256": "2350695dda8d85122da5abb56951db2708f117b1c79ea3fad7716aa69341e0e3"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/contact-dark-mobile-1440.png",
+    "bytes": 178036,
+    "sha256": "d39585c451230e1ee2eb9cadf231f3f0ccc3e8648e17a7ac77d8c2016b2dbbe1"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/contact-light-desktop-1440.png",
+    "bytes": 155913,
+    "sha256": "ade424a72362900969fbf400974b76459104032a6652985b1ebb9e7acfc8a484"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/email-refused-1440.png",
+    "bytes": 302101,
+    "sha256": "5e404327defa3006252fc29ad6bb69ef1d1c53a4dbbfb68ed9ad8535f41c2ad9"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/email-size-meter-1440.png",
+    "bytes": 5902,
+    "sha256": "fa48e25b86c8baa52f5abd70f904e7469a35be2bbd3709a50c1ee1c960d47164"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/followup-refused-0-1440.png",
+    "bytes": 17604,
+    "sha256": "5c915659d0a04eacf93877d4e9ac8b2c83b22b7711ea202b3a8880cdda490a1d"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/large-email-1440.png",
+    "bytes": 294189,
+    "sha256": "1aed9db9b0e33fd020a05fe249551ce578a985f17c2d9f04ba495776ef4988cf"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/oversized-import-1440.png",
+    "bytes": 65592,
+    "sha256": "cc91e40113310b4b7a38e96ba5cef4cc892800de6398ea184528b85dd3d8a862"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/presend-findings-1440.png",
+    "bytes": 106908,
+    "sha256": "637bd9d652eb18e0513a04ef2be328a74bafa6230d36b21cc37f8addaa5a331b"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/presend-findings-390.png",
+    "bytes": 106040,
+    "sha256": "6825752a23e72630a2c0b1e049d95ddc3a3cad2e614e06deac3903a91dd4300f"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/reuse-refused-0-1440.png",
+    "bytes": 17054,
+    "sha256": "b1d58c45c722bf20ea357f1f7d47ea0ff61bd4ba910c18f55b8041183942419d"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/reuse-refused-1-1440.png",
+    "bytes": 15314,
+    "sha256": "868de2cede002c3d72d5c151a729def876294d01746275f02e40738cd884d517"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/reuse-refused-2-1440.png",
+    "bytes": 16253,
+    "sha256": "144d445a76956861e4888aba8f0a82ab7de7e065939bc6634761c7374cb874e2"
+  },
+  {
+    "path": "candidate-artifacts/7e96edbe7a5a/go-live/presend-checks.journeys.ts-7ffd0-se-unsafe-handoff-expansion/template-start-refused-1440.png",
+    "bytes": 16206,
+    "sha256": "6fb5330f734b398fb9f8baaa6309cdf2d2908d53cd2abdff0275bbacc68112d0"
+  },
+  {
+    "path": "candidate-artifacts/coordinator/go-live.files.json",
+    "bytes": 210,
+    "sha256": "880119217da242d4cb7a2738de8a999f79df4978dc29fa24b2006bd0a753fe72"
+  },
+  {
+    "path": "candidate-artifacts/coordinator/go-live.log",
+    "bytes": 400,
+    "sha256": "5ae09cc322af92f51bf576c84a7b73ceb0759d0f9b00aa1d12bda7981388b423"
+  },
+  {
+    "path": "candidate-artifacts/coordinator/timings.json",
+    "bytes": 766,
+    "sha256": "8491563fe6812e1666b27bde46dae110208e7d0a8640b36fec5278678cf2094c"
+  },
+  {
+    "path": "candidate-artifacts/coordinator/timings.md",
+    "bytes": 650,
+    "sha256": "b9076413a002dd0fc706d84b391506956ec232e1f8154d89a8d1709afdfb7404"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "tag": "sd-mango102-ci-triage-1",
+  "recorded_at": "2026-11-06T11:06:16.206283+00:00",
+  "candidate": "f6d74f43f3602f5a14ba42375e795cdb9b5522af",
+  "fresh_main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "brief_main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "runner": {
+    "hostname": "e7631b8f140c",
+    "system": "Linux",
+    "release": "6.18.57",
+    "machine": "x86_64",
+    "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n"
+  },
+  "tools": {
+    "node": "v22.20.0",
+    "node_exec": "/home/agent/.rer/node/node-v22.20.0-linux-x64/bin/node",
+    "pnpm": "10.12.4",
+    "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)"
+  },
+  "tracked_status": "",
+  "github_api_calls": 0
+}

@@ -1,0 +1,9 @@
+# sd-mango102-ci-triage-1 plan
+
+1. Read fleet and repository rules; no product edits, commits, pushes, CI polling, log retrieval, reruns or provider qualification. Preserve holds and contract judgments.
+2. Fetch exact failed candidate f6d74f43f3602f5a14ba42375e795cdb9b5522af and fresh origin/main once; record identities and drift. Use one disposable owned Linux clone for the sequential pair.
+3. Trace named registration and its two composed flow sections, installation/platform composition, DNS-over-HTTPS request, Worker interception and provider edge, and checked-in CI configuration. Compare those sources and tool pins on both SHAs.
+4. Complete declared rer setup/build for candidate, keeping its ordinary runtime configuration. Run exactly the presend-checks.journeys.ts file once via scripts/verification/run.mjs with MANGO_VERIFY_STAGE=go-live and MANGO_VERIFY_FILES=["presend-checks.journeys.ts"]. Config has retries=0. Use the same Node 22.20.0, pnpm 10.12.4 and system Chromium, and native cloud_run execution for both.
+5. Switch the same clone to the captured fresh-main SHA, complete the same setup/build, then run the identical test command once with independent external artifacts. Preserve all assertions and the fixture interception; no DNS or network workaround.
+6. Compare actual outputs. Candidate-only ordinary failure routes to SD with the frozen failure; same failure on main or established infrastructure cause routes to FV as NOTE G. Both pass means NOT REPRODUCED only. No inference from hostname or general catch text.
+7. Write full report and actual non-secret identity/runtime/cleanup receipts, explicitly select public-safe evidence files and publish only evidence/sd-mango102-ci-triage-1 via cloud_evidence.py. Remove owned runtimes/dependencies/clone after publication; preserve packet. Emit one changed status for each SD/FV lane. No READY/PUSHED product claim.

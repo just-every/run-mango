@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "file": "tests/go-live/presend-checks.journeys.ts",
+      "attempts": 1,
+      "durationMs": 192542,
+      "statuses": {
+        "passed": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango102-ci-triage-1/runtime/candidate/evidence/coordinator
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T11:07:10.419Z"}
+go-live
+
+Running 1 test using 1 worker
+
+(node:2799) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (3.2m)
+
+  1 passed (3.2m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-06T11:07:10.419Z","durationMs":195181,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":195199,"boundary":"coordinator"}

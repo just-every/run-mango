@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-11-06T11:14:50.534263+00:00",
+  "runtime_and_scratch_removed": true,
+  "clone_node_modules_removed": true,
+  "live_owned_browser_or_server_processes": [],
+  "explicit_stop_signals_sent": [],
+  "shutdown": "Both test finally blocks closed owned fixture runtimes and edges; browser shutdown and cloud_run subreaper completed with exit 0. No pkill/killall/rer dev --stop used.",
+  "clone": "Retained only until evidence publication can use its Git object store; remove immediately after successful evidence transfer.",
+  "product_status": ""
+}
