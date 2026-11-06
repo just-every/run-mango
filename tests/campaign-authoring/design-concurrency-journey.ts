@@ -111,7 +111,7 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
     expect(chosen.status()).toBe(200);
     expect(chosen.request().postDataJSON()).toEqual({ slot: 'b' });
     expect((await chosen.json()).job).toMatchObject({ id: earlier.id, state: 'preparing', chosenSlot: 'b' });
-    let preparing;
+    let preparing, pendingCosts, pendingPurchases;
     try {
       await expect.poll(() => fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert').length,
         { timeout: 30000 }).toBe(1);
@@ -126,6 +126,20 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
       await expect(earlierPanel.getByRole('status')).toContainText('Preparing design B');
       await expect(page.getByRole('button', { name: 'Design with 12ui', exact: true })).toBeDisabled();
       expect(await detail()).toEqual(draftBefore);
+      pendingCosts = await costs();
+      pendingPurchases = [...fake.purchases];
+      expect(pendingCosts).toEqual(costsBefore);
+      expect(pendingPurchases).toEqual(purchasesBefore);
+      expect(await commands()).toEqual([...commandsBefore, { kind: 'design.layout', payload: JSON.stringify({ jobId: earlier.id }) }]);
+      // Browser proof shows the same unanswered preparation on both screen sizes.
+      // Behavioural assertions remain at the journey's desktop width.
+      for (const width of [1440, 390]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await reloadPage(page);
+        await earlierPanel.getByRole('status').waitFor();
+        await page.screenshot({ path: info.outputPath(`design-concurrency-preparing-${width}.png`), fullPage: true });
+      }
+      await page.setViewportSize({ width: 1440, height: 1000 });
     } finally { conversion.release(); }
     await expect(earlierPanel.getByRole('button', { name: 'Use design B in the email', exact: true })).toBeVisible({ timeout: 45000 });
     const settled = await status();
@@ -177,7 +191,8 @@ export async function walkConcurrency({ page, request }: { page: Page; request: 
         state: settled.earlier[0].state, chosenSlot: 'b', candidateSha256: converts[0].fileSha256,
         layoutPurchase: converts[0].idempotencyKey },
       costs: await costs(), authority: { campaignState: draftBefore.campaign.state, approvals: [], recipients: [], dispatch: [] },
-      screenshots: [1440, 390],
+      unansweredConversion: { purchases: pendingPurchases, costFacts: pendingCosts },
+      screenshots: { preparing: [1440, 390], ready: [1440, 390] },
     }, null, 2) + '\n');
     console.log('PROBE DESIGN-007 acceptance-6-start: native start during provider 429 wait -> 409 design_job_active; no new job, command, creation request or purchase');
     console.log('PROBE DESIGN-007 acceptance-6-choice: earlier design B control during latest wait -> earlier layout ready, one matching purchase and cost; latest wait and draft authority unchanged after reload');
