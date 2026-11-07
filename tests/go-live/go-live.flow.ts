@@ -1,5 +1,6 @@
 const width = 1440;
 import { expect, test, type Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,6 +8,7 @@ import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { decodeProviderReference } from '../../src/core/shared/provider-reference';
 import { localSessionCookieName } from '../support/local-session';
+import { openPage, reloadPage } from '../support/navigation';
 import { archiveRows, importContacts, transfer } from './restore';
 import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, rule, sender, signedPost, type Installation } from './harness';
 
@@ -37,9 +39,12 @@ test.afterAll(async () => { await site?.runtime.close(); await (await edgeServer
 
 /** A populated marketing history stays unchanged by an authorized test, while
  * the same subscribed destination remains available for ordinary approval. */
-export const walkTestIsolation = async () => {
+export const walkTestIsolation = async ({ page }: { page: Page }, info: { outputPath(name: string): string }) => {
   const edge = await edgeServer, isolated = await installation(edge, signer);
   try {
+    const clock = await isolated.control('/_golive/clock');
+    const todayNoon = Date.parse(new Date(clock.now).toISOString().slice(0, 10)) + 12 * 3600_000;
+    await isolated.control('/_golive/clock', { advanceMs: (todayNoon > clock.now ? todayNoon : todayNoon + 86400000) - clock.now });
     const owner = await isolated.open();
     await json(await isolated.call('/api/settings/sender', { method: 'PUT', cookie: owner, body: sender }), 200);
     await isolated.control('/_golive/sender-evidence');
@@ -57,7 +62,7 @@ export const walkTestIsolation = async () => {
     const priorMessage = edge.sends.findLast(message => message.to === recent
       && decodeProviderReference(message.body.custom_args?.mango_recipient_step ?? '') === prior.id)!;
     const delivered = Buffer.from(JSON.stringify([event('delivered', recent, prior.handed_off_at, priorMessage.messageId, priorMessage.body.custom_args)]));
-    expect(await signedPost(isolated, '/webhooks/mail/sendgrid', delivered, signer.headers(delivered))).toBe(204);
+    expect(await signedPost(isolated, '/webhooks/mail/sendgrid', delivered, signer.headers(delivered, String(Math.floor(await now() / 1000))))).toBe(204);
     // Independently valued historical attribution, as in the report fixtures:
     // this is retained input, not a substitute for any application result read.
     const attributedAt = prior.handed_off_at + 1, attributionId = 'synthetic-mango-804';
@@ -135,7 +140,7 @@ export const walkTestIsolation = async () => {
     const testEvents = Buffer.from(JSON.stringify(['processed', 'delivered'].map(kind =>
       event(kind, tested, testOccurredAt, testMessage.messageId, testMessage.body.custom_args))));
     const reconcileTest = async () => {
-      expect(await signedPost(isolated, '/webhooks/mail/sendgrid', testEvents, signer.headers(testEvents))).toBe(204);
+      expect(await signedPost(isolated, '/webhooks/mail/sendgrid', testEvents, signer.headers(testEvents, String(Math.floor(await now() / 1000))))).toBe(204);
     };
     await reconcileTest();
     await reconcileTest();
@@ -147,6 +152,79 @@ export const walkTestIsolation = async () => {
     expect(afterTestResults).toEqual(beforeResults);
     const afterMembership = await memberships();
     expect(afterMembership).toEqual(beforeMembership);
+    await noAuthority();
+
+    // Authors can use configured operator destinations without gaining the
+    // Owner's authority to type arbitrary email destinations.
+    const authorId = 'synthetic-mango-807', authorDestination = `synthetic-mango-808${sender.fromEmail.slice(sender.fromEmail.indexOf('@'))}`;
+    const author = await isolated.open(authorDestination, authorId);
+    await json(await isolated.call(`/api/operators/${authorId}/role`, { method: 'PUT', cookie: owner, body: { role: 'author' } }), 200);
+    expect((await json(await isolated.call('/api/operator', { cookie: author }), 200)).operator.role).toBe('author');
+    const testHistory = async () => json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: author }), 200);
+    const configuredAccess = await testHistory();
+    expect(configuredAccess.canType).toBe(false);
+    expect(configuredAccess.destinations.email).toContain(authorDestination);
+    expect(configuredAccess.destinations.email).not.toContain(tested);
+    const beforeRefusal = edge.sends.length, allowanceAfterTyped = await allowance();
+    const costsBeforeRefusal = await isolated.rows(`SELECT * FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`);
+    expect(await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-send`, { method: 'POST', cookie: author,
+      body: { revisionId: campaign.revisionId, channel: 'email', to: tested } }), 403))
+      .toMatchObject({ status: 'blocked', results: [], blockers: [{ detail: expect.stringContaining('Approval rights are required for a typed destination') }] });
+    expect(edge.sends).toHaveLength(beforeRefusal);
+    expect(await testHistory()).toEqual(configuredAccess);
+    expect(await allowance()).toBe(allowanceAfterTyped);
+    expect(await isolated.rows(`SELECT * FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`)).toEqual(costsBeforeRefusal);
+    await noAuthority();
+
+    await page.context().addCookies([{ name: author.split('=')[0], value: author.split('=')[1], url: isolated.runtime.url }]);
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const reviewUrl = `${isolated.runtime.url}/app/campaigns/${campaign.campaignId}/review`;
+    await openPage(page, reviewUrl);
+    const panel = page.locator('.test-send-panel');
+    await panel.getByRole('button', { name: 'Send a test', exact: true }).click();
+    await expect(panel.getByLabel('Test destination', { exact: true })).toHaveCount(0);
+    await panel.getByLabel('Configured test destination', { exact: true }).selectOption(authorDestination);
+    await availableTransport(isolated);
+    const configuredResponse = page.waitForResponse(response => response.url().endsWith(`/api/campaigns/${campaign.campaignId}/test-send`) && response.request().method() === 'POST');
+    await panel.getByRole('button', { name: 'Send test', exact: true }).click();
+    const response = await configuredResponse;
+    expect(response.request().postDataJSON()).toEqual({ revisionId: campaign.revisionId, channel: 'email', to: authorDestination });
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toMatchObject({ status: 'test-sent', disposition: 'accepted', results: [{ to: authorDestination }] });
+    const configuredMessages = edge.sends.slice(beforeRefusal);
+    expect(configuredMessages.map(message => message.to)).toEqual([authorDestination]);
+    for (const message of [testMessages[0], configuredMessages[0]]) {
+      expect(message.body.subject).toContain('MANGO TEST');
+      for (const format of ['html', 'plain']) expect(message.body.content.find((part: any) => part.type === `text/${format}`).value).toContain('MANGO TEST');
+    }
+    const history = panel.getByRole('region', { name: 'Test send history' });
+    await expect(history.getByRole('heading', { name: 'Recent test sends' })).toBeVisible();
+    await expect(history.getByRole('listitem')).toHaveCount(2);
+    const receipts = (await testHistory()).tests;
+    expect(receipts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ destination: tested, test: true, channel: 'email', operatorId: 'go-live-owner' }),
+      expect.objectContaining({ destination: authorDestination, test: true, channel: 'email', operatorId: authorId }),
+    ]));
+    for (const receipt of receipts) {
+      const item = history.getByRole('listitem').filter({ hasText: receipt.destination });
+      await expect(item).toContainText(receipt.operatorName);
+      await expect(item).toContainText('email');
+    }
+    await reloadPage(page);
+    await panel.getByRole('button', { name: 'Send a test', exact: true }).click();
+    await expect(history.getByRole('listitem')).toHaveCount(2);
+    await expect(history).toContainText(authorDestination);
+    await expect(history).toContainText(tested);
+    await panel.screenshot({ path: info.outputPath('test-isolation-history-1440.png') });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await panel.screenshot({ path: info.outputPath('test-isolation-history-390.png') });
+    expect((await testHistory()).tests).toEqual(receipts);
+    expect(await allowance()).toBe(allowanceAfterTyped - 1);
+    expect(await isolated.rows(`SELECT operation,recipient_step_id,outcome FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`))
+      .toEqual([1, 2].map(() => ({ operation: 'test-handoff', recipient_step_id: null, outcome: 'accepted' })));
+    expect(await stored()).toEqual(beforeStored);
+    expect(await results()).toEqual(beforeResults);
+    expect(await memberships()).toEqual(beforeMembership);
     await noAuthority();
     const review = await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/checks`, { method: 'POST', cookie: owner,
       body: { revisionId: campaign.revisionId } }), 200);
@@ -254,9 +332,71 @@ export const walk0 = async ({ page }, info) => {
     log.push({ name, status, ...await snapshot() });
     return status;
   };
-  const delivered = batch(event('delivered', alice, t + 2 * minute, message(alice).messageId, args(alice)));
+  // Choose the strongest provider identity independently of kind, address,
+  // message and time, rather than accepting the event helper's derived id.
+  const originalEvent = event('delivered', alice, t + 2 * minute, message(alice).messageId, args(alice), {
+    sg_event_id: 'synthetic-mango-5701', response: '250 synthetic-mango-5702', status: '2.0.0',
+  });
+  const delivered = batch(originalEvent);
   const deliveredHeaders = signer.headers(delivered);
   expect(await post('delivered (alice)', delivered, deliveredHeaders)).toBe(204);
+  const identity = 'sendgrid:synthetic-mango-5701';
+  const payloadDigest = createHash('sha256').update(JSON.stringify(originalEvent)).digest('hex');
+  const evidenceFields = 'identity_key, provider, provider_message_id, kind, provider_occurred_at, payload_digest';
+  const expectedEvidence = { identity_key: identity, provider: 'sendgrid', provider_message_id: message(alice).messageId,
+    kind: 'delivered', provider_occurred_at: Math.floor((t + 2 * minute) / 1000) * 1000, payload_digest: payloadDigest };
+  expect(await site.rows(`SELECT ${evidenceFields} FROM provider_fact_inbox`)).toEqual([expectedEvidence]);
+  expect(await site.rows(`SELECT ${evidenceFields}, provider_event_id, recipient_step_id FROM delivery_facts`))
+    .toEqual([{ ...expectedEvidence, provider_event_id: identity, recipient_step_id: handedOff.find(row => row.email === alice)!.id }]);
+  for (const table of ['provider_fact_inbox', 'delivery_facts']) {
+    const [stored] = await site.rows(`SELECT detail_json FROM ${table} WHERE identity_key='${identity}'`);
+    expect(JSON.parse(stored.detail_json)).toMatchObject({ destination: alice, providerEvent: 'delivered', hard: false,
+      response: '250 synthetic-mango-5702', status: '2.0.0', mangoReference: decodeProviderReference(args(alice).mango_handoff_key) });
+  }
+  const contactIds = (await site.rows('SELECT contact_id FROM contact_email_addresses ORDER BY email')).map(row => row.contact_id);
+  const identityState = async () => {
+    // asOf describes the read request, rather than a persisted provider fact.
+    const { asOf, ...results } = (await json(await site.call(`/api/campaigns/${first.campaignId}`, { cookie }), 200)).results;
+    return {
+    inbox: await site.rows('SELECT * FROM provider_fact_inbox ORDER BY identity_key'),
+    facts: await site.rows('SELECT * FROM delivery_facts ORDER BY identity_key'),
+    contacts: await site.rows('SELECT * FROM contacts ORDER BY id'),
+    addresses: await site.rows('SELECT * FROM contact_email_addresses ORDER BY email'),
+    suppressions: await site.rows('SELECT * FROM contact_suppressions ORDER BY id'),
+    optOuts: await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id'),
+    bounces: await site.rows('SELECT * FROM contact_bounce_facts ORDER BY provider_event_id'),
+    history: await site.rows('SELECT * FROM contact_history ORDER BY id'),
+    // Rebinding an identical message may refresh updated_at; the projection's
+    // authority, attempts and original outcome times must stay unchanged.
+    recipients: (await site.rows('SELECT * FROM recipient_steps ORDER BY id')).map(({ updated_at, ...row }) => row),
+    contactReadback: await Promise.all(contactIds.map(async id => json(await site.call(`/api/contacts/${id}`, { cookie }), 200))),
+    results,
+    handoffs: edge.sends.length,
+    };
+  };
+  const originalIdentityState = await identityState();
+  expect(originalIdentityState.facts).toHaveLength(1);
+  expect(originalIdentityState.recipients.find(row => row.destination === alice)!.transport_disposition).toBe('delivered');
+  expect(originalIdentityState.contactReadback[0].timeline).toEqual(expect.arrayContaining([
+    expect.objectContaining({ kind: 'message-delivered', source: 'sendgrid', occurredAt: new Date(expectedEvidence.provider_occurred_at).toISOString() }),
+  ]));
+  expect(await post('identical evidence with the explicit provider identity', delivered)).toBe(204);
+  expect(await identityState()).toEqual(originalIdentityState);
+  for (const [name, changes] of [
+    ['changed payload', { response: 'synthetic-mango-5703' }],
+    ['changed kind with restrictive contact effects', { event: 'spamreport' }],
+    ['changed message', { sg_message_id: `${message(bob).messageId}.recvd-5f8c-1-0` }],
+    ['changed occurrence time', { timestamp: originalEvent.timestamp + 60 }],
+  ] as const) {
+    const changed = batch({ ...originalEvent, ...changes });
+    // Sign the changed bytes afresh: this reaches the immutable evidence guard,
+    // independently of the invalid-signature cases below.
+    expect(await post(`reused provider identity: ${name}`, changed, signer.headers(changed))).toBe(500);
+    expect(await identityState()).toEqual(originalIdentityState);
+  }
+  state.providerIdentity = { identity, expectedEvidence, identicalReplay: 204, conflicts: 4, conflictStatus: 500,
+    originalInbox: originalIdentityState.inbox, originalFact: originalIdentityState.facts, unchangedProjections: true };
+  await record('provider-identity.json', state.providerIdentity);
   expect(await post('deferred (bob, uncertain hand-off)', batch(event('deferred', bob, t + 2 * minute, message(bob).messageId, args(bob), { response: '421 try again later', attempt: '1' })))).toBe(204);
   expect(log.at(-1)!.recipients).toMatchObject({ [bob]: 'handoff-unknown' });
   expect(await post('soft bounce (bob)', batch(event('bounce', bob, t + 3 * minute, message(bob).messageId, args(bob), { type: 'blocked', reason: '452 mailbox full' })))).toBe(204);
