@@ -1,3 +1,4 @@
+import {activationPolicyRoutes} from '@/core/features/lifecycle/activation-policy-routes';
 import {createPropertyRoutes} from '@/core/features/audience/properties/routes';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
@@ -366,6 +367,7 @@ export function createApp(
   });
   app.route('/api', createPortabilityRoutes(environment, platform));
   app.route('/',createSmsInboundRoutes(platform));
+  app.route('/api',activationPolicyRoutes(environment.DB));
   const lifecycleServices = registerLifecycleRoutes(app, lifecycleRuntime);
   app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));

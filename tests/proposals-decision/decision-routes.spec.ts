@@ -1,3 +1,5 @@
+import {ownerControlBrowser} from './owner-control-browser';
+import {ownerControlJourney} from './owner-control-journey';
 import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
 import {history} from './history';
@@ -120,4 +122,10 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect(await readRetained()).toEqual(originals);
     expect(runtime.jobs).toEqual([]);
   } finally {await runtime.close();}
+});
+
+test('Owner control — complete acceptance',async({page},info)=>{
+  test.setTimeout(600000);
+  await ownerControlJourney();
+  await ownerControlBrowser(page,info);
 });

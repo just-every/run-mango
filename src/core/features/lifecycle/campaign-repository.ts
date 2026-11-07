@@ -228,6 +228,8 @@ export function createCampaignLifecycleRepository(database: Database) {
       now: Date;
       reconciliationWindowMs: Partial<Record<Channel, number>>;
       sourceGeneration?:number;
+      activationGeneration?:number;
+      activationHoldId?:string;
       mailProvider?:string;
       reputationSince?:number;
     }) {
@@ -270,6 +272,9 @@ export function createCampaignLifecycleRepository(database: Database) {
              SELECT 1 FROM campaign_revisions r JOIN campaigns c ON c.id = r.campaign_id
              WHERE r.id = ? AND r.campaign_id = ? AND r.state = 'draft' AND r.updated_at = ?
                AND c.updated_at = ? AND ${replaceGuard} AND ${senderGuard}
+               AND COALESCE((SELECT generation FROM campaign_activation_policy WHERE id=1),0)=?
+               AND (NOT EXISTS(SELECT 1 FROM campaign_activation_policy WHERE id=1) OR EXISTS(SELECT 1 FROM campaign_activation_policy WHERE id=1 AND approver_operator_id=?))
+               AND (? IS NULL OR EXISTS(SELECT 1 FROM campaign_activation_holds h JOIN integration_credentials k ON k.id=h.credential_id WHERE h.id=? AND h.revision_id=r.id AND h.revision_updated_at=r.updated_at AND h.policy_generation=? AND h.approver_operator_id=? AND k.revoked_at IS NULL))
                AND EXISTS(SELECT 1 FROM audience_source_authority WHERE id=1 AND generation=?)
                AND COALESCE((SELECT enabled FROM open_tracking_settings WHERE id=1),0)=?
                AND COALESCE((SELECT generation FROM open_tracking_settings WHERE id=1),0)=?
@@ -293,6 +298,7 @@ export function createCampaignLifecycleRepository(database: Database) {
           snapshot.revision.updatedAt.getTime(),
           snapshot.campaign.updatedAt.getTime(),
           ...senderValues,
+          input.activationGeneration??0,operatorId,input.activationHoldId??null,input.activationHoldId??null,input.activationGeneration??0,operatorId,
           input.sourceGeneration??null,
           Number(input.openTracking.enabled),
           input.openTracking.generation,

@@ -1,3 +1,4 @@
+import {activationPolicy,currentActivationHold} from '@/core/features/lifecycle/activation-policy';
 import { exportCampaignsCsv } from './export';
 import type {AdvisorySizeOptions} from '@/core/features/lifecycle/advisory-acknowledgements';
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
@@ -23,6 +24,10 @@ import {
 
 export function createCampaignRepository(database: Database,sizeOptions:AdvisorySizeOptions = {}) {
   return {
+    async activationStatus(revision?:{id:string;updatedAt:Date}) {
+      const policy=await activationPolicy(database.$client);
+      return {activationPolicy:policy,activationHold:revision && policy ? await currentActivationHold(database.$client,revision.id,revision.updatedAt.getTime()) : null};
+    },
     exportCsv: (actorId: string) => exportCampaignsCsv(database, actorId),
     ...createCampaignResultRepository(database),
     attribution:(campaignId:string,revisionId:string)=>campaignAttribution(database.$client,campaignId,revisionId),

@@ -1,4 +1,5 @@
 import {SettingsProperties} from './settings-properties';
+import {CampaignActivationPanel} from '@/core/features/settings/campaign-activation-panel';
 import {SettingsSending} from './settings-sending';
 import {SettingsWooCommerce} from './settings-woocommerce';
 import {SettingsAudienceExclusions} from './settings-audience-exclusions';
@@ -36,6 +37,7 @@ export function SettingsPage() {
       <Can permission="settings.manage"><SettingsSender operatorEmail={operator.data.operator.email} /></Can>
       <Can permission="settings.manage"><SettingsLinkHosts /></Can>
       <Can permission="settings.manage"><SettingsAudienceExclusions /></Can>
+      <Can permission="settings.manage"><CampaignActivationPanel current={operator.data.operator} /></Can>
       <Can permission="integration.manage"><SettingsIntegrations /></Can>
       <Can permission="integration.manage"><SettingsProperties /></Can>
       <Can permission="settings.manage"><SettingsStripe /></Can>

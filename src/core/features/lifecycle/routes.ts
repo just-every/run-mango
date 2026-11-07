@@ -13,6 +13,8 @@ const identifier = z.object({ id: z.string().min(1), token: z.string().min(32).o
 const approvalBody = z.object({
   revisionId: z.string().min(1),
   idempotencyKey: z.string().min(16).max(200),
+  revisionUpdatedAt:z.number().int().nonnegative().optional(),
+  holdId:z.string().min(1).max(200).optional(),
 });
 const testSendBody = z.object({
   revisionId: z.string().min(1),
@@ -69,6 +71,8 @@ export function registerLifecycleHttpRoutes(
       revisionId: body.data.revisionId,
       idempotencyKey: body.data.idempotencyKey,
       operatorId: actor,
+      revisionUpdatedAt:body.data.revisionUpdatedAt,
+      holdId:body.data.holdId,
     });
     if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
     if (result.kind === 'blocked') return context.json({ status: 'blocked', blockers: result.blockers }, 409);

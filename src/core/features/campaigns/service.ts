@@ -129,7 +129,8 @@ export function createCampaignService(
         detail.revision && detail.steps.some(step=>step.channel==='sms') ? options.smsPreview?.(id,detail.revision.id) : undefined,
         detail.revision ? options.blockedHosts?.({revision:detail.revision,links:detail.links}) : undefined,
       ]);
-      return { ...detail, checks, smsPreview, blockedHosts: blockedHosts ?? [], blockers: blockers.filter(blocker=>required.has(blocker.kind)) };
+      const activation=await repository.activationStatus(detail.revision);
+      return { ...detail, ...activation, checks, smsPreview, blockedHosts: blockedHosts ?? [], blockers: blockers.filter(blocker=>required.has(blocker.kind)) };
     },
 
     updateDraft(id: string, composition: DraftComposition, deferRead: boolean, actorId: string) {

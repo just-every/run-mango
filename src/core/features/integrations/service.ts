@@ -1,3 +1,4 @@
+import {holdActivation} from '@/core/features/lifecycle/activation-policy';
 import { recordConversionEvent } from '@/core/features/insights/conversion-events';
 import type { createAudienceService } from '@/core/features/audience/service';
 import type { Platform } from '@/core/shared/platform';
@@ -42,6 +43,11 @@ export function createIntegrationService(platform: Platform, audience: ReturnTyp
     async send(credentialId: string, campaignId: string, input: {revisionId: string; segmentId: string}) {
       if (platform.config.authMail && platform.config.mailProvider === 'rer') throw new IntegrationError('not available yet', 503);
       await contacts.ownedSegment(credentialId, input.segmentId);
+      const requested=await db.prepare('SELECT inclusion_rule_json inclusion,exclusion_rules_json exclusions FROM campaign_revisions WHERE id=? AND campaign_id=?').bind(input.revisionId,campaignId).first<{inclusion:string;exclusions:string}>();
+      const requestedSegment=await db.prepare('SELECT inclusion_rule_json inclusion,exclusion_rules_json exclusions FROM audience_segments WHERE id=?').bind(input.segmentId).first<{inclusion:string;exclusions:string}>();
+      if(!requested || !requestedSegment || stableJson(JSON.parse(requested.inclusion))!==stableJson(JSON.parse(requestedSegment.inclusion)) || stableJson(JSON.parse(requested.exclusions))!==stableJson(JSON.parse(requestedSegment.exclusions)))throw new IntegrationError('approved_segment_mismatch',409);
+      const held=await holdActivation(db,credentialId,campaignId,input.revisionId);
+      if(held)return held;
       const revision = await db.prepare(`SELECT r.inclusion_rule_json AS inclusion,r.exclusion_rules_json AS exclusions
         FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id
         WHERE c.id=? AND r.id=? AND c.active_revision_id=r.id AND r.state='approved'

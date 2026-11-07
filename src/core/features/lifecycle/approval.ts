@@ -1,3 +1,4 @@
+import {activationAuthority} from './activation-policy';
 import {incumbentReliance} from '../move-in/incumbent-review';
 import { digestJson } from './digest';
 import { messageRendererVersion } from '@/core/features/campaigns/message-content';
@@ -39,12 +40,18 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       revisionId: string;
       operatorId: string;
       idempotencyKey: string;
+      revisionUpdatedAt?:number;
+      holdId?:string;
       now?: Date;
     }) {
       const now = input.now ?? new Date();
       await createProposalRepository(runtime.platform.database).expireDue(now);
       const snapshot = await repository.readRevisionSnapshot(input.campaignId, input.revisionId);
       if (!snapshot) return { kind: 'not_found' as const };
+      if(input.revisionUpdatedAt!==undefined && input.revisionUpdatedAt!==snapshot.revision.updatedAt.getTime())return {kind:'conflict' as const,detail:'The saved revision changed. Reload and review it before approving.'};
+      const activation=await activationAuthority(runtime.platform.database.$client,{operatorId:input.operatorId,revisionId:input.revisionId,updatedAt:snapshot.revision.updatedAt.getTime(),holdId:input.holdId});
+      if(!activation.ok)return {kind:'conflict' as const,detail:activation.detail};
+      if(activation.generation && input.revisionUpdatedAt===undefined)return {kind:'conflict' as const,detail:'Company policy requires the exact reviewed revision timestamp.'};
       if (snapshot.revision.state === 'approved' && snapshot.campaign.activeRevisionId === input.revisionId) {
         const digest = await repository.approvedRevision(input.campaignId, input.revisionId);
         if (!digest) return { kind: 'conflict' as const, detail: 'Approved revision is missing its immutable approval record.' };
@@ -92,6 +99,8 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         snapshot,
         revisionDigest,
         sourceGeneration:authority.generation,
+        activationGeneration:activation.generation,
+        activationHoldId:input.holdId,
         senderLease: checkResult.senderLease,
         smsPolicy,
         openTracking,

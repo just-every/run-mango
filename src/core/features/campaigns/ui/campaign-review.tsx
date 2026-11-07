@@ -30,7 +30,7 @@ import { DeliveryPlan } from './delivery-plan';
 import { toDraftComposition, type DraftComposition } from './draft-composition';
 import { RevisionPreviews } from './revision-previews';
 
-type ReviewData = CampaignDetail & { blockers: ApprovalBlocker[] };
+type ReviewData = CampaignDetail & { blockers: ApprovalBlocker[]; activationPolicy?:{approverOperatorId:string;approverName:string}; activationHold?:{holdId:string;requesterName:string}|null };
 
 export function CampaignReviewPage() {
   const {can}=usePermissions();
@@ -117,13 +117,13 @@ export function CampaignReviewPage() {
     setNotice(undefined);
     setActionBlockers(undefined);
     try {
-    const response = await requestJson<{ status?: string; blockers?: ApprovalBlocker[]; error?: string; disposition?: 'accepted' | 'handoff-unknown'; results?: Array<{to:string}> }>(
+    const response = await requestJson<{ status?: string; blockers?: ApprovalBlocker[]; error?: string; detail?:string; disposition?: 'accepted' | 'handoff-unknown'; results?: Array<{to:string}> }>(
       `/api/campaigns/${id}/${kind === 'test' ? 'test-send' : 'approve'}`,
       {
         method: 'POST',
         body: JSON.stringify(kind === 'test'
           ? { revisionId: revision.id, channel: testChannel, to: testAccess.data?.canType ? testDestination.split(',').map(value=>value.trim()).filter(Boolean) : testDestination }
-          : { revisionId: revision.id, idempotencyKey: crypto.randomUUID() }),
+          : { revisionId: revision.id, revisionUpdatedAt:new Date(revision.updatedAt).getTime(), holdId:data.activationHold?.holdId, idempotencyKey: crypto.randomUUID() }),
       },
     );
     if (response.status === 409 && response.data.blockers) {
@@ -148,7 +148,7 @@ export function CampaignReviewPage() {
       return;
     }
     if (kind === 'test') setTestErrors({destination: response.data.error === 'test_destination_not_allowed' ? 'Use a destination approved by your operator in the test allowlist.' : 'Check the approved destination and sender in Settings before sending a test.'});
-    setNotice('This action is unavailable. Check the approval checks and sending configuration, then try again.');
+    setNotice(response.data.detail ?? 'This action is unavailable. Check the approval checks and sending configuration, then try again.');
     } catch {setNotice('The result could not be confirmed. Reload this campaign before trying again.');}
     finally {setBusy(undefined);if(kind==='test')void testAccess.reload();}
   };
@@ -258,6 +258,11 @@ export function CampaignReviewPage() {
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
         </div>}
       </header>
+      {data.activationPolicy && editable ? <section className="panel" aria-label="Company activation approval">
+        <h2>Company activation approval</h2>
+        <p>Only {data.activationPolicy.approverName} can approve this saved revision.</p>
+        {data.activationHold ? <p>Activation requested by {data.activationHold.requesterName} is held for approval. It may contact recipients and incur provider costs.</p> : <p>This draft has no current machine activation request. Saving changes does not approve or schedule it.</p>}
+      </section> : null}
       <CampaignAttributionSummary attribution={data.attribution} version={revision.version}/>
       {editable && blockingFindings.length ? <p id="approval-blocked-reason" className="notice-note" role="status">Approval blocked: {approvalFindingDescription(blockingFindings[0])}{blockingFindings.length > 1 ? ` Review all ${blockingFindings.length} blocking checks below.` : ''}</p> : null}
       {dirty ? <div className="unsaved-notice" role="status"><span>Unsaved changes. Save before approving.</span><button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => {setDraft(savedDraft); setNotice(undefined);}}>Discard changes</button></div> : null}
