@@ -3110,7 +3110,7 @@
       "executable": false
     },
     "src/core/features/audience/bulk/routes.ts": {
-      "sha256": "ad66bf5116c9bccbb06b77f08c97b2da3b75ab70319e67b933888cc904dd8725",
+      "sha256": "ff3efe87f93768a1b8392e013e22bdbbe5116e588ec0ecf0988095876e3c908d",
       "executable": false
     },
     "src/core/features/audience/bulk/search.ts": {
@@ -8378,7 +8378,7 @@
       "executable": false
     },
     "tests/audience-controls/bulk-browser.ts": {
-      "sha256": "4083ed4f2aa5b8402a37725526cc4c7ef83f512bb23da89be75fbbe7d189ba5f",
+      "sha256": "d8725e6c2ab26fa8c9a860daaebd6a670593620c7b3015c68fea3a82c45ac97d",
       "executable": false
     },
     "tests/audience-controls/bulk-fixture.ts": {
@@ -8390,7 +8390,7 @@
       "executable": false
     },
     "tests/audience-controls/bulk.flow.ts": {
-      "sha256": "8b25cf47faccd089278c62cad319dacfca8a8deabd12e5fdd172179c64de18f9",
+      "sha256": "c44c45f8aefaaba8b25f8518719865deb243ec246f3691c3d420a64eecf16bd4",
       "executable": false
     },
     "tests/audience-controls/channel-snapshot-journey.ts": {

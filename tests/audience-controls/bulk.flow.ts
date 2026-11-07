@@ -110,7 +110,12 @@ export async function bulkRouteJourney() {
       expect((await h.json(`/api/contacts/${people[0].id}`)).contact).toMatchObject({emailStatus:'suppressed',smsStatus:'suppressed'});
       expect((await run({contactIds:[people[0].id],action:'topic',value:'offers',channel:'email'})).refused).toBe(1);
       expect((await h.json(`/api/contacts/${people[4].id}`)).contact.emailStatus).toBe('subscribed');
-      const erased=await finish(await start({contactIds:[people[0].id],action:'erase'}),2000);
+      let erasing=await start({contactIds:[people[0].id],action:'erase'});
+      erasing=await resume(erasing);
+      expect(erasing.state).toBe('running');
+      expect((await h.call(exportPath)).status).toBe(503);
+      expect((await h.call('/api/audience/bulk',{contactIds:[people[4].id],action:'export'})).status).toBe(503);
+      const erased=await finish(erasing,2000);
       expect(erased).toMatchObject({total:1,processed:1,succeeded:1,refused:0});
       expect((await h.call(`/api/contacts/${people[0].id}`)).status).toBe(404);
       const oldReceipt=await h.json(`/api/audience/bulk/${sms.id}`),erasureReceipt=await h.json(`/api/audience/bulk/${erased.id}`);

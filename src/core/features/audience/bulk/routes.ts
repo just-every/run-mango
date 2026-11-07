@@ -1,3 +1,4 @@
+import {pendingErasure} from '../erasure/maintenance';
 import {Hono} from 'hono';
 import type {AuthVariables} from '@/core/features/auth/routes';
 import type {Platform} from '@/core/shared/platform';
@@ -24,6 +25,7 @@ export function createContactBulkRoutes(platform:Platform) {
     properties:await propertyDefinitions(db),
   }));
   routes.post('/audience/bulk',async c=>{
+    if(await pendingErasure(db))return c.json({error:'contact_erasure_in_progress'},503);
     const input=await readJson(c,bulkInput);if('error'in input)return input.error;
     const authority=await audienceImportContext(platform,c.get('operator').id,c.req.raw);
     const sessionHash=String(authority.authorization.predicate('erase','mango').params![0]);
@@ -36,6 +38,7 @@ export function createContactBulkRoutes(platform:Platform) {
     catch{return c.json({job:await readBulkReceipt(db,c.req.param('id')),error:'bulk_failed'},409);}
   });
   routes.get('/audience/bulk/:id/export',async c=>{
+    if(await pendingErasure(db))return c.json({error:'contact_erasure_in_progress'},503);
     const job=await readBulkReceipt(db,c.req.param('id'));if(!job||job.action!=='export'||job.state!=='complete')return c.json({error:'export_not_ready'},409);
     const rows=(await db.prepare(`SELECT c.id,c.display_name,c.email,c.email_status,c.sms_status,(SELECT group_concat(phone_e164,'; ') FROM contact_phones WHERE contact_id=c.id) phones FROM contact_bulk_items i JOIN contacts c ON c.id=i.contact_id WHERE i.job_id=? AND i.state='succeeded' ORDER BY i.ordinal`).bind(job.id).all<Record<string,unknown>>()).results;
     const csv=encodeCsv([['Contact ID','Name','Email Address','Phone','Email Marketing Status','SMS Marketing Status'],...rows.map(r=>[r.id,r.display_name,r.email,r.phones,r.email_status,r.sms_status].map(v=>String(v??'')))]);

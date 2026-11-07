@@ -15,7 +15,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     const {people}=await seeded.json();
     await openPage(page,`${runtime.url}/app/audience`);
     await page.getByText('Search contacts',{exact:true}).click();
-    await page.getByLabel('Search by',{exact:true}).selectOption('property');
+    await page.getByRole('combobox',{name:'Search by',exact:true}).selectOption('property');
     await page.getByLabel('Property key',{exact:true}).fill('favourite');
     await page.getByLabel('Search value',{exact:true}).fill('Vegetables');
     await page.getByRole('button',{name:'Find contacts',exact:true}).click();
@@ -24,8 +24,8 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     await expect(table.getByRole('link',{name:'Bennett Cole',exact:true})).toBeVisible();
     await expect(table.getByRole('link',{name:'Caroline Moore',exact:true})).toHaveCount(0);
     await page.getByLabel('Select all contacts',{exact:true}).check();
-    await page.getByLabel('Bulk action',{exact:true}).selectOption('topic');
-    await page.getByLabel('Topic',{exact:true}).selectOption('email:harvest-news');
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('topic');
+    await page.getByRole('combobox',{name:'Topic',exact:true}).selectOption('email:harvest-news');
     await page.getByRole('button',{name:'Apply to selection',exact:true}).click();
     const receipt=page.getByRole('region',{name:'Add to topic',exact:true});
     await expect(receipt.getByRole('status')).toContainText('Complete',{timeout:30000});
@@ -44,7 +44,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     await expect(receipt.getByRole('status')).toContainText('Complete');
     await expect(receipt).toContainText('Bennett Cole');
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
-    await page.getByLabel('Bulk action',{exact:true}).selectOption('tag');
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('tag');
     await page.getByLabel('Tag',{exact:true}).fill('Harvest members');
     await page.getByRole('button',{name:'Apply to selection',exact:true}).click();
     const tagReceipt=page.getByRole('region',{name:'Add tag',exact:true});
@@ -52,7 +52,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     const profile=await request.get(`${runtime.url}/api/contacts/${people[0].id}`);
     expect((await profile.json()).profile.tags).toContain('Harvest members');
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
-    await page.getByLabel('Bulk action',{exact:true}).selectOption('suppress');
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('suppress');
     await page.getByRole('button',{name:'Review action',exact:true}).click();
     const dialog=page.getByRole('alertdialog',{name:'Suppress selected contacts?',exact:true});
     await expect(dialog).toBeVisible();
