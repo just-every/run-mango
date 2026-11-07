@@ -28,12 +28,20 @@ export async function startBulkJob(platform:Platform,input:BulkInput,principalId
   await enqueueBulk(platform,id);
   return readBulkReceipt(db,id);
 }
-async function enqueueBulk(platform:Platform,id:string){if(!platform.config.local)await platform.jobs.enqueue({kind:'contact.bulk',idempotencyKey:`bulk:${id}:${crypto.randomUUID()}`,payload:{id}});}
+async function enqueueBulk(platform:Platform,id:string){
+  if(platform.config.local)return;
+  try{await platform.jobs.enqueue({kind:'contact.bulk',idempotencyKey:`bulk:${id}:${crypto.randomUUID()}`,payload:{id}});}
+  catch{await platform.database.$client.prepare("UPDATE contact_bulk_jobs SET error='Queue handoff delayed; resume this receipt or wait for scheduled recovery.' WHERE id=?").bind(id).run();}
+}
+export async function sweepBulkJobs(platform:Platform){
+  const rows=(await platform.database.$client.prepare("SELECT id FROM contact_bulk_jobs WHERE state IN ('queued','running') AND (lease_until IS NULL OR lease_until<?) ORDER BY created_at LIMIT 10").bind(Date.now()).all<{id:string}>()).results;
+  for(const row of rows)await enqueueBulk(platform,row.id);
+}
 
 /** A bounded page owns a durable lease. Replayed queue messages cannot run a second page concurrently. */
 export async function advanceBulkJob(platform:Platform,id:string) {
   const db=platform.database.$client,token=crypto.randomUUID(),now=Date.now();
-  const claimed=await db.prepare(`UPDATE contact_bulk_jobs SET lease_token=?,lease_until=?,state='running',updated_at=?
+  const claimed=await db.prepare(`UPDATE contact_bulk_jobs SET lease_token=?,lease_until=?,state='running',error=NULL,updated_at=?
     WHERE id=? AND state IN ('queued','running') AND (lease_until IS NULL OR lease_until<?)`)
     .bind(token,now+120000,now,id,now).run();
   if(!claimed.meta.changes)return readBulkReceipt(db,id);

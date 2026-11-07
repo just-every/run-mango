@@ -41,7 +41,7 @@ CREATE TABLE contact_topic_memberships (
 );
 -- Native erasure also operates when a restore tool disables foreign keys.
 CREATE TRIGGER contact_bulk_erased BEFORE DELETE ON contacts BEGIN
-  UPDATE contact_bulk_items SET contact_id=NULL,reason=CASE WHEN state='pending' THEN 'contact-erased' ELSE NULL END,state=CASE WHEN state='pending' THEN 'refused' ELSE state END WHERE contact_id=OLD.id;
+  UPDATE contact_bulk_items SET contact_id=NULL WHERE contact_id=OLD.id;
   DELETE FROM contact_tag_overrides WHERE contact_id=OLD.id;
   DELETE FROM contact_topic_memberships WHERE contact_id=OLD.id;
 END;

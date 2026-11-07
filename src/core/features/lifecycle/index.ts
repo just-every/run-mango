@@ -1,4 +1,4 @@
-import {advanceBulkJob} from '@/core/features/audience/bulk/jobs';
+import {advanceBulkJob,sweepBulkJobs} from '@/core/features/audience/bulk/jobs';
 import {advisorySizeOptions} from './advisory-size-options';
 import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
@@ -84,6 +84,7 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
 
 export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntime) {
   const { repository, delivery } = createLifecycleServices(runtime);
+  await sweepBulkJobs(runtime.platform);
   const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return 'blocked-erasure' as const;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();

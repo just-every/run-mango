@@ -1622,7 +1622,7 @@
       "executable": false
     },
     "migrations/core/0104_contact_bulk_actions.sql": {
-      "sha256": "20bbbf082ff76905ef50fb251562a0f454ae68c3857a18efa231c0e01f1c4919",
+      "sha256": "4fec29d4dc7ab09b488adf1334d4df2631cb7c333a3bef1e83af77ba170c0645",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -3098,7 +3098,7 @@
       "executable": false
     },
     "src/core/features/audience/bulk/jobs.ts": {
-      "sha256": "e69f07dda3746008b0abde3ff3c71404843752d3eb203e224f6cd4e64086a9fe",
+      "sha256": "b99028afac6fdfa81ed4d058023042c50775be5a820c6c277f6f335f9542257c",
       "executable": false
     },
     "src/core/features/audience/bulk/page.ts": {
@@ -5210,7 +5210,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/index.ts": {
-      "sha256": "d904542ffe1b90860dfe7c9dafe481760838d09287f17dbef46637d4e2e9dc0d",
+      "sha256": "763fbc4a3f25170405ed53ab207ee5bf3deb4d8d6f78677e47cdc82e73294e26",
       "executable": false
     },
     "src/core/features/lifecycle/link-checks.ts": {
@@ -8377,6 +8377,22 @@
       "sha256": "11676b25e05cd94d1b3595fccf46355b8d0e3d380dfed78fb84a485316ffe180",
       "executable": false
     },
+    "tests/audience-controls/bulk-browser.ts": {
+      "sha256": "26d44a641de1d4f5dcdfa735d2c42d55052a8490464b71cd35fa0619f29e0e87",
+      "executable": false
+    },
+    "tests/audience-controls/bulk-fixture.ts": {
+      "sha256": "56c922b00c8c443af6b08f5acb6735c08984911f3d6c50270181ec52b517977d",
+      "executable": false
+    },
+    "tests/audience-controls/bulk-worker.ts": {
+      "sha256": "a63ba5ba68a5f618843c9468c24c076c4b481139b5bc86f50e46e1b49c41b527",
+      "executable": false
+    },
+    "tests/audience-controls/bulk.flow.ts": {
+      "sha256": "28b6d1b0c372c4501ea229cb10e945e4fc4b8c45986eba072bd731b4f87f6ede",
+      "executable": false
+    },
     "tests/audience-controls/channel-snapshot-journey.ts": {
       "sha256": "67945c5f2425696e57f42eba760534620b3aad775ee31e18c0e26dd2d9894303",
       "executable": false
@@ -8414,7 +8430,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "fa46e0510b070f030e8e4a6e4e44b3c10a0cb3ae238136b114539686bfee568b",
+      "sha256": "0c7f96a56c20bcd9eb3554eb14c7415b6d24759eebf2b1657609ab61adcfef87",
       "executable": false
     },
     "tests/audience-import/config.js": {
