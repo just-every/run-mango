@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "f60ed67626b19eb19675a1e9016f482e0d107386e21b6144c674b5637e3ba6e0",
+      "sha256": "fa500adc26823641f9d875ad886e798652e5f76ab7a8a85edbdadb1990104990",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "bf24281775faaebf7c794aaa231a563eb068db96e127bbe96cfc4bcf85d83d02",
+      "sha256": "f6c44fc1620c503fec5b05fd69e6438faba7e9162edea3fae0a820775e559e88",
       "executable": false
     },
     "DEMO.md": {
@@ -8581,16 +8581,20 @@
       "sha256": "128e1e2125b235cb91bb749fb6826820a6c9f8c115f56b1ec2cf709a45557f4d",
       "executable": false
     },
+    "tests/campaign-results/cost-identity-proof.ts": {
+      "sha256": "1b09a4da4198a6b88acef1c2db371a9e598be70bd8a381e806f36a0fbb910d3a",
+      "executable": false
+    },
     "tests/campaign-results/cost-mail-proof.ts": {
       "sha256": "d768eb5ca97414dfaa9a579ace6d4a125127d087ac91c42f1b3a201b669a3f2c",
       "executable": false
     },
     "tests/campaign-results/cost-worker.ts": {
-      "sha256": "4313c7576fa568a0eb9ff35872c402e8be8157f2591e0cc7c94675d8d15072bf",
+      "sha256": "5832842626768c2b3e2d8fa202e58a9acbeea42ab3d8076c12b2cc2fba00e2e0",
       "executable": false
     },
     "tests/campaign-results/costs.flow.ts": {
-      "sha256": "696f7c1e2c8701e0348b5a36719ecacb32d4727b759d80423e9c51aecaff4f43",
+      "sha256": "7f5d387ee451c441473168f7c71aa4329d89d6983620a5e06cb57240ad83ab05",
       "executable": false
     },
     "tests/campaign-results/cross-channel-attribution.ts": {
