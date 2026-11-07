@@ -8,6 +8,7 @@ type BulkSelection = { contactIds: string[] } | { search: AudienceQuery };
 type BulkRequest = BulkSelection & { action: BulkAction; value?: string; channel?: 'email' | 'sms' };
 type BulkJob = {
   id: string; action: BulkAction; state: 'queued' | 'running' | 'complete' | 'failed';
+  value?: string | null; channel: 'email' | 'sms';
   total: number; processed: number; succeeded: number; refused: number; error?: string;
   refusals: { contactId: string; displayName: string; reason: string }[];
 };
@@ -138,6 +139,7 @@ export function AudienceBulk({ selection, count, options, disabled, onComplete, 
       <div className="section-heading"><div><p className="eyebrow">Bulk receipt</p><h3 id="bulk-receipt-title">{job ? actionLabels[job.action] : 'Contact action'}</h3></div></div>
       <p className="audience-bulk-receipt__reference">Reference: {jobId}</p>
       {job ? <>
+        {job.value ? <p>{job.action === 'topic' ? 'Topic' : 'Tag'}: <strong>{job.value}</strong>{job.action === 'topic' ? ` · ${job.channel === 'email' ? 'Email' : 'SMS'}` : ''}</p> : job.action === 'suppress' ? <p>Channel: {job.channel === 'email' ? 'Email' : 'SMS'}</p> : null}
         <p role="status">{job.state === 'complete' ? 'Complete' : job.state === 'failed' ? 'Failed' : following ? 'In progress' : 'Waiting to continue'} · {job.processed.toLocaleString()} of {job.total.toLocaleString()} processed</p>
         <progress max={Math.max(job.total, 1)} value={job.processed} aria-label="Bulk action progress" />
         <dl className="audience-bulk-receipt__counts"><div><dt>Succeeded</dt><dd>{job.succeeded.toLocaleString()}</dd></div><div><dt>Refused</dt><dd>{job.refused.toLocaleString()}</dd></div><div><dt>Total</dt><dd>{job.total.toLocaleString()}</dd></div></dl>
