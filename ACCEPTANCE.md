@@ -1519,8 +1519,8 @@ Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001 · Rules D
 4. Campaign detail shows the pause and provider error.
 5. Each operator receives one outage email as soon as the mail provider is available.
 
-**Evidence.** `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` — “[SEND-005] authenticated probes pause without recipients, obey durable cadence and recover without duplicate uncertain notices”
-**Gap.** Old evidence asserts Adapter unavailable pauses channel; No recipient hand-off while paused; Bounded non-recipient probe; Probe cadence survives restart; Automatic probe recovery. Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery; Provider error visible. Missing public-door journey: “Provider outage — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` — “[SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends”, invoking `tests/go-live/delivery-recovery.flow.ts`: authenticated 503 probe code reconciles with persisted outage and channel pause, authenticated campaign readback and visible pause explanation; repeated reads and reopening preserve queued recipient identities, attempts and marketing handoffs, with paused-screen captures at 1440 and 390. Existing bounded probe, durable cadence, restart, deadline, late replay, automatic recovery and once-only operator-notice assertions remain.
+**Gap.** Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery. SMS outage qualification, owner-held Twilio A2P and US carrier registration, SMS transport and provider qualification remain unproved. Provider, device, account and cross-seed Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013's SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
 
 ### Results
 
