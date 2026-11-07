@@ -119,6 +119,58 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect(runtime.jobs).toEqual([]);
     await reusableRoleProof(runtime);
 
+    // A separate owner removes the generator; original actors are fixture facts,
+    // independently checked before comparing retained records and public reads.
+    const colleague=runtime.colleague;
+    const retained=await colleague.call('/api/proposals/generate',{});
+    expect(retained.status).toBe(201);
+    const dismissedByColleague=await colleague.call('/api/proposals/generate',{});
+    expect(dismissedByColleague.status).toBe(201);
+    expect((await colleague.call(`/api/proposals/${dismissedByColleague.body.proposalId}/dismiss`,{reason:'Synthetic colleague decision'})).status).toBe(200);
+    runtime.controls.failure=new Error('Synthetic provider refusal');
+    const failedByColleague=await colleague.call('/api/proposals/generate',{});
+    expect(failedByColleague).toMatchObject({status:409,body:{kind:'failed',error:'ai_provider_failed'}});
+    runtime.controls.failure=undefined;
+    runtime.controls.alter=output=>{output.summary.text='Synthetic unsupported claim';};
+    const rejectedByColleague=await colleague.call('/api/proposals/generate',{});
+    expect(rejectedByColleague).toMatchObject({status:409,body:{kind:'failed',error:'invalid_ai_output'}});
+    runtime.controls.alter=undefined;
+    const cases=[
+      {id:retained.body.proposalId,state:'proposed',transitions:[{fromState:'generating',toState:'proposed',actorId:colleague.id,reason:'grounded-generation'}]},
+      {id:dismissedByColleague.body.proposalId,state:'dismissed',transitions:[{fromState:'generating',toState:'proposed',actorId:colleague.id,reason:'grounded-generation'},{fromState:'proposed',toState:'dismissed',actorId:colleague.id,reason:'Synthetic colleague decision'}]},
+      {id:failedByColleague.body.proposalId,state:'failed',transitions:[{fromState:'generating',toState:'failed',actorId:colleague.id,reason:'ai_provider_failed'}]},
+      {id:rejectedByColleague.body.proposalId,state:'failed',transitions:[{fromState:'generating',toState:'failed',actorId:colleague.id,reason:'invalid_ai_output'}]},
+    ];
+    const readRetained=async()=>Promise.all(cases.map(async expected=>{
+      const response=await runtime.call(`/api/proposals/${expected.id}`);
+      expect(response.status).toBe(200);
+      const proposal=await runtime.db.prepare('SELECT * FROM proposals WHERE id=?').bind(expected.id).first();
+      const transitions=(await runtime.db.prepare('SELECT * FROM proposal_transitions WHERE proposal_id=? ORDER BY occurred_at,id').bind(expected.id).all()).results;
+      return {detail:response.body,proposal,transitions};
+    }));
+    const originals=await readRetained();
+    for(const [index,expected] of cases.entries()) {
+      expect(originals[index].detail.proposal).toMatchObject({id:expected.id,state:expected.state});
+      expect(originals[index].detail.history).toEqual(expected.transitions.map(event=>expect.objectContaining(event)));
+      expect(originals[index].transitions).toEqual(expected.transitions.map(event=>expect.objectContaining({from_state:event.fromState,to_state:event.toState,actor_id:colleague.id,reason:event.reason})));
+    }
+    expect((await runtime.call(`/api/operators/${colleague.id}`,undefined,true,'DELETE')).status).toBe(403);
+    expect(await readRetained()).toEqual(originals);
+    expect((await colleague.call('/api/operator')).status).toBe(200);
+    expect((await runtime.confirmOwner()).status).toBe(303);
+    expect((await runtime.call(`/api/operators/${colleague.id}`,undefined,true,'DELETE')).status).toBe(204);
+    expect((await runtime.call('/api/operator')).body.operator).toMatchObject({id:'proposal-operator',role:'owner'});
+    expect(await runtime.db.prepare('SELECT display_name,removed_at FROM operators WHERE id=?').bind(colleague.id).first()).toEqual({display_name:colleague.name,removed_at:expect.any(Number)});
+    for(let read=0;read<2;read++) {
+      expect(await readRetained()).toEqual(originals);
+      for(const expected of cases)expect(await colleague.call(`/api/proposals/${expected.id}`)).toEqual({status:401,body:{error:'unauthenticated'}});
+    }
+    expect((await colleague.call('/api/operator')).status).toBe(401);
+    expect((await colleague.call('/api/proposals/generate',{})).status).toBe(401);
+    expect((await colleague.call(`/api/proposals/${retained.body.proposalId}/dismiss`,{reason:'Revoked decision'})).status).toBe(401);
+    expect(await readRetained()).toEqual(originals);
+    expect(runtime.jobs).toEqual([]);
+
     const approvalBody={revisionId:first.revisionId,idempotencyKey:'synthetic-mango-009-approval'};
     const approval=await timed(()=>runtime.call(`/api/campaigns/${first.campaignId}/approve`,approvalBody));
     expect(approval.value,JSON.stringify(approval.value.body)).toMatchObject({status:200,body:{status:'scheduled',idempotent:false}});

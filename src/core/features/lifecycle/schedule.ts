@@ -38,6 +38,11 @@ function sameParts(left: LocalParts, right: LocalParts) {
   return Object.keys(left).every((key) => left[key as keyof LocalParts] === right[key as keyof LocalParts]);
 }
 
+export function localDayEnd(instant: Date, timeZone: string) {
+  const {year, month, day} = localParts(instant, timeZone);
+  return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T23:59`;
+}
+
 export function resolveLocalInstant(localDateTime: string, timeZone: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(localDateTime);
   if (!match) return { status: 'invalid' as const, detail: 'Local time must use YYYY-MM-DDTHH:mm.' };
