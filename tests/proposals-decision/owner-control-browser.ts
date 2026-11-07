@@ -9,6 +9,7 @@ const address=(name:string)=>[name,'example.test'].join('@');
 
 /** Only paid AI, commerce, DNS and mail boundaries are doubled. */
 export async function ownerControlBrowser(page:Page,info:TestInfo) {
+  page.setDefaultTimeout(30000);
   const edge=await providerEdge({...sourceEdge(),async incumbent(url,request,response){
     if(url.hostname!=='api.openai.com')return false;
     let raw='';for await(const chunk of request)raw+=chunk;
@@ -21,6 +22,7 @@ export async function ownerControlBrowser(page:Page,info:TestInfo) {
   }});
   const site=await installation(edge,eventSigner(),{commerce:true,ai:true,networkHosts:['api.openai.com']});
   try {
+    console.log('Owner control browser: runtime ready');
     const owner=await site.open();
     const approver=await site.open(address('synthetic-mango-207'),'synthetic-mango-207');
     await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' ELSE 'Casey River' END RETURNING id");
@@ -33,6 +35,7 @@ export async function ownerControlBrowser(page:Page,info:TestInfo) {
     await page.getByLabel('Required approver',{exact:true}).selectOption('synthetic-mango-207');
     await expect(page.getByRole('region',{name:'Campaign activation approval'})).toContainText('Casey River');
     await screens('policy-settings');
+    console.log('Owner control browser: named-person policy saved');
     const credential=await json(await site.call('/api/settings/integrations',{method:'POST',cookie:owner,body:{name:'Synthetic Mango gardener',scopes:['contacts:read','contacts:write','campaigns:send']}}),201);
     const machine=async(path:string,body:unknown,method='POST')=>site.call(path,{method,headers:{Authorization:`Bearer ${credential.token}`},body});
     const contact=await json(await machine('/api/integrations/v1/contacts',{email:address('synthetic-mango-208'),displayName:'Leila Garden',segmentName:'Synthetic Mango harvest readers'},'PUT'),200);
@@ -48,8 +51,9 @@ export async function ownerControlBrowser(page:Page,info:TestInfo) {
     await expect(page.getByRole('region',{name:'Company activation approval'})).toContainText('Synthetic Mango gardener');
     await expect(page.getByRole('button',{name:'Approve & schedule',exact:true})).toBeEnabled();
     await screens('held-review');
+    console.log('Owner control browser: held revision reviewed');
     await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
-    await page.getByRole('dialog').getByRole('button',{name:'Approve & schedule',exact:true}).click();
+    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule',exact:true}).click();
     await expect(page.getByRole('link',{name:'View schedule and results',exact:true})).toBeVisible();
     await screens('approved-review');
     const approved=await json(await site.call(`/api/campaigns/${generated.campaignId}`,{cookie:approver}),200);
@@ -63,6 +67,9 @@ export async function ownerControlBrowser(page:Page,info:TestInfo) {
         await expect(page.locator('main h1').first()).toBeVisible();
         expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
         await page.screenshot({path:info.outputPath(`owner-control-${name}-${width}.png`),fullPage:true});
+        if(name==='policy-settings')await page.getByRole('region',{name:'Campaign activation approval'}).screenshot({path:info.outputPath(`owner-control-${name}-panel-${width}.png`)});
+        else if(name==='held-review')await page.getByRole('region',{name:'Company activation approval'}).screenshot({path:info.outputPath(`owner-control-${name}-panel-${width}.png`)});
+        else {await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:info.outputPath(`owner-control-${name}-viewport-${width}.png`)});}
       }
     }
   } finally {await page.context().setExtraHTTPHeaders({});await site.runtime.close();await edge.close();}

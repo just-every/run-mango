@@ -9474,7 +9474,7 @@
       "executable": false
     },
     "tests/proposals-decision/owner-control-browser.ts": {
-      "sha256": "ae104fdf5e26490042fd19cce3c079a82061631d1d10e89c4f58f37471ed7419",
+      "sha256": "4b733256feeb9cf04754967a847fcb4f7729d2d59e94e174bad49e6c214ead14",
       "executable": false
     },
     "tests/proposals-decision/owner-control-journey.ts": {
