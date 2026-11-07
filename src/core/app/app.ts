@@ -266,7 +266,8 @@ export function createApp(
   });
   app.use('*',async(context,next)=>{
     const path=context.req.path;
-    const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
+    // A bulk erase job continues CONT-013 erasures here; every other bulk action fences itself in advanceBulkJob.
+    const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path))||/^\/api\/audience\/bulk\/[^/]+\/resume$/.test(path);
     // Campaign images write only a per-image request counter, never personal data (CAMP-012).
     if(initialReads.getStore()||erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
@@ -339,7 +340,7 @@ export function createApp(
     context.header('Cache-Control','no-store');
     const required=requiredPermission(context.req.method,context.req.url);
     if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
-    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&!/^\/api\/audience\/bulk\/[^/]+(?:\/resume)?$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
     if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
       const value=await context.res.json();

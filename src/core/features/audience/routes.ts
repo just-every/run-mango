@@ -10,6 +10,7 @@ import type { AuthVariables } from '@/core/features/auth/routes';
 import type {Platform,AppBindings} from '@/core/shared/platform';
 import {createContactErasure,ErasureAdmissionConflict,ErasureAmbiguousText} from './erasure/service';
 import {audienceImportContext} from './import-service';
+import {createBulkRoutes} from './bulk/routes';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
@@ -30,6 +31,7 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
   const erasure=createContactErasure(database,platform.config.contactHashSalt,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
   const routes = new Hono<{Variables:AuthVariables}>();
 
+  routes.route('/',createBulkRoutes(platform));
   routes.get('/audience', async (context) => context.json({ contacts: await service.list() }));
   routes.get('/contacts/consent',async c=>{const description=await loadSignupDescription(platform);return c.json({...description,mode:await loadOptInMode(database,'manual'),sms:description.sms?{...description.sms,available:true,category:programme(platform).category}:{available:false,detail:platform.config.modules.sms.enabled?'SMS transport is unavailable.':platform.config.modules.sms.detail}});});
   routes.get('/contacts/search', async context => {

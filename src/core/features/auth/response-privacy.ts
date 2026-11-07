@@ -117,6 +117,7 @@ export function contactPrivacyRole(operator: {role: ProductRole; unmaskedContact
 export function projectPrivateResponse(role: ProductRole, path: string, value: unknown): unknown {
   if (hasPermission(role, 'contact.unmasked')) return value;
   const pathname = permissionLocation(path)?.pathname.replace(/\/+$/, '');
+  if (pathname === '/api/audience/search') {const body = object(value); return {...maskContactResponse(value), nextCursor: body.nextCursor ?? null, total: count(body.total) ?? null};}
   if (pathname === '/api/audience' || pathname === '/api/contacts/search' || /^\/api\/contacts\/[^/]+$/.test(pathname ?? '')) return maskContactResponse(value);
   if (/^\/api\/campaigns\/[^/]+\/(?:recipients|clickers)$/.test(pathname ?? '')) return maskCampaignReportResponse(value);
   if(pathname==='/api/campaigns') {

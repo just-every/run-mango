@@ -5,6 +5,7 @@ import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fenc
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import {continueErasure,pendingErasure} from '@/core/features/audience/erasure/maintenance';
+import {continueBulkJob} from '@/core/features/audience/bulk/queue';
 import { advanceDesignJob, isDesignCommand } from '@/core/features/design-generation/advance';
 import { sweepDesignJobs } from '@/core/features/design-generation/sweep';
 import { createApprovalService } from './approval';
@@ -41,6 +42,11 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
     if (only && !only.includes(message.body.kind)) {message.retry(); continue;}
     try {
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
+      // A bulk contact job owns its own erasure pause, so it runs before the pending-erasure hold below.
+      if(message.body.kind==='contact.bulk'){
+        if(await continueBulkJob(runtime.platform,String(message.body.payload.jobId??''))==='wait')message.retry({delaySeconds:30});else message.ack();
+        continue;
+      }
       if(await pendingErasure(runtime.platform.database.$client)){message.retry({delaySeconds:30});continue;}
       await withErasureWriteFence(runtime.platform.database.$client,async()=>{
       if (isDesignCommand(message.body)) {await advanceDesignJob(runtime.platform, message.body); message.ack(); return;}

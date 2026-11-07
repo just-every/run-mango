@@ -111,4 +111,6 @@ export const contactErasureTables:ErasureTable[]=[
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
   {table:'contact_property_definitions',literal:true,mode:'redact'},
+  // CONT-022: a bulk receipt keeps counts, never an erased member, and a topic membership leaves with its contact.
+  contact('contact_bulk_items'),contact('contact_topic_memberships'),
 ];
