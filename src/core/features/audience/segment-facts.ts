@@ -14,6 +14,8 @@ export function createSegmentFacts(db:D1Database) {
       for(const record of imported){const profile=JSON.parse(record.detail);Object.assign(fields,profile.fields,{importedTopics:profile.topics});for(const topic of profile.topics)fields['imported-topic:'+topic]=true;for(const tag of profile.tags)tags.add(tag);}
       const history=(await db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='property-change' ORDER BY occurred_at,id").bind(contactId).all<{detail:string}>()).results;
       if(row){Object.assign(fields,JSON.parse(row.fields));for(const tag of JSON.parse(row.tags))tags.add(tag);}
+      const overrides=(await db.prepare('SELECT tag,present FROM contact_tag_overrides WHERE contact_id=?').bind(contactId).all<{tag:string;present:number}>()).results;
+      for(const change of overrides){if(change.present)tags.add(change.tag);else tags.delete(change.tag);}
       const values=propertyFields(fields,history);
       return {fields:values,tags:[...tags].sort(),definitions:await propertyDefinitions(db)};
     },

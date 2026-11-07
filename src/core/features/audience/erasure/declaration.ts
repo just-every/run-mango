@@ -111,4 +111,8 @@ export const contactErasureTables:ErasureTable[]=[
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
   {table:'contact_property_definitions',literal:true,mode:'redact'},
+  {...contact('contact_bulk_items'),retain:'contact_id=NULL'},
+  {...contact('contact_tag_overrides'),literal:true,mode:'contact-data'},
+  {...contact('contact_topic_memberships'),literal:true,mode:'contact-data'},
+  {table:'contact_bulk_jobs',literal:true,mode:'redact'},
 ];

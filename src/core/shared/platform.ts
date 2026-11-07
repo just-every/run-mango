@@ -189,7 +189,7 @@ export interface DesignProvider {
 }
 
 export type QueueCommand = {
-  kind: 'health.probe' | 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
+  kind: 'health.probe' | 'contact.bulk' | 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
   idempotencyKey: string;
   payload: Record<string, unknown>;
 };

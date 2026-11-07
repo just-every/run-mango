@@ -1,3 +1,4 @@
+import {advanceBulkJob} from '@/core/features/audience/bulk/jobs';
 import {advisorySizeOptions} from './advisory-size-options';
 import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
@@ -40,6 +41,7 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
     if (acknowledgeHealthProbe(message)) continue;
     if (only && !only.includes(message.body.kind)) {message.retry(); continue;}
     try {
+      if(message.body.kind==='contact.bulk'){await advanceBulkJob(runtime.platform,String(message.body.payload.id??''));message.ack();continue;}
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
       if(await pendingErasure(runtime.platform.database.$client)){message.retry({delaySeconds:30});continue;}
       await withErasureWriteFence(runtime.platform.database.$client,async()=>{

@@ -1,3 +1,4 @@
+import {createContactBulkRoutes} from '@/core/features/audience/bulk/routes';
 import {createPropertyRoutes} from '@/core/features/audience/properties/routes';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
@@ -266,7 +267,7 @@ export function createApp(
   });
   app.use('*',async(context,next)=>{
     const path=context.req.path;
-    const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
+    const erasure=path.startsWith('/api/audience/bulk/')||path==='/api/audience/bulk'||path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
     // Campaign images write only a per-image request counter, never personal data (CAMP-012).
     if(initialReads.getStore()||erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
@@ -339,7 +340,7 @@ export function createApp(
     context.header('Cache-Control','no-store');
     const required=requiredPermission(context.req.method,context.req.url);
     if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
-    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!context.req.path.startsWith('/api/audience/bulk/')&&context.req.path!=='/api/audience/bulk'&&!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
     if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
       const value=await context.res.json();
@@ -383,6 +384,7 @@ export function createApp(
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createPropertyRoutes(environment.DB));
   app.route('/api', createSegmentRoutes(environment.DB));
+  app.route('/api', createContactBulkRoutes(platform));
   app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
   app.route('/api', createAudienceImportRoutes(platform));
   app.route('/api', optInRoutes(platform));
