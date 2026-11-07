@@ -1,3 +1,5 @@
+import {readFile} from 'node:fs/promises';
+import {parseCsv} from '../../src/core/features/audience/csv';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {authoringRuntime} from '../campaign-authoring/browser-runtime.mjs';
 import {localSessionCookieName} from '../support/local-session';
@@ -52,6 +54,31 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     const profile=await request.get(`${runtime.url}/api/contacts/${people[0].id}`);
     expect((await profile.json()).profile.tags).toContain('Harvest members');
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('untag');
+    await page.getByLabel('Tag',{exact:true}).fill('Harvest members');
+    await page.getByRole('button',{name:'Apply to selection',exact:true}).click();
+    await expect(page.getByRole('region',{name:'Remove tag',exact:true}).getByRole('status')).toContainText('Complete');
+    expect((await (await request.get(`${runtime.url}/api/contacts/${people[0].id}`)).json()).profile.tags).not.toContain('Harvest members');
+    await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
+    await page.getByLabel('Select Bennett Cole',{exact:true}).check();
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('export');
+    await page.getByRole('button',{name:'Apply to selection',exact:true}).click();
+    const exported=page.getByRole('region',{name:'Export selected contacts',exact:true});
+    await expect(exported.getByRole('status')).toContainText('Complete');
+    const exportId=new URL(page.url()).searchParams.get('bulk');
+    const downloadEvent=page.waitForEvent('download');
+    await exported.getByRole('button',{name:'Download selected contacts CSV',exact:true}).click();
+    const download=await downloadEvent;
+    const rows=parseCsv(await readFile((await download.path())!,'utf8'));
+    expect(rows.map(row=>row['contact id']).sort()).toEqual(people.slice(0,2).map((person:any)=>person.id).sort());
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      const path=info.outputPath(`contact-export-${width}.png`);await page.screenshot({path,fullPage:true});
+      await info.attach(`contact-export-${width}`,{path,contentType:'image/png'});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    }
+    await page.setViewportSize({width:1440,height:1000});
+    await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
     await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('suppress');
     await page.getByRole('button',{name:'Review action',exact:true}).click();
     const dialog=page.getByRole('alertdialog',{name:'Suppress selected contacts?',exact:true});
@@ -71,7 +98,28 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
       await page.screenshot({path,fullPage:true});await info.attach(`contact-bulk-${width}`,{path,contentType:'image/png'});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     }
-    console.log('PROBE CONT-022 browser: property Vegetables -> Amelia and Bennett; topic receipt names Bennett refused, tag saved, suppression cancel unchanged and confirm suppressed; receipt survives reload; screens 1440 and 390');
+    await page.setViewportSize({width:1440,height:1000});
+    await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
+    await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('erase');
+    await page.getByRole('button',{name:'Review action',exact:true}).click();
+    const eraseDialog=page.getByRole('alertdialog',{name:'Erase selected contacts?',exact:true});
+    await eraseDialog.getByRole('button',{name:'Cancel',exact:true}).click();
+    expect((await request.get(`${runtime.url}/api/contacts/${people[0].id}`)).status()).toBe(200);
+    await page.getByRole('button',{name:'Review action',exact:true}).click();
+    await eraseDialog.getByRole('button',{name:'Permanently erase 1 contacts',exact:true}).click();
+    const erased=page.getByRole('region',{name:'Erase contacts',exact:true});
+    await expect(erased.getByRole('status')).toContainText('Complete',{timeout:120000});
+    await expect(page.getByRole('table',{name:'Contacts',exact:true}).getByRole('link',{name:'Amelia Rivera',exact:true})).toHaveCount(0);
+    expect((await request.get(`${runtime.url}/api/contacts/${people[0].id}`)).status()).toBe(404);
+    const afterErasure=await (await request.get(`${runtime.url}/api/audience/bulk/${exportId}/export`)).text();
+    expect(afterErasure).not.toContain(people[0].email);expect(afterErasure).not.toContain(people[0].name);
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      const path=info.outputPath(`contact-erased-${width}.png`);await page.screenshot({path,fullPage:true});
+      await info.attach(`contact-erased-${width}`,{path,contentType:'image/png'});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    }
+    console.log('PROBE CONT-022 browser: property Vegetables -> Amelia and Bennett; topic receipt names Bennett refused; tag and untag persisted; selection CSV downloaded; suppression and erasure cancel unchanged and confirm applied; old export drops erased contact; receipts survive reload; screens 1440 and 390');
     expect(errors).toEqual([]);
   } catch(error) {
     const path=info.outputPath('contact-bulk-interrupted.png');

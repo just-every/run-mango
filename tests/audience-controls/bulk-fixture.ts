@@ -32,6 +32,10 @@ export async function seedBulkPeople(db:D1Database,start:number,end:number) {
           .bind(`${person.id}-${channel}-consent`,person.id,channel,destination,'Mango',index===4&&channel==='email'?'newsletter':'offers',
             'Weekly','US','recorded','Synthetic market signup','Send weekly market offers.','v1',at,index===3&&channel==='email'?null:at,at,at));
       }
+      if(index===4)statements.push(db.prepare(`INSERT INTO consent_evidence
+        (id,contact_id,channel,destination,brand_or_legal_sender,message_category,frequency_disclosure,destination_jurisdiction,capture_method,capture_source,consent_text,consent_version,occurred_at,confirmation_required,confirmed_at,created_at,updated_at)
+        VALUES(?,?,'email',?,'Another sender','offers','Weekly','US','recorded','Synthetic other sender','Send other offers.','v1',?,1,?,?,?)`)
+        .bind(`${person.id}-other-sender`,person.id,person.email,at,at,at,at));
     }
     await db.batch(statements);
   }

@@ -12,7 +12,7 @@ export default {
       const people=[];
       for(const [index,name]of ['Amelia Rivera','Bennett Cole','Caroline Moore'].entries()) {
         const email=[`synthetic-mango-bulk-ui-${index}`,'example.test'].join('@');
-        const {contact}=await audienceService.captureConsent({contact:{email,displayName:name},channel:'email',brandOrLegalSender:'Mango local',messageCategory:index===1?'events':'harvest-news',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'recorded-form',captureSource:'Synthetic harvest signup',consentText:'Send the weekly harvest letter.',consentVersion:'v1',occurredAt:new Date(Date.now()-60000),confirmationRequired:false});
+        const {contact}=await audienceService.captureConsent({contact:{email,displayName:name},channel:'email',brandOrLegalSender:'Authoring test',messageCategory:index===1?'events':'harvest-news',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'recorded-form',captureSource:'Synthetic harvest signup',consentText:'Send the weekly harvest letter.',consentVersion:'v1',occurredAt:new Date(Date.now()-60000),confirmationRequired:false});
         await bindings.DB.prepare("INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,'[]')").bind(contact.id,JSON.stringify({favourite:index===2?'Flowers':'Vegetables'})).run();
         people.push({id:contact.id,email,name});
       }

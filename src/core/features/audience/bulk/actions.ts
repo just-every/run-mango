@@ -27,8 +27,8 @@ export async function actOnContact(platform:Platform,job:BulkJob,item:BulkItem) 
   const repository=createAudienceRepository(platform.database);
   if(job.action==='topic') {
     const eligible=await selectedChannel(repository,id!,job.channel,new Date(),async(channel,destination)=>repository.hasDestinationSuppression(await sha256(`${platform.config.contactHashSalt}:${destination}`),channel));
-    const covered=eligible?.consents.find(value=>value.category===job.value);
-    const evidence=covered&&(await repository.listConsent(id!)).find(value=>value.channel===job.channel&&value.destination===eligible!.destination&&value.messageCategory===job.value&&((value.confirmedAt&&value.confirmedAt<=new Date())||(value.incumbentAt&&value.incumbentAt<=new Date())));
+    const covered=eligible?.consents.find(value=>value.category===job.value&&value.brandOrLegalSender===platform.config.mailSender.displayName);
+    const evidence=covered&&(await repository.listConsent(id!)).find(value=>value.channel===job.channel&&value.destination===eligible!.destination&&value.brandOrLegalSender===covered.brandOrLegalSender&&value.messageCategory===job.value&&((value.confirmedAt&&value.confirmedAt<=new Date())||(value.incumbentAt&&value.incumbentAt<=new Date())));
     if(!evidence)return 'missing-covering-consent';
     await db.prepare(`INSERT INTO contact_topic_memberships(contact_id,channel,topic,evidence_id,added_at)
       SELECT ?,?,?,?,? WHERE EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL)

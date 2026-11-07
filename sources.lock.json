@@ -1206,7 +1206,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "d91f0b2113d210784915e8d1bf9adff580c20ca1e153adffda0367a6e995ac7f",
+      "sha256": "6187b52d5797fcb433b3e02eb36da4c6dc912b45322f257e1d703349bff0a78b",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -3090,7 +3090,7 @@
       "executable": false
     },
     "src/core/features/audience/bulk/actions.ts": {
-      "sha256": "3a3dc2d17efa2be6557ce68de0627322323af53d2febf770e5265242fbd3464f",
+      "sha256": "537e6b3881d509c5292fd2a6764470d383408dc9e62fb69f6bab695bf09de1bf",
       "executable": false
     },
     "src/core/features/audience/bulk/authority.ts": {
@@ -8378,15 +8378,15 @@
       "executable": false
     },
     "tests/audience-controls/bulk-browser.ts": {
-      "sha256": "d8725e6c2ab26fa8c9a860daaebd6a670593620c7b3015c68fea3a82c45ac97d",
+      "sha256": "02ba92889ac31d2266fcf7cca894e141b2138a824858fd9a10aab0d1846fe086",
       "executable": false
     },
     "tests/audience-controls/bulk-fixture.ts": {
-      "sha256": "56c922b00c8c443af6b08f5acb6735c08984911f3d6c50270181ec52b517977d",
+      "sha256": "a6e123879e6b0087136731cf0fd768359ccf1139267dd0f553ecb7c706afa17b",
       "executable": false
     },
     "tests/audience-controls/bulk-worker.ts": {
-      "sha256": "a63ba5ba68a5f618843c9468c24c076c4b481139b5bc86f50e46e1b49c41b527",
+      "sha256": "d52508f1f0c4ab1c7b1d97d57aab12ef5facef5584ff0861d60fdca4fa7399bc",
       "executable": false
     },
     "tests/audience-controls/bulk.flow.ts": {
