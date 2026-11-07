@@ -54,6 +54,9 @@ export async function ownerControlJourney() {
     const approval=await runtime.colleague.call(approveDoor,approve(fresh.body));
     expect(approval).toMatchObject({status:200,body:{status:'scheduled',idempotent:false}});
     const approved=await read();
+    const signoff=await runtime.db.prepare("SELECT actor_id actorId,detail_json detail FROM lifecycle_audit_entries WHERE entity_id=? AND action='approved'").bind(proposal.revisionId).first<{actorId:string;detail:string}>();
+    expect(signoff?.actorId).toBe(runtime.colleague.id);
+    expect(JSON.parse(signoff!.detail).activation).toMatchObject({holdId:fresh.body.holdId,reviewedRevisionUpdatedAt:fresh.body.revisionUpdatedAt});
     expect(approved.campaign).toMatchObject({state:'scheduled',activeRevisionId:proposal.revisionId});
     expect(approved.revision).toMatchObject({state:'approved',emailSubject:'Synthetic Mango reviewed harvest',approvedByOperatorId:runtime.colleague.id,contentDigest:approval.body.revisionDigest});
     expect(runtime.jobs).toHaveLength(1);

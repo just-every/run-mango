@@ -474,7 +474,7 @@ export function createCampaignLifecycleRepository(database: Database) {
            ON CONFLICT(operation_key) DO NOTHING`,
         ).bind(
           ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, operatorId,
-          JSON.stringify({ revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
+          JSON.stringify({ revisionDigest, previousRevision, ...(input.activationGeneration ? {activation:{policyGeneration:input.activationGeneration,holdId:input.activationHoldId??null,reviewedRevisionUpdatedAt:snapshot.revision.updatedAt.getTime()}} : {}), dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
             approval: {idempotency_key: idempotencyKey, campaign_id: snapshot.campaign.id, revision_id: snapshot.revision.id,
               revision_digest: revisionDigest, write_token: writeToken, operator_id: operatorId, approved_at: nowMs, created_at: nowMs},
             ...(needsSender ? {approvedFrom, senderEvidence: input.senderLease} : {}),
