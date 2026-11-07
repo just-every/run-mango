@@ -1,5 +1,8 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import {writeFile} from 'node:fs/promises';
+import {join} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {openPage} from '../support/navigation';
 import type {Installation} from './harness';
 import {json} from './harness';
@@ -11,7 +14,9 @@ export async function proveCustomEvents(site:Installation,cookie:string,contactI
   // Execute the delivered client against the real HTTP API; it adds no browser
   // storage or automatic observation. This fixture holds a synthetic key server-side.
   const response=await site.call('/api/integrations/v1/client.mjs');expect(response.status).toBe(200);
-  const {createMangoClient}=await import('data:text/javascript;base64,'+Buffer.from(await response.text()).toString('base64'));
+  const clientPath=join(site.runtime.directory,'client.mjs');
+  await writeFile(clientPath,await response.text());
+  const {createMangoClient}=await import(pathToFileURL(clientPath).href);
   const client=createMangoClient({baseUrl:site.runtime.url+'/api/integrations/v1',token:key.token});
   const event={name:'sample.requested',contactId,idempotencyKey:'website:sample:one',occurredAt:new Date(Date.now()-1000).toISOString(),properties:{sample:'linen',quantity:2}};
   const [first,second]=await Promise.all([client.track(event),client.track({...event,properties:{quantity:2,sample:'linen'}})]);
