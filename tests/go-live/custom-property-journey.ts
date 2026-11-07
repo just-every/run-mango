@@ -4,6 +4,7 @@ import {openPage} from '../support/navigation';
 import {json,confirmedContact,type Installation} from './harness';
 import type {providerEdge} from './edge';
 import {provePropertyRulesAndPreview} from './custom-property-preview';
+import {provePropertyTypes} from './custom-property-types';
 const dateKey='synthetic_mango_1401_date',moneyKey='synthetic_mango_1402_money';
 
 export async function proveCustomProperties(site:Installation,cookie:string,page:Page,info:TestInfo,edge:Awaited<ReturnType<typeof providerEdge>>) {
@@ -78,6 +79,7 @@ export async function proveCustomProperties(site:Installation,cookie:string,page
   await json(await postEvent(event),200);expect((await profile(contacts[0].id)).profile.properties[dateKey]).toBe('2026-04-16');
   await json(await site.call('/api/contacts/'+contacts[0].id+'/properties',{method:'PUT',cookie,body:{fields:{[dateKey]:'2026-04-15'}}}),200);
   expect(await ledger()).toEqual(before);expect(await statuses()).toEqual(beforeStates);
+  await provePropertyTypes(site,cookie,page,info,contacts[0].id);
   await provePropertyRulesAndPreview(site,cookie,page,info,edge,{contacts,emails,dateKey,moneyKey});
   const locked=await site.call('/api/settings/properties',{method:'PUT',cookie,body:{key:dateKey,label:'synthetic-mango-1401 date',type:'text',options:[]}});expect(await json(locked,409)).toEqual({error:'property_type_locked',property:dateKey});
 }
