@@ -27,7 +27,20 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:30*86400000,reconciliationWindowMs:30*86400000,detail:'Test sender; sends disabled.'};},inspectSender:value=>evidence.inspect(value),async validateSender(){return {ready:true,detail:'Test only.'};},async send(){throw new Error('Authoring tests never send.');},async reconcile(){return {facts:[],exhausted:true};},async verifyWebhook(){throw new Error('No webhook fixture.');}};
   // Health probes and design runs use the real local queue; domain jobs are only recorded.
   const queue=platform.jobs;
-  platform.jobs={async enqueue(job){if(job.kind==='health.probe'||isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
+  platform.jobs={
+    async enqueue(job){
+      if(isDesignCommand(job)){
+        // Observe actual enqueues before forwarding to the native queue. Only the
+        // concurrency journey creates this optional transport receipt table.
+        if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_design_commands'").first())
+          await bindings.DB.prepare('INSERT INTO task_authoring_design_commands (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();
+        return queue.enqueue(job);
+      }
+      if(job.kind==='health.probe')return queue.enqueue(job);
+      await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();
+    },
+    async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');},
+  };
   const path=new URL(request.url).pathname;
   if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) {
     platform.config.modules.commerce.enabled=true;
@@ -48,6 +61,27 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await bindings.DB.prepare('CREATE TABLE IF NOT EXISTS task_authoring_commerce (id TEXT)').run();
       await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Recorded test source'}]);
       await services.storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'product',providerSourceId:'gid://shopify/Product/1',payload:{id:'gid://shopify/Product/1',title:'Garden linen',handle:'garden-linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
+      return Response.json({ok:true});
+    }
+    if(path==='/_authoring/exclusion-contacts') {
+      const now=new Date();
+      for(const n of [201,202,203,204]) {
+        const name=`synthetic-mango-${n}`,email=[name,'example.test'].join('@');
+        await services.audienceService.captureConsent({idempotencyKey:name,contact:{email,displayName:name},channel:'email',brandOrLegalSender:sender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'test-fixture',captureSource:name,consentText:'Receive this test newsletter',consentVersion:'v1',occurredAt:now,confirmationRequired:false});
+        if(n===204)await services.audienceService.recordChannelOptOut({channel:'email',destination:email,occurredAt:now,reason:'test-optout'});
+      }
+      return Response.json({ok:true});
+    }
+    if(path==='/_authoring/exclusion-source') {
+      await bindings.DB.prepare('CREATE TABLE IF NOT EXISTS task_authoring_commerce (id TEXT)').run();
+      const contact=await bindings.DB.prepare('SELECT id FROM contacts WHERE display_name=?').bind('synthetic-mango-201').first<{id:string}>();
+      const now=new Date();
+      await services.storeService.recordSourceCapabilities([{sourceType:'order',available:true,detail:'Recorded test orders'}]);
+      await services.storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'order',providerSourceId:'synthetic-mango-205',contactId:contact!.id,payload:{total:100,processedAt:now.toISOString()},occurredAt:now}],'full',['order'],true,now);
+      return Response.json({ok:true});
+    }
+    if(path==='/_authoring/exclusion-source-stale') {
+      await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='order'").bind(Date.now()-25*3600000).run();
       return Response.json({ok:true});
     }
     // Historical states are fixture arrangement only. The product copy still
