@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "c1371e66126e52413d51e7faa123b601e9688a6af3018071b408c27cd79a4424",
+      "sha256": "4bd3b3b4ffb1b07ed560ae050bb0d7692b4490e9ffd6c16e9f022ede9ef47fef",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7e756ab338bb33e69ff9f92395d1190af2d8a994eda3eb453412cfaa29a6ef76",
+      "sha256": "408ff9b3a422f0b5d426a0481b7a283bbab72ca6404b62338727cb5a578bc7fc",
       "executable": false
     },
     "DEMO.md": {
@@ -8990,7 +8990,7 @@
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {
-      "sha256": "550c58fba3de745b95efa732f8b09ba8b788381ca5c410ac78b96b967da0978f",
+      "sha256": "bfa00084f6f054dfe6ca291bcdccd3d9245c8e76f0c0e63e0c0c3e045e62418a",
       "executable": false
     },
     "tests/go-live/playwright.config.js": {

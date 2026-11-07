@@ -1294,8 +1294,8 @@ Core · published · **partial**
 5. Preview uses an illustrative display name only for the name field delivery supports; unavailable properties use their saved fallbacks in preview and delivered content.
 6. Editor, preview and review expose the same fallback outcomes at desktop and phone widths.
 
-**Evidence.** `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation”
-**Gap.** Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal. Missing public-door journey: “Personalization — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation”: saved fallback rendering, eligible-person counts, escaped HTML and plain-text delivery; all-named subscribed email audience with only the personalisation blocker, approval and scheduling refusal without authority or dispatch work, and successful approval after adding the fallback.
+**Gap.** Acceptance 6 still lacks phone-width editor, preview and review proof; SMS personalization proof and real SMS transport qualification remain unproved. Twilio A2P and US carrier registration remain owner-held. Existing provider, device, account, cross-seed and Base prerequisites, rer 0.2.95 adoption, release requirements and CONT-013 SPLIT and NEW-1 disposition with the original fix-1 hold are unchanged.
 
 #### MSG-009 — Email body
 
