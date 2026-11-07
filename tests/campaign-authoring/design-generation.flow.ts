@@ -184,7 +184,11 @@ export const walk2 = async ({ page, request }) => {
   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
   try {
-    const { campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
+    const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
+    const operatorResponse = await api.get(`${runtime.url}/api/operator`);
+    expect(operatorResponse.status()).toBe(200);
+    const operator = (await operatorResponse.json()).operator;
+    expect(operator.id).toBe('authoring-operator');
     await openPage(page, `${runtime.url}/app/campaigns/${campaignId}/review`);
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
@@ -196,12 +200,25 @@ export const walk2 = async ({ page, request }) => {
     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
     // The prefilled brief already went without the draft's token; one typed in goes too.
     await expect(dialog.getByLabel('Brief')).not.toHaveValue(/\{\{/);
-    await dialog.getByLabel('Brief').fill('Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}');
+    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}';
+    await dialog.getByLabel('Brief').fill(submittedBrief);
+    const retainedBrief = 'Good Things Are Ripening\nHello and';
+    const creationResponse = page.waitForResponse(response => response.request().method() === 'POST'
+      && response.url() === `${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
+    const creationBefore = Date.now();
     await dialog.getByRole('button', { name: 'Generate designs', exact: true }).click();
+    const started = await creationResponse, creationAfter = Date.now();
+    expect(started.status()).toBe(201);
+    expect(started.request().postDataJSON()).toMatchObject({ brief: submittedBrief });
+    const startedJob = (await started.json()).job;
+    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+    expect(startedJob.createdAt).toBeGreaterThanOrEqual(creationBefore);
+    expect(startedJob.createdAt).toBeLessThanOrEqual(creationAfter);
     const run = page.getByRole('region', { name: 'Design with 12ui' });
     // Slot A's first purchase meets an outage; the retried pass replays the same key and buys it once.
     await expect(useDesign(run, page, 'B')).toBeVisible({ timeout: 60000 });
     await expect(useDesign(run, page, 'A')).toBeVisible({ timeout: 30000 });
+    const candidatesAfter = Date.now();
 
     const posts = fake.requests.filter(item => item.method === 'POST');
     expect(fake.requests.every(item => item.authorized)).toBe(true);
@@ -217,16 +234,54 @@ export const walk2 = async ({ page, request }) => {
     expect(slotA).toHaveLength(2);
     expect(new Set(slotA.map(item => item.idempotencyKey)).size).toBe(1);
     expect(fake.purchases.filter(item => item.startsWith('draft:'))).toHaveLength(2);
-    const stored = await runtime.sql(`SELECT slot, state, sha256 FROM design_candidates ORDER BY slot`);
-    expect(stored).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', sha256: createHash('sha256').update(candidateImage).digest('hex') })));
+    const issuedRun = fake.issued.filter(item => item.kind === 'run');
+    expect(issuedRun).toHaveLength(1);
+    const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
+    const stored = await candidates();
+    expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
+      sha256: createHash('sha256').update(candidateImage).digest('hex'), bytes: candidateImage.byteLength })));
+    for (const candidate of stored) {
+      expect(candidate.createdAt).toBeGreaterThanOrEqual(issuedRun[0].at);
+      expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
+    }
+    const retained = async () => {
+      const rows = await runtime.sql(`SELECT id, campaign_id AS campaignId, state, brief, provider_run_id AS providerRunId,
+        provider_layout_id AS providerLayoutId, chosen_slot AS chosenSlot, created_by AS createdBy, created_at AS createdAt,
+        updated_at AS updatedAt, deadline_at AS deadlineAt, error_code AS errorCode FROM design_jobs WHERE id = '${startedJob.id}'`);
+      expect(rows).toHaveLength(1);
+      const record = rows[0];
+      expect(record).toMatchObject({ id: startedJob.id, campaignId, brief: retainedBrief, providerRunId: issuedRun[0].id,
+        createdBy: operator.id, createdAt: startedJob.createdAt });
+      const response = await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
+      expect(response.status()).toBe(200);
+      const status = (await response.json()).job;
+      expect(status).toMatchObject({ id: record.id, campaignId, state: record.state, brief: retainedBrief,
+        createdAt: record.createdAt, updatedAt: record.updatedAt, deadlineAt: record.deadlineAt, chosenSlot: record.chosenSlot,
+        ...(record.errorCode ? { errorCode: record.errorCode } : {}) });
+      expect(status.candidates).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', width: canvas.width, height: canvas.height,
+        bytes: candidateImage.byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
+      expect(await candidates()).toEqual(stored);
+      return { record, status };
+    };
 
     // The layout fails at the service: the run says so in Mango's words, keeps both paid designs on offer (also after a
     // reload) and leaves the draft untouched. Nothing asks for a new brief.
+    const layoutBefore = Date.now();
     await useDesign(run, page, 'A').click();
     const failure = run.getByRole('alert');
     await expect(failure.getByRole('button', { name: 'Try the layout again', exact: true })).toBeVisible({ timeout: 45000 });
+    const failureAfter = Date.now();
     await expect(failure).not.toContainText('Injected');
+    const issuedFailedLayout = fake.issued.filter(item => item.kind === 'layout');
+    expect(issuedFailedLayout).toHaveLength(1);
+    expect(issuedFailedLayout[0].at).toBeGreaterThanOrEqual(layoutBefore);
+    const failedRecord = await retained();
+    expect(failedRecord.record).toMatchObject({ state: 'failed', chosenSlot: 'a', errorCode: 'provider_failed', providerLayoutId: issuedFailedLayout[0].id });
+    expect(failedRecord.record.updatedAt).toBeGreaterThanOrEqual(issuedFailedLayout[0].at);
+    expect(failedRecord.record.updatedAt).toBeLessThanOrEqual(failureAfter);
     await reloadPage(page);
+    expect(await retained()).toEqual(failedRecord);
+    expect(await retained()).toEqual(failedRecord);
     await expect(failure).toBeVisible();
     await expect(useDesign(run, page, 'A')).toBeVisible({ timeout: 30000 });
     await expect(useDesign(run, page, 'B')).toBeVisible();
@@ -256,15 +311,27 @@ export const walk2 = async ({ page, request }) => {
     fake.setLayoutStatus('succeeded');
     await failure.getByRole('button', { name: 'Choose a different design', exact: true }).click();
     await expect(useDesign(run, page, 'B')).toBeFocused();
+    const completionBefore = Date.now();
     await page.keyboard.press('Enter');
     const apply = page.getByRole('dialog', { name: 'Use this design in the email' });
     await expect(apply.getByLabel('Button destination')).toBeFocused({ timeout: 45000 });
+    const completionAfter = Date.now();
     await apply.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(run.getByRole('button', { name: 'Use design B in the email', exact: true })).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect.poll(content).toBe(before);
     // The refused try bought nothing: two designs and two layouts.
     expect(await costs()).toEqual([draftCost, draftCost, layoutCost, layoutCost]);
+    const issuedLayouts = fake.issued.filter(item => item.kind === 'layout');
+    expect(issuedLayouts).toHaveLength(2);
+    expect(issuedLayouts[1].at).toBeGreaterThanOrEqual(completionBefore);
+    const readyRecord = await retained();
+    expect(readyRecord.record).toMatchObject({ state: 'ready', chosenSlot: 'b', errorCode: null, providerLayoutId: issuedLayouts[1].id });
+    expect(readyRecord.record.updatedAt).toBeGreaterThanOrEqual(issuedLayouts[1].at);
+    expect(readyRecord.record.updatedAt).toBeLessThanOrEqual(completionAfter);
+    await reloadPage(page);
+    expect(await retained()).toEqual(readyRecord);
+    expect(await retained()).toEqual(readyRecord);
 
     // A new run while a prepared design is on offer: the brief says the designs stay, and they do, under Earlier designs.
     // 12ui names a time to ask again: the run says it is waiting, then continues with the same purchase key.
