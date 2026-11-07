@@ -13,7 +13,7 @@ import type { createAudienceService } from './service';
 import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
 import { signupNetwork, reserveSignupAllowance, verifySignupChallenge } from './signup-security';
 
-const signup = z.object({ email: z.string().email(), displayName: z.string().max(200).optional(), consent: z.union([z.literal(true), z.literal('true')]), website: z.string().max(500).optional(), disclosure: z.string().optional() });
+const signup = z.object({ email: z.string().trim().toLowerCase().email(), displayName: z.string().max(200).optional(), consent: z.union([z.literal(true), z.literal('true')]), website: z.string().max(500).optional(), disclosure: z.string().optional() });
 export function signupDescription(platform: Platform, frequencyDisclosure = 'Occasional newsletters') {
   const sender = platform.config.mailSender.displayName;
   const consentText=`I agree to receive email newsletters from ${sender}. I can unsubscribe at any time.`;
@@ -72,7 +72,7 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
     if(parsed.data.disclosure!==description.disclosure){await badAttempt();return context.json({error:'signup_disclosure_changed',detail:'The newsletter details changed. Reload the form and review your consent before subscribing.'},409);}
     const blocked=await signupCapacityRefusal(db,{id:'',destinationHash:'',networkKey:key,kiosk:description.kioskEnabled,challenged,confirmation:false,levels:capacity.levels});
     if(blocked)return rateLimited(blocked.reason,blocked.retryAfter);
-    const email=parsed.data.email.trim().toLowerCase();
+    const email=parsed.data.email;
     const state=await service.publicSignupState(email);
     if (state==='refused') {await refuse('existing-restriction');await service.recordPublicSignupRefusal(email,'Existing restriction prevents public confirmation.');return success();}
     const destinationHash=await sha256(`${platform.config.contactHashSalt}:signup-email:${email}`);

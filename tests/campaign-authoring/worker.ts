@@ -27,7 +27,20 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:30*86400000,reconciliationWindowMs:30*86400000,detail:'Test sender; sends disabled.'};},inspectSender:value=>evidence.inspect(value),async validateSender(){return {ready:true,detail:'Test only.'};},async send(){throw new Error('Authoring tests never send.');},async reconcile(){return {facts:[],exhausted:true};},async verifyWebhook(){throw new Error('No webhook fixture.');}};
   // Health probes and design runs use the real local queue; domain jobs are only recorded.
   const queue=platform.jobs;
-  platform.jobs={async enqueue(job){if(job.kind==='health.probe'||isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
+  platform.jobs={
+    async enqueue(job){
+      if(isDesignCommand(job)){
+        // Observe actual enqueues before forwarding to the native queue. Only the
+        // concurrency journey creates this optional transport receipt table.
+        if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_design_commands'").first())
+          await bindings.DB.prepare('INSERT INTO task_authoring_design_commands (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();
+        return queue.enqueue(job);
+      }
+      if(job.kind==='health.probe')return queue.enqueue(job);
+      await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();
+    },
+    async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');},
+  };
   const path=new URL(request.url).pathname;
   if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) {
     platform.config.modules.commerce.enabled=true;
