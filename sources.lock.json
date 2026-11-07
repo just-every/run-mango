@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "9c4bb8299d7835f752e0466e8a3537570f573f94bbf6f0c93d64895721026a8a",
+      "sha256": "22861a8ebd146bc4330e4faa3800d95a4bb3e84c10f87dc79d2f04bc4260dcd9",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b08ca1a1c761a4ebcb10e66d8c54eb2415f2dcb65564e383b0d4d958433245d7",
+      "sha256": "64432a12382810ecd63694b4d8c4c7a0bb1f97db85e495d3c1adefc5793a594d",
       "executable": false
     },
     "DEMO.md": {
@@ -1070,7 +1070,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "18d51300eb59438ec20a05ef64c90635c3877b50c7990c530718ca6f1e3c0c7a",
+      "sha256": "3f43d07b6f29cf13407eff177512d09a6dcf11c9959c36a541c3edfb5e58f645",
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
@@ -3362,7 +3362,7 @@
       "executable": false
     },
     "src/core/features/audience/manual-entry-schema.ts": {
-      "sha256": "e8804e91703e1b6a2eea12b744d713fb12e1b30588d601057fa3657762f05f2a",
+      "sha256": "51377a9c979967334ba3cb0d8feb27f028569facb4f1ba3fc332bcb745b8dfff",
       "executable": false
     },
     "src/core/features/audience/manual-sms-capture.ts": {
@@ -3486,7 +3486,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-routes.ts": {
-      "sha256": "fd2a736fb52fda76ee157edc0d7e671957833ae4068b0a2dd734dc7e91775837",
+      "sha256": "fc71fb93bc1ae0560323e11996d6c5e143ee003c53fd1bab6495dbfca8de3382",
       "executable": false
     },
     "src/core/features/audience/signup-security.ts": {
@@ -8425,6 +8425,10 @@
       "sha256": "621925dd294535a8f2c9583e8a3b7d3c823fcf372b1e895c6b794f1af517f009",
       "executable": false
     },
+    "tests/audience-import/identity-doors.ts": {
+      "sha256": "9419370c97ee43a476280ef6f70dfaa2ef802c0fc8918eb9da64466cc69ca57a",
+      "executable": false
+    },
     "tests/audience-import/native.ts": {
       "sha256": "78ecb8d73f664905aa85305d530ec8180e3c60fa1c46dbf98faf7eaa041e904a",
       "executable": false
@@ -8442,7 +8446,7 @@
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
-      "sha256": "1982743cf19ecb78d5ca7eb15e1ca78c376644f0e78fa89f35a82e4a46953c9f",
+      "sha256": "5bb1a15c05fdd53e6450dbdabadc586dcb8db51e78ab95a54cfdc020e92869bb",
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
