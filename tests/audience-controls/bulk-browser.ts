@@ -32,10 +32,12 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     const receipt=page.getByRole('region',{name:'Add to topic',exact:true});
     await expect(receipt.getByRole('status')).toContainText('Complete',{timeout:30000});
     await expect(receipt).toContainText('Bennett Cole');
+    await expect(receipt.getByText('harvest-news',{exact:true})).toBeVisible();
     await expect(receipt).toContainText('missing-covering-consent');
     await expect(receipt.locator('dd')).toHaveText(['1','1','2']);
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
+      await page.evaluate(()=>window.scrollTo(0,0));
       const path=info.outputPath(`contact-topic-${width}.png`);await page.screenshot({path,fullPage:true});
       await info.attach(`contact-topic-${width}`,{path,contentType:'image/png'});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -45,12 +47,14 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     await reloadPage(page);
     await expect(receipt.getByRole('status')).toContainText('Complete');
     await expect(receipt).toContainText('Bennett Cole');
+    await expect(receipt.getByText('harvest-news',{exact:true})).toBeVisible();
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
     await page.getByRole('combobox',{name:'Bulk action',exact:true}).selectOption('tag');
     await page.getByLabel('Tag',{exact:true}).fill('Harvest members');
     await page.getByRole('button',{name:'Apply to selection',exact:true}).click();
     const tagReceipt=page.getByRole('region',{name:'Add tag',exact:true});
     await expect(tagReceipt.getByRole('status')).toContainText('Complete');
+    await expect(tagReceipt.getByText('Harvest members',{exact:true})).toBeVisible();
     const profile=await request.get(`${runtime.url}/api/contacts/${people[0].id}`);
     expect((await profile.json()).profile.tags).toContain('Harvest members');
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
@@ -73,6 +77,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     expect(rows.map(row=>row['contact id']).sort()).toEqual(people.slice(0,2).map((person:any)=>person.id).sort());
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
+      await page.evaluate(()=>window.scrollTo(0,0));
       const path=info.outputPath(`contact-export-${width}.png`);await page.screenshot({path,fullPage:true});
       await info.attach(`contact-export-${width}`,{path,contentType:'image/png'});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -93,6 +98,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     expect((await (await request.get(`${runtime.url}/api/contacts/${people[0].id}`)).json()).contact.emailStatus).toBe('suppressed');
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
+      await page.evaluate(()=>window.scrollTo(0,0));
       await expect(suppressed).toBeVisible();
       const path=info.outputPath(`contact-bulk-${width}.png`);
       await page.screenshot({path,fullPage:true});await info.attach(`contact-bulk-${width}`,{path,contentType:'image/png'});
@@ -115,6 +121,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     expect(afterErasure).not.toContain(people[0].email);expect(afterErasure).not.toContain(people[0].name);
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
+      await page.evaluate(()=>window.scrollTo(0,0));
       const path=info.outputPath(`contact-erased-${width}.png`);await page.screenshot({path,fullPage:true});
       await info.attach(`contact-erased-${width}`,{path,contentType:'image/png'});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
