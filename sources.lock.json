@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "f60ed67626b19eb19675a1e9016f482e0d107386e21b6144c674b5637e3ba6e0",
+      "sha256": "878531f54f116cb44f09e2ce81caa33151a588d8364d40c2e5bf5ca9ef54afe0",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "bf24281775faaebf7c794aaa231a563eb068db96e127bbe96cfc4bcf85d83d02",
+      "sha256": "f0481e8d78a3090b10a20e125d5c65b3dcbbc78d4213a68be4f397eb8d41637f",
       "executable": false
     },
     "DEMO.md": {
@@ -8538,7 +8538,7 @@
       "executable": false
     },
     "tests/campaign-authoring/local-images.spec.ts": {
-      "sha256": "3b20989ab62960e13ac171e210aa9bf5943da825707cfcb06b7298ff66259ddc",
+      "sha256": "1fbfea1fbd9eac0987c37535f1c9f3f03d097279f9b4a73a1aae772d6ce74cfe",
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
