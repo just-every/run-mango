@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2e52472560eca47756700bc177c0d015b48a5207fa22c5bd48ed106d8903663e",
+      "sha256": "a85bff5117271c7ba3f995f126c82e3b277af108220f30372d7a9b55d18afc82",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "2120db44ecc4453418b35fb9e4f1fff48f3619c8375a3ce3dc8541033a6a0fa3",
+      "sha256": "ddda49f45f013f5d47931d41e2f606c33c20f0fbc1f2d5e8284c1dd65dd13113",
       "executable": false
     },
     "DEMO.md": {
@@ -2818,7 +2818,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "180ded7e731eaa19cd9352501d3800b077c456b593b62ada7317954aa4b9205d",
+      "sha256": "0358b726d00353adf7a459077fbe3abfd3f9d5bfeae98c2a4e6cd117cb57a442",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -8506,11 +8506,11 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
+      "sha256": "37506f989f3c29c71fc623ad0c3f8972a98656d9da54cadb04f6cf70752a572b",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
+      "sha256": "0cb3b1c4be5907a03fcc4e24b36c984a3c7156abf120a916dfd885aa34144d3b",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
