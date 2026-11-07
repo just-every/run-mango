@@ -1,0 +1,9 @@
+.contact-search__form { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; align-items:end; }
+.contact-search__form label { display:grid; gap:6px; font-size:14px; }
+.contact-search__form button { justify-self:start; }
+.bulk-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.bulk-job { display:grid; gap:12px; }
+.bulk-job h3 { margin:0; }
+.bulk-job__bar { height:10px; border:1px solid var(--ms-line,#b9b2a3); border-radius:6px; overflow:hidden; }
+.bulk-job__bar span { display:block; height:100%; background:var(--ms-sun,#e8a200); }
+.contact-search__all { display:flex; gap:8px; align-items:center; font-size:14px; }

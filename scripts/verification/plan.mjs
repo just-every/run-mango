@@ -26,7 +26,7 @@ export const packs = [
   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
   {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
   {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts'])]},
-  {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts'])]},
+  {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts','contact-bulk.journeys.ts'])]},
 ];
 
 export function options(args, env = {}) {

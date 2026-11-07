@@ -2,6 +2,7 @@ import {ManualEntryForm} from './manual-entry-form';
 import {Can} from '@/core/features/auth/ui/permissions';
 import { AudienceExport } from './audience-export';
 import { SavedSegments } from './saved-segments';
+import { ContactSearch } from './contact-search';
 import { Link } from '@tanstack/react-router';
 
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
@@ -42,6 +43,7 @@ export function AudiencePage() {
         <article className="summary-grid__tile summary-grid__tile--email"><span>Email subscribed</span><strong>{subscribedEmail}</strong></article>
         <article className="summary-grid__tile summary-grid__tile--sms"><span>SMS subscribed</span><strong>{subscribedSms}</strong></article>
       </section>
+      <Can permission="contact.read"><ContactSearch /></Can>
       <section className="panel data-table-panel audience-ledger">
         <div className="section-heading">
           <div>
