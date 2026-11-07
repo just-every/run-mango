@@ -64,7 +64,7 @@ export function createIntegrationService(platform: Platform, audience: ReturnTyp
       // provider capability and timing again at handoff. This grants no approval.
       for (const step of steps) await platform.jobs.enqueue({kind: 'campaign.dispatch', idempotencyKey: `dispatch:${step.id}:${new Date(step.scheduledAt).toISOString()}`,
         payload: {campaignId, revisionId: input.revisionId, stepId: step.id, channel: step.channel}});
-      return {status: 'queued', revisionId: input.revisionId, steps: steps.map(step => step.id)};
+      return {status: 'queued', riskClasses:['external','money'], revisionId: input.revisionId, steps: steps.map(step => step.id)};
     },
   };
 }

@@ -1,4 +1,5 @@
-import {hasPermission, type ProductRole} from '@/core/features/auth/permissions';
+import {productAuthority} from '@/core/features/auth/product-roles';
+import {hasPermission} from '@/core/features/auth/permissions';
 import {IntegrationError} from '@/core/features/integrations/schema';
 
 export type ActivationPolicy = {approverOperatorId:string; approverName:string; generation:number; updatedAt:number};
@@ -45,9 +46,9 @@ export async function holdActivation(db:D1Database,credentialId:string,campaignI
 }
 
 export async function saveActivationPolicy(db:D1Database,approver:string,actor:string) {
-  const operator=await db.prepare(`SELECT COALESCE(r.role,'owner') role FROM operators o JOIN oa_operators a ON a.id=o.id
-    LEFT JOIN operator_product_roles r ON r.operator_id=o.id WHERE o.id=? AND o.removed_at IS NULL AND a.status='active'`).bind(approver).first<{role:ProductRole}>();
-  if(!operator || !hasPermission(operator.role,'campaign.approve'))return false;
+  const operator=await productAuthority(db,approver);
+  const active=await db.prepare("SELECT id FROM oa_operators WHERE id=? AND status='active'").bind(approver).first();
+  if(!active || !operator || !hasPermission(operator.role,'campaign.approve'))return false;
   const now=Date.now(),id=crypto.randomUUID();
   await db.batch([
     db.prepare(`INSERT INTO campaign_activation_policy(id,approver_operator_id,generation,updated_by,updated_at) VALUES(1,?,1,?,?)

@@ -21,9 +21,9 @@ export async function ownerControlBrowser(page:Page,info:TestInfo) {
   }});
   const site=await installation(edge,eventSigner(),{commerce:true,ai:true,networkHosts:['api.openai.com']});
   try {
-    const owner=await site.open(address('synthetic-mango-206'),'synthetic-mango-206');
+    const owner=await site.open();
     const approver=await site.open(address('synthetic-mango-207'),'synthetic-mango-207');
-    await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'synthetic-mango-206' THEN 'Jordan Green' ELSE 'Casey River' END RETURNING id");
+    await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' ELSE 'Casey River' END RETURNING id");
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie:owner,body:sender}),200);
     await site.control('/_golive/sender-evidence');
     await confirmedContact(site,edge,owner,address('synthetic-mango-208'),'Leila Garden');

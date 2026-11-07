@@ -6,6 +6,7 @@ export async function ownerControlJourney() {
   const runtime=await decisionRuntime({delivery:true});
   try {
     const policyDoor='/api/settings/campaign-activation';
+    expect((await runtime.colleague.call(policyDoor,{approverOperatorId:runtime.colleague.id},'PUT')).status).toBe(403);
     expect((await runtime.call(policyDoor,{approverOperatorId:'proposal-analyst'},true,'PUT')).status).toBe(400);
     expect((await runtime.call(policyDoor,{approverOperatorId:runtime.colleague.id},true,'PUT')).status).toBe(200);
     const credential=await runtime.call('/api/settings/integrations',{name:'Synthetic Mango scheduler',scopes:['contacts:read','contacts:write','campaigns:send']});
@@ -35,6 +36,8 @@ export async function ownerControlJourney() {
     expect(held).toMatchObject({status:202,body:{status:'held',revisionId:proposal.revisionId,approverOperatorId:runtime.colleague.id,riskClasses:['external','money']}});
     const replay=await runtime.machine(machineDoor,token,{revisionId:proposal.revisionId,segmentId});
     expect(replay.body.holdId).toBe(held.body.holdId);
+    const audit=(await runtime.call('/api/settings/integrations/audit')).body.audit;
+    expect(audit).toContainEqual(expect.objectContaining({credentialId:credential.body.credential.id,credentialName:'Synthetic Mango scheduler',operation:'api.campaigns.send.post',outcome:'allowed',riskClassesJson:JSON.stringify(['external','money'])}));
     const approveDoor=campaignDoor+'/approve';
     const approve=(hold:any)=>({revisionId:proposal.revisionId,revisionUpdatedAt:hold.revisionUpdatedAt,holdId:hold.holdId,idempotencyKey:crypto.randomUUID()});
     expect((await runtime.call(approveDoor,approve(held.body))).status).toBe(409);

@@ -46,8 +46,8 @@ export function createIntegrationAudit(db: D1Database) {
   return {
     async begin(operation: string, credentialId: string | null, actorId: string | null) {
       const id = ulid();
-      await db.prepare('INSERT INTO integration_audit(id,credential_id,actor_id,operation,occurred_at) VALUES(?,?,?,?,?)')
-        .bind(id, credentialId, actorId, operation, Date.now()).run();
+      await db.prepare('INSERT INTO integration_audit(id,credential_id,actor_id,operation,occurred_at,risk_classes_json) VALUES(?,?,?,?,?,?)')
+        .bind(id, credentialId, actorId, operation, Date.now(),operation==='api.campaigns.send.post'?JSON.stringify(['external','money']):null).run();
       return id;
     },
     async finish(id: string, status: number, outcome: string, credentialId?: string) {
@@ -57,7 +57,7 @@ export function createIntegrationAudit(db: D1Database) {
       await db.prepare('UPDATE integration_audit SET credential_id=? WHERE id=?').bind(credentialId, id).run();
     },
     async list(cursor: string, limit: number) {
-      const audit = (await db.prepare(`SELECT a.id,a.sequence,a.credential_id AS credentialId,c.name AS credentialName,a.actor_id AS actorId,o.display_name AS operatorName,a.operation,a.status,a.outcome,a.occurred_at AS occurredAt
+      const audit = (await db.prepare(`SELECT a.id,a.sequence,a.credential_id AS credentialId,c.name AS credentialName,a.actor_id AS actorId,o.display_name AS operatorName,a.operation,a.status,a.outcome,a.risk_classes_json AS riskClassesJson,a.occurred_at AS occurredAt
         FROM integration_audit a LEFT JOIN integration_credentials c ON c.id=a.credential_id LEFT JOIN operators o ON o.id=a.actor_id
         WHERE (?=0 OR a.sequence<?) AND ${visibleOperation('a.operation')} ORDER BY a.sequence DESC LIMIT ?`).bind(Number(cursor), Number(cursor), limit).all<{sequence: number}>()).results;
       return {audit, nextCursor: String(audit.at(-1)?.sequence ?? cursor)};

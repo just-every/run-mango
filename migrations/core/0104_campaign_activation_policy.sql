@@ -17,3 +17,5 @@ CREATE TABLE campaign_activation_holds (
   created_at INTEGER NOT NULL,
   UNIQUE (revision_id, revision_updated_at, policy_generation, credential_id)
 );
+
+ALTER TABLE integration_audit ADD COLUMN risk_classes_json TEXT;

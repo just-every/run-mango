@@ -1621,6 +1621,10 @@
       "sha256": "5bc9ce76e1efac1985f0826a2863ec939dad9aa55e8bd0150d9ae2b1c9a6d129",
       "executable": false
     },
+    "migrations/core/0104_campaign_activation_policy.sql": {
+      "sha256": "1662ea29dca2d2faba9dc1f8e52e202a86a51f7390a23a31968181f6daa02e01",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -4890,7 +4894,7 @@
       "executable": false
     },
     "src/core/features/integrations/credentials.ts": {
-      "sha256": "c40cffb441715401d6bc2a15b8ad752794f1faee6684cd2bbf79d6f4616479f0",
+      "sha256": "d93304741b54eeab5752b707d566cd2d67095b65eab5a360c9951bf62da1335c",
       "executable": false
     },
     "src/core/features/integrations/custom-events.ts": {
@@ -4930,7 +4934,7 @@
       "executable": false
     },
     "src/core/features/integrations/service.ts": {
-      "sha256": "9d3176d35e46bd639e8821e6ae9efceb0fb81cb5eacb30b8dd82da98ea167ce1",
+      "sha256": "ed96937ae556400eab80f8f0b3b8bf2d13cf69a698a739dad9b82322fc777561",
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
@@ -5087,6 +5091,14 @@
     },
     "src/core/features/landing/styles/steps.css": {
       "sha256": "58b49296d949bb8e3ce1c36a520cf6aeaf647a9dbe3e06e47bdadac7175ce3c1",
+      "executable": false
+    },
+    "src/core/features/lifecycle/activation-policy-routes.ts": {
+      "sha256": "cc8fe82f892e9da987e0ef174925bdcb87a637d36badac0e540b62511e17af52",
+      "executable": false
+    },
+    "src/core/features/lifecycle/activation-policy.ts": {
+      "sha256": "53bf5440aff9a4dc0a3ef3e2d9aa93b631b197b3d2f213a86eb6f61a533c8866",
       "executable": false
     },
     "src/core/features/lifecycle/advisory-acknowledgements.ts": {
@@ -5571,6 +5583,10 @@
     },
     "src/core/features/settings/analytics-settings.ts": {
       "sha256": "577bae570c65a2cadb7aae1dd0be0b4a0b04ce6b83f1234e89872ab9859cde93",
+      "executable": false
+    },
+    "src/core/features/settings/campaign-activation-panel.tsx": {
+      "sha256": "ea34d7bf0d01e33e37e41c96f9a68f105ae99247be50af887466fd20806dc3bd",
       "executable": false
     },
     "src/core/features/settings/link-host-source-panel.tsx": {
@@ -9455,6 +9471,14 @@
     },
     "tests/proposals-decision/history.ts": {
       "sha256": "f0722dd20719119914d1f1cae40f879085ec092924d6cfe8731afbc1d4d874ba",
+      "executable": false
+    },
+    "tests/proposals-decision/owner-control-browser.ts": {
+      "sha256": "ae104fdf5e26490042fd19cce3c079a82061631d1d10e89c4f58f37471ed7419",
+      "executable": false
+    },
+    "tests/proposals-decision/owner-control-journey.ts": {
+      "sha256": "f51e98638daec7b83513093794c8af421c59bf0738ff3f847ab3b05b053112bf",
       "executable": false
     },
     "tests/proposals-decision/runtime.ts": {
