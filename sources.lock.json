@@ -8822,7 +8822,7 @@
       "executable": false
     },
     "tests/go-live/custom-event-journey.ts": {
-      "sha256": "ab60f343bca2eff300d3509af1280096afd217fcf38015e0cec1f341b2e6b7a1",
+      "sha256": "112eaa8762a006e079208c2f58e5af86834f3d28d6a888941eafae66b7ba6076",
       "executable": false
     },
     "tests/go-live/custom-property-journey.ts": {
