@@ -650,8 +650,8 @@ Core · published · **partial** · Rules D-2
 1. A contact inside the channel’s frequency window is excluded from that step with a frequency-window reason and is never silently deferred.
 2. The default windows are 24 hours since the last marketing email and 72 hours since the last marketing SMS.
 
-**Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Frequency-window exclusion; Recorded frequency-window reason; No silent deferral; 24-hour email window; 72-hour SMS window. Missing public-door journey: “Frequency protection — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts` · `tests/go-live/frequency-protection.journeys.ts` — “[AUD-004] an email frequency exclusion is terminal even after its window expires”: two native campaigns approved before the first handoff; repeat reader terminally skipped with frequency-window and zero attempts, fresh control accepted; unchanged recipient rows, results and provider requests after a native dispatch replay and Cron beyond 26 hours with renewed sender evidence and an open deadline; named results at 1440 and captured at 390.
+**Gap.** Acceptance 1: SMS frequency exclusion, recorded reason and no-deferral proof remain unasserted. Acceptance 2: exact default-window boundary proof for email and SMS remains unasserted. AUD-009 overrides and FLOW-014 caps remain separate obligations. Owner-held Twilio A2P and US carrier registration, SMS transport and provider qualification remain held; no real-provider qualification is claimed.
 
 #### AUD-005 — Dispatch recheck
 

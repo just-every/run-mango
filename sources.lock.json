@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "a78ed9d54073917e78064525d1486e0c7c8f239561e1a4f508b9895aee60af8a",
+      "sha256": "e9ae40e057731bce8294ceb03081cb2836ac244faf275e6890e95e6310ad429c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "ff4bf0274edb47868188a828b62eeb9f8dbf51a68d2b798848eecae65e1d407a",
+      "sha256": "a362d77abd9acf1a7a0f33e9c19faf82b865c555149c826c345cc53e1f6038fe",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "f4c9cef44d796d08ea2539dbc2ac39e8c918800295dd07e169688b81d5c95a64",
+      "sha256": "763bf6089d0f67184bd0635ef42d9b52d95dcba6efb1a7e1803f98cf5c8a6ae6",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8891,6 +8891,10 @@
     },
     "tests/go-live/embed-origin.journeys.ts": {
       "sha256": "f6b843289b32f75c285d936871bec5e923773d6af0276ee7cd5729af9cbc6f1a",
+      "executable": false
+    },
+    "tests/go-live/frequency-protection.journeys.ts": {
+      "sha256": "439fa86567f6a2a3bda4dacf67ba668504d880142e52a2474ee7f7bd8314ba61",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
