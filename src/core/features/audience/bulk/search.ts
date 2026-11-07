@@ -1,3 +1,4 @@
+import {validateProperty} from '../properties/validation';
 import {z} from 'zod';
 import type {Platform} from '@/core/shared/platform';
 import {readContactProfile} from '../contact-profile';
@@ -26,6 +27,10 @@ export async function searchContacts(platform:Platform,input:ContactSearch) {
   const fields=new Map(profiles.map(row=>[row.contact_id,JSON.parse(row.fields_json)])),history=new Map<string,typeof histories>();
   for(const row of histories){const list=history.get(row.contact_id)??[];list.push(row);history.set(row.contact_id,list);}
   const definition=input.field==='property'?(await propertyDefinitions(db)).find(d=>d.key===input.property):undefined;
+  let wanted:unknown=input.value;
+  if(definition){try{wanted=validateProperty(definition,input.value,'import');}catch{return [];}}
+  const requested=Array.isArray(wanted)?wanted:[wanted];
+  const equal=(value:unknown)=>requested.some(want=>String(value).toLowerCase()===String(want).toLowerCase());
   const ids:string[]=[];
   for(const row of rows) {
     if(input.field==='segment') {
@@ -34,7 +39,7 @@ export async function searchContacts(platform:Platform,input:ContactSearch) {
     } else {
       const values=propertyFields(fields.get(row.id)??{},history.get(row.id)??[]);
       const actual=definition?readTypedProperty(definition,values).value:values[input.property??''];
-      if(Array.isArray(actual)?!actual.some(value=>String(value).toLowerCase()===input.value.toLowerCase()):actual===null||actual===undefined||String(actual).toLowerCase()!==input.value.toLowerCase())continue;
+      if(actual===null||actual===undefined||(Array.isArray(actual)?!actual.some(equal):!equal(actual)))continue;
     }
     ids.push(row.id);
   }

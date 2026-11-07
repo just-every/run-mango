@@ -4,6 +4,8 @@ import {localSessionCookieName} from '../support/local-session';
 import {openPage,reloadPage} from '../support/navigation';
 
 export async function bulkBrowserJourney(page:Page,info:TestInfo) {
+  page.setDefaultTimeout(15000);
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   const runtime=await authoringRuntime({suite:'contact-bulk',fixtureWorker:'tests/audience-controls/bulk-worker.ts',vars:(url:string)=>({MANGO_PUBLIC_BASE_URL:url})});
   try {
     const headers={'X-Test-Token':runtime.token},request=page.context().request;
@@ -52,7 +54,7 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
     await page.getByLabel('Select Amelia Rivera',{exact:true}).check();
     await page.getByLabel('Bulk action',{exact:true}).selectOption('suppress');
     await page.getByRole('button',{name:'Review action',exact:true}).click();
-    const dialog=page.getByRole('dialog',{name:'Suppress selected contacts?',exact:true});
+    const dialog=page.getByRole('alertdialog',{name:'Suppress selected contacts?',exact:true});
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button',{name:'Cancel',exact:true}).click();
     expect((await (await request.get(`${runtime.url}/api/contacts/${people[0].id}`)).json()).contact.emailStatus).toBe('subscribed');
@@ -70,5 +72,12 @@ export async function bulkBrowserJourney(page:Page,info:TestInfo) {
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     }
     console.log('PROBE CONT-022 browser: property Vegetables -> Amelia and Bennett; topic receipt names Bennett refused, tag saved, suppression cancel unchanged and confirm suppressed; receipt survives reload; screens 1440 and 390');
+    expect(errors).toEqual([]);
+  } catch(error) {
+    const path=info.outputPath('contact-bulk-interrupted.png');
+    await page.screenshot({path,fullPage:true}).catch(()=>undefined);
+    await info.attach('contact-bulk-interrupted',{path,contentType:'image/png'}).catch(()=>undefined);
+    if(errors.length)console.log('Browser errors: '+errors.join('; '));
+    throw error;
   } finally {await runtime.close();}
 }

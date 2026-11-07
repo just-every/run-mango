@@ -3090,7 +3090,7 @@
       "executable": false
     },
     "src/core/features/audience/bulk/actions.ts": {
-      "sha256": "cd83de6b40f1158346e29a22bde7d3659e0b2976cfb26f8bf3ff8df8e3733934",
+      "sha256": "3a3dc2d17efa2be6557ce68de0627322323af53d2febf770e5265242fbd3464f",
       "executable": false
     },
     "src/core/features/audience/bulk/authority.ts": {
@@ -3114,7 +3114,7 @@
       "executable": false
     },
     "src/core/features/audience/bulk/search.ts": {
-      "sha256": "9d7404abd3536f8bab018d7c5c7c0bfa01b4fc01915e0e25eb05994ee082593e",
+      "sha256": "c983c47735fdf4006b4f5190189e5e817b17a0698ac236b1782b5cf696a5dec3",
       "executable": false
     },
     "src/core/features/audience/bulk/types.ts": {
@@ -8378,7 +8378,7 @@
       "executable": false
     },
     "tests/audience-controls/bulk-browser.ts": {
-      "sha256": "26d44a641de1d4f5dcdfa735d2c42d55052a8490464b71cd35fa0619f29e0e87",
+      "sha256": "4083ed4f2aa5b8402a37725526cc4c7ef83f512bb23da89be75fbbe7d189ba5f",
       "executable": false
     },
     "tests/audience-controls/bulk-fixture.ts": {
@@ -8390,7 +8390,7 @@
       "executable": false
     },
     "tests/audience-controls/bulk.flow.ts": {
-      "sha256": "28b6d1b0c372c4501ea229cb10e945e4fc4b8c45986eba072bd731b4f87f6ede",
+      "sha256": "8b25cf47faccd089278c62cad319dacfca8a8deabd12e5fdd172179c64de18f9",
       "executable": false
     },
     "tests/audience-controls/channel-snapshot-journey.ts": {

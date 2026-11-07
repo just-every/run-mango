@@ -19,8 +19,8 @@ export async function actOnContact(platform:Platform,job:BulkJob,item:BulkItem) 
     let receipt=item.erasure_reference?await service.read(item.erasure_reference):await service.begin(id!,authority);
     if(!receipt)return 'contact-erased';
     await db.prepare('UPDATE contact_bulk_items SET erasure_reference=? WHERE job_id=? AND ordinal=?').bind(receipt.reference,job.id,item.ordinal).run();
-    // One bounded erasure stage per continuation, retaining the same item.
-    if(receipt.state!=='complete')receipt=await service.advance(receipt.reference,authority);
+    // A bounded group of native erasure stages retains the same frozen item.
+    for(let stage=0;stage<8&&receipt?.state!=='complete';stage++)receipt=await service.advance(receipt!.reference,authority);
     return receipt?.state==='complete'?undefined:'pending-erasure';
   }
   if(job.action==='export')return;

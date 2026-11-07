@@ -1,3 +1,4 @@
+import {consumeLifecycleQueue,type LifecycleQueueBatch} from '../../src/core/features/lifecycle';
 import {expect,test} from '@playwright/test';
 import {parseCsv} from '../../src/core/features/audience/csv';
 import {bulkFixture,bulkPerson,seedBulkPeople} from './bulk-fixture';
@@ -51,6 +52,7 @@ export async function bulkRouteJourney() {
       await selected('phone',people[0].phone.replace('+1','+1 ').replace(/(\d{3})(\d{4})$/,'$1-$2'),[people[0].id]);
       await selected('name',people[4].name.toUpperCase(),[people[4].id]);
       await selected('property','42',[people[0].id],{property:'bulk_rank'});
+      await selected('property','42.0',[people[0].id],{property:'bulk_rank'});
       await selected('property','11',[],{property:'bulk_rank'});
       await selected('tag','market-import',people.slice(0,2).map(person=>person.id));
       await selected('consent','pending',[people[1].id],{channel:'email'});
@@ -119,6 +121,9 @@ export async function bulkRouteJourney() {
       expect(restrictions.map(row=>({channel:row.channel,cause:row.cause,contactId:row.contact_id})).sort((a,b)=>a.channel.localeCompare(b.channel)))
         .toEqual([{channel:'email',cause:'owner-block',contactId:null},{channel:'sms',cause:'owner-block',contactId:null}]);
       expect(restrictions.every(row=>row.provider_event_id.startsWith('integration:'))).toBe(true);
+      const replayed=await run({contactIds:[people[0].id],action:'tag',value:'erasure-replay'});
+      expect(replayed).toMatchObject({total:1,succeeded:0,refused:1});
+      expect((await h.call(`/api/contacts/${people[0].id}`)).status).toBe(404);
     });
 
     await test.step('A 5,000-contact frozen job survives app recreation and replays without widening selection',async()=>{
@@ -129,7 +134,11 @@ export async function bulkRouteJourney() {
       let job=await start({search:{field:'name',value:'Market member'},action:'tag',value:'autumn-market'});
       expect(job).toMatchObject({total:5000,processed:0,succeeded:0,refused:0});
       expect((await h.call(`/api/audience/bulk/${job.id}/export`)).status).toBe(409);
-      job=await resume(job);expect(job.processed).toBeGreaterThan(0);expect(job.processed).toBeLessThan(job.total);
+      const command=h.f.jobs.findLast((value:any)=>value.kind==='contact.bulk'&&value.payload.id===job.id);
+      expect(command).toBeTruthy();let acknowledged=false,retried=false;
+      await consumeLifecycleQueue({messages:[{body:command,ack(){acknowledged=true;},retry(){retried=true;}}]} as unknown as LifecycleQueueBatch,h.f.services.lifecycleRuntime);
+      expect(acknowledged).toBe(true);expect(retried).toBe(false);
+      job=(await h.json(`/api/audience/bulk/${job.id}`)).job;expect(job.processed).toBeGreaterThan(0);expect(job.processed).toBeLessThan(job.total);
       h.restart();expect((await h.json(`/api/audience/bulk/${job.id}`)).job).toEqual(job);
       // A newly matching person is outside the selection already frozen by the command.
       await seedBulkPeople(h.f.db,5001,5002);
@@ -159,5 +168,9 @@ export async function bulkRouteJourney() {
       expect((await profile(people[4].id)).tags).not.toContain(body.value);
       expect((await h.json(`/api/audience/bulk/${pending.id}`)).job).toEqual(failed);
     });
+    console.log('PROBE CONT-022 1: authenticated search for email, formatted phone, name, latest typed property, imported tag, saved segment and consent states -> expected contact identities');
+    console.log('PROBE CONT-022 2: selected tag, untag, CSV export, email and SMS suppression, native erasure and topic additions -> saved changes; topic receipt names every refusal; erased identities absent from old receipts and exports');
+    console.log('PROBE CONT-022 3: create and resume a frozen 5000-contact job, recreate app mid-job and replay terminal command -> monotonic progress and durable 5000-success receipt');
+    console.log('PROBE CONT-022 4: property 42 selects one person; 5000-contact tag job completes; topic additions refuse mismatched, missing, unconfirmed and restricted evidence by name');
   } finally {await h.dispose();}
 }
