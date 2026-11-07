@@ -26,16 +26,25 @@ export type FakeOptions = {
 };
 /** A refusal the next request to a path suffix gets: a status, and for 429 the Retry-After 12ui names, if any. */
 export type Refusal = { status: number; retryAfter?: number };
+export type IssuedDesign = { kind: 'run' | 'layout'; id: string; at: number };
 
 export async function startFakeTwelveUi(options: FakeOptions) {
   const requests: FakeRequest[] = [];
   const purchases: string[] = [];
+  // Observe identifiers at issuance, independently of Mango's stored values or purchase keys.
+  const issued: IssuedDesign[] = [];
+  const noteIssued = (kind: IssuedDesign['kind'], id: string) => {
+    issued.push({ kind, id, at: Date.now() });
+    if (issued.length > 32) issued.shift();
+  };
   const replies = new Map<string, unknown>();
   const runs = new Map<string, { slots: { slot: string; status: string; settles?: number }[] }>();
   const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed' }>();
   let layoutStatus = options.layoutStatus ?? 'succeeded';
   const failed = new Set<string>();
   const refusals = new Map<string, Refusal>();
+  const held = new Map<string, { entered: () => void; released: Promise<void> }>();
+  const releases = new Set<() => void>();
   const inflations = new Map<string, number>();
   const drawMs = { ...options.drawMs };
   const layerDocSha = createHash('sha256').update(options.layerDoc).digest('hex');
@@ -58,6 +67,12 @@ export async function startFakeTwelveUi(options: FakeOptions) {
     const key = request.headers['idempotency-key'] as string | undefined;
     const entry: FakeRequest = { method: request.method ?? 'GET', path, authorized: request.headers.authorization === `Bearer ${options.key}`, ...(key ? { idempotencyKey: key } : {}), ...(request.headers['content-type'] ? { contentType: request.headers['content-type'] } : {}) };
     requests.push(entry);
+    const barrier = [...held].find(([suffix]) => `${entry.method} ${path}`.endsWith(suffix));
+    if (barrier) {
+      held.delete(barrier[0]);
+      barrier[1].entered();
+      await barrier[1].released;
+    }
     const send = (status: number, value: unknown, type = 'application/json', headers: Record<string, string> = {}) => {
       const inflation = type === 'application/json' && [...inflations].find(([suffix]) => `${entry.method} ${path}`.endsWith(suffix));
       if (inflation) {
@@ -88,6 +103,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
       entry.json = JSON.parse(body.toString('utf8'));
       const id = `crt-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
       runs.set(id, { slots: (entry.json as { candidates: { slot: string }[] }).candidates.map(({ slot }) => ({ slot, status: 'pending' })) });
+      noteIssued('run', id);
       if (key) replies.set(`POST ${path} ${key}`, () => runView(id));
       return send(201, runView(id));
     }
@@ -113,6 +129,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
       const id = `cnv-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
       purchases.push(`layout:${key ?? ''}`);
       layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus });
+      noteIssued('layout', id);
       if (key) replies.set(`POST ${path} ${key}`, () => layoutView(id));
       return send(202, layoutView(id));
     }
@@ -125,8 +142,18 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   });
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  return { origin, requests, purchases, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+  return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+    /** Observe a request in flight without manufacturing Mango's persisted state or clock. */
+    holdNext: (suffix: string) => {
+      let entered!: () => void, unblock!: () => void;
+      const requested = new Promise<void>(resolve => { entered = resolve; });
+      const released = new Promise<void>(resolve => { unblock = resolve; });
+      const release = () => { releases.delete(release); unblock(); };
+      releases.add(release);
+      held.set(suffix, { entered, released });
+      return { requested, release };
+    },
     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
-    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { for (const release of releases) release(); server.closeAllConnections(); server.close(() => resolve()); }) };
 }

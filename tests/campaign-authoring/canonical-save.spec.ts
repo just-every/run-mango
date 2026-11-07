@@ -6,6 +6,7 @@ import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
 import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
 import { authoringRuntime } from './browser-runtime.mjs';
+import { canonicalContentJourney } from './canonical-content-journey';
 
 // The reported bypass (MSG-012) in all six spellings: a tag walker read each as closing the white span; mail
 // clients read a comment or text and keep the span open over the claim.
@@ -96,6 +97,8 @@ test('[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as
       if (approvable) expect(blockers, body).not.toContain('message.content');
       else expect(blockers, body).toContain('message.content');
     }
+
+    await canonicalContentJourney(request,runtime,headers);
 
     // Arrange an older draft directly in D1: a normal body save would already
     // canonicalize it and could not prove that editing another field upgrades it.
