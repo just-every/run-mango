@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "f2834f9c2ad4fd9a19a0c001cb1817474bfbc1d8b4db06b1720f1eb52c9937c0",
+      "sha256": "d4a15d7bff6644624643e74243865b51f84190ddeaffb5a0cc9ac34dbc80ff5a",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "885d1bfd1251715e67d7132de33456df13891c1b5fabb1ffb4b4212ac0d7b73f",
+      "sha256": "0d0bf88e1cc234d2f48f6a88071435e2715f39faeb760c54d915a15599fbad31",
       "executable": false
     },
     "DEMO.md": {
@@ -3314,7 +3314,7 @@
       "executable": false
     },
     "src/core/features/audience/import-service.ts": {
-      "sha256": "96f3e0d9629d2b58e5e2d988d6fa59f7831c0b8e168ea47f7b77098776b518bb",
+      "sha256": "9518b1aa4ffa8a117e680872073657a264e423830b5fec05d1b8f8dcc0dcc554",
       "executable": false
     },
     "src/core/features/audience/import-snapshot.ts": {
@@ -5326,7 +5326,7 @@
       "executable": false
     },
     "src/core/features/move-in/csv-review.ts": {
-      "sha256": "ce954dd8b736a8495462ac1dd17055e6fe03c759e7048b1b6abed607cf453eab",
+      "sha256": "996e5ef268a4ef948d335c43e6b076b34740d84fa1c6fe56bc03d1cc9b0d7ef8",
       "executable": false
     },
     "src/core/features/move-in/csv-sources.ts": {
@@ -9254,11 +9254,15 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "5eb4110776a3688cfc889c3c6dd51fd42e8aed84a07b3e8e23398ae2c9dabe59",
+      "sha256": "0f053f3597eff26280ed7d9a1a366279d358418066381794c818327947f0f297",
       "executable": false
     },
     "tests/move-in/archive.ts": {
       "sha256": "6410befa07ee72f37f9d831c6a62ee48a8c761f0d12394ac9dfc1ef68a606df5",
+      "executable": false
+    },
+    "tests/move-in/csv-rules-journey.ts": {
+      "sha256": "f25e9246e1adce687496681c766126aca1c372095f8d3c6d8283c677e8260419",
       "executable": false
     },
     "tests/move-in/fixtures/account-export/appointments/appointments.csv": {
@@ -9359,6 +9363,10 @@
     },
     "tests/move-in/incumbent-journey.ts": {
       "sha256": "4a0653226d1b6d86336fcd2419bd9b3b81315f918e6dbf3868428ced0461d4a2",
+      "executable": false
+    },
+    "tests/move-in/phone-csv-journey.ts": {
+      "sha256": "d9a8c8b7ae40e758ddb9a035ca1c6e6489c1b9c11a5c1cd46de1b65591790923",
       "executable": false
     },
     "tests/move-in/playwright.config.js": {
