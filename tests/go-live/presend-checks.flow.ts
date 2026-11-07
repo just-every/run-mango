@@ -1,10 +1,9 @@
 const width = 1440;
 import { png } from '../support/images';
 import { expect } from '@playwright/test';
-import { contract } from '../contract.js';
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
-import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
+import { installation, json, sender, consent, confirmedContact, draftCampaign, approve, availableTransport } from './harness';
 import { openPage, reloadPage } from '../support/navigation';
 import { measureEmailSize, formatEmailSize } from '../../src/core/features/campaigns/email-size';
 
@@ -21,8 +20,23 @@ export const walk0 = async ({page}, info) => {
     const named = 'ava@example.test', unnamed = 'reader@example.test';
     await confirmedContact(site, edge, cookie, named, 'Ava <b>Gardener</b> & Co');
     await confirmedContact(site, edge, cookie, unnamed, '');
+    // Capture a third, independently known candidate without confirming it.
+    const pending = ['synthetic-mango-31', 'example.test'].join(String.fromCharCode(64));
+    await availableTransport(site);
+    const captured = await json(await site.call('/api/contacts/consent', {method: 'POST', cookie,
+      body: {...consent, contact: {email: pending, displayName: 'Pending gardener'}, occurredAt: new Date().toISOString()}}), 201);
+    expect(captured).toMatchObject({contact: {email: pending, emailStatus: 'pending'}, confirmationRequired: true});
+    const people = (await json(await site.call('/api/audience', {cookie}), 200)).contacts;
+    const eligible = [named, unnamed].map(email => {
+      const person = people.find((contact: any) => contact.email === email);
+      expect(person).toMatchObject({email, emailStatus: 'subscribed'});
+      return {email, id: person.id};
+    });
+    const addresses = [named, unnamed, pending];
+    const expectedRule = {version: 1, operator: 'any', predicates: addresses.map(value =>
+      ({sourceType: 'contact', field: 'email', comparator: 'eq', value}))};
     const clock = await site.control('/_golive/clock', {hold: true});
-    const campaign = await draftCampaign(site, cookie, 'Garden preview checks', [named, unnamed], new Date(clock.now + 3600000));
+    const campaign = await draftCampaign(site, cookie, 'Garden preview checks', addresses, new Date(clock.now + 3600000));
     const path = `/api/campaign-revisions/${campaign.revisionId}`;
     const patch = (body: unknown) => site.call(path, {method: 'PATCH', cookie, body}).then(response => json(response, 200));
     const read = () => site.call(`/api/campaigns/${campaign.campaignId}`, {cookie}).then(response => json(response, 200));
@@ -30,6 +44,10 @@ export const walk0 = async ({page}, info) => {
     const acknowledge = (check: any, status = 200) => site.call(`/api/campaigns/${campaign.campaignId}/checks/${check.id}/acknowledge`, {
       method: 'POST', cookie, body: {revisionId: campaign.revisionId, findingIdentity: check.findingIdentity},
     }).then(response => json(response, status));
+    // Two email steps distinguish eligible contacts from recipient-step counts.
+    await patch({steps: [1, 2].map(hour => ({channel: 'email', timezone: 'Australia/Brisbane',
+      scheduledAt: new Date(clock.now + hour * 3600000).toISOString(),
+      sendByAt: new Date(clock.now + (hour + 2) * 3600000).toISOString(), whyThisTime: 'Owner chose this time'}))});
     await patch({emailSubject: 'Act now: your garden letter', preheader: 'For {{displayName | fallback: Garden friend}}',
       emailBody: '<h1>Your garden</h1><h3>Spring notes</h3><p>Hello {{displayName | fallback: Garden friend}}.</p>'
         + '<p style="color:#bbbbbb">Low contrast garden note.</p>'
@@ -131,6 +149,52 @@ export const walk0 = async ({page}, info) => {
     expect(records).toEqual([expect.objectContaining({idempotency_key: `approve-${campaign.revisionId}`,
       campaign_id: campaign.campaignId, revision_id: campaign.revisionId, revision_digest: approval.revisionDigest,
       operator_id: 'go-live-owner', approved_at: clock.now, created_at: clock.now})]);
+    const expectedCounts = {candidateCount: addresses.length, excludedCount: 1, eligibleCount: eligible.length};
+    const expectedExclusions = {'email-pending': 1};
+    expect(approved.audienceState).toBe('saved');
+    expect(approved.audience).toMatchObject({...expectedCounts, asOfAt: new Date(clock.now).toISOString()});
+    expect(JSON.parse(approved.audience.exclusions)).toEqual(expectedExclusions);
+    expect(JSON.parse(approved.revision.inclusionRuleJson)).toEqual(expectedRule);
+    expect(JSON.parse(approved.revision.exclusionRulesJson)).toEqual([]);
+    expect(approved.steps.map((step: any) => step.channel)).toEqual(['email', 'email']);
+    expect(approved.audienceChannelCounts).toEqual([expect.objectContaining({channel: 'email',
+      recipientStepCount: eligible.length * 2, eligibleContactCount: eligible.length, fallbackContactCount: 1})]);
+    const snapshotRows = () => site.rows(`SELECT * FROM campaign_audiences WHERE revision_id='${campaign.revisionId}'`);
+    const channelRows = () => site.rows(`SELECT * FROM campaign_audience_channel_counts WHERE audience_id='${approved.audience.id}' ORDER BY channel`);
+    const candidateRows = () => site.rows(`SELECT * FROM campaign_revision_candidates WHERE revision_id='${campaign.revisionId}' ORDER BY contact_id`);
+    const recipientRows = () => site.rows(`SELECT * FROM recipient_steps WHERE revision_id='${campaign.revisionId}' ORDER BY contact_id, step_id`);
+    const dispatchEmissions = async () => (await site.control('/_golive/emissions'))
+      .filter((item: any) => item.command.kind === 'campaign.dispatch' && item.command.payload.campaignId === campaign.campaignId);
+    const storedSnapshot = await snapshotRows(), storedChannels = await channelRows();
+    const frozen = await candidateRows(), recipients = await recipientRows(), emissions = await dispatchEmissions();
+    expect(storedSnapshot).toEqual([expect.objectContaining({id: approved.audience.id, revision_id: campaign.revisionId,
+      as_of_at: clock.now, candidate_count: addresses.length, excluded_count: 1, eligible_count: eligible.length})]);
+    expect(JSON.parse(storedSnapshot[0].exclusions)).toEqual(expectedExclusions);
+    expect(storedChannels).toEqual([expect.objectContaining({id: approved.audienceChannelCounts[0].id,
+      channel: 'email', recipient_step_count: eligible.length * 2, eligible_contact_count: eligible.length, fallback_contact_count: 1})]);
+    expect(frozen.map(row => row.contact_id)).toEqual(eligible.map(person => person.id).sort());
+    expect(recipients.map(row => ({contact: row.contact_id, destination: row.destination, step: row.step_id,
+      channel: row.channel, disposition: row.transport_disposition, attempts: row.attempt_count})))
+      .toEqual(eligible.flatMap(person => approved.steps.map((step: any) => ({contact: person.id, destination: person.email,
+        step: step.id, channel: 'email', disposition: 'queued', attempts: 0})))
+        .sort((left, right) => left.contact.localeCompare(right.contact) || left.step.localeCompare(right.step)));
+    expect(emissions.map((item: any) => item.command.payload.stepId).sort()).toEqual(approved.steps.map((step: any) => step.id).sort());
+    const marketingSends = () => edge.sends.filter(send => send.body.headers?.['List-Unsubscribe']);
+    expect(marketingSends()).toEqual([]);
+    const assertUnchanged = async () => {
+      const reopened = await read();
+      expect(reopened.campaign).toEqual(approved.campaign);
+      expect(reopened.revision).toEqual(approved.revision);
+      expect(reopened.audience).toEqual(approved.audience);
+      expect(reopened.audienceChannelCounts).toEqual(approved.audienceChannelCounts);
+      expect(await approvalRecords()).toEqual(records);
+      expect(await snapshotRows()).toEqual(storedSnapshot);
+      expect(await channelRows()).toEqual(storedChannels);
+      expect(await candidateRows()).toEqual(frozen);
+      expect(await recipientRows()).toEqual(recipients);
+      expect(await dispatchEmissions()).toEqual(emissions);
+      expect(marketingSends()).toEqual([]);
+    };
     // Replaying approval and attempting an edit cannot replace the approved revision or its authority record.
     expect(await approve(site, cookie, campaign)).toEqual({...approval, idempotent: true});
     expect(await json(await site.call(path, {method: 'PATCH', cookie, body: {emailSubject: 'Changed after approval'}}), 409))
@@ -145,9 +209,38 @@ export const walk0 = async ({page}, info) => {
       const email=page.locator('.message-preview--email');
       await expect(email.getByRole('button',{name:'Dark approximation',exact:true})).toBeVisible();
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Hello Alex Example.');
+      const snapshot = page.locator('.audience-snapshot');
+      const formattedAsOf = await page.evaluate(at => new Intl.DateTimeFormat('en-AU',
+        {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(at)), clock.now);
+      const expectedSummary = 'Contacts matching any of these conditions: '
+        + addresses.map(address => `Email address is "${address}"`).join('; ') + '. No additional exclusions.';
+      const inspectSnapshot = async () => {
+        await expect(snapshot.getByRole('heading', {level: 2})).toHaveText(`Saved ${formattedAsOf}`);
+        await expect(snapshot.getByLabel('Saved audience rule', {exact: true})).toHaveText(expectedSummary);
+        for (const [label, count] of [['Candidates', addresses.length], ['Excluded', 1], ['Eligible contacts', eligible.length]] as const) {
+          await expect(snapshot.locator('dl > div').filter({has: page.getByText(label, {exact: true})}).locator('dd')).toHaveText(String(count));
+        }
+        const channels = snapshot.getByLabel('Saved channel step counts', {exact: true}).locator('p').filter({has: page.locator('strong')});
+        await expect(channels).toHaveCount(1);
+        await expect(channels.locator('span')).toHaveText('Email');
+        await expect(channels.locator('strong')).toHaveText(String(eligible.length * 2));
+        const exclusions = snapshot.getByLabel('Saved audience exclusions', {exact: true}).locator('p').filter({has: page.locator('strong')});
+        await expect(exclusions).toHaveCount(Object.keys(expectedExclusions).length);
+        await expect(exclusions.locator('span')).toHaveText('Email Pending');
+        await expect(exclusions.locator('strong')).toHaveText('1');
+      };
+      await inspectSnapshot();
+      await assertUnchanged();
+      await reloadPage(page);
+      await inspectSnapshot();
+      await assertUnchanged();
+      await snapshot.screenshot({path: info.outputPath(`approved-audience-${width}.png`)});
       await email.screenshot({path:info.outputPath(`approved-preview-${width}.png`)});
       await page.setViewportSize({width: 390, height: 1000});
+      await snapshot.screenshot({path: info.outputPath('approved-audience-390.png')});
       await email.screenshot({path:info.outputPath('approved-preview-390.png')});
+      await reloadPage(page);
+      await assertUnchanged();
       await page.setViewportSize({width, height: 1000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
