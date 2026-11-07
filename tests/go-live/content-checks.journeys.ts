@@ -13,7 +13,7 @@ import { openPage, reloadPage } from '../support/navigation';
 
 test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",async ({page}, info) => {
   const commerce=sourceEdge();
-  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
+  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:[...imageHosts,'admin-review.example.test']});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);

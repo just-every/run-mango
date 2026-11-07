@@ -529,7 +529,9 @@ export function createAudienceService(
       const inserted = await repository.recordBounceFact({ providerEventId: input.providerEventId, contactId: contact.id, kind: 'soft-bounce', occurredAt: input.occurredAt, createdAt: input.occurredAt });
       if (!inserted) return { kind: 'duplicate' as const };
       const count = await reconcileSoftBounceState(contact.id, email, input.occurredAt);
-      await recordHistory(contact.id, 'soft-bounce', `Consecutive soft bounce count: ${count}.`, input.occurredAt, input.providerEventId);
+      // One provider fact may record both a bounce and its suppression outcome.
+      // Give each history kind its own identity so neither hides the other.
+      await recordHistory(contact.id, 'soft-bounce', `Consecutive soft bounce count: ${count}.`, input.occurredAt, `${input.providerEventId}:soft-bounce`);
       if (count < 3) return { kind: 'recorded' as const, count };
       await recordProviderSuppression({ destination: email, channel: 'email', cause: 'three-consecutive-soft-bounces', occurredAt: input.occurredAt, providerEventId: input.providerEventId });
       return { kind: 'suppressed' as const, count };

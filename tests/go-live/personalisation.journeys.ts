@@ -75,5 +75,65 @@ test("[MSG-008] saved review counts fallback recipients and delivery uses the sa
     }
     const saved=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
     expect(saved.audienceChannelCounts[0]).toMatchObject({eligibleContactCount:2,fallbackContactCount:2});
+
+
+    // All eligible people resolve the name, so the missing fallback must be the only approval blocker.
+    const allNamed = [2,3].map(number => ({email:named.replace('ava',`synthetic-mango-${number}`),displayName:`Garden reader ${number}`}));
+    const contactIds:string[] = [];
+    for (const contact of allNamed) {
+      await confirmedContact(site,edge,cookie,contact.email,contact.displayName);
+      const found = await json(await site.call(`/api/contacts/search?address=${encodeURIComponent(contact.email)}`,{cookie}),200);
+      expect(found.contacts).toEqual([expect.objectContaining({...contact,emailStatus:'subscribed'})]);
+      contactIds.push(found.contacts[0].id);
+    }
+    await availableTransport(site);
+    const isolatedClock = await site.control('/_golive/clock',{hold:true});
+    const isolated = await draftCampaign(site,cookie,'Named garden readers',allNamed.map(contact=>contact.email),new Date(isolatedClock.now+3600000));
+    const isolatedPath = `/api/campaigns/${isolated.campaignId}`;
+    const readIsolated = () => site.call(isolatedPath,{cookie}).then(response=>json(response,200));
+    const patchIsolated = (emailBody:string) => site.call(`/api/campaign-revisions/${isolated.revisionId}`,{method:'PATCH',cookie,body:{emailBody}}).then(response=>json(response,200));
+    const reviewIsolated = () => site.call(`${isolatedPath}/checks`,{method:'POST',cookie,body:{revisionId:isolated.revisionId}}).then(response=>json(response,200));
+    // The same saved email passes every check before introducing its bare token.
+    expect((await reviewIsolated()).checks.filter((check:any)=>check.blocking)).toEqual([]);
+    await patchIsolated('<p>Hello {{displayName}}. The spring beds are in.</p>');
+    const isolatedReview = await reviewIsolated();
+    expect(isolatedReview.candidateCount).toBe(2);
+    expect(isolatedReview.eligibleCount).toBe(2);
+    expect(isolatedReview.channelCounts).toEqual([{channel:'email',eligibleContactCount:2,fallbackContactCount:0,recipientStepCount:2}]);
+    expect(isolatedReview.checks.filter((check:any)=>check.blocking)).toEqual([
+      expect.objectContaining({kind:'message.personalisation',status:'blocked',detail:expect.stringContaining('displayName')})
+    ]);
+    const beforeRefusal = await readIsolated();
+    expect(beforeRefusal.campaign).toMatchObject({state:'draft',activeRevisionId:isolated.revisionId});
+    expect(beforeRefusal.revision).toMatchObject({state:'draft',contentDigest:null,approvedAt:null,approvedByOperatorId:null});
+    const refused = await json(await site.call(`${isolatedPath}/approve`,{method:'POST',cookie,body:{revisionId:isolated.revisionId,idempotencyKey:'all-named-missing-fallback'}}),409);
+    expect(refused.status).toBe('blocked');
+    expect(refused.blockers).toEqual([expect.objectContaining({kind:'message.personalisation',blocking:true})]);
+    const afterRefusal = await readIsolated();
+    expect(afterRefusal.campaign).toEqual(beforeRefusal.campaign);
+    expect(afterRefusal.revision).toEqual(beforeRefusal.revision);
+    expect(afterRefusal.steps).toEqual(beforeRefusal.steps);
+    expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${isolated.campaignId}'`)).toEqual([]);
+    expect(await site.rows(`SELECT * FROM campaign_revision_candidates WHERE revision_id='${isolated.revisionId}'`)).toEqual([]);
+    expect(await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${isolated.campaignId}'`)).toEqual([]);
+    const dispatchCommands = async () => (await site.control('/_golive/emissions')).filter((emission:any)=>emission.command.kind==='campaign.dispatch'&&emission.command.payload.campaignId===isolated.campaignId);
+    expect(await dispatchCommands()).toEqual([]);
+    expect(edge.sends.filter(send=>allNamed.some(contact=>contact.email===send.to)&&send.body.headers?.['List-Unsubscribe'])).toEqual([]);
+
+    // Adding only the fallback admits ordinary approval and schedules precisely this verified audience.
+    await patchIsolated('<p>Hello {{displayName | fallback: Garden friend}}. The spring beds are in.</p>');
+    expect((await reviewIsolated()).checks.filter((check:any)=>check.blocking)).toEqual([]);
+    const isolatedApproval = await approve(site,cookie,isolated);
+    expect(isolatedApproval).toMatchObject({status:'scheduled',idempotent:false,revisionDigest:expect.stringMatching(/^[a-f0-9]{64}$/)});
+    const scheduled = await readIsolated();
+    expect(scheduled.campaign).toMatchObject({state:'scheduled',activeRevisionId:isolated.revisionId});
+    expect(scheduled.revision).toMatchObject({state:'approved',contentDigest:isolatedApproval.revisionDigest,approvedByOperatorId:'go-live-owner'});
+    expect(scheduled.audienceChannelCounts).toEqual([expect.objectContaining({channel:'email',eligibleContactCount:2,fallbackContactCount:0,recipientStepCount:2})]);
+    expect(await site.rows(`SELECT revision_id,revision_digest,operator_id FROM campaign_approval_requests WHERE campaign_id='${isolated.campaignId}'`)).toEqual([
+      {revision_id:isolated.revisionId,revision_digest:isolatedApproval.revisionDigest,operator_id:'go-live-owner'}
+    ]);
+    const frozenRecipients = await site.rows(`SELECT contact_id,destination,channel,transport_disposition FROM recipient_steps WHERE campaign_id='${isolated.campaignId}' ORDER BY destination`);
+    expect(frozenRecipients).toEqual(allNamed.map((contact,index)=>({contact_id:contactIds[index],destination:contact.email,channel:'email',transport_disposition:'queued'})));
+    expect(await dispatchCommands()).toEqual([expect.objectContaining({command:expect.objectContaining({payload:expect.objectContaining({campaignId:isolated.campaignId,revisionId:isolated.revisionId,channel:'email'})})})]);
   } finally {await site.runtime.close();await edge.close();}
 });
