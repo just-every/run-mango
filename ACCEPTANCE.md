@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 23 | 195 | 89 | 307 |
+| Core | 24 | 194 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 23 | 195 | 98 | 316 |
+| Full target | 24 | 194 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. CONT-001 was exercised through its registered native signup and identity-door journey from the code and tests at commit `6a0bc82eeebc63536e6e0cbc002b72f32194f447` (6 November 2026); this status candidate retains those source and test bytes. The proof covers canonical identities and does not claim SMS transport or carrier qualification. CAMP-010 was judged from the code and tests at commit `0acfc77e` (6 November 2026) by ct, with the streamed-editor hydration fix at `3aa0a095a88c6f32a8c2d267cf611159242cc5c0`; landing requires a green full-runtime Verify on the integrated head. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -848,7 +848,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-007 — Scheduled edits
 
-Core · published · **partial** · Rules D-1, D-3
+Core · published · **done** · Rules D-1, D-3
 
 **Requirement.** Editing a scheduled campaign preserves its approved work until a replacement is approved, and cannot rewrite a dispatch already begun.
 
@@ -857,8 +857,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. Replacement approval atomically makes the new revision the only active schedule and cancels every prior pending recipient-step.
 3. After any step begins dispatching, an edit creates a different campaign; the original campaign and later steps stay active until explicitly canceled.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CAMP-007] replacement and dispatch each win a forced real D1 ordering without mixing revisions”
-**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation. Missing public-door journey: “Scheduled edits — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch”, invoking `tests/go-live/scheduled-edit-journey.ts`: acceptance 1 reads back unchanged active revision, immutable approval and queued recipients after replacement creation and editing; acceptance 2 retains both forced replacement and dispatch orderings, prior pending skips and stale dispatch replay; acceptance 3 forks a three-step campaign after its first handoff, retains original authority, sends its second step once, then explicitly cancels the third with named skips and unchanged accepted outcomes. Native route, browser and network-edge journey with screens at 1440 and 390.
+**Gap.** None.
 
 #### CAMP-008 — Test send
 
