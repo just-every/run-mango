@@ -3,9 +3,9 @@ export function wooCommerceEdge(options: {catalogUrl?: string} = {}) {
   const at = '2026-10-20T10:00:00', later = '2026-10-21T10:00:00';
   const customer = {id: 11, date_created_gmt: at, date_modified_gmt: later, email: 'woo-reader@example.test', first_name: 'Alex', last_name: 'Orchard', password: 'never-import-this'};
   const product = {id: 21, date_created_gmt: at, date_modified_gmt: later, name: 'Orchard harvest box', status: 'publish', permalink: options.catalogUrl ?? 'https://woo.example.test/harvest', categories: [{id: 2, name: 'Seasonal produce'}]};
-  const order = {id: 31, date_created_gmt: at, date_modified_gmt: later, date_paid_gmt: at, currency: 'AUD', total: '48.00', status: 'completed', billing: customer,
+  const order = {id: 31, date_created_gmt: at, date_modified_gmt: later, date_paid_gmt: at, currency: 'AUD', total: '48.00', status: 'completed', billing: {...customer},
     line_items: [{id: 41, product_id: 21, name: product.name, quantity: 2}], refunds: [{id: 51, total: '-12.00'}], order_key: 'never-import-this', customer_ip_address: '192.0.2.1'};
-  const refund = {id: 51, date_created_gmt: later, amount: '12.00', refunded_payment: true, line_items: [{id: 61, product_id: 21, name: product.name, quantity: -1}]};
+  const refund = {id: 51, date_created_gmt: later, date_modified_gmt: later, amount: '12.00', refunded_payment: true, line_items: [{id: 61, product_id: 21, name: product.name, quantity: -1}]};
   const state = {observations: [] as any[], outage: false, secondPageFailure: false, requests: [] as string[], authorizations: [] as string[], customer, product, order, refund};
   async function handle(url: URL, request: IncomingMessage, response: ServerResponse) {
     if (url.hostname !== 'woo.example.test' || !url.pathname.startsWith('/wp-json/wc/v3/')) return false;
