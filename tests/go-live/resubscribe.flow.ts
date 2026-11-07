@@ -74,24 +74,67 @@ export const walk0 = async({page:operator,browser},info)=>{
       await screenshots(page,info,`resubscribe-${mode}-confirmation`);
       expect(await contactDetail(site,id)).toEqual(pending);
       await expectEmailStatus(site,email,'unsubscribed');
+      let confirmationStartedAt=0;
+      await page.route(link,async route=>{
+        expect(route.request().method()).toBe('POST');
+        expect(new URLSearchParams(route.request().postData()??'').get('confirm')).toBe('true');
+        confirmationStartedAt=Date.now();
+        await route.continue();
+      });
       const confirming=page.waitForResponse(response=>response.url()===link&&response.request().method()==='POST');
       await page.getByRole('button',{name:'Confirm subscription',exact:true}).click();
-      expect((await confirming).status()).toBe(200);
+      const confirmationResponse=await confirming;
+      await confirmationResponse.finished();
+      const confirmationFinishedAt=Date.now();
+      await page.unroute(link);
+      expect(confirmationResponse.status()).toBe(200);
       await expect(page.getByRole('heading',{name:'Subscription confirmed',exact:true})).toBeVisible();
       await screenshots(page,info,`resubscribe-${mode}-success`);
       await expectEmailStatus(site,email,'subscribed');
       const confirmed=await contactDetail(site,id),afterGrowth=await growth(site);
       expect(confirmed.history.filter((event:any)=>event.kind==='resubscribed')).toHaveLength(1);
-      expect(confirmed.consent.find((item:any)=>item.id===evidence.id)).toMatchObject({confirmationIp:ip,confirmedAt:expect.any(String)});
+      const confirmedEvidence=confirmed.consent.find((item:any)=>item.id===evidence.id);
+      expect(confirmedEvidence).toMatchObject({confirmationIp:ip,occurredAt:evidence.occurredAt,confirmedAt:expect.any(String)});
+      const confirmedAt=Date.parse(confirmedEvidence.confirmedAt);
+      expect(confirmationStartedAt).toBeGreaterThan(Date.parse(evidence.occurredAt));
+      expect(confirmedAt).toBeGreaterThanOrEqual(confirmationStartedAt);
+      expect(confirmedAt).toBeLessThanOrEqual(confirmationFinishedAt);
+      expect(Date.parse(confirmed.contact.emailStatusAt)).toBe(confirmedAt);
+      const confirmationRecords=()=>site.rows(`SELECT e.occurred_at AS captured_at,e.confirmed_at AS consent_at,
+        c.confirmed_at AS confirmation_at,h.kind,h.occurred_at AS history_at
+        FROM consent_evidence e JOIN consent_confirmations c ON c.consent_evidence_id=e.id
+        JOIN contact_history h ON h.id IN (e.id||'_confirmed',e.id||'_resubscribed')
+        WHERE e.id='${evidence.id}' ORDER BY h.kind`);
+      const recordedConfirmation=await confirmationRecords();
+      expect(recordedConfirmation).toEqual(['consent-confirmed','resubscribed'].map(kind=>({
+        captured_at:Date.parse(evidence.occurredAt),consent_at:confirmedAt,confirmation_at:confirmedAt,kind,history_at:confirmedAt,
+      })));
+      for(const suffix of ['confirmed','resubscribed']) {
+        const history=confirmed.history.filter((event:any)=>event.id===`${evidence.id}_${suffix}`);
+        expect(history).toHaveLength(1);
+        expect(Date.parse(history[0].occurredAt)).toBe(confirmedAt);
+      }
       expect(afterGrowth.rows).toContainEqual(expect.objectContaining({kind:'resubscribe',channel:'email',method,
         source:evidence.captureSource,consentText:description.consentText,count:1,net:1}));
       const beforeTotal=beforeGrowth.channels.find((row:any)=>row.channel==='email').closing;
       expect(afterGrowth.channels.find((row:any)=>row.channel==='email').closing).toBe(beforeTotal+1);
-      expect((await fetch(link)).status).toBe(410);
-      expect((await confirm(link)).status).toBe(410);
+      const replays:Array<{startedAt:number;getStatus:number;postStatus:number}>=[];
+      for(let replay=0;replay<2;replay++) {
+        const startedAt=Date.now();
+        expect(startedAt).toBeGreaterThan(confirmedAt);
+        const getStatus=(await fetch(link)).status,postStatus=(await confirm(link)).status;
+        expect(getStatus).toBe(410);
+        expect(postStatus).toBe(410);
+        expect(await confirmationRecords()).toEqual(recordedConfirmation);
+        replays.push({startedAt,getStatus,postStatus});
+      }
       expect(await contactDetail(site,id)).toEqual(confirmed);
       expect((await growth(site)).channels).toEqual(afterGrowth.channels);
       expect(await messagesFor(site,email)).toHaveLength(2);
+      await info.attach(`confirmation-time-${mode}`,{contentType:'application/json',body:JSON.stringify({
+        mode,capturedAt:Date.parse(evidence.occurredAt),confirmationStartedAt,confirmationFinishedAt,
+        confirmedAt,recordedConfirmation,replays,
+      },null,2)});
 
       await openPage(operator,`${site.runtime.url}/app/audience/${id}`);
       const history=operator.locator('section[aria-labelledby="timeline-title"]');

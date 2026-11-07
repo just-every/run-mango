@@ -212,7 +212,8 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
     const activeOperators=(await json(await site.call('/api/operators',{cookie:owner}),200)).operators.map((operator:any)=>operator.id);
     for(const role of ['author','manager'])expect(activeOperators).not.toContain(`role-${role}`);
     expect(await retainedHistory()).toEqual(history);
-    for(const width of [1440]) {
+    expect(await retainedHistory()).toEqual(history);
+    for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
       await view(owner,`/app/campaigns/${campaign.campaignId}/review`);
       await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Lena Chen');
@@ -223,6 +224,21 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
       await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Lena Chen');
       await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Maya Torres');
       await page.screenshot({path:info.outputPath(`roles-retained-campaign-${width}.png`),fullPage:true});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      await view(owner,'/app/settings/activity');
+      for(const [operator,name,action] of [['role-author','Lena Chen','campaign.approval-requested'],['role-manager','Maya Torres','approved']]) {
+        await page.getByLabel('Operator',{exact:true}).fill(operator);
+        await page.getByLabel('Action',{exact:true}).fill(action);
+        await page.getByLabel('Object',{exact:true}).fill(campaign.revisionId);
+        const response=page.waitForResponse(response=>response.url().includes('/api/activity?')&&new URL(response.url()).searchParams.get('operator')===operator);
+        await page.getByRole('button',{name:'Apply filters',exact:true}).click();
+        expect((await response).status()).toBe(200);
+        const entries=page.getByLabel('Activity entries',{exact:true});
+        await expect(entries.locator('tbody tr')).toHaveCount(1);
+        await expect(entries.locator('td[data-label="Who"]')).toHaveText(name);
+        await expect(entries.locator('time')).toHaveAttribute('datetime',new Date((operator==='role-author'?history.authorActivity:history.managerActivity)[0].occurredAt).toISOString());
+      }
+      await page.screenshot({path:info.outputPath(`roles-retained-activity-${width}.png`),fullPage:true});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
   } finally {await site.runtime.close();await edge.close();}
