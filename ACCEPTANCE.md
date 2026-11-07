@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 24 | 194 | 89 | 307 |
+| Core | 18 | 200 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 24 | 194 | 98 | 316 |
+| Full target | 18 | 200 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. CONT-001 was exercised through its registered native signup and identity-door journey from the code and tests at commit `6a0bc82eeebc63536e6e0cbc002b72f32194f447` (6 November 2026); this status candidate retains those source and test bytes. The proof covers canonical identities and does not claim SMS transport or carrier qualification. CAMP-010 was judged from the code and tests at commit `0acfc77e` (6 November 2026) by ct, with the streamed-editor hydration fix at `3aa0a095a88c6f32a8c2d267cf611159242cc5c0`; landing requires a green full-runtime Verify on the integrated head. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -226,7 +226,7 @@ Core · published · **partial** · Rules D-1
 
 #### CONT-001 — Contact identity
 
-Core · published · **done** · Rules D-2
+Core · published · **partial** · Rules D-2
 
 **Requirement.** Canonical email and phone identities identify one Mango contact.
 
@@ -235,8 +235,8 @@ Core · published · **done** · Rules D-2
 2. Phone identities use the documented international canonical form.
 3. Each canonical email or phone identity belongs to at most one contact on capture and import.
 
-**Evidence.** `tests/audience-import/signup.spec.ts` — “[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out”, including `tests/audience-import/identity-doors.ts` — “identityDoors”: acceptance 1, canonical email comparison through hosted JSON and encoded form submissions, manual and scoped API capture, CSV import and authenticated search and detail; acceptance 2, US, UK and Australian canonical phone readback including phone-only CSV import and malformed-number refusal; acceptance 3, one contact per identity in both capture and import orders, duplicate rows and conflicting-owner refusal without identity or consent changes. Revoked credentials cannot write and no campaign approval, recipients or dispatch authority is created. Existing `tests/move-in/archive.journeys.ts` archive evidence is retained. Identity proof makes no SMS handoff: Twilio A2P and US carrier registration, SMS transport and qualification remain held; CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
-**Gap.** None.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import. Missing public-door journey: “Contact identity — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-002 — Channel status
 
@@ -526,8 +526,8 @@ Core · published · **partial** · Rules D-1
 3. The sender identity and destination links are editable.
 4. Each selected channel has a preview of its saved content.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”; `tests/proposals-decision/content-editing.spec.ts` — “[PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority”: native generation and adoption, independently chosen email body, sender name, From, Reply-to, postal address and replacement destination; repeated campaign and review readback, persisted revision and link rows, retained proposal evidence and no approval, recipients or dispatch authority.
-**Gap.** Asserted: Editable campaign name; Editable email subject; Editable email body; Editable email sender identity and destination links; Saved email preview; Saved SMS preview. Unasserted: Editable proposed SMS body and SMS sender identity. Twilio A2P and US carrier registration remain owner-held; SMS transport and qualification and real AI, commerce and provider qualification are not established. Carried provider, device, account and cross-seed or Base prerequisites, rer 0.2.95 adoption and account and acceptance requirements remain binding. CONT-013 retains the ct SPLIT and NEW-1 disposition and original fix-1 hold.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Editable campaign name; Editable email subject; Saved email preview; Saved SMS preview. Unasserted: Editable email body; Editable proposed SMS body; Editable sender identity; Editable destination links. Missing public-door journey: “Content — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-005 — Owner control
 
@@ -581,8 +581,8 @@ Core · published · **partial** · Rules D-1
 2. No forecast presents a benchmark from another store.
 3. Insufficient own history is stated explicitly instead of a displayed range.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.
-**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history”
+**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: “Forecast provenance — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-009 — Proposal states
 
@@ -669,7 +669,7 @@ Core · published · **partial** · Rules D-2
 
 #### AUD-006 — Multi-step exit
 
-Core · published · **done** · Rules D-2
+Core · published · **partial** · Rules D-2
 
 **Requirement.** Every later step applies its own current inclusion and exclusion rules to the frozen audience.
 
@@ -678,8 +678,8 @@ Core · published · **done** · Rules D-2
 2. After the first send, changes to inclusion, a custom exclusion and consent yield named skips at the second step, with only the still-eligible control sent.
 3. A contact newly matching the rule remains outside the frozen audience.
 
-**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”: after the first handoff, a signed paid order for the campaign product prevents both later buyer steps with recent-product-purchase, zero attempts and no handoff; current inclusion, custom exclusion and opt-out remain named skips; only the eligible control sends once at each later step and a newly matching contact stays outside the frozen audience.
-**Gap.** None.
+**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”
+**Gap.** Asserted: after the first send, changed inclusion, a custom exclusion and an opt-out are named skips at the second step, only the still-eligible control is sent, and a newly matching contact stays outside the frozen audience. Unasserted: a conversion after an earlier step prevents later steps; no journey records a purchase of the campaign's product between steps and shows the next step skipped (recent-product-purchase is asserted only at review).
 
 #### AUD-007 — Frozen candidate set
 
@@ -848,7 +848,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-007 — Scheduled edits
 
-Core · published · **done** · Rules D-1, D-3
+Core · published · **partial** · Rules D-1, D-3
 
 **Requirement.** Editing a scheduled campaign preserves its approved work until a replacement is approved, and cannot rewrite a dispatch already begun.
 
@@ -857,8 +857,8 @@ Core · published · **done** · Rules D-1, D-3
 2. Replacement approval atomically makes the new revision the only active schedule and cancels every prior pending recipient-step.
 3. After any step begins dispatching, an edit creates a different campaign; the original campaign and later steps stay active until explicitly canceled.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch”, invoking `tests/go-live/scheduled-edit-journey.ts`: acceptance 1 reads back unchanged active revision, immutable approval and queued recipients after replacement creation and editing; acceptance 2 retains both forced replacement and dispatch orderings, prior pending skips and stale dispatch replay; acceptance 3 forks a three-step campaign after its first handoff, retains original authority, sends its second step once, then explicitly cancels the third with named skips and unchanged accepted outcomes. Native route, browser and network-edge journey with screens at 1440 and 390.
-**Gap.** None.
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CAMP-007] replacement and dispatch each win a forced real D1 ordering without mixing revisions”
+**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation. Missing public-door journey: “Scheduled edits — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-008 — Test send
 
@@ -890,7 +890,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-010 — Step deadline
 
-Core · published · **done** · Rules D-1, D-3
+Core · published · **partial** · Rules D-1, D-3
 
 **Requirement.** Steps never begin sending after their send-by deadline.
 
@@ -899,8 +899,8 @@ Core · published · **done** · Rules D-1, D-3
 2. A recipient-step not handed off by that instant is skipped with a deadline-passed reason.
 3. A step whose deadline passed before dispatch begins sends nothing.
 
-**Evidence.** `tests/campaign-authoring/step-deadline.spec.ts` — “[CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue”, invoking `tests/campaign-authoring/step-deadline-dispatch-journey.ts`: acceptance 1 — native email and SMS creation and PATCH, local and UTC-only inputs without send-by fields, independently specified ordinary and daylight-saving day ends, explicit overrides, agreement and mismatch refusals, saved and reopened deadline controls, no draft approval or dispatch authority; acceptance 2 — native approval and production Cron and Queue consumers skip queued and prepared recipients at expiry with send-window-expired while retaining accepted and uncertain handoffs; acceptance 3 — expired first and later steps, delayed commands, paused windows and late queue replay produce no marketing handoff. The authoring fixture substitutes mail capabilities and records domain queue jobs. The dispatch journey exercises production Cron and Queue with HTTP fixtures for SendGrid, DNS, Mobile Message and the mailbox receipt connector; clock and D1/Queue barriers control timing only. These establish native behavior, not live provider qualification. Existing scheduler evidence remains in `tests/go-live/scheduler.journeys.ts`. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration.
-**Gap.** None.
+**Evidence.** `tests/go-live/scheduler.journeys.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch. Missing public-door journey: “Step deadline — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-011 — Dispatch punctuality
 
@@ -1084,8 +1084,8 @@ Core · published · **partial** · Cites BASE-DATA-001, BASE-DATA-004, BASE-OPS
 4. Candidate images and layouts are retained as authoring evidence and exported under DATA-001.
 5. Each paid request records its RESULT-004 cost fact.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: native generation and choice, failed and successful completion, authenticated status and persisted rows after reload and repeated reads
-**Gap.** Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request; Exact sanitized brief retained; Issued provider run and layout identifiers; Candidate byte size; Authenticated operator; Independently bounded creation, candidate and completion times retained through reload. Unasserted: Run never deleted beyond existing terminal-state checks; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request. Unasserted: Brief retained; Provider run identifier; Provider layout identifier; Candidate size; Operator; Times; Run never deleted; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-011 — Design provider custody
 
@@ -1294,8 +1294,8 @@ Core · published · **partial**
 5. Preview uses an illustrative display name only for the name field delivery supports; unavailable properties use their saved fallbacks in preview and delivered content.
 6. Editor, preview and review expose the same fallback outcomes at desktop and phone widths.
 
-**Evidence.** `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation”: saved fallback rendering, eligible-person counts, escaped HTML and plain-text delivery; all-named subscribed email audience with only the personalisation blocker, approval and scheduling refusal without authority or dispatch work, and successful approval after adding the fallback.
-**Gap.** Acceptance 6 still lacks phone-width editor, preview and review proof; SMS personalization proof and real SMS transport qualification remain unproved. Twilio A2P and US carrier registration remain owner-held. Existing provider, device, account, cross-seed and Base prerequisites, rer 0.2.95 adoption, release requirements and CONT-013 SPLIT and NEW-1 disposition with the original fix-1 hold are unchanged.
+**Evidence.** `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation”: saved fallback rendering, eligible-person counts, escaped HTML and plain-text delivery; all-named subscribed email audience with only the personalisation blocker, approval and scheduling refusal without authority or dispatch work, and successful approval after adding the fallback. The same journey authors the fallback and checks saved editor, preview and review outcomes at 390px, with browser captures at 1440px and 390px.
+**Gap.** SMS personalization proof and real SMS transport qualification remain unproved. Twilio A2P and US carrier registration remain owner-held. Existing provider, device, account, cross-seed and Base prerequisites, rer 0.2.95 adoption, release requirements and CONT-013 SPLIT and NEW-1 disposition with the original fix-1 hold are unchanged.
 
 #### MSG-009 — Email body
 
@@ -4470,7 +4470,7 @@ Core · target · **missing** · Rules D-2
 
 #### PUB-005 — Paid signup page and payer consent
 
-Core · target · **done** · Rules D-2
+Core · target · **partial** · Rules D-2
 
 **Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
 
@@ -4480,12 +4480,12 @@ Core · target · **done** · Rules D-2
 3. Checkout returns the reader to a Mango explanation of the next step.
 4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-tier-journey.ts`
-**Gap.** None.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above.
 
 #### PUB-006 — Paid-reader consent and restrictions
 
-Core · target · **done** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
+Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
 
 **Requirement.** A paying reader joins the mailing audience only with their own channel confirmation.
 
@@ -4496,8 +4496,8 @@ Core · target · **done** · From PUB-005 · Cites BASE-DATA-003 · Rules D-2
 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures.
-**Gap.** None.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either).
 
 ### Installation services
 
