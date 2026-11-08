@@ -13,7 +13,7 @@ import { openPage, reloadPage } from '../support/navigation';
 
 test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",async ({page}, info) => {
   const commerce=sourceEdge();
-  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
+  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:[...imageHosts,'admin-review.example.test']});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
@@ -118,11 +118,13 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     expect(replayOperator.operator.id).not.toBe(acknowledged.acknowledgement.operatorId);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
-    // Replay the exact original request as another operator before checks replace their transient row IDs.
+    // Preserve the original-operator replay and exercise the captured request as another operator.
+    expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
     expect(await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
     await review();
     const refreshed = await retainedFinding();
     expect(refreshed.id).not.toBe(originalFinding.id);
+    expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
     // Expired check row IDs cannot grant authority, even with the exact original payload.
     await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),409);
     // Another authenticated operator cannot replace the original actor or time.
