@@ -1,9 +1,9 @@
 {
-  "conclusion": null,
+  "conclusion": "failure",
   "head_sha": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
   "html_url": "https://github.com/just-every/run-mango/actions/runs/42484470495",
-  "status": "in_progress",
+  "status": "completed",
   "id": 42484470495,
-  "observed_at": "2026-11-08T13:30:58.748415+00:00",
+  "observed_at": "2026-11-08T13:35:59.799029+00:00",
   "event": "push"
 }

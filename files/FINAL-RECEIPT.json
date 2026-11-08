@@ -1,0 +1,33 @@
+{
+  "tag": "sd-mango-c-f134",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f134",
+  "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "product_pushed": true,
+  "status": "BLOCKED",
+  "ready": false,
+  "blocker": "Exact-head Verify failed in an unchanged held-import journey; the full failed command passed on the candidate and its original move-in member passed on main. The brief requires stopping when the CI failure cannot be reproduced.",
+  "ci": {
+    "run": 42484470495,
+    "event": "push",
+    "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+    "conclusion": "failure",
+    "failed_jobs": [
+      128743646905,
+      128746534365
+    ],
+    "reports_job": 128743646795,
+    "reports_job_conclusion": "success"
+  },
+  "candidate_reproduction_exit": 0,
+  "main_comparison_head": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "main_comparison_exit": 0,
+  "repair_edits": 0,
+  "workflow_reruns": 0,
+  "github_calls": 8,
+  "final_lock_check_exit": 0,
+  "final_contract_check_exit": 0,
+  "working_tree_clean": true,
+  "source_receipt_hashes_still_match": true,
+  "timestamp": "2026-11-08T13:53:48.106096+00:00"
+}

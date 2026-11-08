@@ -1,0 +1,38 @@
+VERIFY_MEMBER move-in
+VERIFY_SCHEDULE {"selection":"move-in","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f134/reproduce-candidate/members/move-in/evidence/7f523b30a6bf/verify/move-in-E8h9eC
+VERIFY_STAGE {"name":"move-in","event":"start","at":"2026-11-08T13:37:27.301Z"}
+move-in
+
+Running 2 tests using 2 workers
+
+(node:5090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5091) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives (2.4m)
+  ✓  2 tests/move-in/archive.journeys.ts:5:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (5.9m)
+
+  Slow test file: tests/move-in/archive.journeys.ts (5.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (5.9m)
+VERIFY_STAGE {"name":"move-in","status":"PASS","startedAt":"2026-11-08T13:37:27.301Z","durationMs":357373,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":357395,"boundary":"coordinator"}
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f134/reproduce-candidate/members/go-live/evidence/7f523b30a6bf/verify/go-live-e3ZnDL
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T13:43:24.764Z"}
+go-live
+
+Running 2 tests using 2 workers
+
+(node:6252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/personalisation.journeys.ts:9:1 › [MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation (57.3s)
+  ✓  2 tests/go-live/open-estimates.journeys.ts:9:1 › [RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased (2.4m)
+
+  2 passed (2.4m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-08T13:43:24.764Z","durationMs":144081,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":144111,"boundary":"coordinator"}

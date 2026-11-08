@@ -1,0 +1,16 @@
+verify	Require the selected coverage and its proof	﻿2026-11-08T13:33:56.8885710Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8886525Z [36;1mset -euo pipefail[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8887287Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8888195Z [36;1mcase "$PUSH_PROOF:$NIGHTLY_PROOF" in[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8889230Z [36;1m  *failure*|*cancelled*) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8889975Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8890597Z [36;1mcase "$COVERAGE" in[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8891490Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8892859Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8894650Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8896415Z [36;1m  *) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.8897060Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.9116960Z shell: /usr/bin/bash -e {0}
+[Job environment values omitted from report packet.]
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.9130819Z ##[endgroup]
+verify	Require the selected coverage and its proof	2026-11-08T13:33:56.9439941Z ##[error]Process completed with exit code 1.

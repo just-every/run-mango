@@ -1,0 +1,20 @@
+VERIFY_MEMBER move-in
+VERIFY_SCHEDULE {"selection":"move-in","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f134/reproduce-main/members/move-in/evidence/fb5f6f4036ff/verify/move-in-HnaApv
+VERIFY_STAGE {"name":"move-in","event":"start","at":"2026-11-08T13:46:41.293Z"}
+move-in
+
+Running 2 tests using 2 workers
+
+(node:7148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7149) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives (2.4m)
+  ✓  2 tests/move-in/archive.journeys.ts:5:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (6.0m)
+
+  Slow test file: tests/move-in/archive.journeys.ts (6.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (6.0m)
+VERIFY_STAGE {"name":"move-in","status":"PASS","startedAt":"2026-11-08T13:46:41.293Z","durationMs":362485,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":362507,"boundary":"coordinator"}

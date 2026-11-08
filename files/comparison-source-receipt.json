@@ -1,0 +1,10 @@
+{
+  "candidate": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "main": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "different_paths": [
+    "sources.lock.json",
+    "tests/go-live/signup-capacity-journey.ts"
+  ],
+  "production_source_identical": true,
+  "move_in_test_source_identical": true
+}

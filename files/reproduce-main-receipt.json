@@ -1,0 +1,9 @@
+{
+  "head": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "job": 128743646905,
+  "command": "node scripts/verification/ci.mjs move-in",
+  "members": "Original move-in member only, including both original journeys and two workers.",
+  "exit": 0,
+  "repair_edits": 0,
+  "scope": "Same physical cloud runner, Node 22.20.0, system Chromium, separate native fixture storage and frozen dependencies"
+}

@@ -13,6 +13,8 @@ GAP FORM-012: Acceptance 1's full floor matrix, acceptance 2's every-level, floo
 
 No new policy default was adopted. RL-103's existing conservative Owner-only, audited, prospective raises remain in force. CONT-013's SPLIT and NEW-1 disposition, original fix-1 hold, prohibition on a third FIX or follow-up-only builder, provider, device, account, cross-seed and Base prerequisites, and existing rer0.2.95 adoption and release requirements remain unchanged.
 
+Current CI custody: Verify run 42484470495 completed with failure. Its reports job 128743646795, containing the changed signup journey, passed. The unrelated move-in job 128743646905 failed; its full command subsequently passed on the candidate with exit 0. The original move-in member also passed on current main, exit 0. The brief requires BLOCKED because the exact CI failure did not reproduce. No repair edit or workflow rerun has been made.
+
 ## Plan and implementation
 
 The complete plan is in PLAN.md. The sole plan-row result is FORM-012 PARTIAL to PARTIAL, with the three missing acceptance-4 refusal outcomes closed. No other campaign row was selected or changed. Status counts remain 21 DONE, 197 PARTIAL and 98 MISSING before and after. Test registration delta is zero; the focused registered file still contains one registration. No assertion was removed, weakened, skipped or moved behind a width condition. Existing successful update, replay, pending-state, activation and once-only Owner audit assertions are retained or strengthened.
@@ -49,7 +51,7 @@ No DONE claim is made. All eleven rows were reviewed against this bounded PARTIA
 | --- | --- | --- |
 | 1 — every acceptance outcome reached | FAIL for whole-clause DONE; PASS for selected acceptance 4 locally | The three refusal outcomes execute and observe real state at lines 49–59. The planner's held outcomes remain explicit above. |
 | 2 — meaningful real-data assertions and both unsafe and allowed paths | PASS for scoped door locally | A real persisted pending Owner raise precedes all three refused writes; complete stored rows and activity are compared. Owner success and replay remain at lines 25–33 and 84–92. |
-| 3 — recorded exact-head Verify loads proof | Registered; CI receipt governs completion | Existing reports partition in scripts/verification/plan.mjs:25 contains shared-kiosk.journeys.ts. Verify push run 42484470495 targets the exact candidate. |
+| 3 — recorded exact-head Verify loads proof | Scoped reports job PASS; overall Verify FAIL | Existing reports partition in scripts/verification/plan.mjs:25 contains shared-kiosk.journeys.ts. Verify push run 42484470495 targets the exact candidate. |
 | 4 — candidate provenance | PASS locally | source-receipt.json records exact committed blobs and SHA-256 values; the final focused run executes the clean committed candidate. |
 | 5 — inherited duties cited | PASS, INSPECTED | CONTRACT.md:2091 already cites BASE-ROLE-001 and BASE-AUDIT-001. No inheritance text changed. |
 | 6 — generated views and provenance | PASS mechanically, no status promotion | Generator write and check both exit 0; main's views are restored. Every Status, Gap and Evidence cell is untouched. |
@@ -57,7 +59,7 @@ No DONE claim is made. All eleven rows were reviewed against this bounded PARTIA
 | 8 — dangerous authority path both ways | PASS for scoped door locally | Owner change succeeds; effective Admin change is refused with 403; both invalid Owner bounds are refused with 400; all refused paths preserve persisted authority and activity. |
 | 9 — provider and legal boundaries honest | PASS, INSPECTED | No provider qualification, real handoff-rate, legal or device claim is added. Named remainders and the existing fixture boundary remain explicit. |
 | 10 — policy approval | PASS, INSPECTED | No new authority or spending policy was introduced. The existing Owner-only implementation and RL-103 are retained. |
-| 11 — main, Verify, Run site and publication scan | Pending guarded lander | Product main is not changed. Main equality is false by design. The cloud does not run the fleet's publication scanner or claim a candidate Run site receipt. |
+| 11 — main, Verify, Run site and publication scan | Not satisfied: overall Verify red | Product main is not changed. Main equality is false by design. The cloud does not run the fleet's publication scanner or claim a candidate Run site receipt. |
 
 ## Pre-READY review and mechanical checks
 
@@ -76,3 +78,19 @@ Both view files were restored from origin/main before commit. The lock was gener
 The packet selects only the actual plan, report, public-door observations, local and mechanical receipts, exact source hashes, CI observations, command logs and the four signup allowance screenshots. Runtime directories, fixture sessions, private configuration, environment files and other captures are not selected. Source and output artifacts are outside the product branch except the requested test and generated lock.
 
 No PR is needed: the product branch push started the repository's existing Verify entry point. The fleet owns publication scanning and guarded landing. Prior main eceb55d9eca66cf4a2702f69e23109d2266b1560 had successful Verify 42480504208 and successful Run site 42480504239 when inspected. These earlier runs are not candidate proof.
+
+The intermediate evidence publication cbf63cba25f13d3eef7f5d11204fd4f7cf235add was fetched back through the report transport. Its manifest and all seventeen selected file hashes verified; evidence-transfer-receipt.json records that intermediate transfer, not a product acceptance or landing result. The terminal EVIDENCE line names the final report ref head.
+
+## Terminal CI custody and blocker
+
+Verify 42484470495 completed failure on c25389df22188f2da7b4abde3d71ed08bc823b6c. The changed journey's reports job 128743646795 succeeded. The only failed test was the unchanged held-import journey in job 128743646905, where consent capture returned 409 instead of 201 with “Confirmation delivery is uncertain; the attempt will not be repeated automatically.” Aggregate job 128746534365 then correctly refused failed coverage.
+
+The complete failed command passed on the exact candidate: four tests, exit 0, including both move-in journeys and both go-live members. Current main eceb55d9eca66cf4a2702f69e23109d2266b1560 was fetched again, then its original move-in member ran on the same cloud runner: both original journeys passed, exit 0. Both runs used Node 22.20.0, CPU budget 4 and two workers. Production source and move-in test source are identical between main and the candidate. The comparison source receipt records the only two differing paths.
+
+VERIFY_NOT_REPRODUCED {"head":"c25389df22188f2da7b4abde3d71ed08bc823b6c","job":128743646905,"command":"node scripts/verification/ci.mjs move-in","test":"tests/move-in/held.journeys.ts#restrictive move-in states win across held imports, retry, undo and rejected archives","exit":0,"failure":"CI expected HTTP 201; received HTTP 409 consent_capture_failed; local replay passed"}
+
+The Verify-repair rule explicitly requires stopping BLOCKED when the failed command does not reproduce. No speculative repair or workflow rerun was made. Eight of the ten allowed GitHub calls were used. The two failed-job logs were fetched once each; job environment blocks were omitted. A successful scoped shard and passing local replay do not change the overall red workflow conclusion.
+
+FORM-012 stays PARTIAL, with acceptance 4 proved and all planner-held remainders unchanged. Counts remain 21 DONE, 197 PARTIAL and 98 MISSING; the plan row is PARTIAL to PARTIAL. No claim is made for landing, main equality, candidate Run site or a complete publication scan. The final source lock and contract checks exit 0, the product checkout remains clean and every hash in the candidate source receipt still matches. All product work is preserved on the named cloud branch; actual reports and receipts are separately published to the evidence ref.
+
+BLOCKED branch=cloud/sd-mango-c-f134 head=c25389df22188f2da7b4abde3d71ed08bc823b6c reason=unreproduced exact-head Verify failure in move-in job 128743646905; runner-side CI diagnosis required

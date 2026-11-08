@@ -1,0 +1,8 @@
+{
+  "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "job": 128743646905,
+  "command": "node scripts/verification/ci.mjs move-in",
+  "exit": 0,
+  "repair_edits": 0,
+  "scope": "Exact failed matrix selection, Node 22.20.0 and two test workers; cloud system Chromium and external artifact storage"
+}
