@@ -1,0 +1,16 @@
+{
+  "head": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+  "candidateIdentitiesAndMessagesValid": true,
+  "candidateCommitCount": 2,
+  "generatedViewsEqualOriginMain": true,
+  "workflowAndShardPlanUnchanged": true,
+  "worktreeClean": true,
+  "sha256": {
+    "tests/go-live/fixture-links.ts": "09eb78c760af26ac6c7777009aa3617c385eccfa424d6d087d5072d899188045",
+    "tests/go-live/worker.ts": "5be0444a3c4e9fe91c5a7b12f5f317c01258a89253cffca894288c44662a8777",
+    "tests/go-live/edge.ts": "8b517e066c85f76bed58c303d4882c01e4010760ad0cb29911a176cfd7172690",
+    "tests/campaign-assets.spec.ts": "7e7d80ae30657ef92e62334d5cd1898986ab508f16754b8469078728069ffc69",
+    "CONTRACT.md": "c572c181a98db9d3b17e4a268d27c0f73c7d78cb3c54a36f7079b93f9b7ecbfb",
+    "sources.lock.json": "bae829a5939172bc8bc9b081c4f753d604aab9531c027d938f0d360e4ce150c3"
+  }
+}

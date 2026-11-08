@@ -1,0 +1,32 @@
+[
+  {
+    "repository": "just-every/run-mango",
+    "ref": "refs/heads/evidence/sd-mango-c-f144",
+    "head": "b619f53d9c008f7cb7898423e3f8598d61fc7367",
+    "source": "files/prior-ci-failure.txt",
+    "blob": "814abe09f2d0040cdecee20e9dc91eb959982973",
+    "packetFile": "prior-ci-f144.txt",
+    "sha256": "9828b551786b0748787438fb76f8eece8e52f265a7e1cfa5726ec0c0ba9eae1d",
+    "provenance": "retained builder evidence, not a newly retrieved workflow archive"
+  },
+  {
+    "repository": "just-every/run-mango",
+    "ref": "refs/heads/evidence/sd-mango-c-f134",
+    "head": "33e7a7cf21d64a8b577ea344e863edf076d647bd",
+    "source": "files/CI-DIAGNOSIS.md",
+    "blob": "1bdbf4a2d4576dd94c39c86ab26bfbb8cb28ec07",
+    "packetFile": "prior-ci-f134.md",
+    "sha256": "19f112ce3a302f5f37f905664888c61a2f53477c6fa57a1cc13be9210814a2ce",
+    "provenance": "retained builder evidence, not a newly retrieved workflow archive"
+  },
+  {
+    "repository": "just-every/run-mango",
+    "ref": "refs/heads/evidence/sd-mango-c-f134",
+    "head": "33e7a7cf21d64a8b577ea344e863edf076d647bd",
+    "source": "files/failed-move-in.log",
+    "blob": "459478bb69f3d2795cc9e5fba80b6f89c2b719a2",
+    "packetFile": "prior-f134-failed-move-in.log",
+    "sha256": "faaa7dd7a079bf59ead3af9112ef726a6e743815b4676fb4d2c3c92773c383b3",
+    "provenance": "retained builder evidence, not a newly retrieved workflow archive"
+  }
+]

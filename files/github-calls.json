@@ -1,0 +1,67 @@
+{
+  "limit": 10,
+  "calls": [
+    {
+      "n": 1,
+      "command": "gh run view 42484392722 --repo just-every/run-mango --attempt 1 --log-failed",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 2,
+      "command": "gh run view 42484470495 --repo just-every/run-mango --attempt 1 --job 128743646905 --log-failed",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 3,
+      "command": "gh run view 42487666893 --repo just-every/run-mango --attempt 1 --job 128753337741 --log-failed",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 4,
+      "command": "gh run view 42493957794 --repo just-every/run-mango --attempt 1 --job 128772486199 --log-failed",
+      "exit": 0,
+      "file": "failure-42493957794.log"
+    },
+    {
+      "n": 5,
+      "command": "gh run view 42484392722 --repo just-every/run-mango --attempt 1 --log",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 6,
+      "command": "gh run view 42484470495 --repo just-every/run-mango --job 128743646905 --log",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 7,
+      "command": "gh run view 42487666893 --repo just-every/run-mango --job 128753337741 --log",
+      "exit": 0,
+      "bytes": 0
+    },
+    {
+      "n": 8,
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=3ada2fb0ea501a1f02de43b8da1bdedc545e1313&per_page=100",
+      "file": "ci-discovery.json",
+      "epoch": 1794155369.0383472
+    },
+    {
+      "n": 9,
+      "command": "gh api repos/just-every/run-mango/actions/runs/42500042846/jobs?per_page=100",
+      "file": "ci-jobs.json",
+      "epoch": 1794155670.5576258,
+      "exit": 0
+    },
+    {
+      "n": 10,
+      "command": "gh run view 42500042846 --repo just-every/run-mango --job 128790648142 --log-failed",
+      "file": "ci-build-failed.log",
+      "epoch": 1794155973.3842702,
+      "exit": 0
+    }
+  ]
+}

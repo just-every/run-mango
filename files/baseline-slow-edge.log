@@ -1,0 +1,39 @@
+
+Running 1 test using 1 worker
+
+(node:2351) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FLEET_SHOP_DNS_DELAY {"type":"A","elapsedMs":5501.009972999978,"closed":true}
+  ✘  1 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (2.9m)
+
+
+  1) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Draft saved. Preview and checks are up to date.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+
+
+       at email-size.flow.ts:78
+
+      76 |     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);
+      77 |     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    > 78 |     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();
+         |                                                                                                  ^
+      79 |     await approve(site,cookie,campaign);
+      80 |     await site.control('/_golive/clock',{advanceMs:3600001});
+      81 |     const recipients=await dispatch(site,campaign.campaignId,due);
+        at walk0 (/home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live/email-size.flow.ts:78:98)
+        at /home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live/presend-checks.journeys.ts:8:3
+
+    Error Context: ../evidence/f2a495d94b16/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md
+
+  1 failed
+    tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 

@@ -1,0 +1,18 @@
+{
+  "head": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+  "workflow": ".github/workflows/verify.yml",
+  "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb",
+  "aggregateJob": "verify",
+  "needs": [
+    "plan",
+    "build",
+    "shards",
+    "light",
+    "full-push-proof",
+    "nightly-proof"
+  ],
+  "aggregateFailureStep": "Require the selected coverage and its proof",
+  "explanation": "For full coverage, lines 329-331 require build=success and shards=success. The exact-SHA job metadata records build=failure at generated contract check and shards=skipped; the aggregate dependency gate therefore fails. It is not an additional browser assertion.",
+  "rootJobId": 128790648142,
+  "aggregateJobId": 128790710953
+}

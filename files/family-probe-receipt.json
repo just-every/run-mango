@@ -1,0 +1,17 @@
+{
+  "probe1": {
+    "log": "failure-family-probe.log",
+    "script": "failure-family.probe.ts",
+    "exit": 1,
+    "f134": "Refused by provider-pacing before the delayed transport was reached; experiment omitted availableTransport",
+    "f137": "Passed: explicit expiry Cron before resume yielded completed campaign, skipped send-window-expired recipient and HTTP 409 campaign_not_operator_paused"
+  },
+  "probe2": {
+    "log": "failure-family-fixed-probe.log",
+    "script": "failure-family-fixed.probe.ts",
+    "exit": 1,
+    "f134": "Passed after awaiting the real provider budget: 16-second fake provider delay yielded HTTP 409 consent_capture_failed with unchanged uncertainty detail",
+    "f137": "Aborted during next installation startup; no new conclusion. First independent probe remains the recorded successful deterministic expiry experiment."
+  },
+  "limits": "These controlled sufficient causes do not identify the unrecorded transport exception or scheduler interleaving of the historical hosted runs."
+}

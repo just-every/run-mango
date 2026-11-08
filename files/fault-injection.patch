@@ -1,0 +1,17 @@
+diff --git a/tests/go-live/edge.ts b/tests/go-live/edge.ts
+index cd7fc95..03a1499 100644
+--- a/tests/go-live/edge.ts
++++ b/tests/go-live/edge.ts
+@@ -88,6 +88,12 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+     if (original.hostname === 'links.example.test' && request.method === 'HEAD') {response.writeHead(domainSetup.trackingHttps ? 200 : 503); response.end(); return;}
+     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
+     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
++    // One-off fault injection; removed before the product commit.
++    if (process.env.FLEET_DELAY_SHOP_DNS && original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'shop.example.test') {
++      const started=performance.now();
++      await new Promise(resolve=>setTimeout(resolve,5500));
++      console.log('FLEET_SHOP_DNS_DELAY',JSON.stringify({type:original.searchParams.get('type'),elapsedMs:performance.now()-started,closed:response.destroyed}));
++    }
+     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+     if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
+     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});

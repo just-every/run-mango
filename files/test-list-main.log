@@ -1,0 +1,55 @@
+Listing tests:
+  audience-controls/segments.spec.ts:7:1 › [CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent
+  audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion
+  audience-import/erasure.spec.ts:24:1 › CONT-013 public erasure resumes, keeps each restriction, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable
+  audience-import/erasure.spec.ts:99:1 › CONT-013 erasure removes an address inside URLs and storage keys and keeps longer addresses that contain it
+  audience-import/erasure.spec.ts:117:1 › CONT-013 a capture IP shared with another person never touches their separate import
+  audience-import/privacy-portability.spec.ts:23:49 › CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody
+  audience-import/privacy-portability.spec.ts:23:49 › CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody after a pre-upgrade mapping cursor
+  audience-import/privacy-portability.spec.ts:116:1 › CONT-004/010 legacy detached opt-outs and suppressions refuse a lossy CSV and still exclude later imports
+  audience-import/signup-reservation-clock.spec.ts:43:1 › security: ascending old streamed-body groups spend only the actual D1 reservation hour
+  audience-import/signup-reservation-clock.spec.ts:87:1 › security: delayed bodies share the actual D1 network hour despite older ingress clocks
+  audience-import/signup-reservation-clock.spec.ts:110:1 › security: application clock skew cannot move the durable admission clock or reopen its final slot
+  audience-import/signup-security.spec.ts:19:1 › security: confirmation scanner GET and HEAD write nothing; affirmative POST alone consumes token
+  audience-import/signup-security.spec.ts:30:1 › security: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation
+  audience-import/signup-security.spec.ts:79:1 › security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed
+  audience-import/signup-security.spec.ts:86:1 › security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart
+  audience-import/signup-security.spec.ts:102:1 › security: sender and Turnstile preflight fail closed before contact storage; valid challenge is single use
+  audience-import/signup-security.spec.ts:122:1 › security: IPv4 mapped IPv6 shares the IPv4 budget
+  audience-import/signup-security.spec.ts:126:1 › security: production rejects one-sided Turnstile and publishes only the public widget key and action
+  audience-import/signup-security.spec.ts:144:1 › security: confirmation POST preserves expiry, optout and suppression guards
+  audience-import/signup-security.spec.ts:159:1 › security: explicit ledger reconsent remains logged and confirmable after optout, but suppression never dispatches
+  audience-import/signup-security.spec.ts:170:1 › [CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot
+  audience-import/signup-security.spec.ts:200:1 › [CONT-027] repeated public requests share the durable UTC destination allowance across restart and reopen on a new database day
+  audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out
+  contract.js:7:10 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free
+  contract.js:7:10 › [CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing
+  contract.js:7:10 › [CAMP-012] an image past its per-minute allowance answers 429 without affecting other images
+  contract.js:7:10 › [CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection
+  campaign-assets.spec.ts:145:1 › [MSG-006] the go-live destination uses injected DNS and HEAD responses while link policy still blocks unsafe destinations
+  campaign-authoring/browser.spec.ts:6:1 › [CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft
+  campaign-authoring/canonical-save.spec.ts:15:1 › [BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree
+  campaign-authoring/canonical-save.spec.ts:77:1 › [CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it
+  campaign-authoring/design-generation.spec.ts:5:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact
+  campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px
+  campaign-authoring/local-images.spec.ts:11:1 › [CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval
+  campaign-authoring/step-deadline.spec.ts:16:1 › [CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue
+  contract.js:7:10 › public documentation › [DOCS-001] every manifest page renders with one h1, section navigation, previous and next, and no cookie or foreign request
+  contract.js:7:10 › public documentation › [DOCS-001] lists the page sections under On this page and links the header to the app
+  contract.js:7:10 › public documentation › [DOCS-001] the docs home answers at /docs and /docs/; unknown, miscased, nested and index slugs are a 404 in the shared frame
+  contract.js:7:10 › public documentation › [DOCS-001] the docs fit the screen at desktop and phone widths and the phone shows a Contents disclosure
+  contract.js:7:10 › public documentation › [DOCS-001] documentation is public while the operator app still requires a session
+  portability/privacy.spec.ts:13:1 › CONT-030/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor
+  portability/privacy.spec.ts:66:1 › CONT-030/DATA-001 invalid archive authority is refused before any durable admission mutation
+  portability/privacy.spec.ts:80:1 › CONT-030/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one
+  portability/privacy.spec.ts:125:1 › CONT-030/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows
+  portability.spec.ts:5:1 › [DATA-001][CONT-013] upgrade and restore populated records and assets, then enforce the current erasure fence
+  production-entry.spec.ts:6:1 › [BASE-OPS-001][OPER-001] production entry keeps local authority private and reports healthy, failed and recovering dependencies
+  proposals-decision/content-editing.spec.ts:4:1 › [PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority
+  proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes
+  proposals-decision/forecast-provenance.spec.ts:6:1 › [PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads
+  proposals-decision/grounding-citations.spec.ts:17:1 › [PROP-006] forged citations and altered observations fail without composition or campaign authority, then valid generation recovers
+  proposals-decision/owner-control.spec.ts:17:1 › [PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs
+  rendering.spec.ts:6:1 › [BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authenticates its actual generated operator transport
+  shopify/connection.spec.ts:4:1 › [STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry
+Total: 53 tests in 24 files

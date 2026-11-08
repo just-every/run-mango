@@ -1,0 +1,28 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/fv-mango-409-1",
+  "head": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+  "initialProductCommit": "7cf9becd80c06cc8fb0634a9bde3e9e72444d852",
+  "mergedMain": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "parents": [
+    "7cf9becd80c06cc8fb0634a9bde3e9e72444d852",
+    "f936cb5351ca3432e53e7ed5592f2aa720f3eab2"
+  ],
+  "worktreeClean": true,
+  "diffFromMain": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/campaign-assets.spec.ts",
+    "tests/go-live/edge.ts",
+    "tests/go-live/fixture-links.ts",
+    "tests/go-live/worker.ts"
+  ],
+  "runtimeSourceUnchangedFromInitialCommit": true,
+  "pushLog": "final-product-push.log",
+  "pr": null,
+  "clause": "MSG-006",
+  "clauseStatusBefore": "partial",
+  "clauseStatusAfter": "partial",
+  "noProductionTimeoutChange": true,
+  "ciShapeUnchanged": true
+}

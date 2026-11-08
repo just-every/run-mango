@@ -1,0 +1,10 @@
+{
+  "main": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "changes": [
+    {
+      "id": "PROP-005",
+      "before": "done",
+      "after": "partial"
+    }
+  ]
+}

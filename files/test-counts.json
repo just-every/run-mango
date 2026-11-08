@@ -1,0 +1,70 @@
+{
+  "rows": [
+    {
+      "name": "main",
+      "config": "playwright.config.js",
+      "tests": 53,
+      "files": 24,
+      "exit": 0
+    },
+    {
+      "name": "local-start",
+      "config": "scripts/verification/local-start.config.mjs",
+      "tests": 5,
+      "files": 4,
+      "exit": 0
+    },
+    {
+      "name": "local-start-slow",
+      "config": "tests/local-start/config.js",
+      "tests": 7,
+      "files": 5,
+      "exit": 0
+    },
+    {
+      "name": "newsletter-ui",
+      "config": "tests/newsletter-ui/playwright.config.js",
+      "tests": 1,
+      "files": 1,
+      "exit": 0
+    },
+    {
+      "name": "campaign-results",
+      "config": "tests/campaign-results/playwright.config.js",
+      "tests": 2,
+      "files": 2,
+      "exit": 0
+    },
+    {
+      "name": "go-live",
+      "config": "tests/go-live/playwright.config.js",
+      "tests": 23,
+      "files": 21,
+      "exit": 0
+    },
+    {
+      "name": "move-in",
+      "config": "tests/move-in/playwright.config.js",
+      "tests": 2,
+      "files": 2,
+      "exit": 0
+    }
+  ],
+  "added": 1,
+  "limit": 200,
+  "withinLimit": true,
+  "collectedAcrossConfigs": {
+    "before": 92,
+    "after": 93
+  },
+  "duplicateLocalStartListings": 5,
+  "before": 88,
+  "after": 89,
+  "basis": "All seven maintained config listings; five local-start journeys also appear in the slow config and are counted once.",
+  "mergedMainConfigTests": 54,
+  "initialBefore": 87,
+  "initialCandidateAfter": 88,
+  "currentMainBeforeOwnChange": 88,
+  "mainIntegrationAdded": 1,
+  "mergedCollectedAcrossConfigs": 94
+}

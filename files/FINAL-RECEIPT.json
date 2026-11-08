@@ -1,0 +1,148 @@
+{
+  "tag": "fv-mango-409-1",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/fv-mango-409-1",
+  "head": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+  "productPush": "succeeded",
+  "pr": null,
+  "ci": {
+    "run": {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42500042846",
+      "id": 42500042846,
+      "name": "Verify",
+      "status": "completed"
+    },
+    "rootFailedJob": 128790648142,
+    "rootFailedStep": "Check generated contract documents",
+    "rootFailure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "dependentFailedJob": 128790710953,
+    "dependentFailedStep": "Require the selected coverage and its proof",
+    "hostedShards": "skipped due to build failure",
+    "ordinaryWorkflowGreen": false,
+    "generatedViewExceptionApplies": true,
+    "readyUnderBrief": true,
+    "githubInvocations": 10,
+    "ciDiagnosticIntervalsAtLeast300Seconds": true,
+    "archiveCommand": "gh run view 42500042846 --repo just-every/run-mango --job 128790648142 --log-failed",
+    "archiveExit": 0
+  },
+  "scope": "MSG-006 test transport and evidence only; production behavior/timeouts/retry policy and CI shape unchanged",
+  "clauseStatusChanges": [],
+  "ownClause": {
+    "id": "MSG-006",
+    "before": "partial",
+    "after": "partial"
+  },
+  "contractCountsAgainstUpdatedMain": {
+    "before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "after": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    }
+  },
+  "inheritedClauseChanges": {
+    "main": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+    "changes": [
+      {
+        "id": "PROP-005",
+        "before": "done",
+        "after": "partial"
+      }
+    ]
+  },
+  "testCounts": {
+    "rows": [
+      {
+        "name": "main",
+        "config": "playwright.config.js",
+        "tests": 53,
+        "files": 24,
+        "exit": 0
+      },
+      {
+        "name": "local-start",
+        "config": "scripts/verification/local-start.config.mjs",
+        "tests": 5,
+        "files": 4,
+        "exit": 0
+      },
+      {
+        "name": "local-start-slow",
+        "config": "tests/local-start/config.js",
+        "tests": 7,
+        "files": 5,
+        "exit": 0
+      },
+      {
+        "name": "newsletter-ui",
+        "config": "tests/newsletter-ui/playwright.config.js",
+        "tests": 1,
+        "files": 1,
+        "exit": 0
+      },
+      {
+        "name": "campaign-results",
+        "config": "tests/campaign-results/playwright.config.js",
+        "tests": 2,
+        "files": 2,
+        "exit": 0
+      },
+      {
+        "name": "go-live",
+        "config": "tests/go-live/playwright.config.js",
+        "tests": 23,
+        "files": 21,
+        "exit": 0
+      },
+      {
+        "name": "move-in",
+        "config": "tests/move-in/playwright.config.js",
+        "tests": 2,
+        "files": 2,
+        "exit": 0
+      }
+    ],
+    "added": 1,
+    "limit": 200,
+    "withinLimit": true,
+    "collectedAcrossConfigs": {
+      "before": 92,
+      "after": 93
+    },
+    "duplicateLocalStartListings": 5,
+    "before": 88,
+    "after": 89,
+    "basis": "All seven maintained config listings; five local-start journeys also appear in the slow config and are counted once.",
+    "mergedMainConfigTests": 54,
+    "initialBefore": 87,
+    "initialCandidateAfter": 88,
+    "currentMainBeforeOwnChange": 88,
+    "mainIntegrationAdded": 1,
+    "mergedCollectedAcrossConfigs": 94
+  },
+  "localChecks": "local-checks.json",
+  "productCustody": "product-custody.json",
+  "identityScan": "product-identity.json",
+  "report": "REPORT.md",
+  "plan": "PLAN.md",
+  "remainingInvestigations": [
+    "f134: controlled provider delay reproduces uncertainty, but original hosted transport exception is not recorded; no production retry behavior changed",
+    "f137: explicit expiry-before-resume reproduces completed state and HTTP 409; original hosted interleaving is unproven, and the CAMP-014 journey assumption is left for a separate one-clause change"
+  ],
+  "productLandingBlockers": [],
+  "fleetPublicationScanRun": false,
+  "landed": false,
+  "acceptanceClaimed": false,
+  "evidenceRef": "refs/heads/evidence/fv-mango-409-1",
+  "evidenceProtocol": "The terminal EVIDENCE line identifies the separately published report-only tree; it is not a product READY or landing signal."
+}

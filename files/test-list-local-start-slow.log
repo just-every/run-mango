@@ -1,0 +1,11 @@
+Listing tests:
+  authority.journey.ts:7:1 › [CONT-006] forced setup retains suppression and opt-out authority while invalidating prior native sessions
+  command-data.journey.ts:9:1 › [DATA-001] rer upgrades a retained backup, exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset
+  editor.journey.ts:8:1 › [MGMT-002] native owner editor mounts at 1440, refuses visitors and loses its grant on sign-out
+  local.journey.ts:11:1 › [OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440
+  local.journey.ts:82:1 › [OPER-001] a production build with local credentials present emits no local variable file or secret
+  retained-archive.journey.ts:63:1 › [DATA-001] a backup from the listed version restores every archived row and original asset through rer import
+  retained-archive.journey.ts:74:1 › [DATA-001] a Platform-migrated installation restores the listed version's Platform backup without Wrangler
+Total: 7 tests in 5 files
+(node:5584) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

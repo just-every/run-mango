@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:2993) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/network-deadline.probe.ts:6:1 › [MSG-006] synthetic shop link approval tolerates an unavailable external test edge (30.3s)
+
+
+  1) tests/go-live/network-deadline.probe.ts:6:1 › [MSG-006] synthetic shop link approval tolerates an unavailable external test edge 
+
+    Error: {"status":"blocked","blockers":[{"kind":"message.links.resolved","status":"blocked","detail":"Blocked transmitted links: https://shop.example.test/market (Link host shop.example.test could not be resolved and checked.)","blocking":true,"blockedHosts":[]}]}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 409
+
+       at harness.ts:44
+
+      42 | export async function json(response: Response, status: number) {
+      43 |   const text = await response.text();
+    > 44 |   expect(response.status, text).toBe(status);
+         |                                 ^
+      45 |   return text ? JSON.parse(text) : null;
+      46 | }
+      47 |
+        at json (/home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live/harness.ts:44:33)
+        at /home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live/network-deadline.probe.ts:18:5
+
+    Error Context: ../probe-artifacts/network-deadline.probe.ts--886a4-vailable-external-test-edge/error-context.md
+
+  1 failed
+    tests/go-live/network-deadline.probe.ts:6:1 › [MSG-006] synthetic shop link approval tolerates an unavailable external test edge 

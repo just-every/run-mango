@@ -1,0 +1,40 @@
+
+Running 2 tests using 1 worker
+
+(node:5987) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FLEET_CONSENT_FAILURE {"error":"consent_capture_failed","detail":"provider-pacing"}
+  ✘  1 tests/go-live/failure-family.probe.ts:6:1 › f134: a delayed fake provider produces consent uncertainty without a link lookup (21.8s)
+(node:6102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FLEET_EXPIRED_RESUME {"result":{"error":"campaign_not_operator_paused"},"state":[{"state":"completed"}],"recipients":[{"transport_disposition":"skipped","skip_reason":"send-window-expired"}]}
+  ✓  2 tests/go-live/failure-family.probe.ts:29:1 › f137: expiry before resume produces a completed campaign and a refusal (24.0s)
+
+
+  1) tests/go-live/failure-family.probe.ts:6:1 › f134: a delayed fake provider produces consent uncertainty without a link lookup 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "detail": "Confirmation delivery is uncertain; the attempt will not be repeated automatically.",
+    +   "detail": "provider-pacing",
+        "error": "consent_capture_failed",
+      }
+
+      23 |       body:{...consent,contact:{email:'uncertain-reader@example.test',displayName:'Garden reader'},occurredAt:new Date(clock.now).toISOString()}}), 409);
+      24 |     console.log('FLEET_CONSENT_FAILURE', JSON.stringify(result));
+    > 25 |     expect(result).toMatchObject({error:'consent_capture_failed',detail:'Confirmation delivery is uncertain; the attempt will not be repeated automatically.'});
+         |                    ^
+      26 |   } finally {await site.runtime.close();await edge.close();}
+      27 | });
+      28 |
+        at /home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live/failure-family.probe.ts:25:20
+
+    Error Context: ../probe-artifacts/failure-family.probe.ts-f1-3a208-ainty-without-a-link-lookup/error-context.md
+
+  1 failed
+    tests/go-live/failure-family.probe.ts:6:1 › f134: a delayed fake provider produces consent uncertainty without a link lookup 
+  1 passed (47.0s)

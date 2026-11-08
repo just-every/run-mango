@@ -1,0 +1,2 @@
+Build and public command checks	Check generated contract documents	2026-11-08T16:28:36.9310365Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-08T16:28:36.9396577Z ##[error]Process completed with exit code 1.

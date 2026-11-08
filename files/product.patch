@@ -1,0 +1,174 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index bfea86a..8e6c4cf 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4139,7 +4139,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `MSG-003` | Email unsubscribe | published | partial | `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/go-live/go-live.journeys.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]” | Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact. Missing public-door journey: “Email unsubscribe — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-004` | SMS permission | published | partial | `src/core/features/sms/transport-guard.ts` | acceptance not yet met: SMS eligibility needs subscribed scope and an approved sender; US registration pending. |
+ | `MSG-005` | SMS opt-out | published | partial | `tests/go-live/content-checks.journeys.ts` · `src/core/features/sms/review-preview.ts` · `src/core/features/sms/content.ts` | Assertions in tests/go-live/sms-review.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Configured program identity; STOP or jurisdiction equivalent; Frequency disclosure; URL never replaces reply opt-out; Compliance text; Segment count; Help contact. Missing public-door journey: “SMS opt-out — complete acceptance”, covering the unasserted outcomes above. |
+-| `MSG-006` | Links | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts` | Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named. Missing public-door journey: “Links — complete acceptance”, covering the unasserted outcomes above. |
++| `MSG-006` | Links | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” · `tests/campaign-assets.spec.ts` — “[MSG-006] the go-live destination uses injected DNS and HEAD responses while link policy still blocks unsafe destinations” · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts` | Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named. Missing public-door journey: “Links — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-007` | Content checks | published | partial | `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” | Old evidence asserts Blocking findings shown; Advisory findings shown; Acknowledgment survives reload; Replay produces one audit entry; Actor. Unasserted: Every channel. Missing public-door journey: “Content checks — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-008` | Personalization | published | partial | `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation” | Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal. Missing public-door journey: “Personalization — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-009` | Email body | published | partial | `tests/campaign-authoring/canonical-save.spec.ts` — “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”; “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree” | Old evidence asserts Stored parser structure; Save stability. Unasserted: Decoded destination checks; Literal quote refusal; Literal angle-bracket refusal; No-break space refusal; Normalization does not repair hiding declarations; Multipart alternative; Equivalent offer in HTML and text; Equivalent links in HTML and text; Unsubscribe link in both parts; Saved preheader delivered; Saved HTML bytes delivered; Only token and tracking substitutions; Admitted tag set; Admitted attribute set; Admitted inline-style set; BUILD-012 size bar; Script refusal; Form refusal; Stylesheet refusal; Class refusal; CSS-function refusal; Responsive block generated only by builder; Responsive block regenerated on save; Check with responsive block; Check without responsive block; Same stored-parse checker for approval; Same stored-parse checker for test send; Same stored-parse checker for delivery; Preview uses shared parse; Preview styles only after checker success; Plain text derives from same parse. Missing public-door journey: “Email body — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 644ac8c..dded125 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "20496c62cfb189944d419f9ae307aefc6312ee949b9924734d11d8c870d77d9b",
++      "sha256": "c572c181a98db9d3b17e4a268d27c0f73c7d78cb3c54a36f7079b93f9b7ecbfb",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -8462,7 +8462,7 @@
+       "executable": false
+     },
+     "tests/campaign-assets.spec.ts": {
+-      "sha256": "c375fb09b064204d79ee5650a0f7ce5203a6c917a49908ef82eed2b6db559b10",
++      "sha256": "7e7d80ae30657ef92e62334d5cd1898986ab508f16754b8469078728069ffc69",
+       "executable": false
+     },
+     "tests/campaign-authoring/advisory-worker.ts": {
+@@ -8890,7 +8890,7 @@
+       "executable": false
+     },
+     "tests/go-live/edge.ts": {
+-      "sha256": "0b8c8779d397da950d00dd65888357369af3a974ac5a94a194b634db8a281290",
++      "sha256": "8b517e066c85f76bed58c303d4882c01e4010760ad0cb29911a176cfd7172690",
+       "executable": false
+     },
+     "tests/go-live/email-size-imports.ts": {
+@@ -8909,6 +8909,10 @@
+       "sha256": "f6b843289b32f75c285d936871bec5e923773d6af0276ee7cd5729af9cbc6f1a",
+       "executable": false
+     },
++    "tests/go-live/fixture-links.ts": {
++      "sha256": "09eb78c760af26ac6c7777009aa3617c385eccfa424d6d087d5072d899188045",
++      "executable": false
++    },
+     "tests/go-live/go-live.flow.ts": {
+       "sha256": "3ff7e773fb25d0b0b1218c32577f3fab0d37395f5dc5f95af45753ca4df01a53",
+       "executable": false
+@@ -9210,7 +9214,7 @@
+       "executable": false
+     },
+     "tests/go-live/worker.ts": {
+-      "sha256": "4e54e9adbd6035a7807bcf3b4eec23fb0a7b7b6aeb74324b6b00a6444c68b150",
++      "sha256": "5be0444a3c4e9fe91c5a7b12f5f317c01258a89253cffca894288c44662a8777",
+       "executable": false
+     },
+     "tests/health-lifetime.ts": {
+diff --git a/tests/campaign-assets.spec.ts b/tests/campaign-assets.spec.ts
+index 953b2bb..aabe0cc 100644
+--- a/tests/campaign-assets.spec.ts
++++ b/tests/campaign-assets.spec.ts
+@@ -1,3 +1,5 @@
++import { createLinkInspector } from '../src/core/platform/link-inspector';
++import { fixtureLinkResponse } from './go-live/fixture-links';
+ import { expect, test } from '@playwright/test';
+ import { createHash, randomBytes } from 'node:crypto';
+ import { readFileSync } from 'node:fs';
+@@ -207,3 +209,24 @@ test('[CAMP-012] original image files survive export and a changed origin and ar
+   test.setTimeout(360000);
+   await campaignAssetLifecycle();
+ });
++
++test('[MSG-006] the go-live destination uses injected DNS and HEAD responses while link policy still blocks unsafe destinations', async () => {
++  const attempted: string[] = [];
++  const transport: typeof fetch = async (input, init) => {
++    const request = new Request(input, init), url = new URL(request.url);
++    const response = fixtureLinkResponse(url, request.method);
++    if (response) return response;
++    attempted.push(request.url);
++    throw new Error('Synthetic edge is unavailable.');
++  };
++  const inspector = createLinkInspector(['shop.example.test'], transport);
++  expect(await inspector.inspect('https://shop.example.test/market')).toMatchObject({ok: true, finalUrl: 'https://shop.example.test/market'});
++  expect(await inspector.inspect('https://unlisted.example.test/market')).toMatchObject({ok: false, blockedHost: 'unlisted.example.test'});
++  expect(await inspector.inspect('http://shop.example.test/market')).toMatchObject({ok: false});
++  expect(await inspector.inspect('mailto:garden@example.test')).toMatchObject({ok: true});
++  expect(attempted).toEqual([]);
++  // The fixture does not turn unknown hosts into successful resolutions.
++  const unavailable = createLinkInspector(['other.example.test'], transport);
++  expect(await unavailable.inspect('https://other.example.test/market')).toMatchObject({ok: false, detail: expect.stringContaining('could not be resolved and checked')});
++  expect(attempted).toHaveLength(1);
++});
+diff --git a/tests/go-live/edge.ts b/tests/go-live/edge.ts
+index cd7fc95..f9ffdcf 100644
+--- a/tests/go-live/edge.ts
++++ b/tests/go-live/edge.ts
+@@ -1,3 +1,4 @@
++import {fixtureLinkResponse} from './fixture-links';
+ import {providerBehavior} from './provider-behavior';
+ import {marketingAdmission} from './marketing-admission';
+ import {smsProviderEdge} from './sms-provider-edge';
+@@ -36,7 +37,6 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+     dkim2: { valid: true, type: 'cname', host: 's2._domainkey.example.test', data: 's2.domainkey.u99.wl.sendgrid.net' } } };
+   const zone: Record<string, Answer[]> = {
+     'mango-test.myshopify.com': [{type:1,data:'203.0.113.10'}],
+-    'shop.example.test':[{type:1,data:'203.0.113.10'}],
+     'send.example.test':[{type:16,data:quoted('v=spf1 ip4:192.0.2.1 -all')}],
+     'resend._domainkey.example.test':[{type:16,data:quoted(`v=DKIM1; k=rsa; p=${keys[0]}`)}],
+     'em123.example.test': [{ type: 5, data: 'u99.wl.sendgrid.net.' }],
+@@ -80,7 +80,6 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+     if(await resend.handle(original,request,response))return;
+     const linked = options.links?.[original.href];
+     if(linked && request.method==='HEAD') {response.writeHead(linked.status ?? (linked.location ? 302 : 200), linked.location ? {Location:linked.location} : {});response.end();return;}
+-    if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
+     if(original.hostname==='mango-test.myshopify.com' && options.commerce) {
+       if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}
+       return json(response,200,options.commerce(JSON.parse(await body(request))));
+@@ -88,6 +87,12 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
+     if (original.hostname === 'links.example.test' && request.method === 'HEAD') {response.writeHead(domainSetup.trackingHttps ? 200 : 503); response.end(); return;}
+     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
+     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
++    const fixture = fixtureLinkResponse(original, request.method ?? 'GET');
++    if (fixture) {
++      response.writeHead(fixture.status, Object.fromEntries(fixture.headers));
++      response.end(Buffer.from(await fixture.arrayBuffer()));
++      return;
++    }
+     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+     if (original.hostname === 'api.stripe.com') stripe.requests.push({method: request.method!, path: original.pathname});
+     if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});
+diff --git a/tests/go-live/fixture-links.ts b/tests/go-live/fixture-links.ts
+new file mode 100644
+index 0000000..462e211
+--- /dev/null
++++ b/tests/go-live/fixture-links.ts
+@@ -0,0 +1,13 @@
++/** Fixed destination used by the go-live journeys. This is a network-edge
++ * fixture, shared by the Worker and HTTP edge; policy stays in the real link
++ * inspector. Answer here so a loaded Node edge cannot consume its DNS deadline.
++ * All other hosts and operations continue through the configurable HTTP edge. */
++export function fixtureLinkResponse(url: URL, method: string): Response | undefined {
++  if (url.hostname === 'cloudflare-dns.com' && url.pathname === '/dns-query'
++    && url.searchParams.get('name') === 'shop.example.test' && method === 'GET') {
++    const type = url.searchParams.get('type');
++    if (type === 'A') return Response.json({Status: 0, Answer: [{name: 'shop.example.test', type: 1, TTL: 300, data: '203.0.113.10'}]});
++    if (type === 'AAAA') return Response.json({Status: 0, Answer: []});
++  }
++  if (url.hostname === 'shop.example.test' && method === 'HEAD') return new Response(null, {status: 200});
++}
+diff --git a/tests/go-live/worker.ts b/tests/go-live/worker.ts
+index 5214c8a..56bd9d2 100644
+--- a/tests/go-live/worker.ts
++++ b/tests/go-live/worker.ts
+@@ -1,3 +1,4 @@
++import {fixtureLinkResponse} from './fixture-links';
+ import {loadSendingConnection} from '../../src/core/features/sending/load-connection';
+ import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
+ import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
+@@ -38,6 +39,8 @@ let extraHosts: string[] = [];
+ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+   const request = new Request(input, init), url = new URL(request.url);
+   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
++  const fixture = fixtureLinkResponse(url, request.method);
++  if (fixture) return fixture;
+   if (!['links.example.test', 'api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname) && !extraHosts.includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
+   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
+   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,

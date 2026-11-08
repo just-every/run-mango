@@ -1,0 +1,20 @@
+
+Running 2 tests using 1 worker
+
+(node:7216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+FLEET_CONSENT_FAILURE {"error":"consent_capture_failed","detail":"Confirmation delivery is uncertain; the attempt will not be repeated automatically."}
+  ✓  1 tests/go-live/failure-family.probe.ts:6:1 › f134: a delayed fake provider produces consent uncertainty without a link lookup (45.7s)
+FLEET_PROVIDER_DELAY {"elapsedMs":16000.538474999998}
+  ✘  2 tests/go-live/failure-family.probe.ts:30:1 › f137: expiry before resume produces a completed campaign and a refusal (635ms)
+
+
+  1) tests/go-live/failure-family.probe.ts:30:1 › f137: expiry before resume produces a completed campaign and a refusal 
+
+    Error: aborted
+
+    Error Context: ../probe-artifacts/failure-family.probe.ts-f1-ace80-eted-campaign-and-a-refusal/error-context.md
+
+  1 failed
+    tests/go-live/failure-family.probe.ts:30:1 › f137: expiry before resume produces a completed campaign and a refusal 
+  1 passed (47.2s)

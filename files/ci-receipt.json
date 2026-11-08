@@ -1,0 +1,24 @@
+{
+  "run": {
+    "conclusion": "failure",
+    "event": "push",
+    "head_sha": "3ada2fb0ea501a1f02de43b8da1bdedc545e1313",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42500042846",
+    "id": 42500042846,
+    "name": "Verify",
+    "status": "completed"
+  },
+  "rootFailedJob": 128790648142,
+  "rootFailedStep": "Check generated contract documents",
+  "rootFailure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "dependentFailedJob": 128790710953,
+  "dependentFailedStep": "Require the selected coverage and its proof",
+  "hostedShards": "skipped due to build failure",
+  "ordinaryWorkflowGreen": false,
+  "generatedViewExceptionApplies": true,
+  "readyUnderBrief": true,
+  "githubInvocations": 10,
+  "ciDiagnosticIntervalsAtLeast300Seconds": true,
+  "archiveCommand": "gh run view 42500042846 --repo just-every/run-mango --job 128790648142 --log-failed",
+  "archiveExit": 0
+}

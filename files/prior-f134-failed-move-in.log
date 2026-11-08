@@ -1,0 +1,99 @@
+shards (move-in)	Run this shard	﻿2026-11-08T13:22:25.6767615Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (move-in)	Run this shard	2026-11-08T13:22:25.6767877Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (move-in)	Run this shard	2026-11-08T13:22:25.6784414Z shell: /usr/bin/bash -e {0}
+[Job environment values omitted from report packet.]
+shards (move-in)	Run this shard	2026-11-08T13:22:25.6786426Z ##[endgroup]
+shards (move-in)	Run this shard	2026-11-08T13:22:25.7005882Z VERIFY_MEMBER move-in
+shards (move-in)	Run this shard	2026-11-08T13:22:25.7383943Z VERIFY_SCHEDULE {"selection":"move-in","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (move-in)	Run this shard	2026-11-08T13:22:25.7386211Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/move-in/members/move-in/evidence/4b3746152534/verify/move-in-Ux4t4E
+shards (move-in)	Run this shard	2026-11-08T13:22:25.7501132Z VERIFY_STAGE {"name":"move-in","event":"start","at":"2026-11-08T13:22:25.738Z"}
+shards (move-in)	Run this shard	2026-11-08T13:22:25.7542284Z move-in
+shards (move-in)	Run this shard	2026-11-08T13:22:26.9613115Z 
+shards (move-in)	Run this shard	2026-11-08T13:22:26.9614017Z Running 2 tests using 2 workers
+shards (move-in)	Run this shard	2026-11-08T13:22:26.9622506Z 
+shards (move-in)	Run this shard	2026-11-08T13:22:50.2379986Z   ✘  1 tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives (22.7s)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.8646999Z   ✓  2 tests/move-in/archive.journeys.ts:5:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (3.2m)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9186047Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9204530Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9205924Z   1) tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9206624Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9207227Z     Error: {"error":"consent_capture_failed","detail":"Confirmation delivery is uncertain; the attempt will not be repeated automatically."}
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9207734Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208037Z     expect(received).toBe(expected) // Object.is equality
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208359Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208458Z     Expected: 201
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208666Z     Received: 409
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208780Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9208893Z        at ../go-live/harness.ts:44
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9209054Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9209268Z       42 | export async function json(response: Response, status: number) {
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9210000Z       43 |   const text = await response.text();
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9210340Z     > 44 |   expect(response.status, text).toBe(status);
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9210656Z          |                                 ^
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9210956Z       45 |   return text ? JSON.parse(text) : null;
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9211210Z       46 | }
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9211327Z       47 |
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9211497Z         at json ([REDACTED]/tests/go-live/harness.ts:44:33)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9211753Z         at confirmedContact ([REDACTED]/tests/go-live/harness.ts:52:3)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9212000Z         at walk0 ([REDACTED]/tests/move-in/held.flow.ts:84:5)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9212226Z         at [REDACTED]/tests/move-in/held.journeys.ts:8:3
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9212534Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9213112Z     Error Context: ../../_temp/mango-verification/move-in/members/move-in/evidence/4b3746152534/move-in/held.journeys.ts--CONT-002-3396b--undo-and-rejected-archives/error-context.md
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9213676Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9213756Z   1 failed
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9214507Z     tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9215292Z   1 passed (3.2m)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9947273Z Verification failed: move-in: exit 1, signal none.
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9947688Z Command: pnpm
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9947915Z Last output (up to 40 lines):
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9948031Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9948157Z Running 2 tests using 2 workers
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9948308Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9949209Z   ✘  1 tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives (22.7s)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9950704Z   ✓  2 tests/move-in/archive.journeys.ts:5:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (3.2m)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9951498Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9951506Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9952124Z   1) tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9952593Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9952885Z     Error: {"error":"consent_capture_failed","detail":"Confirmation delivery is uncertain; the attempt will not be repeated automatically."}
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953252Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953364Z     expect(received).toBe(expected) // Object.is equality
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953503Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953555Z     Expected: 201
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953704Z     Received: 409
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953777Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953854Z        at ../go-live/harness.ts:44
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9953978Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9954116Z       42 | export async function json(response: Response, status: number) {
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9954382Z       43 |   const text = await response.text();
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9954626Z     > 44 |   expect(response.status, text).toBe(status);
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9954829Z          |                                 ^
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9955035Z       45 |   return text ? JSON.parse(text) : null;
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9955224Z       46 | }
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9955341Z       47 |
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9955509Z         at json ([REDACTED]/tests/go-live/harness.ts:44:33)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9955793Z         at confirmedContact ([REDACTED]/tests/go-live/harness.ts:52:3)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9956045Z         at walk0 ([REDACTED]/tests/move-in/held.flow.ts:84:5)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9956268Z         at [REDACTED]/tests/move-in/held.journeys.ts:8:3
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9956424Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9956843Z     Error Context: ../../_temp/mango-verification/move-in/members/move-in/evidence/4b3746152534/move-in/held.journeys.ts--CONT-002-3396b--undo-and-rejected-archives/error-context.md
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9957240Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9957308Z   1 failed
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9958003Z     tests/move-in/held.journeys.ts:6:1 › [CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives 
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9958407Z   1 passed (3.2m)
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9958802Z Log: /home/runner/work/_temp/mango-verification/move-in/members/move-in/evidence/4b3746152534/verify/move-in-Ux4t4E/move-in/install.log
+shards (move-in)	Run this shard	2026-11-08T13:25:39.9988196Z VERIFY_MEMBER go-live
+shards (move-in)	Run this shard	2026-11-08T13:25:40.0361140Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (move-in)	Run this shard	2026-11-08T13:25:40.0364218Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/move-in/members/go-live/evidence/4b3746152534/verify/go-live-mKHn7b
+shards (move-in)	Run this shard	2026-11-08T13:25:40.0481631Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T13:25:40.036Z"}
+shards (move-in)	Run this shard	2026-11-08T13:25:40.0524481Z go-live
+shards (move-in)	Run this shard	2026-11-08T13:25:40.8447449Z 
+shards (move-in)	Run this shard	2026-11-08T13:25:40.8448378Z Running 2 tests using 2 workers
+shards (move-in)	Run this shard	2026-11-08T13:25:40.8457725Z 
+shards (move-in)	Run this shard	2026-11-08T13:26:17.7514621Z   ✓  1 tests/go-live/personalisation.journeys.ts:9:1 › [MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation (36.3s)
+shards (move-in)	Run this shard	2026-11-08T13:27:05.2971902Z   ✓  2 tests/go-live/open-estimates.journeys.ts:9:1 › [RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased (1.4m)
+shards (move-in)	Run this shard	2026-11-08T13:27:05.3429243Z 
+shards (move-in)	Run this shard	2026-11-08T13:27:05.3434218Z   2 passed (1.4m)
+shards (move-in)	Run this shard	2026-11-08T13:27:05.4103603Z VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-08T13:25:40.036Z","durationMs":85372,"exitCode":0,"signal":null,"event":"end"}
+shards (move-in)	Run this shard	2026-11-08T13:27:05.4121538Z VERIFY_TOTAL {"status":"PASS","durationMs":85384,"boundary":"coordinator"}
+shards (move-in)	Run this shard	2026-11-08T13:27:05.4199988Z ##[error]Process completed with exit code 1.

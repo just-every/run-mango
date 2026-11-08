@@ -1,0 +1,2 @@
+import {defineConfig} from '/home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/node_modules/@playwright/test/index.mjs';
+export default defineConfig({testDir:'/home/agent/rer-consolidation/work/fv-mango-409-1/run-mango/tests/go-live',testMatch:'network-deadline.probe.ts',timeout:180000,workers:1,retries:0,reporter:'list',outputDir:'/home/agent/rer-consolidation/work/fv-mango-409-1/probe-artifacts'});

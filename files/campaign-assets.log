@@ -1,0 +1,52 @@
+
+Running 6 tests using 1 worker
+
+(node:4182) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4182) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/contract.js:7:10 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free (220ms)
+  ✓  2 tests/contract.js:7:10 › [CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing (266ms)
+  ✓  3 tests/contract.js:7:10 › [CAMP-012] an image past its per-minute allowance answers 429 without affecting other images (69ms)
+  ✓  4 tests/contract.js:7:10 › [CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection (204ms)
+  ✓  5 tests/campaign-assets.spec.ts:145:1 › [MSG-006] the go-live destination uses injected DNS and HEAD responses while link policy still blocks unsafe destinations (6ms)
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=1 eligible=1 excluded=0 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+Full promotion proof: start; elapsed=0ms
+Full promotion proof: runtime ready; elapsed=19769ms
+Full promotion proof: build six products; elapsed=32554ms
+Full promotion proof: build social links; elapsed=39054ms
+Full promotion proof: save draft; elapsed=42565ms
+Full promotion proof: reload saved draft; elapsed=43386ms
+Full promotion proof: round trip complete; elapsed=46563ms
+Full promotion proof: screen proofs; elapsed=46687ms
+Full promotion proof: render complete email; elapsed=51244ms
+Full promotion proof: approve and dispatch; elapsed=52087ms
+Full promotional email: storedCharacters=32117; sentBytes=33768; shownBytes=33768; limit=102400
+Chosen size: runtime ready; elapsed=15915ms
+Chosen size: catalog synced; elapsed=18122ms
+Chosen size: builder ready; elapsed=24837ms
+Chosen size: columns built; elapsed=26764ms
+Chosen size: six products picked; elapsed=29324ms
+Chosen size: saved six products; elapsed=31078ms
+Chosen size: visible bound; elapsed=35361ms
+Chosen size: hidden bound; elapsed=57390ms
+Chosen six-item promotion: storedCharacters=27799; bound=31814; edgeBytes=31814
+Chosen size journey elapsed=65045ms
+Catalog guard: six roles and anonymous pass exact denials without edge reads
+Catalog guard: malformed payloads preserve the exact stored revision
+Catalog guard: escaped opaque values and unsafe destinations pass
+Catalog guard journey elapsed=13601ms; native imported history and MOVE-011 conversion do not create catalog choices; imported and flow authoring remain gaps
+Combined catalog journey elapsed=78674ms
+  ✓  6 tests/campaign-authoring/browser.spec.ts:6:1 › [CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft (2.9m)
+
+  6 passed (3.1m)
