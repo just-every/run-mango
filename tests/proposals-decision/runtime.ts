@@ -5,6 +5,7 @@ import {createApp, createAppServices} from '../../src/core/app/app';
 import {createFixturePlatform} from '../support/local-platform';
 import {testIdentity} from '../support/test-identity';
 import {fixtureVerification} from '../support/sender-verification';
+import {hashToken,opaqueToken} from '../../src/vendor/base/operator-auth/crypto.mjs';
 import {proposalCommerce,synchronizeProposalSource} from './shopify-edge';
 import {sqlStatements} from '../../operations/sql-statements.mjs';
 import type {AppBindings, GroundedGenerationRequest} from '../../src/core/shared/platform';
@@ -61,19 +62,34 @@ export async function decisionRuntime() {
     await identity.importLocalDemoOperator({id:'proposal-analyst',email:'analyst@example.test',displayName:'Analyst'},new Date());
     await db.prepare("INSERT INTO operator_product_roles(operator_id,role,unmasked_contacts,updated_by,updated_at) VALUES('proposal-analyst','analyst',0,'proposal-operator',?)").bind(Date.now()).run();
     const analyst=await identity.createTestSession('proposal-analyst');
+    const colleague={id:'synthetic-mango-176',name:'Synthetic colleague'};
+    await identity.importLocalDemoOperator({id:colleague.id,email:[colleague.id,'example.test'].join('@'),displayName:colleague.name},new Date());
+    const colleagueSession=await identity.createTestSession(colleague.id);
     for(const name of ['first','second','excluded']) await services.audienceService.captureConsent({idempotencyKey:`proposal-${name}`,contact:{email:`${name}@example.test`,displayName:name},channel:'email',brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'test-fixture',captureSource:'decision-test',consentText:'Receive newsletter',consentVersion:'v1',occurredAt:new Date(),confirmationRequired:false});
     await services.audienceService.recordChannelOptOut({channel:'email',destination:'excluded@example.test',occurredAt:new Date(),reason:'fixture-optout'});
     await synchronizeProposalSource(services);
     const app=createApp(env,platform,undefined,true);
-    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST',token=session.token)=>{
-      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
-      return {status:response.status,body:await response.json() as any};
+    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST',token=session.token,extraHeaders:Record<string,string>={})=>{
+      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',Origin:'http://127.0.0.1',...extraHeaders,...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
+      const text=await response.text();
+      return {status:response.status,body:text?JSON.parse(text):null as any};
     };
     const publicPost=async(path:string,form:string)=>{
       const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:form}),env);
       return {status:response.status,text:await response.text()};
     };
-    return {db,platform,services,controls,jobs,marketingHandoffs,call,publicPost,senderEdge,senderEvidence:verification,analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+    // Seed an unconsumed email credential like the fixture sessions above;
+    // the native confirmation route must bind and consume the owner's proof.
+    const confirmOwner=async()=>{
+      const token=opaqueToken(),now=Date.now();
+      await db.prepare(`INSERT INTO oa_step_up_challenges(id,token_hash,session_id,operator_id,operator_version,action,return_to,created_at,expires_at)
+        SELECT ?,?,s.id,s.operator_id,s.operator_version,'delete','/app',?,? FROM oa_sessions s WHERE s.token_hash=?`)
+        .bind(crypto.randomUUID(),await hashToken(platform.config.sessionSigningKey,'link',token),now,now+600000,await hashToken(platform.config.sessionSigningKey,'session',session.token)).run();
+      return call('/auth/confirm',{token});
+    };
+    /** A service credential's own door: bearer token only, never the operator session. */
+    const agent=(secret:string)=>(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(`/api/integrations/v1${path}`,body,false,method,undefined,{Authorization:`Bearer ${secret}`});
+    return {db,platform,services,controls,jobs,marketingHandoffs,publicPost,senderEdge,senderEvidence:verification,call,agent,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
   }catch(error){await native.dispose();throw error;}
 }
 

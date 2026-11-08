@@ -1,3 +1,5 @@
+import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
+import {recordSendingAcceptance,recordSignedSendingEvent} from './event-silence';
 import {SendingWebhookError} from './webhook-error';
 import {monitorSendingConnection,notifySendingAlerts} from './monitor';
 import {createResendAdapter} from '@/core/platform/adapters/resend';
@@ -20,7 +22,7 @@ export async function loadSendingConnection(platform:Platform) {
   const secret=await openSendingSecret(row.secret_cipher,platform.config.sessionSigningKey);
   const provider=row.account_id==='resend'?'resend':'sendgrid';
   Object.assign(platform.config,{mailProvider:provider,mailProviderApiKey:secret.apiKey,mailWebhookSecret:secret.publicKey??'',mailWebhookId:row.webhook_id??''});
-  const adapter=provider==='resend'?createResendAdapter({apiKey:secret.apiKey,webhookSecret:secret.publicKey??'',webhookId:row.webhook_id??'',verification:platform.senderVerification}):createSendgridAdapter({apiKey:secret.apiKey,webhookPublicKey:secret.publicKey??'',verification:platform.senderVerification});
+  const adapter=provider==='resend'?createResendAdapter({apiKey:secret.apiKey,webhookSecret:secret.publicKey??'',webhookId:row.webhook_id??'',verification:platform.senderVerification,retentionPolicy:platform.config.deliveryPolicies?.resend}):createSendgridAdapter({apiKey:secret.apiKey,webhookPublicKey:secret.publicKey??'',verification:platform.senderVerification});
   const current=()=>db.prepare("SELECT delivery_proved_at,last_error FROM sending_connection WHERE id=1 AND generation=? AND state='connected'").bind(row.generation).first<{delivery_proved_at:number|null;last_error:string|null}>();
   const refuse=(detail:string)=>new ProviderTransportError({outcome:'known-not-accepted',permanent:true,code:'sending-connection-missing',detail});
   const connected:SenderAdapter={
@@ -31,14 +33,18 @@ export async function loadSendingConnection(platform:Platform) {
         detail:!state?'sending-connection-missing: connect your provider in Settings.':state.last_error?state.last_error:!state.delivery_proved_at?'delivery-events-missing: send the owner sender check and verify its signed delivered event.':capabilities.detail};
     },
     async send(request) {
-      const state=await current();if(state?.last_error)throw new ProviderTransportError({outcome:'known-not-accepted',permanent:true,code:state.last_error,detail:state.last_error});if(!state)throw refuse('The sending connection changed or is disconnected.');
+      const state=await current();
+      if(state?.last_error==='delivery-events-silent')throw new ProviderDeferredError(new Date(Date.now()+60000),state.last_error);
+      if(state?.last_error)throw new ProviderTransportError({outcome:'known-not-accepted',permanent:true,code:state.last_error,detail:state.last_error});if(!state)throw refuse('The sending connection changed or is disconnected.');
       if(!state.delivery_proved_at&&request.purpose!=='consent-confirmation') {
         const challenge=await db.prepare(`SELECT id FROM sender_verification_challenges WHERE json_extract(request_json,'$.idempotencyKey')=?
           AND json_extract(request_json,'$.recipientStepId')=? AND recipient=? AND created_at>=? AND sent_at IS NOT NULL AND expires_at>?`)
           .bind(request.idempotencyKey,request.recipientStepId,request.to,row.connected_at,Date.now()).first();
         if(!challenge)throw new ProviderTransportError({outcome:'known-not-accepted',permanent:true,code:'delivery-events-missing',detail:'Verify the owner sender check’s signed delivered event before marketing.'});
       }
-      return adapter.send(request);
+      const receipt=await adapter.send(request);
+      if(provider==='resend'&&receipt.disposition==='accepted')await recordSendingAcceptance(platform,row.generation,request,receipt.providerAcceptedAt??new Date());
+      return receipt;
     },
     async verifyWebhook(request) {
       if(!await current())throw new Error('No active signed sending connection.');
@@ -50,6 +56,7 @@ export async function loadSendingConnection(platform:Platform) {
         AND EXISTS(SELECT 1 FROM sender_verification_challenges c JOIN sender_verification_state s ON s.id=c.state_id AND s.generation=c.generation
           WHERE c.provider_message_id=? AND c.recipient=? AND c.connector_id=? AND c.created_at>=? AND c.sent_at IS NOT NULL AND c.expires_at>?)`)
         .bind(verified.receivedAt.getTime(),row.generation,fact.providerMessageId,fact.detail.destination,ownerConnectorId,row.connected_at,verified.receivedAt.getTime())));
+      if(provider==='resend')await recordSignedSendingEvent(platform,row.generation,verified);
       return verified;
     },
   };

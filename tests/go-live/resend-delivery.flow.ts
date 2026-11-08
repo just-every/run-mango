@@ -3,6 +3,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {providerEdge} from './edge';
+import {proveResendCompletion} from './resend-completion-proof';
 import {event,eventSigner} from './sendgrid-events';
 import {installation,json,sender,consent,confirmedContact,draftCampaign,approve,availableTransport,signedPost} from './harness';
 
@@ -62,10 +63,16 @@ export const walk0 = async({page})=>{
     await expect.poll(()=>Promise.resolve(edge.resend.reads.filter(r=>r.path==='/emails'&&r.after==='decoy-3').length),{timeout:60000}).toBeGreaterThanOrEqual(2);
     await expect.poll(async()=> (await recipients()).map(r=>r.reconcile_cursor),{timeout:60000}).toEqual([null,null]);
     const before=await recipients();expect(before.map(r=>r.provider_message_id)).toEqual([null,null]);
+    const completionProof=(stage:string,dispositions:string[],completed=false)=>proveResendCompletion({site,cookie,page,campaign,
+      stage,completed,expected:emails.map((destination,index)=>({destination,disposition:dispositions[index]})),
+      requests:before.map(row=>row.outbound_request_json),submissions:()=>marketing().length});
+    await completionProof('two-uncertain',['handoff-unknown','handoff-unknown']);
     const emissions=await site.control('/_golive/emissions');
     expect(emissions.some((e:any)=>e.command.kind==='campaign.dispatch'&&e.command.payload.revisionId===campaign.revisionId)).toBe(true);
     expect(emissions.some((e:any)=>e.command.kind==='delivery.reconcile'&&before.some(r=>r.id===e.command.payload.recipientStepId))).toBe(true);
     await site.runtime.close();site=await installation(edge,signer,{...options,resendCoverage:'complete'});cookie=await site.open();
+    await site.control('/_golive/cron');
+    await completionProof('restart-cron',['handoff-unknown','handoff-unknown']);
     expect((await recipients()).map(r=>r.outbound_request_json)).toEqual(before.map(r=>r.outbound_request_json));
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
@@ -87,6 +94,7 @@ export const walk0 = async({page})=>{
     await expect.poll(async()=> (await recipients())[0].transport_disposition,{timeout:60000}).toBe('delivered');
     expect(edge.resend.reads.slice(eventReads).some(r=>r.path.endsWith('/events')&&r.after===null)).toBe(true);
     await expect(page.locator('[data-disposition=delivered] dd')).toHaveText('1',{timeout:30000});
+    await completionProof('delivered-and-uncertain',['delivered','handoff-unknown']);
     expect((await recipients()).map(r=>r.outbound_request_json)).toEqual(originalRequests);
     await page.goto(`${site.runtime.url}/app/insights`);
     const reputation=page.getByRole('row').filter({has:page.getByRole('rowheader',{name:'example.test (email)',exact:true})});
@@ -111,7 +119,10 @@ export const walk0 = async({page})=>{
     await expect.poll(async()=> (await site.rows(`SELECT transport_disposition,last_error_code FROM recipient_steps WHERE destination='${emails[1]}'`))[0],{timeout:60000})
       .toEqual({transport_disposition:'failed',last_error_code:'outcome-unconfirmed'});
     await expect(page.locator('[data-disposition=failed] dd')).toHaveText('1',{timeout:30000});
-    expect(await site.rows(`SELECT state FROM campaigns WHERE id='${campaign.campaignId}'`)).toEqual([{state:'completed'}]);
+    await expect.poll(()=>site.rows(`SELECT state FROM campaigns WHERE id='${campaign.campaignId}'`),{timeout:60000}).toEqual([{state:'completed'}]);
+    // Reconciliation settles the recipient first; the next native tick closes its step.
+    await site.control('/_golive/cron');
+    await completionProof('lookup-expired',['delivered','failed'],true);
     expect(marketing()).toHaveLength(2);expect((await recipients())[0].transport_disposition).toBe('delivered');
     await expect.poll(async()=> (await site.rows(`SELECT reason FROM campaign_channel_pauses WHERE revision_id='${unknownCampaign.revisionId}' AND resumed_at IS NULL`)).map(row=>row.reason),{timeout:60000}).toContain('reconciliation-authority');
     expect(await site.rows(`SELECT provider,transport_disposition,attempt_count,outbound_request_json FROM recipient_steps WHERE id='${originalUnknown.id}'`)).toEqual([{provider:'sendgrid',transport_disposition:'handoff-unknown',attempt_count:1,outbound_request_json:originalUnknown.outbound_request_json}]);
