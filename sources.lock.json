@@ -9114,7 +9114,7 @@
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {
-      "sha256": "348c92d2e71e6b47be920d8e0b30fe69dd6f93a59e8d6c9eaa4cdd9d7b22f41f",
+      "sha256": "3611b4b0771daa942deac3a8447b0294c69d1a27274c4da722e6936d3fcc3c9b",
       "executable": false
     },
     "tests/go-live/signup-refusal-screens.ts": {
