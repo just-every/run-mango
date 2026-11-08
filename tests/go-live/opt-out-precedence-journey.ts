@@ -4,6 +4,7 @@ import {confirmedContact,json,draftCampaign,approve,dispatch,rule,type Installat
 import type {providerEdge} from './edge';
 import {mailchimpMember,type mailchimpEdge} from './mailchimp-edge';
 import {restrictionPrivateJourney} from './restriction-private-journey';
+import {restrictionScreens} from './restriction-screens';
 
 /** One populated parallel run: allowed delivery, incoming restrictions and outgoing refusal. */
 export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,incumbent:ReturnType<typeof mailchimpEdge>,cookie:string,page:Page,info:TestInfo) {
@@ -65,6 +66,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   expect(incumbent.members[3].status).toBe('subscribed');
   await panel.getByRole('button',{name:'Synchronize restrictions',exact:true}).click();
   await expect(panel.getByRole('alert').filter({hasText:'Synchronization could not complete'})).toBeVisible();
+  await restrictionScreens(page,info,'failed');
   expect((await site.call('/api/settings/incumbent-restrictions/'+status.connections[0].id,{method:'DELETE',cookie})).status).toBe(409);
   incumbent.failures.writeStatus=0;
   const retried=page.waitForResponse(response=>response.url().endsWith('/api/settings/incumbent-restrictions/sync')&&response.request().method()==='POST');
@@ -78,12 +80,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   incumbent.members[0].status='subscribed';incumbent.members[1].status='subscribed';
   await json(await site.call('/api/settings/incumbent-restrictions/sync',{method:'POST',cookie}),200);
   expect(incumbent.members.slice(0,2).map(member=>member.status)).toEqual(['unsubscribed','unsubscribed']);
-  for(const width of [1440,390]) {
-    await page.setViewportSize({width,height:1000});await panel.scrollIntoViewIfNeeded();
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-    expect(await panel.locator('input,button,p,label').evaluateAll(elements=>elements.every(element=>parseFloat(getComputedStyle(element).fontSize)>=13))).toBe(true);
-    await panel.screenshot({path:info.outputPath('opt-out-parallel-'+width+'.png')});
-  }
+  await restrictionScreens(page,info,'parallel');
   await openPage(page,site.runtime.url+'/docs/integrations#mailchimp-restrictions-during-a-parallel-run');
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
@@ -119,4 +116,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   await json(await site.call('/api/settings/incumbent-restrictions/sync',{method:'POST',cookie}),200);
   expect(incumbent.requests).toHaveLength(calls);
   expect(await site.rows('SELECT id FROM incumbent_restriction_connections')).toEqual([]);
+  await openPage(page,site.runtime.url+'/app/settings');
+  await expect(panel.getByRole('button',{name:'Synchronize restrictions',exact:true})).toHaveCount(0);
+  await restrictionScreens(page,info,'disconnected');
 }
