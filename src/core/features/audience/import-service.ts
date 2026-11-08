@@ -1,7 +1,7 @@
 import {propertyDefinitions} from './properties/read';
 import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
-import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
+import {csvReview,csvCounts,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
 import {csvAttestations,sourceIdentity} from '../move-in/csv-sources';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
@@ -31,13 +31,6 @@ import { portableAudienceSnapshot } from './import-export';
 import type { AudienceSnapshot, ImportInput } from './import-types';
 
 const planned=holdReason.running;
-function previewCounts(plan:ImportPlan) {
-  const effects=plan.entries.flatMap(entry=>entry.effects), held=heldRows(plan);
-  // An opt-out-only line counts toward the restrictions it restores, never as a contact.
-  const statuses=[...effects.map(effect=>{const c=(effect.value as unknown as AudienceSnapshot).tables.contacts[0];return restrictiveRank[String(c.sms_status)]>restrictiveRank[String(c.email_status)]?c.sms_status:c.email_status;}),...held.map(row=>restrictiveRank[row.smsStatus]>restrictiveRank[row.status]?row.smsStatus:row.status),...optOutRows(plan).map(row=>row.status)];
-  return {...plan.counts,created:effects.filter(effect=>!effect.expectedRevision).length,updated:effects.filter(effect=>effect.expectedRevision).length+held.length,
-    unsubscribed:statuses.filter(status=>status==='unsubscribed').length,suppressed:statuses.filter(status=>status==='suppressed').length};
-}
 
 export async function audienceImportContext(platform: Platform, principalId: string, request: Request): Promise<D1ImportContext> {
   const name = platform.config.local === true ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
@@ -161,7 +154,7 @@ export function createAudienceImportService(platform: Platform) {
         const users=await previewDb.prepare("SELECT j.state FROM ik_jobs j WHERE j.destination=? AND j.principal_id=? AND (j.operation_key=? OR j.id IN (SELECT p.job_id FROM ik_d1_stream_pages p JOIN ik_d1_streams s ON s.id=p.stream_id WHERE s.destination=? AND s.principal_id=? AND s.operation_key=?))").bind(context.destination,context.authorization.principalId,existing.fingerprint,context.destination,context.authorization.principalId,existing.fingerprint).all<{state:string}>();
         const used=users.results.length>0,reversed=used&&users.results.every(row=>['rolled_back','undone'].includes(row.state));
         if(reversed)await previewDb.prepare("UPDATE audience_import_plans SET source_digest=source_digest||':reversed:'||fingerprint WHERE fingerprint=?").bind(existing.fingerprint).run();
-        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {...csvReview(cached),fingerprint:cached.fingerprint,counts:previewCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:rows.flatMap(row=>row.warnings)};}
+        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {...csvReview(cached),fingerprint:cached.fingerprint,counts:csvCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:rows.flatMap(row=>row.warnings)};}
         else{
           const unused="NOT EXISTS(SELECT 1 FROM ik_jobs WHERE operation_key=?) AND NOT EXISTS(SELECT 1 FROM ik_d1_streams WHERE operation_key=?)";
           await previewDb.batch(['audience_import_plan_chunks','audience_import_plan_contacts','audience_import_plans'].map(table=>previewDb.prepare(`DELETE FROM ${table} WHERE fingerprint=? AND ${unused}`).bind(existing.fingerprint,existing.fingerprint,existing.fingerprint)));
@@ -170,7 +163,7 @@ export function createAudienceImportService(platform: Platform) {
       await saveAudiencePlan(previewDb,plan,context.authorization.principalId,sourceDigest,now,budget);
       const saved=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       const retained=await readAudiencePlan(previewDb,saved!);const retainedRows=retained.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);
-      return {...csvReview(retained),fingerprint:retained.fingerprint,counts:previewCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:retainedRows.flatMap(row=>row.warnings)};
+      return {...csvReview(retained),fingerprint:retained.fingerprint,counts:csvCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:retainedRows.flatMap(row=>row.warnings)};
     },
     async create(fingerprint: string, context: D1ImportContext, actor?:{operator:{id:string;role:string};request:Request}) {
       const row=await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=? AND principal_id=?').bind(fingerprint,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();

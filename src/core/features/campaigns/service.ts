@@ -52,7 +52,9 @@ export function createCampaignService(
       repository.uncertainDeliveries(id),
       repository.attribution(id,composition.revision.id),
     ]);
-    const checks=savedChecks.map(check=>authoringSourceCheck(check,rules.ok?rules.sourceTypes:[]));
+    const checks=savedChecks.map(check=>authoringSourceCheck(check.kind==='audience.structured-rule'
+      ? {...check,detail:summarizeAudienceRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson)}
+      : check,rules.ok?rules.sourceTypes:[]));
     return { campaign, ...composition, catalogSummary:composition.revision.emailBody.includes('data-mango-catalog')?await options.catalogSummary?.(id):undefined,
       scheduler,
       revision: {...composition.revision, audienceRule:summarizeAudienceRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson)},

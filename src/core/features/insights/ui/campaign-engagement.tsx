@@ -20,6 +20,12 @@ export function CampaignEngagement({campaignId,revisionId,emailBody}:{campaignId
     html=html.replaceAll(`${title}>`,`${title}><mark style="background:#fff1ac;color:#242821"><strong>[${link.totalClicks} clicks · ${link.uniqueClicks} people]</strong></mark> `);
   }
   return <section className="panel" aria-labelledby="link-engagement-title"><h2 id="link-engagement-title">Link engagement</h2><p>Human clicks and people are separate from automated requests. Repeated positions using the same destination share one count.</p><p>{data.coverage}</p>
+    <dl className="metric-row" aria-label="Saved revision link totals">
+      <div><dt>Human clicks</dt><dd>{data.totalClicks}</dd></div>
+      <div><dt>Unique people</dt><dd>{data.uniqueClicks}</dd></div>
+      <div><dt>Automated requests</dt><dd>{data.automatedRequests}</dd></div>
+    </dl>
+    <p>People count once across all links and message steps in this saved revision.</p>
     <Can permission="audience.export"><a className="text-link" href={`${base}/engagement?${query}&format=csv`}>Export link totals CSV</a></Can>
     {data.links.length?<><div className="table-scroll" tabIndex={0} role="region" aria-label="Link click totals"><table className="responsive-table report-table" aria-label="Clicks by link"><thead><tr><th>Link</th><th>Clicks</th><th>People</th><th>Automated</th><th>Details</th></tr></thead><tbody>{data.links.map(link=><tr key={link.destinationUrl}><th scope="row">{link.label}<small style={{display:'block',overflowWrap:'anywhere'}}>{link.destinationUrl}</small></th><td data-label="Clicks">{link.totalClicks}</td><td data-label="People">{link.uniqueClicks}</td><td data-label="Automated">{link.automatedRequests}</td><td data-label="Details"><button type="button" className="text-link" onClick={()=>setDestination(link.destinationUrl)}>View clickers: {link.label}</button></td></tr>)}</tbody></table></div>
       {emailBody===undefined?null:<><h3>Click map</h3><p>Counts over the saved revision. Images stay blocked and links are inactive.</p><iframe title="Campaign click map" sandbox="" referrerPolicy="no-referrer" srcDoc={previewDocument(html,false)} style={{width:'100%',height:400,border:'1px solid #c8c5b9',borderRadius:8}}/></>}

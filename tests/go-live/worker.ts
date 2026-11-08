@@ -1,3 +1,4 @@
+import {fixtureLinkResponse} from './fixture-links';
 import {loadSendingConnection} from '../../src/core/features/sending/load-connection';
 import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
@@ -38,6 +39,8 @@ let extraHosts: string[] = [];
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const request = new Request(input, init), url = new URL(request.url);
   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
+  const fixture = fixtureLinkResponse(url, request.method);
+  if (fixture) return fixture;
   if (!['links.example.test', 'api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname) && !extraHosts.includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,
@@ -116,7 +119,24 @@ async function control(request: Request, bindings: Bindings) {
     if(!queue)throw new Error('Parallel native Queue is not enabled for this installation.');
     await replay(queue,index);return Response.json({ok:true});
   }
-  const { platform, verification } = await compose(bindings), db=bindings.DB;
+  // Observation and Cron must not run request composition first: that would
+  // conceal a missing scheduled monitor behind a read's side effect.
+  // The deployed scheduled handler: due steps are queued for the real consumer.
+  if (path === '/_golive/cron') {
+    edge=bindings.GO_LIVE_EDGE_ORIGIN;extraHosts=JSON.parse(bindings.GO_LIVE_EXTRA_HOSTS??'[]');
+    const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
+    const pending:Promise<unknown>[]=[];
+    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
+      {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
+    await Promise.all(pending);
+    return Response.json({ok:true});
+  }
+  if (path === '/_golive/rows') {
+    const { sql } = await request.json() as { sql: string };
+    if (!/^SELECT\s/i.test(sql)) return new Response('Read-only', { status: 400 });
+    return Response.json((await bindings.DB.prepare(sql).all()).results);
+  }
+  const { platform, verification } = await compose(bindings);
   if (path === '/_golive/open') {
     const { email, id } = await request.json() as { email: string; id: string };
     await testIdentity(platform).importLocalDemoOperator({ id, email, displayName: 'Owner' }, new Date());
@@ -128,25 +148,11 @@ async function control(request: Request, bindings: Bindings) {
     await verification.sendChallenge(challenge.id, platform.mailer);
     return Response.json(await verification.acquireObservation(challenge.id));
   }
-  // The deployed scheduled handler: due steps are queued for the real consumer.
-  if (path === '/_golive/cron') {
-    const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
-    const pending:Promise<unknown>[]=[];
-    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
-      {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
-    await Promise.all(pending);
-    return Response.json({ok:true});
-  }
   // The unsubscribe link a letter to this contact would carry, without sending one.
   if (path === '/_golive/unsubscribe-link') {
     const { contactId } = await request.json() as { contactId: string };
     const issued = await createAppServices(platform).audienceService.issueUnsubscribeToken(contactId, 'email');
     return Response.json({ url: new URL(`/unsubscribe/${issued.token}`, platform.config.publicBaseUrl).href });
-  }
-  if (path === '/_golive/rows') {
-    const { sql } = await request.json() as { sql: string };
-    if (!/^SELECT\s/i.test(sql)) return new Response('Read-only', { status: 400 });
-    return Response.json((await db.prepare(sql).all()).results);
   }
   return new Response('Not found', { status: 404 });
 }

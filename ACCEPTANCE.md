@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 20 | 198 | 89 | 307 |
+| Core | 22 | 196 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 20 | 198 | 98 | 316 |
+| Full target | 22 | 196 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -240,7 +240,7 @@ Core · published · **partial** · Rules D-2
 
 #### CONT-002 — Channel status
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Consent and eligibility are independent for email and SMS on every contact.
 
@@ -249,8 +249,8 @@ Core · published · **partial** · Rules D-2
 2. Only subscribed channels are eligible for a marketing send.
 3. Store activity or consent on one channel never changes the other channel’s state.
 
-**Evidence.** `tests/move-in/held.journeys.ts` — “[CONT-002][CONT-004][CONT-010] an export's unsubscribe or cleaned status reaches a contact an earlier import holds, and keeps their own edits” · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Independent pending and SMS states; Cross-channel independence under store activity and consent. Missing public-door journey: “Channel status — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-002] Channel status — complete acceptance”: independent contact and destination states for both channels; capture and confirmation preserve opposite restrictions; customer sync and signed paid orders preserve state and consent; campaign checks, approval and Queue handoff admit only subscribed channels.; `tests/audience-controls/segments.spec.ts` ([CONT-002] Channel status — complete acceptance)
+**Gap.** None.
 
 #### CONT-003 — Consent evidence
 
@@ -706,8 +706,8 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 1. The states are draft with nothing scheduled, scheduled with an approved revision and future step, dispatching once hand-off begins, paused under SEND-009, completed under SEND-007, canceled under CAMP-009, or failed when the first step misses its deadline because its required provider or sender registration is unavailable.
 2. Each transition records its actor or acting feature and its time, and an invalid transition is rejected.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”, invoking `tests/go-live/pause.flow.ts`: distinct scheduled and mid-dispatch operator pause and resume requests independently bracketed by the installation clock; authenticated Activity reconciled with persisted actor, revision and original audit and channel-pause times; later replay, reload and named invalid transitions retain events, times, approval and recipient authority and handoff counts.
-**Gap.** Remaining acceptance 1 proof: the complete campaign-state, deadline and provider matrix, including Draft state, SEND-009 provider-pause semantics and Failed after a first-step deadline missed for an unavailable provider or sender registration. Remaining acceptance 2 proof: actor or acting feature, occurrence time, retention and invalid-transition refusal across every other transition and acting feature; the native operator pause and resume slice is now asserted. Existing Scheduled, Dispatching, Completed and Canceled evidence is retained.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected. Missing public-door journey: “States — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-002 — Draft editing
 
@@ -728,7 +728,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### AUD-010 — Derived audience rule summaries
 
-Core · published · **partial** · From AUD-001 · Rules D-2
+Core · published · **done** · From AUD-001 · Rules D-2
 
 **Requirement.** Every displayed audience explanation derives from the rules that actually select recipients.
 
@@ -736,8 +736,8 @@ Core · published · **partial** · From AUD-001 · Rules D-2
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. Missing public-door journey: “Derived audience rule summaries — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts` and `tests/audience-controls/audience-summary-cases.ts`: acceptance 1 reconciles saved inclusion and custom exclusions with the authenticated collection, actual campaign row, review, approval checks, scheduled page and saved audience snapshots; repeated reads preserve the exact approval and recipient rows. Acceptance 2 independently specifies nested all and any membership, every editor field and comparison, typed values, property, channel, topic, ZIP and currency scopes, zero, one and longer lookbacks, same-event order filters, retained imported conditions and a native saved follow-up cohort. Predicate and exclusion edits persist after reload without authority; 39 condition cases and a follow-up retain their complete meaning. Restricted roles cannot read private rule details or run checks, and a signed-out session cannot read them. Browser proof covers the clause screens at 1440 and 390.
+**Gap.** None.
 
 ### Campaigns — Live audience authoring counts
 
@@ -1023,8 +1023,8 @@ Core · published · **partial** · From DESIGN-002 · Cites BASE-OPS-004 · Rul
 5. Minute scheduling and reading a draft both fail overdue runs; scheduling also resumes live work quiet for two minutes unless awaiting the provider’s declared retry time.
 6. A new run cannot start while another of that draft waits on the provider; a design already offered may still prepare its layout.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
-**Gap.** Asserted: Same key on rate retry; Notice stays until answer; Untimed refusal fails quota; Wallet refusal fails quota; Failed design reason; Read deadline settlement. Unasserted: Ordinary 30-second request bound; 60-second download bound; 150-second purchase bound; Retry-After honored; Relative retry time notice; Beyond-deadline wait fails quota; Network failure retries; Server failure retries; Request timeout retries; Three-pass bound; Five- and ten-second spacing; Unavailable final failure; Unauthorized reason; Rejected request reason; Unreadable reason; Forbidden redirect reason; Expired layout reason; Cron deadline settlement; Quiet work resumed after two minutes; Declared provider wait respected; New run refused while same draft waits; Offered design may prepare during wait. Missing public-door journey: “Design provider retries and deadlines — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”; `tests/campaign-authoring/design-concurrency-journey.ts` — “walkConcurrency”, invoked by the registered generation spec: native concurrent-start refusal and explicit earlier-candidate preparation during a provider-declared wait, independently observed in-flight conversion without premature purchase or cost, settled run and cost reconciliation, preparing and ready states reloaded at 1440 and 390, unchanged draft and delivery authority
+**Gap.** Asserted: Same key on rate retry; Notice stays until answer; Untimed refusal fails quota; Wallet refusal fails quota; Failed design reason; Read deadline settlement; New run refused while same draft waits without a new job, command or creation purchase; Earlier offered design prepares its own layout during that wait with truthful run identities and cost. Unasserted: Ordinary 30-second request bound; 60-second download bound; 150-second purchase bound; Retry-After honored; Relative retry time notice; Beyond-deadline wait fails quota; Network failure retries; Server failure retries; Request timeout retries; Three-pass bound; Five- and ten-second spacing; Unavailable final failure; Unauthorized reason; Rejected request reason; Unreadable reason; Forbidden redirect reason; Expired layout reason; Cron deadline settlement; Quiet work resumed after two minutes; Declared provider wait respected. Missing public-door journey: “Design provider retries and deadlines — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-008 — Save generated design through ordinary authoring
 
