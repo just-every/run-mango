@@ -1,0 +1,232 @@
+{
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "status": "passed",
+  "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/shared-kiosk.journeys.ts",
+  "tests": [
+    {
+      "test": "[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation",
+      "path": "tests/go-live/shared-kiosk.journeys.ts",
+      "status": "passed",
+      "durationMs": 113284,
+      "reconciliation": {
+        "requests": [
+          {
+            "order": "hosted-first",
+            "request": 1,
+            "carrier": "hosted",
+            "network": "198.51.100.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 0,
+            "mailAfter": 1,
+            "capturesAdded": 1,
+            "handoffs": 1,
+            "counter": [
+              {
+                "key": "signup-email:7811feed161cf713121912b2708e083d5f36b94b58c7091bcc7d9ed0a2246e17",
+                "window": 20765,
+                "count": 1
+              }
+            ],
+            "refusals": {
+              "counts": {},
+              "refusedLastHour": 0
+            }
+          },
+          {
+            "order": "hosted-first",
+            "request": 2,
+            "carrier": "kiosk",
+            "network": "198.51.101.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 1,
+            "mailAfter": 2,
+            "capturesAdded": 1,
+            "handoffs": 2,
+            "counter": [
+              {
+                "key": "signup-email:7811feed161cf713121912b2708e083d5f36b94b58c7091bcc7d9ed0a2246e17",
+                "window": 20765,
+                "count": 2
+              }
+            ],
+            "refusals": {
+              "counts": {},
+              "refusedLastHour": 0
+            }
+          },
+          {
+            "order": "hosted-first",
+            "request": 3,
+            "carrier": "hosted",
+            "network": "198.51.102.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 2,
+            "mailAfter": 3,
+            "capturesAdded": 1,
+            "handoffs": 3,
+            "counter": [
+              {
+                "key": "signup-email:7811feed161cf713121912b2708e083d5f36b94b58c7091bcc7d9ed0a2246e17",
+                "window": 20765,
+                "count": 3
+              }
+            ],
+            "refusals": {
+              "counts": {},
+              "refusedLastHour": 0
+            }
+          },
+          {
+            "order": "hosted-first",
+            "request": 4,
+            "carrier": "kiosk",
+            "network": "198.51.103.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 3,
+            "mailAfter": 3,
+            "capturesAdded": 0,
+            "handoffs": 3,
+            "counter": [
+              {
+                "key": "signup-email:7811feed161cf713121912b2708e083d5f36b94b58c7091bcc7d9ed0a2246e17",
+                "window": 20765,
+                "count": 3
+              }
+            ],
+            "refusals": {
+              "counts": {
+                "kiosk:daily-allowance": 1
+              },
+              "refusedLastHour": 1
+            }
+          },
+          {
+            "order": "kiosk-first",
+            "request": 1,
+            "carrier": "kiosk",
+            "network": "198.51.110.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 0,
+            "mailAfter": 1,
+            "capturesAdded": 1,
+            "handoffs": 1,
+            "counter": [
+              {
+                "key": "signup-email:8881dc1d4e7ccbb3da4ad1a506d6878e7268974b63df77b1b21acbf7644a117b",
+                "window": 20765,
+                "count": 1
+              }
+            ],
+            "refusals": {
+              "counts": {
+                "kiosk:daily-allowance": 1
+              },
+              "refusedLastHour": 1
+            }
+          },
+          {
+            "order": "kiosk-first",
+            "request": 2,
+            "carrier": "hosted",
+            "network": "198.51.111.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 1,
+            "mailAfter": 2,
+            "capturesAdded": 1,
+            "handoffs": 2,
+            "counter": [
+              {
+                "key": "signup-email:8881dc1d4e7ccbb3da4ad1a506d6878e7268974b63df77b1b21acbf7644a117b",
+                "window": 20765,
+                "count": 2
+              }
+            ],
+            "refusals": {
+              "counts": {
+                "kiosk:daily-allowance": 1
+              },
+              "refusedLastHour": 1
+            }
+          },
+          {
+            "order": "kiosk-first",
+            "request": 3,
+            "carrier": "kiosk",
+            "network": "198.51.112.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 2,
+            "mailAfter": 3,
+            "capturesAdded": 1,
+            "handoffs": 3,
+            "counter": [
+              {
+                "key": "signup-email:8881dc1d4e7ccbb3da4ad1a506d6878e7268974b63df77b1b21acbf7644a117b",
+                "window": 20765,
+                "count": 3
+              }
+            ],
+            "refusals": {
+              "counts": {
+                "kiosk:daily-allowance": 1
+              },
+              "refusedLastHour": 1
+            }
+          },
+          {
+            "order": "kiosk-first",
+            "request": 4,
+            "carrier": "hosted",
+            "network": "198.51.113.1",
+            "status": 202,
+            "acknowledgment": {
+              "status": "confirmation-required"
+            },
+            "mailBefore": 3,
+            "mailAfter": 3,
+            "capturesAdded": 0,
+            "handoffs": 3,
+            "counter": [
+              {
+                "key": "signup-email:8881dc1d4e7ccbb3da4ad1a506d6878e7268974b63df77b1b21acbf7644a117b",
+                "window": 20765,
+                "count": 3
+              }
+            ],
+            "refusals": {
+              "counts": {
+                "hosted:daily-allowance": 1,
+                "kiosk:daily-allowance": 1
+              },
+              "refusedLastHour": 2
+            }
+          }
+        ],
+        "freshControl": {
+          "mail": 1,
+          "status": "subscribed"
+        }
+      }
+    }
+  ]
+}

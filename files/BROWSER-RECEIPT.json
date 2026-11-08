@@ -1,0 +1,58 @@
+{
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "assertionWidth": 1440,
+  "screenshotWidths": [
+    1440,
+    390
+  ],
+  "screens": [
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-1440.png",
+      "bytes": 169070,
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-390.png",
+      "bytes": 106158,
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-1440.png",
+      "bytes": 121215,
+      "sha256": "514cb25ac4efaa079d5acaf3a4cff318a20ccb83b5c5698458326acff020e554",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-390.png",
+      "bytes": 83875,
+      "sha256": "8daac90b263fca2056fcdf50eecb760890a63ea5175fc8762d6c7aa524eea506",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-1440.png",
+      "bytes": 120811,
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-390.png",
+      "bytes": 83440,
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "bytes": 169781,
+      "sha256": "b45d046faa3c93b5d669f2f8122ac298eae8b9d0ea7ecf64ea606754e45f0ef0",
+      "inspected": true
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-390.png",
+      "bytes": 106725,
+      "sha256": "36dbd4010a7e2446aa54bc06d91a6ea39cc2ab2f30d5edd89f7ae1e7efab1176",
+      "inspected": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-11-08T14:11:09.636313+00:00",
+  "apiCallsUsed": 8,
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "runs": [
+    {
+      "id": 42487666893,
+      "name": "Verify",
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42487666893"
+    }
+  ],
+  "observations": [
+    {
+      "observedAt": "2026-11-08T14:06:09.137886+00:00",
+      "conclusion": null,
+      "head_sha": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42487666893",
+      "status": "in_progress"
+    },
+    {
+      "observedAt": "2026-11-08T14:11:09.636313+00:00",
+      "conclusion": null,
+      "head_sha": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42487666893",
+      "status": "in_progress"
+    }
+  ]
+}

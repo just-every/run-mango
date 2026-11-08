@@ -1,0 +1,103 @@
+{
+  "tag": "sd-mango-c-f141",
+  "base": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email [fleet identity] --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "sourceLockSha256": "e51b3851aa5bdae3b0f8295a4d22e104f4712b38ec6da13c541b88c8b7f96cd2",
+  "contractChanged": false,
+  "generatedViewsCommitted": false,
+  "newRegistrations": 0,
+  "countsBefore": {
+    "DONE": 21,
+    "PARTIAL": 197,
+    "MISSING": 98
+  },
+  "countsAfter": {
+    "DONE": 21,
+    "PARTIAL": 197,
+    "MISSING": 98
+  },
+  "publicationScan": {
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "reason": "Mac lander owns full-history publication scan; not run in cloud."
+  },
+  "mainRuns": {
+    "Verify": [
+      42480504208,
+      42479411705
+    ],
+    "Run site": 42480504239,
+    "conclusion": "success"
+  },
+  "inheritedRun": {
+    "id": 42484916479,
+    "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+    "conclusion": "failure",
+    "targetReportsJob": 128744971785,
+    "targetReportsConclusion": "success",
+    "unrelatedFailedJobs": [
+      128744971773,
+      128744971783
+    ]
+  },
+  "apiCallsUsed": 8,
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "branch": "cloud/sd-mango-c-f141",
+  "productPush": "success",
+  "productPushAttempts": 1,
+  "postCommitRebase": "up to date; no history rewrite",
+  "finalLockCheckExit": 0,
+  "fullHistory": true,
+  "diffFiles": [
+    "sources.lock.json",
+    "tests/go-live/confirmation-allowance-journey.ts",
+    "tests/go-live/resubscribe.flow.ts",
+    "tests/go-live/shared-kiosk.journeys.ts"
+  ],
+  "workingTreeClean": true,
+  "exactHeadJourney": "passed",
+  "exactHeadJourneyReceipt": "JOURNEY-RECEIPT.json",
+  "candidateVerify": 42487666893,
+  "localToolchain": {
+    "node": "24.19.0",
+    "pnpm": "10.12.4",
+    "launcherToolchainScriptUsed": true
+  },
+  "candidateVerifyStatus": "in_progress",
+  "candidateVerifyConclusion": null,
+  "handoff": "PUSHED; exact-head Verify still in progress; no green or landing claim"
+}
