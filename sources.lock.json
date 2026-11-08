@@ -5366,7 +5366,7 @@
       "executable": false
     },
     "src/core/features/move-in/mailchimp-transport.ts": {
-      "sha256": "a7e480a67fb9a6bc9b6e02f23031bff898e46b35e6ff6cda3a2105cb55fddaf1",
+      "sha256": "9bd927ddcefdfc5efa149c57ff3a0d48fd1957f7d462be7cd54bbb6a2b4283d8",
       "executable": false
     },
     "src/core/features/move-in/restriction-connections.ts": {
@@ -9026,7 +9026,7 @@
       "executable": false
     },
     "tests/go-live/opt-out-precedence-journey.ts": {
-      "sha256": "0093072ce003aae939b62d9692c44c656bc5911fca8d6ad6fff3177567e5615b",
+      "sha256": "4c1e46037026fe41a4aee5450311a192aa9cfa28a4157e9a08a7854771888423",
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
