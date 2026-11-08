@@ -30,5 +30,11 @@
   "contract_changed": false,
   "pr": null,
   "final_verify": "unconfirmed: ten-call API budget exhausted",
-  "readiness": "PUSHED pending independent exact-SHA Verify; final local suite pending"
+  "readiness": "PUSHED: final exact-SHA Verify unconfirmed after ten-call API budget",
+  "working_tree_clean": true,
+  "all_product_commits_pushed": true,
+  "runtime_source_matches_browser_proof_and_build": true,
+  "tests_changed_relative_merged_main": false,
+  "local_touched_checks": "passed",
+  "blockers": "No remaining local check failure; independent exact-SHA Verify and fleet publication scan remain required."
 }

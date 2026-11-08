@@ -1,6 +1,6 @@
 # sd-mango-hydration-date-3
 
-Product custody: **PUSHED**, branch `cloud/sd-mango-hydration-date-3`, head `0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2`, repository `just-every/run-mango`. Final exact-SHA Verify is unconfirmed because the ten-call GitHub budget is exhausted. No READY, acceptance, deployment or landing claim is made. The strictly isolated presend journey passed; the final full-suite result is pending at this revision and is recorded below before terminal publication.
+Product custody: **PUSHED**, branch `cloud/sd-mango-hydration-date-3`, head `0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2`, repository `just-every/run-mango`. Final exact-SHA Verify is unconfirmed because the ten-call GitHub budget is exhausted. No READY, acceptance, deployment or landing claim is made. All final local touched checks passed, including the strictly isolated presend journey and all 23 go-live journeys.
 
 ## Final behavior and cause
 
@@ -27,7 +27,7 @@ A diagnostic worktree shares the same full-history clone and origin. It allowed 
 
 ## Final-source browser and local proof
 
-The final no-input proof passed 20 reloads across browser Australia/Brisbane and saved America/New_York preferences. It asserts the heading's text immediately after the app hydration marker, without a date-text polling assertion. The receipt records a complete document, hydrated=true, correct saved-date headings, zero trusted pointer/click/key/touch events during the no-input phase and no page errors. A later phase verifies picker changes to London and cross-tab storage changes to Berlin. Actual date captures at 1440 and 390 were visually inspected and show formatted saved dates. Full saved-newsletter captures and proof source are included. All data is synthetic local fixture data.
+The final no-input proof passed 20 reloads across browser Australia/Brisbane and saved America/New_York preferences. It asserts the heading's text immediately after the app hydration marker, without a date-text polling assertion. The receipt records a complete document, hydrated=true, correct saved-date headings, zero trusted pointer/click/key/touch events during the no-input phase and no page errors. A later phase verifies picker changes to London and cross-tab storage changes to Berlin. Actual date captures at [1440](commit-ready-date-1440.png) and [390](commit-ready-date-390.png) were visually inspected and show formatted saved dates. Full saved-newsletter captures and proof source are included. All data is synthetic local fixture data.
 
 | Final-source check | Result | Actual evidence |
 | --- | --- | --- |
@@ -40,13 +40,15 @@ The final no-input proof passed 20 reloads across browser Australia/Brisbane and
 | Source freshness/offline Base comparison | exit 0 | commit-ready-source-check.log |
 | Integration specification/identity | exit 0 | commit-ready-integration-check.log |
 | Presend journey strictly isolated | PASS, 1 journey, 3.2m | isolated-presend.log |
-| All 23 go-live journeys at maintained capacity | pending | final-go-live.log |
+| All 23 go-live journeys at maintained capacity | PASS, 23 journeys, 26.3m; 0 failed/skipped | final-go-live.log |
 
 The focused editor test exercises the saved numeric value that failed in the prior CI run; its unchanged assertions passed. The phone journey recorded the public/operator states, dialogs, refusal states and role-limited pages fitting at 390 with clear axe results. The provided toolchain and cloud_run were used; headless Chromium used `/usr/bin/chromium` and `--no-sandbox`.
 
 One concurrent presend run hit the known five-second save-notice timeout at `tests/go-live/email-size.flow.ts:78`. Its actual snapshot showed the save still busy and the Save button disabled, rather than a completed refusal. app-presend.log and busy-save-context.md retain that result. Several native/browser jobs overlapped on the VM's four CPU quota. The final isolation run removed competing browser work without changing the assertion or timeout and passed in 3.2m. The failed concurrent observation is retained and is not represented as a pass. The final full suite uses the maintained two-worker capacity with no additional browser jobs alongside it.
 
 The first immediate-text diagnostic omitted waiting for the newly reloaded document's readiness marker and saw the expected server placeholder. That probe is retained in commit-ready-unawaited-reload.log. The corrected proof awaits the existing hydration marker on every reload and then checks text synchronously; it passed. No product workaround or existing test relaxation was introduced.
+
+The final merged SHA also passed `pnpm run verify:managed` (first-party, source freshness/offline Base comparison, typecheck and integration), exit 0; see final-managed.log. Its runtime source bytes are identical to the browser-proof/build source. The working tree is clean and the remote product branch matches the terminal SHA.
 
 ## Mechanical and clause custody
 
@@ -78,4 +80,10 @@ The earlier failures show why document-shell hydration alone was an insufficient
 
 ## Evidence custody
 
-All actual non-secret reports, receipts, logs and captures are kept under the task packet directory. Files are selected explicitly, checked to be regular files and scanned for injected bundle values before transfer. Credentials, environment dumps, private held-out material and symlinks are excluded. Evidence uses only the report-only `evidence/sd-mango-hydration-date-3` ref. An earlier pending snapshot was published at `b63900ba0565af56d57008cf4217d582ae67096c`; the terminal EVIDENCE line identifies the complete final packet's commit. Product custody and evidence publication are separate. The fleet owns its independent publication scan and landing.
+All actual non-secret reports, receipts, logs and captures are kept under the task packet directory. Files are selected explicitly, checked to be regular files and scanned for injected bundle values before transfer. Credentials, environment dumps, private held-out material and symlinks are excluded. Evidence uses only the report-only `evidence/sd-mango-hydration-date-3` ref. Pending snapshots were published at `b63900ba0565af56d57008cf4217d582ae67096c` and `12e7b531bd919eadf93fa3f3c2ad600cdc22609c`; their actual transport receipts are included; the terminal EVIDENCE line identifies the complete final packet's commit. Product custody and evidence publication are separate. The fleet owns its independent publication scan and landing.
+
+## Terminal result
+
+PUSHED branch=cloud/sd-mango-hydration-date-3 head=0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2
+
+Local final evidence: 23/23 go-live journeys, presend alone, immediate no-input date proof with 20 reloads and zone propagation, three rendering/audience/editor journeys, the representative phone journey, managed checks, build and mechanical regeneration all passed. Earlier concurrent/obsolete observations remain recorded separately. Baseline presend was 1/1 passed; final full suite was 23/23 passed. Clause counts remain 21/197/98; no status changes. No PR was created. Final exact-SHA Verify is unconfirmed after the fixed API budget; older failing runs are not treated as green. The fleet must run its independent exact-SHA/publication gates before landing.

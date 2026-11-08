@@ -154,5 +154,24 @@
     "duration": "3.2m",
     "other_browser_jobs": 0,
     "assertions_and_timeouts_unchanged": true
+  },
+  "final_full_go_live": {
+    "exit": 0,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "26.3m",
+    "workers": 2,
+    "additional_browser_jobs": 0,
+    "head": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2"
+  },
+  "final_managed": {
+    "exit": 0,
+    "checks": [
+      "first-party",
+      "source freshness/offline Base comparison",
+      "typecheck",
+      "integration"
+    ]
   }
 }
