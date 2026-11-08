@@ -1,7 +1,7 @@
 {
   "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
   "job": 128744971783,
-  "command": "SHARD=authoring CI=true WRANGLER_SEND_METRICS=false PLAYWRIGHT_SKIP_BROWSER_GC=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium node scripts/verification/ci.mjs \"$SHARD\"",
+  "command": "node scripts/verification/ci.mjs authoring",
   "test": "tests/campaign-authoring/design-import.spec.ts# [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px",
   "exit": 1,
   "failure": "Expected substring: \"Email is too large.\"; Timeout: 5000ms; Error: element(s) not found",
@@ -44,5 +44,13 @@
       "durationMs": 36147,
       "resolution": "Await aria-busy=false; all original assertions retained."
     }
-  ]
+  ],
+  "environment": {
+    "SHARD": "authoring",
+    "CI": "true",
+    "WRANGLER_SEND_METRICS": "false",
+    "PLAYWRIGHT_SKIP_BROWSER_GC": "1",
+    "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium"
+  },
+  "wrapper": "cloud_run perl -e 'alarm 1200; exec @ARGV' --"
 }

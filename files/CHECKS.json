@@ -101,8 +101,8 @@
   },
   "main_equality": false,
   "run_site": "not run on this branch; fleet checks after landing",
-  "github_calls_used": 8,
-  "ci_status": "in_progress",
+  "github_calls_used": 10,
+  "ci_status": "completed",
   "main_remote_at_pre_ready": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
   "product_remote_at_pre_ready": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
   "added_test_text_email_literals": 0,
@@ -117,5 +117,13 @@
     "status": "pushed",
     "skip_ci": true
   },
-  "verify_run_id": 42499768908
+  "verify_run_id": 42499768908,
+  "full_git_history": true,
+  "exact_head_first_party_check": {
+    "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0
+  },
+  "ci_conclusion": "success",
+  "product_custody": "READY after exact-SHA green Verify and local checks; main and publication scan remain fleet-owned"
 }

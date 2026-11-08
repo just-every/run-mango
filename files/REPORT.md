@@ -16,7 +16,7 @@ Reproduced failure at ./tests/campaign-authoring/design-import.spec.ts:78: expec
 
 All original refusal, selected-file retention, no-save, successful-import, exact-byte, preview and approval assertions remain. No retry, skip or wider timeout was added to those assertions. Final import passed in 36147 ms; final registered shared kiosk passed in 93626 ms on the full candidate SHA.
 
-VERIFY_REPRODUCED {"head":"cc2d1f618b695ddc1e28306e8f9774f732a66a69","job":128744971783,"command":"SHARD=authoring node scripts/verification/ci.mjs \"$SHARD\"","test":"tests/campaign-authoring/design-import.spec.ts# a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px","exit":1,"failure":"Expected substring: Email is too large.; Timeout: 5000ms; Error: element(s) not found"}
+VERIFY_REPRODUCED {"head":"cc2d1f618b695ddc1e28306e8f9774f732a66a69","job":128744971783,"command":"node scripts/verification/ci.mjs authoring","test":"tests/campaign-authoring/design-import.spec.ts# a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px","exit":1,"failure":"Expected substring: Email is too large.; Timeout: 5000ms; Error: element(s) not found"}
 
 VERIFY_REPRODUCED.json retains real nonzero exits and repair history. Actual command logs are included. TRANSPORT.md records empty successful failed-log reads and HTTP 403 artifact redirects; blocked downloads were not retried. No unavailable CI assertion content is inferred.
 
@@ -45,7 +45,7 @@ This is a PARTIAL claim. The full clause's omitted outcomes prevent a DONE claim
 | --- | --- | --- |
 | 1 | PARTIAL overall | Selected public-door outcomes pass; other carriers, actual midnight reset and complete failure matrix remain unproved. |
 | 2 | PASS for selected scope | Seeded unsubscribed destinations, exhausted refusal with protected-state equality and a positive fresh-destination confirmation. Journey:53–145. |
-| 3 | Exact-SHA CI recorded separately | Reports pack runs the registered journey on push Verify. Earlier-SHA green is not candidate green. |
+| 3 | Exact-SHA Verify PASS | Push Verify 42499768908 completed successfully on the candidate. The journey is registered in the reports pack and also passed locally on that exact SHA; per-job CI logs were not independently retrieved. |
 | 4 | PASS locally | IMPORT-RUN.json and KIOSK-RUN.json bind focused passes to candidate. Final images retained; relevant bytes unchanged since visual inspection. |
 | 5 | INSPECTED | CONT-042 derives from CONT-027 and states its allowance directly. No new inherited duty introduced. |
 | 6 | PASS mechanically | Contract write and check succeeded; generated views restored from main. Candidate contract and generated-view diff from main is empty. |
@@ -79,3 +79,7 @@ Evidence goes only to evidence/sd-mango-c-f136-pc1. Evidence transport establish
 ## Exact-SHA CI observation
 
 Verify run 42499768908, event push, head 87b2c9dad5825c1840c0b3b03c830826c350e1ec was observed in progress. The initial empty discovery was startup latency. Final status is retained in CI.json. Eight GitHub calls used; further observations respect the five-minute minimum cadence. No dispatch or rerun was requested.
+
+## Final exact-SHA custody
+
+Verify 42499768908 completed SUCCESS on push for 87b2c9dad5825c1840c0b3b03c830826c350e1ec. Observations used ten GitHub calls total and respected the minimum five-minute interval. No dispatch or rerun was requested. The final first-party check also passed on this exact head. All local commands have finished; browsers and test servers closed normally. Product custody is READY for the guarded fleet lander. No product blocker remains within this slice; the named full-clause remainders keep CONT-042 PARTIAL. Main, Run site and the complete publication scan remain landing-side conditions.
