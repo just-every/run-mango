@@ -72,8 +72,14 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     const oversizedDoc=JSON.stringify(tooLarge);
     await files(page,oversizedDoc);
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+    // Cropping and hosting precede the size check, even for a refused import.
+    const oversizedCheck=page.waitForResponse(response=>response.url()===runtime.url+'/api/campaign-authoring/email-size'
+      &&response.request().method()==='POST'&&response.request().postDataJSON()?.emailBody?.includes('🌱'));
     await dialog.getByRole('button',{name:'Import design',exact:true}).click();
     await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+    const oversizedResponse=await oversizedCheck;
+    expect(oversizedResponse.status()).toBe(200);
+    expect(await oversizedResponse.json()).toMatchObject({exceedsLimit:true});
     const sizeError=dialog.getByRole('alert');
     await expect(sizeError).toContainText('Email is too large.');
     await expect(sizeError).toContainText('Largest blocks:');
