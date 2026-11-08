@@ -52,7 +52,7 @@ export function createCampaignResultRepository(database: Database) {
           outageNotices:notices.results.filter(n=>n.channel===step.channel).map(({state,code,count})=>({state,code,count})),
           estimatedCompletionAt:!fact?.pending||channelPauses.some(p=>p.resumed_at===null)||step.estimated_completion_at==null?null:new Date(step.estimated_completion_at).toISOString(),
           pauses:channelPauses.map(p=>({reason:p.reason,detail:p.detail,resumedAt:p.resumed_at===null?null:new Date(p.resumed_at).toISOString(),nextProbeAt:p.next_probe_at===null?null:new Date(p.next_probe_at).toISOString()})),
-          state: stepResultState({campaignState:channelPauses.some(p=>p.resumed_at===null)?'paused':campaignState, startedAt:step.started_at, sendByAt:step.send_by_at, now:now.getTime(), counts, pendingBeforeDeadline:fact?.pending ?? 0, inFlightCount:fact?.in_flight ?? 0}),
+          state: stepResultState({campaignState:campaignState!=='cancelled'&&channelPauses.some(p=>p.resumed_at===null)?'paused':campaignState, startedAt:step.started_at, sendByAt:step.send_by_at, now:now.getTime(), counts, pendingBeforeDeadline:fact?.pending ?? 0, inFlightCount:fact?.in_flight ?? 0}),
           startedAt: step.started_at === null ? null : new Date(step.started_at).toISOString(),
           completedAt: step.completed_at === null ? null : new Date(step.completed_at).toISOString(),
           counts, failures: failures.results.filter(row => row.step_id === step.id).map(({code,detail,count}) => ({code,detail,count})),
