@@ -1620,7 +1620,7 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE
 
 #### RESULT-010 — Ordinary campaign images are untracked
 
-Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
+Core · published · **done** · From RESULT-005 · Cites BASE-DATA-005
 
 **Requirement.** An ordinary campaign image is shared content and never an open tracker.
 
@@ -1629,8 +1629,8 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
 2. A fetch retains no address, user agent, cookie, recipient or request time, only the current-minute per-image rate counter.
 3. An ordinary image fetch is never counted or shown as an open.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. Missing public-door journey: “Ordinary campaign images are untracked — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/ordinary-images.journeys.ts` — “[RESULT-010] delivered ordinary images share one URL, retain only a minute counter and never credit opens”: acceptance 1 compares both actual email handoffs with the native upload URL; acceptance 2 compares every application table after GET and HEAD with distinct requester inputs, allowing only the current-minute image counter; acceptance 3 reconciles unchanged native results and operator counts after reload, with a distinct pixel as the positive control and 1440 and 390 browser proof.
+**Gap.** None.
 
 #### RESULT-006 — Deliverability reporting
 
