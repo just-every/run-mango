@@ -37,6 +37,6 @@ A claim is done when every clause behind it is done, missing when every one is m
 | 29 | Download your audience with its consent history as CSV, ready to import again. | `DATA-001` partial; `DATA-002` partial; `CONT-010` partial | partial |
 | 30 | The owner gives each operator one of six roles, and approvals and cancellations record who made them. | `OPER-004` partial; `CAMP-004` partial; `CAMP-009` partial | partial |
 | 31 | MIT-licensed source you can customise with your own agents. | `MGMT-002` partial; `AGENT-010` partial | partial |
-| 32 | Set up Mango and send a newsletter people are glad to get. | `OPER-001` partial; `CAMP-002` partial; `AUD-010` partial; `CAMP-020` partial; `CAMP-021` partial; `CAMP-004` partial; `SEND-001` partial | partial |
+| 32 | Set up Mango and send a newsletter people are glad to get. | `OPER-001` done; `CAMP-002` partial; `AUD-010` partial; `CAMP-020` partial; `CAMP-021` partial; `CAMP-004` partial; `SEND-001` partial | partial |
 
 Claims: 32; 0 done, 32 partial, 0 missing.
