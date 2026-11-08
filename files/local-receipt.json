@@ -1,0 +1,63 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f134",
+  "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "created_at": "2026-11-08T13:24:44.259267+00:00",
+  "working_tree_clean": true,
+  "checks": [
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "scope": "setup before product edit"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer build",
+      "exit": 0,
+      "scope": "production source unchanged thereafter"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "scope": "same relevant source bytes as candidate"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "scope": "clean committed candidate"
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --workers=1",
+      "exit": 0,
+      "scope": "clean committed candidate",
+      "result": "1 passed (1.5m)",
+      "log": "focused-journey.log",
+      "launcher": "cloud_run with 1200-second hard timeout, system Chromium and external artifact storage"
+    }
+  ],
+  "product_push": {
+    "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f134",
+    "exit": 0,
+    "attempts": 1,
+    "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c"
+  },
+  "counts_before": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "test_registration_delta": 0,
+  "publication_scan": {
+    "commit": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "status": "NOT RUN in cloud; maintained fleet lander must run exact-head full-history scan"
+  },
+  "main_equality": false,
+  "pr": null
+}

@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "output": "Wrote 0 contract documents."
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "output": "Contract documents are current."
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "migration_ledger": {
+    "status": "not applicable",
+    "reason": "No migration changed."
+  }
+}

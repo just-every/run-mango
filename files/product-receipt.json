@@ -1,0 +1,10 @@
+{
+  "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "shallow": false,
+  "changed_files": [
+    "sources.lock.json",
+    "tests/go-live/signup-capacity-journey.ts"
+  ],
+  "status_cells_changed": false,
+  "candidate_identities": "Run Edit Run fleet <fleet@runeditrun.com>\nRun Edit Run fleet <fleet@runeditrun.com>"
+}

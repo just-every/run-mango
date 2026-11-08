@@ -1,0 +1,51 @@
+{
+  "head": "c25389df22188f2da7b4abde3d71ed08bc823b6c",
+  "files": [
+    {
+      "path": "tests/go-live/signup-capacity-journey.ts",
+      "sha256": "3611b4b0771daa942deac3a8447b0294c69d1a27274c4da722e6936d3fcc3c9b",
+      "blob": "cf9efe77f4811d8b1dc8b81a49cd421d9d497878"
+    },
+    {
+      "path": "tests/go-live/shared-kiosk.journeys.ts",
+      "sha256": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
+      "blob": "86e3dee65dfd2da6fc8797fde866e16f532be00c"
+    },
+    {
+      "path": "tests/go-live/shared-kiosk.flow.ts",
+      "sha256": "c6af13c35d4608ec3edf172055ab4f0e513f73b0559b5495165da4c89b166283",
+      "blob": "c699ebc177bd1f785aa3a6d73109ef481e5b63f9"
+    },
+    {
+      "path": "tests/go-live/kiosk-harness.ts",
+      "sha256": "152fc2c0bf53bb142caf1874b1e2b6c25909903b296a0e423655f94c55511e48",
+      "blob": "0c6ba281429638dd389b42c887251a0a6be39218"
+    },
+    {
+      "path": "tests/go-live/kiosk-worker.ts",
+      "sha256": "7f99eeac62a9d3a59e3bfdfaa115ea5d89bf977dc8c60197d6a0665a0f2ab60a",
+      "blob": "53ef227eedca269a5b80210cb4ef332a5ed34ccb"
+    },
+    {
+      "path": "src/core/features/audience/signup-capacity-routes.ts",
+      "sha256": "0faaf794de831feb93e3a1bbd5aa89754034a4d6066d81739fdf1efd120c7336",
+      "blob": "ce57a06248880e1e0d625f0c7a9900fc2c7e24c1"
+    },
+    {
+      "path": "src/core/features/audience/signup-capacity.ts",
+      "sha256": "4a61dc74054e1f55357fc0000abb3fa017908f47691cc701dd2d356e051381be",
+      "blob": "537e732a3b6089cd7adc5ac2151eeb9af9e2f5b0"
+    },
+    {
+      "path": "src/core/features/audience/ui/signup-capacity-settings.tsx",
+      "sha256": "862a5b8bfcd2e6cf3885c7b869af13089f98fd962e690f9dca64fd6d8995519b",
+      "blob": "bb515e527daffc25a94c8393928bb7b651900580"
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "2112f3bff3c8a9d12997f342e2cf7dd6cf5475de0679e6b5666e88a4edd1ed1e",
+      "blob": "3f527b04a2c4473e1caecc0ce94181a04e0c9e91"
+    }
+  ],
+  "working_tree_clean": true
+}
