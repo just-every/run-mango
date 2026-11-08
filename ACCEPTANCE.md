@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 20 | 198 | 89 | 307 |
+| Core | 21 | 197 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 20 | 198 | 98 | 316 |
+| Full target | 21 | 197 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. DESIGN-004 was exercised through its registered native import journey with the refusal helper at commit `22c60b5c54b06c83a4120c511950f69dc2a84d4a` (6 November 2026); this status candidate retains those source and test bytes. Its real email-client field proof remains in R-201. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -1106,7 +1106,7 @@ Core · published · **partial** · From DESIGN-003 · Cites BASE-ACCESS-002, BA
 
 #### DESIGN-004 — Design import
 
-Core · published · **partial** · Rules D-1 · Register R-201
+Core · published · **done** · Rules D-1 · Register R-201
 
 **Requirement.** A local design file and its candidate PNG become an unsaved campaign-body edit through the email grammar.
 
@@ -1119,8 +1119,8 @@ Core · published · **partial** · Rules D-1 · Register R-201
 6. Each HTML and plain-text part is at most 102,400 UTF-8 bytes under BUILD-012’s measured per-part check.
 7. Import makes no request to 12ui; generation is DESIGN-001, DESIGN-002 and DESIGN-010 to DESIGN-008.
 
-**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px”
-**Gap.** Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged.
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px”, including `tests/campaign-authoring/design-import-refusals.ts` — “Unrepresentable import: reserved-personalization”, “Unrepresentable import: compiled-grammar” and “Unrepresentable import: empty-crop”: (1) version-2 browser compilation into the approval grammar; (2) hosted crops, HTTPS destination and managed footer; (3) unsupported text listing and novel-line highlights; (4) visible version, HTTPS, reserved-delimiter, ordinary-checker and crop-area refusals with unchanged editor, authenticated saved revision and approval, recipient and job authority, zero draft PATCHes, and retained public crops after compilation refusal; (5) unsaved import followed by ordinary exact-revision approval; (6) measured per-part size refusal; (7) no design-provider request. Screens captured at 1440 and 390.
+**Gap.** None.
 
 #### DESIGN-012 — Compile the imported layout
 
