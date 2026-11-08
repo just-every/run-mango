@@ -1625,6 +1625,10 @@
       "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1",
       "executable": false
     },
+    "migrations/core/0105_incumbent_restrictions.sql": {
+      "sha256": "f1eee50f34515cdaca9a6518a93631e25388ebce2b4479d54527946d0c232c1c",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -3371,6 +3375,10 @@
     },
     "src/core/features/audience/manual-sms-capture.ts": {
       "sha256": "ecd102258a193ba0277ba69ec924d2210cb8b364aa3bc1e33535a54bcd932b17",
+      "executable": false
+    },
+    "src/core/features/audience/merge-status.ts": {
+      "sha256": "d4beb06bf1dcbd47104de897246c08d31deeb28efeb8c6570d7c9a3b18979180",
       "executable": false
     },
     "src/core/features/audience/message-response.ts": {
@@ -5357,6 +5365,22 @@
       "sha256": "eee46325579546845eeb74b54b8aa7f1408f5e95b66bd23f2eede18fca59f6e6",
       "executable": false
     },
+    "src/core/features/move-in/mailchimp-transport.ts": {
+      "sha256": "a7e480a67fb9a6bc9b6e02f23031bff898e46b35e6ff6cda3a2105cb55fddaf1",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-connections.ts": {
+      "sha256": "eb9d333b6d3ca9dce7c325d46357bf71ae53ad6d1f2825c17b7ddf6a4799e44a",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-routes.ts": {
+      "sha256": "0fcdca9f92a7b8f9137a5b3d9e68f664e146e07182a71f0c9230d67c8a38fe40",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-sync.ts": {
+      "sha256": "4985074a6d9cfda23b6a6dbf44f0e3deb882eea32ebda4786988856c154bd1f1",
+      "executable": false
+    },
     "src/core/features/move-in/routes.ts": {
       "sha256": "2df69b608ef6737a9d520416daed97a5f334a1b6bc25d08f2991008555053370",
       "executable": false
@@ -5895,6 +5919,10 @@
     },
     "src/core/features/store/ui/settings-inbox-check.tsx": {
       "sha256": "0c105441f9077495b5c92a01048e97c1b13b457fd50f1b702e6109d142301846",
+      "executable": false
+    },
+    "src/core/features/store/ui/settings-incumbent-restrictions.tsx": {
+      "sha256": "f5e2b61d4c3054abc242ab00a56d05567d3504d49069fbde15768cbf993eda48",
       "executable": false
     },
     "src/core/features/store/ui/settings-integration-audit.tsx": {
@@ -8949,6 +8977,10 @@
       "sha256": "ffcbcab4ef58cf548768b74df44c5834c01d1a17012d0d4c83b69ff6f8e73161",
       "executable": false
     },
+    "tests/go-live/mailchimp-edge.ts": {
+      "sha256": "5c71da899375349b00b02d7443f2d3e9556e0b3adee377681be953c395528855",
+      "executable": false
+    },
     "tests/go-live/managed-mail.flow.ts": {
       "sha256": "cc38b4ff73505a6cff2d8db38b63025180aa0b019f3a3034bd01ca4095787091",
       "executable": false
@@ -9182,7 +9214,7 @@
       "executable": false
     },
     "tests/go-live/sync-integrations.journeys.ts": {
-      "sha256": "426f0c3c159b5f2e3f9aec44d205f0e6d96ef4a83271c6ad921173e900a5edd2",
+      "sha256": "28ea94ea5861917d58a3648b12f22d52f0f87a01dd7c34d521a82cee2b3c2324",
       "executable": false
     },
     "tests/go-live/template-conversion.ts": {
