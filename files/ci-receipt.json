@@ -1,0 +1,13 @@
+{
+  "repository": "just-every/run-mango",
+  "runId": 42490866446,
+  "event": "push",
+  "head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/just-every/run-mango/actions/runs/42490866446",
+  "observedAt": "2026-11-08T14:55:33.540286+00:00",
+  "githubCalls": 7,
+  "dispatched": false,
+  "rerun": false
+}

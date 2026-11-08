@@ -37,7 +37,7 @@ This is a PARTIAL claim, not a full-clause DONE claim.
 | --- | --- | --- |
 | 1 | PARTIAL | Selected acceptance outcomes pass the native public-door journey; held carriers, midnight reset, failure matrix and next-day reconciliation are still open. |
 | 2 | PASS selected portion | Real seeded unsubscribed destinations, actual mail edge observations, allowed first three requests, refused fourth, and positive fresh-destination confirmation. |
-| 3 | CI PENDING at draft | Push Verify 42490866446 targets the exact candidate and includes the existing reports registration. Final state is in ci-status.json when available. |
+| 3 | PASS selected portion | Push Verify 42490866446 completed success on the exact candidate, including the existing reports registration. See ci-status.json. |
 | 4 | PASS local candidate | Actual final receipt and screenshots are from 80bc36a87109a3da22509aa422b30415de462dc6, after the last source or test change. |
 | 5 | INSPECTED | CONT-042 explicitly names D-2. No inherited duty was moved or newly asserted. |
 | 6 | PASS mechanical, status unchanged | Exact-head contract write and check pass; generated files restored from main; no judgment cells changed. Lander owns any later evidence or count edits. |
@@ -80,7 +80,7 @@ No policy DEFAULT was adopted. No additional target or plan row is selected afte
 
 ## CI and publication custody
 
-Candidate Verify: https://github.com/just-every/run-mango/actions/runs/42490866446, event push, exact head 80bc36a87109a3da22509aa422b30415de462dc6. It was in progress at the last REST observation; no green result from a different head is substituted. The watcher uses one discovery and polls no more than once every 300 seconds. No PR or workflow dispatch was necessary.
+Candidate Verify: https://github.com/just-every/run-mango/actions/runs/42490866446, event push, exact head 80bc36a87109a3da22509aa422b30415de462dc6. It completed with conclusion success at the final REST observation on 2026-11-08 at 14:54 UTC; no green result from a different head is substituted. The watcher uses one discovery and polls no more than once every 300 seconds. No PR or workflow dispatch was necessary.
 
 Main equality: not claimed; the published product remains branch-only. Run site: not run for this branch; fleet-owned after landing. Publication scan: commit 80bc36a87109a3da22509aa422b30415de462dc6, complete=not-run-in-cloud, historyScanned=not-run-in-cloud, findings=not-established. Full Git history is present and candidate origin custody is verified in product-custody.json. The cloud adaptation reserves scanning and landing to the fleet.
 
@@ -95,3 +95,5 @@ Pinned-runtime completion: the exact candidate focused registration also passes 
 CLAIM CONT-042 PARTIAL points=1,2,4 tests=tests/go-live/shared-kiosk.journeys.ts#[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation
 
 The points above identify only the leased portions; the full acceptance sentences retain their stated gaps. Rider 1 remains partial and rider 11 is reserved to landing; local selected-outcome proof passes.
+
+Final CI receipt: Verify 42490866446, event push, status completed, conclusion success, head 80bc36a87109a3da22509aa422b30415de462dc6. Seven GitHub calls were used in total: three for the prior failure and four for candidate discovery and spaced observations. No workflow was dispatched or rerun. The initial 27-file evidence packet was round-trip verified against its manifest before this CI refresh; the final evidence head is reported separately in the terminal EVIDENCE line. Product READY custody is independent of evidence transport and does not claim landing.
