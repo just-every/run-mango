@@ -19,10 +19,10 @@ function header(width: number, height: number) {
 }
 
 /** A complete, decodable RGB PNG whose pixels vary with `seed`. */
-export function png(width: number, height: number, seed = 0) {
+export function png(width: number, height: number, seed = 0, description?: string) {
   const rows = Buffer.alloc((width * 3 + 1) * height);
   for (let y = 0; y < height; y += 1) for (let x = 0; x < width * 3; x += 1) rows[y * (width * 3 + 1) + 1 + x] = (x * 37 + y * 11 + seed) & 255;
-  return new Uint8Array(Buffer.concat([signature, header(width, height), chunk('IDAT', deflateSync(rows)), chunk('IEND', new Uint8Array())]));
+  return new Uint8Array(Buffer.concat([signature, header(width, height), ...(description === undefined ? [] : [chunk('tEXt', new TextEncoder().encode(`Description\0${description}`))]), chunk('IDAT', deflateSync(rows)), chunk('IEND', new Uint8Array())]));
 }
 
 /** Only the PNG signature and header: enough for Mango to read the declared size. */
