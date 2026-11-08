@@ -209,3 +209,11 @@ per collection, 50 pages per collection and 100 templates per export. Each page 
 are reviewed one-time imports, not a parallel-run synchronization.
 
 API source reads stop at 100 requests for one reviewed export. An incomplete or oversized read is refused as a whole; it does not import a partial audience.
+
+## Keep Mailchimp in step during the parallel run
+
+While you run Mango beside Mailchimp, the owner can link one Mailchimp audience under **Settings**: `PUT /api/settings/parallel-run` takes a Mailchimp API key and the audience id. Mango checks the audience, registers one webhook whose address carries a secret unique to this link, and stores the key sealed. Only the owner can link or unlink; `DELETE /api/settings/parallel-run` removes the webhook and the key.
+
+An opt-out always wins. A Mailchimp unsubscribe, abuse report or clean restricts the person in Mango at once, with the same precedence as Mango's own unsubscribe link. Mailchimp's subscribe, profile and email-change events apply nothing here, so nothing from Mailchimp can lift or upgrade a Mango restriction. Mango's own unsubscribes, suppressions and merges are written back to the audience as unsubscribed on the minute Cron. A temporary Mailchimp failure is retried up to five times over an hour; after that the writeback shows as failed in `GET /api/settings/parallel-run` with its error, and `POST /api/settings/parallel-run/retry` starts it again. The echo of Mango's own writeback is recognized once.
+
+Mango does not yet read Mailchimp members during the link, repull missed changes, or write erasures back. Until then a subscribe in Mailchimp does not reach Mango, and the cutover checklist still needs a suppression CSV import.
