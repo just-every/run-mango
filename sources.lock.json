@@ -2990,7 +2990,7 @@
       "executable": false
     },
     "src/core/app/client/ui/layout.tsx": {
-      "sha256": "f592f2b838a518edd1a054f52b240640a415a7c80e53cda0f9e17193778b5a20",
+      "sha256": "10d9ce4080a2ef90a4925efe68d77913c4aaa1042039f5f8cccde83d7a0904e1",
       "executable": false
     },
     "src/core/app/client/ui/materials.ts": {
