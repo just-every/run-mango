@@ -1,4 +1,5 @@
 import {runScheduledReports} from '@/core/features/insights/scheduled-reports';
+import {runParallelRun} from '@/core/features/parallel-run/scheduled';
 import {loadSendingConnection} from '@/core/features/sending/load-connection';
 import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
 import { runScheduled } from './scheduled';
@@ -57,6 +58,7 @@ return {
     executionContext.waitUntil(Promise.allSettled([
       runScheduled(controller, environment, lifecycleRuntime),
       runScheduledReports(controller, environment, platformFor),
+      runParallelRun(controller, environment, platformFor),
     ]).then(results => {
       const failure = results.find(result => result.status === 'rejected');
       if (failure?.status === 'rejected') throw failure.reason;

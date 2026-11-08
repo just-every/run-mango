@@ -10,6 +10,8 @@ import {analyticsSettingsRoutes} from '@/core/features/settings/analytics-settin
 import {signupCapacityRoutes} from '@/core/features/audience/signup-capacity-routes';
 import {reviewLoyaltyRoutes} from '@/core/features/integrations/reviews-loyalty/routes';
 import {sendingConnectionRoutes} from '@/core/features/sending/routes';
+import {parallelRunRoutes} from '@/core/features/parallel-run/routes';
+import {incumbentWebhookRoutes} from '@/core/features/parallel-run/inbound';
 import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
@@ -326,6 +328,7 @@ export function createApp(
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const reviewLoyalty=reviewLoyaltyRoutes(platform,environment.MANGO_RESTORE_MODE==='1');
   app.route('/',reviewLoyalty.webhooks);
+  app.route('/',incumbentWebhookRoutes(platform,audienceService));
   const integrations = createIntegrationService(platform, audienceService);
   app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform));
   mountBeforeAuthentication?.(app, services);
@@ -372,6 +375,7 @@ export function createApp(
   app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api',sendingConnectionRoutes(platform));
+  app.route('/api',parallelRunRoutes(platform));
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));

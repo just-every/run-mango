@@ -720,6 +720,7 @@
       "/paid/info",
       "/webhooks/mail/",
       "/webhooks/sms/",
+      "/webhooks/incumbent/",
       "/auth/bootstrap",
       "/auth/magic-link",
       "/auth/confirm",
