@@ -10,11 +10,19 @@ import {openPage} from '../support/navigation';
 export async function paidTierJourney(input: {site: Installation; page: Page; info: TestInfo; owner: string; admin: string; author: string; restrictedKey: string;
   edge: Awaited<ReturnType<typeof providerEdge>>; post: (event: unknown) => Promise<Response>}) {
   const {site, page, info, owner, edge, post} = input;
+  const checkoutEmail = ['paid-reader', 'example.test'].join('@');
   const tier = {paidTopic: 'Members', freeTopic: 'newsletter', priceId: 'price_synthetic', automaticTax: true};
+  const unsaved = {...tier, paidTopic: 'Garden supporters', priceId: 'price_syntheticMango82'};
+  edge.stripe.prices[unsaved.priceId] = {id: unsaved.priceId, type: 'recurring', active: true, unit_amount: 2700, currency: 'usd', recurring: {interval: 'week', interval_count: 3}};
+  const selectors = new URLSearchParams({priceId: unsaved.priceId, tier: unsaved.paidTopic, paidTopic: unsaved.paidTopic}).toString();
+  const beforeAbsent = edge.stripe.requests.length;
   for (const cookie of [input.admin, input.author]) expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie, body: tier})).status).toBe(403);
   expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie: owner, body: {...tier, automaticTax: false}})).status).toBe(400);
-  expect((await site.call('/paid/checkout', {method: 'POST', body: {email: 'paid-reader@example.test'}})).status).toBe(409);
+  expect((await json(await site.call('/api/settings/stripe', {cookie: owner}), 200)).paidTier).toBeNull();
+  expect(await json(await site.call('/paid/info?' + selectors), 404)).toEqual({error: 'paid_tier_unavailable'});
+  expect((await site.call('/paid/checkout', {method: 'POST', body: {email: checkoutEmail}})).status).toBe(409);
   expect((await site.call('/subscribe?paid=1')).status).toBe(404);
+  expect(edge.stripe.requests).toHaveLength(beforeAbsent);
   await page.setViewportSize({width: 1440, height: 1000});
   await openPage(page, site.runtime.url + '/app/settings');
   await page.getByLabel('Paid topic', {exact: true}).fill(tier.paidTopic);
@@ -24,9 +32,33 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   await expect(page.getByRole('status').filter({hasText: 'Paid tier saved.'})).toBeVisible();
   expect((await json(await site.call('/api/settings/stripe', {cookie: owner}), 200)).paidTier).toEqual(tier);
 
+  const saved = await site.rows('SELECT * FROM paid_tier');
+  const beforeRefusedSave = edge.stripe.requests.length;
+  for (const cookie of [input.admin, input.author, undefined]) {
+    await json(await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie, body: unsaved}), cookie ? 403 : 401);
+    expect(await site.rows('SELECT * FROM paid_tier')).toEqual(saved);
+  }
+  expect(edge.stripe.requests).toHaveLength(beforeRefusedSave);
+  const description = await json(await site.call('/paid/info?' + selectors), 200);
+  expect(description).toMatchObject({paidTopic: tier.paidTopic, price: '$10.00 every month'});
+  expect(await json(await site.call('/paid/info'), 200)).toEqual(description);
+  const beforeOverrides = {requests: edge.stripe.requests.length, sessions: edge.stripe.sessions.length,
+    evidence: await site.count('consent_evidence'), sends: edge.sends.length};
+  const email = ['synthetic-mango-81', 'example.test'].join('@');
+  for (const override of [{priceId: unsaved.priceId}, {tier: unsaved}, {paidTier: unsaved}, {price: 1},
+    {paidTopic: unsaved.paidTopic}, {line_items: [{price: unsaved.priceId, quantity: 1}]}, {automaticTax: false}]) {
+    expect(await json(await site.call('/paid/checkout', {method: 'POST', headers: {'CF-Connecting-IP': '198.51.100.154'}, body: {email, consent: true,
+      disclosure: description.disclosure, requestId: crypto.randomUUID(), ...override}}), 400)).toEqual({error: 'invalid_checkout'});
+    expect(edge.stripe.requests).toHaveLength(beforeOverrides.requests);
+    expect(edge.stripe.sessions).toHaveLength(beforeOverrides.sessions);
+    expect(await site.count('consent_evidence')).toBe(beforeOverrides.evidence);
+    expect(edge.sends).toHaveLength(beforeOverrides.sends);
+    expect(await site.rows('SELECT * FROM paid_tier')).toEqual(saved);
+  }
+
   // The public checkout door creates a subscription-mode session with Stripe Tax
   // through the stored restricted key; Mango never handles card data.
-  const checkout = await json(await site.call('/paid/checkout', {method: 'POST', body: {email: 'paid-reader@example.test'}}), 200);
+  const checkout = await json(await site.call('/paid/checkout?' + selectors, {method: 'POST', body: {email: checkoutEmail}}), 200);
   expect(checkout.url).toMatch(/^https:\/\/checkout\.stripe\.com\//);
   const session = edge.stripe.sessions.at(-1)!;
   expect(session.authorization).toBe(`Bearer ${input.restrictedKey}`);
@@ -184,5 +216,5 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
     await throttle.send('Emulation.setCPUThrottlingRate',{rate:1});await throttle.detach();
   }
-  await paidSignupJourney({site,page,info,owner,edge,post});
+  await paidSignupJourney({site,page,info,owner,edge,post,replacement:unsaved});
 }
