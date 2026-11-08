@@ -8530,7 +8530,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "0ba71d052e8b229574f07b386b63b4ed96885252198d8cdc9b9d6bf0291abfac",
+      "sha256": "2def5f9664d1eb162ed409a8626394aa70d08ef1f57944a838c047bb3201e8f9",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
