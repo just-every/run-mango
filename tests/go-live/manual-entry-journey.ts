@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {openPage} from '../support/navigation';
-import {json,availableTransport,consent,type Installation} from './harness';
+import {json,availableTransport,consent,rule,approve,dispatch,type Installation} from './harness';
+import {smsSender} from './sms-bindings';
 import type {providerEdge} from './edge';
 import {confirmSmsReply} from './sms-confirm-reply';
 export async function manualEntryJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,owner:string,page:Page,info:TestInfo){
@@ -51,6 +52,13 @@ export async function manualEntryJourney(site:Installation,edge:Awaited<ReturnTy
  const text=edge.sms.sends.at(-1)!.body.messages[0].message;expect(text).toContain('Reply YES to confirm');expect(text).not.toContain('/consent/confirm/');
  await confirmSmsReply(site,edge);expect((await site.rows(`SELECT sms_status FROM contacts WHERE id='${contact.id}'`))[0].sms_status).toBe('subscribed');
  expect(await site.rows(`SELECT id FROM contact_history WHERE id='${sms.evidence.id}_confirmed'`)).toHaveLength(1);
+ const queuedSms=await json(await site.call('/api/campaigns',{method:'POST',cookie:owner,body:{}}),201);
+ const smsAt=new Date((await site.control('/_golive/clock')).now+60000),marketingText='Saturday seedlings for the garden club.';
+ await json(await site.call('/api/campaign-revisions/'+queuedSms.revisionId,{method:'PATCH',cookie:owner,body:{
+  name:'Garden club text',smsBody:marketingText,smsSender,messageCategory:options.sms.category,audienceRule:'Confirmed market visitors',
+  inclusionRuleJson:rule([email,body.contact.email]),exclusionRulesJson:'[]',
+  steps:[{channel:'sms',timezone:'Australia/Brisbane',scheduledAt:smsAt.toISOString(),sendByAt:new Date(smsAt.getTime()+3600000).toISOString(),whyThisTime:'Owner chose this time'}]}}),200);
+ await approve(site,owner,queuedSms);
  await json(await site.call('/api/contacts/'+contact.id+'/opt-out',{method:'POST',cookie:owner,body:{channel:'email'}}),200);
  const refused=await json(await site.call('/api/contacts/consent',{method:'POST',cookie:author,body:{...body,contact:{email}}}),409);expect(refused.detail).toContain('Hand entry cannot change that state');expect((await site.rows(`SELECT email_status FROM contacts WHERE id='${contact.id}'`))[0].email_status).toBe('unsubscribed');
  for(const width of [1440]){
@@ -64,6 +72,13 @@ export async function manualEntryJourney(site:Installation,edge:Awaited<ReturnTy
  expect((await site.call('/webhooks/sms/mobile-message',{method:'POST',headers:stop.headers,raw:stop.body})).status).toBe(204);
  expect((await site.call('/api/contacts/consent',{method:'POST',cookie:author,body:smsBody})).status).toBe(409);
  expect((await site.rows(`SELECT sms_status FROM contacts WHERE id='${contact.id}'`))[0].sms_status).toBe('unsubscribed');
+ const smsAudience=await json(await site.call('/api/campaign-authoring/audience',{method:'POST',cookie:owner,body:{inclusionRuleJson:rule([email]),exclusionRulesJson:'[]',channels:['sms']}}),200);
+ expect(smsAudience.eligibleCount).toBe(0);
+ const dispatchClock=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:Math.max(1,smsAt.getTime()-dispatchClock.now+1),hold:true});
+ const smsOutcomes=await dispatch(site,queuedSms.campaignId,smsAt);
+ expect(smsOutcomes.map(row=>[row.email,row.transport_disposition])).toEqual([['+61411111111','skipped'],['+61422222222','accepted']]);
+ expect(edge.sms.sends.filter(send=>send.body.messages[0].message.includes(marketingText)).map(send=>send.body.messages[0].to)).toEqual(['61422222222']);
+ console.log('PROBE CONT-004 1: signed SMS STOP -> unsubscribed before 204, absent from drafts and skipped in approved queue; other SMS recipient accepted');
  const activity=await json(await site.call('/api/activity?action=consent.entered&operator=manual-author',{cookie:owner}),200);expect(activity.entries).toHaveLength(4);
  const source=await json(await site.call('/api/insights/list-growth',{cookie:owner}),200);expect(JSON.stringify(source)).toContain('operator-recorded');
  const csv=await site.call('/api/audience/export',{cookie:owner});expect(await csv.text()).toContain('operator-recorded');

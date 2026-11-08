@@ -9006,7 +9006,7 @@
       "executable": false
     },
     "tests/go-live/mailchimp-edge.ts": {
-      "sha256": "5c71da899375349b00b02d7443f2d3e9556e0b3adee377681be953c395528855",
+      "sha256": "65c51d552033358b1a5fae29a25ab3fbbd51eba8bce883bb2da702903699335f",
       "executable": false
     },
     "tests/go-live/managed-mail.flow.ts": {
@@ -9018,7 +9018,7 @@
       "executable": false
     },
     "tests/go-live/manual-entry-journey.ts": {
-      "sha256": "b180a937f7bb6d06d9c3e61afcd9a18097d805649f268736378c1e0f8bc0f3f7",
+      "sha256": "77be5428df402468c3e7c90820084b4e7da508ab0c00135ed5f5d9ac120277ff",
       "executable": false
     },
     "tests/go-live/marketing-admission.ts": {
@@ -9059,6 +9059,10 @@
     },
     "tests/go-live/opt-in-journey.ts": {
       "sha256": "f8116c5483f15dd0ef49bfc10c0827d096d3d16adb92149c269e95194796cd9b",
+      "executable": false
+    },
+    "tests/go-live/opt-out-precedence-journey.ts": {
+      "sha256": "0093072ce003aae939b62d9692c44c656bc5911fca8d6ad6fff3177567e5615b",
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
