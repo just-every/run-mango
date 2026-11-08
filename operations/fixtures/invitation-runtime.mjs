@@ -10,8 +10,9 @@ const secret = 'synthetic-invitation-test-secret-more-than-thirty-two-bytes';
 const setup = 'invitation-test-setup-more-than-thirty-two-bytes';
 export const cookie = response => response.headers.get('set-cookie')?.split(';')[0];
 
+/** The owner's email-confirmed session; `runtime.setupSession` keeps the setup session, which holds no email proof. */
 export async function confirmedOwner(runtime) {
-  await runtime.bootstrap();
+  runtime.setupSession = await runtime.bootstrap();
   const requested = await runtime.call('/auth/magic-link', { method: 'POST', body: { email: 'owner@example.test' } });
   assert.equal(requested.status, 202);
   const confirmed = await runtime.call('/auth/confirm', { method: 'POST', body: { token: await runtime.token() } });
