@@ -1,0 +1,52 @@
+[
+  {
+    "path": "screens/design-input-deep-input-refused-1440.png",
+    "sha256": "9ae1382ca4c78829c2f56c254a8894081327ea1b42881aad1ab08bfc06569a8f",
+    "bytes": 70833
+  },
+  {
+    "path": "screens/design-input-deep-input-refused-390.png",
+    "sha256": "21639c0a5c632437fd3344c6d9e1c8d58fceff349df830ca1145beb884d4f266",
+    "bytes": 65912
+  },
+  {
+    "path": "screens/design-input-file-size-refused-1440.png",
+    "sha256": "2b539e2ef8f7758c1a0d922e32d4e79ad31d6df51c62ce63c20ec45a526ae08d",
+    "bytes": 70126
+  },
+  {
+    "path": "screens/design-input-file-size-refused-390.png",
+    "sha256": "10f71cd6194c1ba8ff29d65a11ce67f9ed7fa919feeca630853f87dc60d5c4a6",
+    "bytes": 65395
+  },
+  {
+    "path": "screens/design-input-nesting-refused-1440.png",
+    "sha256": "dbdb0a4f49d12945e31270bacff6388dc3b4cd028a5a5ca20390a4102bb0d0fb",
+    "bytes": 70775
+  },
+  {
+    "path": "screens/design-input-nesting-refused-390.png",
+    "sha256": "4bf7d71b0ba5bf9bb08e6ff7b048cec4b0bb3800d45d19e8621ed45224981ff2",
+    "bytes": 65830
+  },
+  {
+    "path": "screens/design-input-recovered-1440.png",
+    "sha256": "272b1846777ce97524f251b0f884eb3590a75d2cd5886967e06253b54f4e675d",
+    "bytes": 247265
+  },
+  {
+    "path": "screens/design-input-recovered-390.png",
+    "sha256": "f9faa5e54716b83cb228e6f0f96b0ba1ab37a7d13e8b9a7ef66043063a0d5562",
+    "bytes": 241026
+  },
+  {
+    "path": "screens/design-input-total-layers-refused-1440.png",
+    "sha256": "5900e6af9f0e52dcd0a61bb1ce2ecde918251404ed914097aee928eaad34ffe8",
+    "bytes": 69845
+  },
+  {
+    "path": "screens/design-input-total-layers-refused-390.png",
+    "sha256": "12ead97779d3e7845cf588ad47bf9ad9f165e4ecdfcf82fac8bfb4b4d715b642",
+    "bytes": 65707
+  }
+]

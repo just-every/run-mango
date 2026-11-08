@@ -1,0 +1,354 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f109-rb2",
+  "repository": "just-every/run-mango",
+  "original_candidate": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+  "base": "6269d1bd1e7fbc2e28620b38021a7d52f145caa9",
+  "main_ahead_count": 101,
+  "branch": "cloud/sd-mango-c-f109-rb2",
+  "head": "7b690e39e22deb1c31ad26e60670dcaa632b7739",
+  "replay_commits": 1,
+  "status_changes": [],
+  "DESIGN_014": {
+    "before": "partial",
+    "after": "partial",
+    "evidence": "acceptance-1 bounds refusals and unsaved recovery"
+  },
+  "before_counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "after_counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "runner": "cloud_run timeout 600",
+      "exit": 0,
+      "observation": "Setup finished with RER_SETUP_READY; frozen dependencies installed; first local owner claimed; setup build succeeded"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "phase": "after write, before restoring views"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "phase": "fresh final lock"
+    },
+    {
+      "command": "pnpm exec playwright test tests/campaign-authoring/design-import.spec.ts --workers=1",
+      "runner": "cloud_run timeout 300",
+      "exit": 0,
+      "tests": 1,
+      "duration_seconds": 53.1,
+      "chromium": "/usr/bin/chromium",
+      "args": [
+        "--no-sandbox"
+      ],
+      "assertion_width": 1440,
+      "proof_widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "runner": "cloud_run timeout 180",
+      "exit": 0,
+      "node": "v24.19.0",
+      "pnpm": "10.12.4",
+      "note": "Provided toolchain retains a newer VM Node; rer used project Node 22.20.0 for its setup orchestration"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "phase": "restored main views",
+      "observation": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "invariants": {
+    "main_status_rows_retained": true,
+    "ID_MAP_unchanged": true,
+    "other_contract_lines_unchanged": true,
+    "newer_main_tests_retained": true,
+    "candidate_helper_byte_identical": true,
+    "no_test_deleted_skipped_or_weakened": true,
+    "no_runtime_behavior_change": true,
+    "no_hold_release": true
+  },
+  "product_files": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/campaign-authoring/design-import.spec.ts",
+    "tests/campaign-authoring/design-input-bounds.ts"
+  ],
+  "custody": {
+    "pushed": true,
+    "push_attempts": 1,
+    "product_ref": "refs/heads/cloud/sd-mango-c-f109-rb2",
+    "pull_request": null,
+    "landing_claim": false,
+    "remote_head_verified": true,
+    "remote_head": "7b690e39e22deb1c31ad26e60670dcaa632b7739"
+  },
+  "ci": {
+    "run_id": 42474638817,
+    "head": "7b690e39e22deb1c31ad26e60670dcaa632b7739",
+    "status": "completed",
+    "conclusion": "failure",
+    "disposition": "READY under explicit generated-view-only exemption",
+    "failed_jobs": [
+      {
+        "id": 128713134232,
+        "name": "Build and public command checks",
+        "failed_steps": [
+          "Check generated contract documents"
+        ]
+      },
+      {
+        "id": 128713189705,
+        "name": "verify",
+        "failed_steps": [
+          "Require the selected coverage and its proof"
+        ]
+      }
+    ],
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 128713096701,
+        "name": "plan",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Check reusable workflow permissions",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Look up complete nightly marker",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run node scripts/ci/mango-plan.mjs",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "failure",
+        "id": 128713134232,
+        "name": "Build and public command checks",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Set runner-owned browser cache",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "name": "Check generated contract documents",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Check edition source lock freshness",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Run npm install --global pnpm@10.12.4",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Set runner-owned pnpm store",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Prepare runner-owned browser and apt caches",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Cache frozen dependencies and Chromium",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Install frozen dependencies and reserve native runtime disk",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Run pnpm run deps",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Install and probe Chromium before system dependencies",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Build and check the public command once",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Share the verified production build",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "skipped",
+        "id": 128713135786,
+        "name": "light",
+        "status": "completed",
+        "steps": []
+      },
+      {
+        "conclusion": "failure",
+        "id": 128713189705,
+        "name": "verify",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "name": "Require the selected coverage and its proof",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "skipped",
+        "id": 128713190558,
+        "name": "shards (${{ matrix.name }})",
+        "status": "completed",
+        "steps": []
+      },
+      {
+        "conclusion": "skipped",
+        "id": 128713190591,
+        "name": "nightly-proof",
+        "status": "completed",
+        "steps": []
+      },
+      {
+        "conclusion": "skipped",
+        "id": 128713190685,
+        "name": "full-push-proof",
+        "status": "completed",
+        "steps": []
+      }
+    ],
+    "build_log_observation": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "build_archive_read_exit": 0,
+    "generated_view_only": true,
+    "verify_archive_read_exit": 0,
+    "github_invocations": 5,
+    "ten_call_budget_respected": true,
+    "at_least_300_seconds_between_invocations": true,
+    "archive_publication": "actual failed-step lines retained; unrelated CI runner environment listings omitted"
+  },
+  "mechanical": "MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock exit=0; views=node src/base/contract-docs.mjs write && node src/base/contract-docs.mjs check exit=0",
+  "clone": {
+    "path": "/home/agent/rer-consolidation/work/sd-mango-c-f109-rb2/run-mango",
+    "is_shallow": "false",
+    "filter": "blob:none",
+    "origin": "https://github.com/just-every/run-mango.git",
+    "candidate_head_verified": true
+  },
+  "blockers": [],
+  "terminal_product_custody": "READY",
+  "cleanup": "Delete disposable product clone and node_modules after evidence publication; terminal message confirms observed result"
+}

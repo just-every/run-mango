@@ -1,0 +1,16 @@
+{
+  "candidate": "42a41d35cf39a6ffbf1cb8f7b572383640c3ca09",
+  "main": "6269d1bd1e7fbc2e28620b38021a7d52f145caa9",
+  "main_ahead_count": 101,
+  "status_rows_identical": true,
+  "candidate_helper_byte_identical": true,
+  "contract_other_lines_identical": true,
+  "generated_views_not_staged": true,
+  "summary": [
+    "| Clauses | Done | Partial | Missing | Total |",
+    "| --- | ---: | ---: | ---: | ---: |",
+    "| Published | 13 | 97 | 0 | 110 |",
+    "| Target and push further | 7 | 101 | 98 | 206 |",
+    "| All | 20 | 198 | 98 | 316 |"
+  ]
+}

@@ -1,0 +1,75 @@
+[
+  {
+    "number": 1,
+    "label": "discover",
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=7b690e39e22deb1c31ad26e60670dcaa632b7739&per_page=100",
+      "--jq",
+      ".workflow_runs[] | {id,name,status,conclusion,head_sha,html_url}"
+    ],
+    "time": 1794136293.8383062,
+    "exit": 0
+  },
+  {
+    "number": 2,
+    "label": "status",
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42474638817",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ],
+    "time": 1794136593.9123054,
+    "exit": 0
+  },
+  {
+    "number": 3,
+    "label": "jobs",
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42474638817/jobs",
+      "--jq",
+      "{total_count,jobs:[.jobs[]|{id,name,status,conclusion,steps:[.steps[]|{name,status,conclusion}]}]}"
+    ],
+    "time": 1794136893.9568837,
+    "exit": 0
+  },
+  {
+    "number": 4,
+    "label": "failed-build",
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42474638817",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "128713134232",
+      "--log-failed"
+    ],
+    "time": 1794137194.0139318,
+    "exit": 0
+  },
+  {
+    "number": 5,
+    "label": "failed-verify",
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42474638817",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "128713189705",
+      "--log-failed"
+    ],
+    "time": 1794137494.050151,
+    "exit": 0
+  }
+]

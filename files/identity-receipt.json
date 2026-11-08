@@ -1,0 +1,10 @@
+{
+  "head": "7b690e39e22deb1c31ad26e60670dcaa632b7739",
+  "candidate_count": 1,
+  "all_authors": "Run Edit Run fleet <fleet@runeditrun.com>",
+  "all_committers": "Run Edit Run fleet <fleet@runeditrun.com>",
+  "trailers": [],
+  "scope": "origin/main..HEAD including all side parents",
+  "clean": true,
+  "skip_ci": false
+}

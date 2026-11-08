@@ -1,0 +1,54 @@
+1:  42a41d3 ! 1:  7b690e3 Prove bounded design file refusals through import controls
+    @@ sources.lock.json
+            "executable": false
+          },
+          "CONTRACT.md": {
+    --      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+    -+      "sha256": "2f683d17b563958575cdc21129fa2cd659cc81fd0bbf5b9dfb662a74b83b7598",
+    +-      "sha256": "bb16b1dc98f74f86a94212b42620f4322d371b0d92e6f0a5e21a20d184426571",
+    ++      "sha256": "5c1a4d1dbf2bcef96355ec88e8fde52fe3f785dccaa49750fdc22c11406d52d0",
+            "executable": false
+          },
+          "DEMO.md": {
+    @@ sources.lock.json
+            "executable": false
+          },
+          "tests/campaign-authoring/design-import.spec.ts": {
+    --      "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+    -+      "sha256": "7b6b253c774975b39892cc1abbdedb332664401bec505f2b1ef9ce3202e9da40",
+    +-      "sha256": "28ffba7db4a813cd43c1a82b091687da594d5f51ad10726e10e41ef52e15abdc",
+    ++      "sha256": "b394c8b423d83980b38596c07ec29c62376587fe7629e5dea75dc21abd24bfbe",
+     +      "executable": false
+     +    },
+     +    "tests/campaign-authoring/design-input-bounds.ts": {
+    @@ sources.lock.json
+          "tests/campaign-authoring/email-size-adoption.ts": {
+     
+      ## tests/campaign-authoring/design-import.spec.ts ##
+    -@@ tests/campaign-authoring/design-import.spec.ts: import { createHash } from 'node:crypto';
+    - import { readFileSync } from 'node:fs';
+    +@@ tests/campaign-authoring/design-import.spec.ts: import { readFileSync } from 'node:fs';
+      import { authoringRuntime } from './browser-runtime.mjs';
+      import { png } from '../support/images';
+    + import { designImportRefusals, importScreens } from './design-import-refusals';
+     +import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
+      
+      test.describe.configure({ mode: 'serial', timeout: 180000 });
+    @@ tests/campaign-authoring/design-import.spec.ts: for (const width of [1440]) test
+          await page.getByRole('button', { name: 'Import 12ui design', exact: true }).click();
+          const dialog = page.getByRole('dialog', { name: 'Import a 12ui design' });
+     @@ tests/campaign-authoring/design-import.spec.ts: for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014]
+    -     await expect(dialog.getByRole('alert').first()).toContainText('HTTPS');
+          expect(uploads).toEqual([]);
+      
+    +     await designImportRefusals({ page, request, info: testInfo, url: runtime.url, token: runtime.token, layerdoc, destination, body, files, read, uploads, saves });
+     +    await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+     +    await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
+    -+
+    + 
+          // A legal LayerDoc can compile beyond the delivery limit without any one
+          // text layer exceeding the input grammar's bound. Keep both selected files.
+    -     const tooLarge=JSON.parse(layerdoc);
+     @@ tests/campaign-authoring/design-import.spec.ts: for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014]
+          expect(saves).toEqual([]);
+          expect((await read()).revision.emailBody).toBe(savedBody);

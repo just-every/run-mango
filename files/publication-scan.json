@@ -1,0 +1,11 @@
+{
+  "scope": "explicit public evidence packet only",
+  "regular_files_only": true,
+  "symlinks": false,
+  "secret_values": false,
+  "credential_patterns": false,
+  "environment_dumps": false,
+  "private_held_out_gate_material": false,
+  "product_checkout_clean": true,
+  "fleet_Mac_publication_scan": "not available in cloud; remains fleet responsibility"
+}

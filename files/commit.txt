@@ -1,0 +1,7 @@
+commit 7b690e39e22deb1c31ad26e60670dcaa632b7739
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Fri Nov 6 11:14:01 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Sun Nov 8 11:11:15 2026 +0000
+
+    Prove bounded design file refusals through import controls

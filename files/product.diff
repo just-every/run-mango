@@ -1,0 +1,187 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index 7ac9d73..583222e 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4133,7 +4133,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `DESIGN-004` | Design import | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px” | Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged. |
+ | `DESIGN-012` | Compile the imported layout | published | partial | `tests/campaign-authoring/design-import.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email. Missing public-door journey: “Compile the imported layout — complete acceptance”, covering the unasserted outcomes above. |
+ | `DESIGN-013` | Review imported design content | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440/390px” | Asserted: Hosted image thumbnail; Text novel-line highlighting; Unsaved state shown; Discard removes summary. Unasserted: Image description highlighting; Icons omitted and listed; Dividers omitted and listed; Shapes omitted and listed; Destinationless links omitted and listed; Extra buttons omitted and listed; Footer links omitted and listed; Digit-bearing footer lines omitted and listed; Edited-since state shown; Abandoned uploaded images remain; Approval does not verify model claims. Missing public-door journey: “Review imported design content — complete acceptance”, covering the unasserted outcomes above. |
+-| `DESIGN-014` | Bounded local design input | published | partial | `tests/campaign-authoring/design-import.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: 2 MB bound; 2,000-layer bound; 64-level nesting bound; Deep input named refusal without overflow; Unsupported input not guessed; PNG canvas shape matched; Personalization delimiter rejected; Editable draft-derived brief; Whole-line whole-word matching; Case/spacing/typographic-quote matching; Signed URLs never fetched; Every value stays within compiler; Lazy importer load. Missing public-door journey: “Bounded local design input — complete acceptance”, covering the unasserted outcomes above. |
++| `DESIGN-014` | Bounded local design input | published | partial | `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px”, invoking `tests/campaign-authoring/design-input-bounds.ts`: actual file-input refusals for oversized files, total layers across groups, excessive nesting and deep input without overflow; retained selected files, unchanged editor and saved revision, no uploads, saves, approval, recipients or jobs, followed by valid unsaved import recovery | Acceptance 1: file-size, total-layer and nesting bounds and named deep-input refusal are asserted, alongside the carried unsupported-version refusal. Unasserted: other malformed-shape and unsupported-input handling; PNG canvas shape matched; Personalization delimiter rejected; Editable draft-derived brief; Whole-line whole-word matching; Case, spacing and typographic-quote matching; Signed URLs never fetched; Every value stays within compiler; Lazy importer load. DESIGN-004 delimiter refusal is not awarded here. Paid live design-provider qualification and carried provider, device, account and cross-seed or Base prerequisites remain unproved; CONT-013 holds and release requirements remain unchanged. |
+ | `MSG-001` | Sender identity | published | partial | `src/core/features/settings/sender-validation.ts` · `tests/go-live/go-live.journeys.ts` | acceptance not yet met: Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002. |
+ | `MSG-002` | Email authentication | published | partial | `tests/go-live/go-live.journeys.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]” | Old evidence asserts Passing sender schedules. Unasserted: Scheduling is refused when the sending domain does not pass SPF.; Scheduling is refused when the sending domain does not pass DKIM.; Scheduling is refused when the sending domain does not pass DMARC.; Scheduling is refused when the visible From domain does not align with an authenticated domain.. Missing public-door journey: “Email authentication — complete acceptance”, covering the unasserted outcomes above. |
+ | `MSG-003` | Email unsubscribe | published | partial | `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/go-live/go-live.journeys.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]” | Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact. Missing public-door journey: “Email unsubscribe — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 71c4898..0b7999c 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "bb16b1dc98f74f86a94212b42620f4322d371b0d92e6f0a5e21a20d184426571",
++      "sha256": "5c1a4d1dbf2bcef96355ec88e8fde52fe3f785dccaa49750fdc22c11406d52d0",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -8522,7 +8522,11 @@
+       "executable": false
+     },
+     "tests/campaign-authoring/design-import.spec.ts": {
+-      "sha256": "28ffba7db4a813cd43c1a82b091687da594d5f51ad10726e10e41ef52e15abdc",
++      "sha256": "b394c8b423d83980b38596c07ec29c62376587fe7629e5dea75dc21abd24bfbe",
++      "executable": false
++    },
++    "tests/campaign-authoring/design-input-bounds.ts": {
++      "sha256": "c1a2a0260c13f3a48fefc5083d1bbc9c9a75bc5f6327c044a36d1fa884389400",
+       "executable": false
+     },
+     "tests/campaign-authoring/email-size-adoption.ts": {
+diff --git a/tests/campaign-authoring/design-import.spec.ts b/tests/campaign-authoring/design-import.spec.ts
+index 1139f06..ffc1cc9 100644
+--- a/tests/campaign-authoring/design-import.spec.ts
++++ b/tests/campaign-authoring/design-import.spec.ts
+@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
+ import { authoringRuntime } from './browser-runtime.mjs';
+ import { png } from '../support/images';
+ import { designImportRefusals, importScreens } from './design-import-refusals';
++import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
+ 
+ test.describe.configure({ mode: 'serial', timeout: 180000 });
+ test.use({ timezoneId: 'America/Los_Angeles' });
+@@ -45,7 +46,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014]
+     await openPage(page, `${runtime.url}/app/campaigns/${created.campaignId}/review`);
+     const body = page.getByLabel('Email body', { exact: true });
+     await expect(body).toBeVisible();
+-    const savedBody = (await read()).revision.emailBody;
++    const savedRevision = (await read()).revision;
++    const savedBody = savedRevision.emailBody;
+ 
+     await page.getByRole('button', { name: 'Import 12ui design', exact: true }).click();
+     const dialog = page.getByRole('dialog', { name: 'Import a 12ui design' });
+@@ -62,6 +64,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014]
+     expect(uploads).toEqual([]);
+ 
+     await designImportRefusals({ page, request, info: testInfo, url: runtime.url, token: runtime.token, layerdoc, destination, body, files, read, uploads, saves });
++    await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
++    await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
+ 
+     // A legal LayerDoc can compile beyond the delivery limit without any one
+     // text layer exceeding the input grammar's bound. Keep both selected files.
+@@ -133,6 +137,12 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014]
+     expect(saves).toEqual([]);
+     expect((await read()).revision.emailBody).toBe(savedBody);
+     await expect(page.getByRole('status').filter({ hasText: 'Unsaved changes' })).toBeVisible();
++    expect((await read()).revision).toEqual(savedRevision);
++    const importAuthority = await api.get(runtime.url + '/_authoring/state', { headers: { 'X-Test-Token': runtime.token } });
++    expect(importAuthority.status()).toBe(200);
++    expect(await importAuthority.json()).toEqual({ jobs: [], recipients: [], approvals: [] });
++    await designInputRecoveryScreens(page, testInfo);
++    console.log('PROBE DESIGN-014 acceptance-1 recovery: existing valid file pair -> unsaved imported body; saved revision unchanged and no approval, recipients or jobs');
+ 
+     await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
+     await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
+diff --git a/tests/campaign-authoring/design-input-bounds.ts b/tests/campaign-authoring/design-input-bounds.ts
+new file mode 100644
+index 0000000..ea4afa3
+--- /dev/null
++++ b/tests/campaign-authoring/design-input-bounds.ts
+@@ -0,0 +1,98 @@
++import { expect, type Page, type TestInfo } from '@playwright/test';
++
++type Options = {
++  page: Page;
++  info: TestInfo;
++  origin: string;
++  token: string;
++  candidate: Buffer;
++  read: () => Promise<{ revision: unknown; campaign: { state: string } }>;
++};
++
++// These files are constructed independently of the importer and its limit constants.
++// Each has a valid version, canvas and layer shape; only the named admission bound differs.
++const canvas = { width: 1024, height: 1536 };
++const leaf = () => ({ kind: 'paragraph', content: 'synthetic-mango-109', box: [0, 0, 100, 20] });
++const envelope = (layers: unknown[], extra = {}) => JSON.stringify({ version: '2', canvas, layers, ...extra });
++const nested = (levels: number) => '{"version":"2","canvas":' + JSON.stringify(canvas) + ',"layers":['
++  + '{"kind":"group","box":[0,0,100,20],"children":['.repeat(levels)
++  + JSON.stringify(leaf()) + ']}'.repeat(levels) + ']}';
++
++export async function designInputBounds({ page, info, origin, token, candidate, read }: Options) {
++  const dialog = page.getByRole('dialog', { name: 'Import a 12ui design' });
++  const layerInput = dialog.getByLabel('LayerDoc', { exact: true });
++  const imageInput = dialog.getByLabel('Design image', { exact: true });
++  const body = page.getByLabel('Email body', { exact: true });
++  const editorValue = () => body.evaluate(element => element instanceof HTMLTextAreaElement ? element.value : element.innerHTML);
++  const editorBefore = await editorValue();
++  const revisionBefore = (await read()).revision;
++  const authority = async () => {
++    const response = await page.request.get(origin + '/_authoring/state', { headers: { 'X-Test-Token': token } });
++    expect(response.status()).toBe(200);
++    return response.json();
++  };
++  expect(await authority()).toEqual({ jobs: [], recipients: [], approvals: [] });
++  const writes: string[] = [], browserErrors: string[] = [];
++  const recordWrite = (request: import('@playwright/test').Request) => {
++    const url = new URL(request.url());
++    if (url.origin === origin && url.pathname.startsWith('/api/') && !['GET', 'HEAD', 'OPTIONS'].includes(request.method())) {
++      writes.push(`${request.method()} ${url.pathname}`);
++    }
++  };
++  const recordError = (error: Error) => browserErrors.push(error.message);
++  page.on('request', recordWrite);
++  page.on('pageerror', recordError);
++  try {
++    const cases = [
++      { name: 'file-size', text: envelope([leaf()], { ignored: ' '.repeat(3 * 1024 * 1024) }), error: /LayerDoc.*file.*(?:larger|large|exceed|limit)/i },
++      // No single layer array is oversized: the total must include every group's children.
++      { name: 'total-layers', text: envelope(Array.from({ length: 8 }, () => ({ kind: 'group', box: [0, 0, 100, 20], children: Array.from({ length: 400 }, leaf) }))), error: /LayerDoc.*(?:more|many|limit|exceed).*layers/i },
++      { name: 'nesting', text: nested(96), error: /LayerDoc.*(?:nest|deep|depth)/i },
++      // String assembly keeps the fixture builder itself out of recursive serialization.
++      { name: 'deep-input', text: nested(12_000), error: /LayerDoc.*(?:nest|deep|depth)/i },
++    ];
++    for (const item of cases) {
++      await layerInput.setInputFiles({ name: `synthetic-mango-109-${item.name}.layerdoc.json`, mimeType: 'application/json', buffer: Buffer.from(item.text) });
++      await imageInput.setInputFiles({ name: 'synthetic-mango-109.png', mimeType: 'image/png', buffer: candidate });
++      await dialog.getByRole('button', { name: 'Import design', exact: true }).click();
++      const alert = dialog.getByRole('alert');
++      await expect(alert, item.name).toContainText(item.error);
++      await expect(alert).not.toContainText(/stack|RangeError|could not be imported/i);
++      expect(browserErrors, item.name).toEqual([]);
++      expect(await layerInput.evaluate(async element => {
++        const file = (element as HTMLInputElement).files![0];
++        return { name: file.name, text: await file.text() };
++      })).toEqual({ name: `synthetic-mango-109-${item.name}.layerdoc.json`, text: item.text });
++      expect(await imageInput.evaluate(async element => {
++        const file = (element as HTMLInputElement).files![0];
++        return { name: file.name, bytes: Array.from(new Uint8Array(await file.arrayBuffer())) };
++      })).toEqual({ name: 'synthetic-mango-109.png', bytes: Array.from(candidate) });
++      expect(await editorValue(), item.name).toBe(editorBefore);
++      const detail = await read();
++      expect(detail.revision, item.name).toEqual(revisionBefore);
++      expect(detail.campaign.state).toBe('draft');
++      expect(await authority(), item.name).toEqual({ jobs: [], recipients: [], approvals: [] });
++      expect(writes, item.name).toEqual([]);
++      // Assertions run at desktop width; these are the same refused state's browser proofs.
++      for (const width of [1440, 390]) {
++        await page.setViewportSize({ width, height: 1000 });
++        await alert.scrollIntoViewIfNeeded();
++        await dialog.screenshot({ path: info.outputPath(`design-input-${item.name}-refused-${width}.png`) });
++      }
++      await page.setViewportSize({ width: 1440, height: 1000 });
++      console.log(`PROBE DESIGN-014 acceptance-1 ${item.name}: file inputs -> named refusal; files retained, editor and revision unchanged, no uploads, saves or authority`);
++    }
++  } finally {
++    page.off('request', recordWrite);
++    page.off('pageerror', recordError);
++  }
++}
++
++export async function designInputRecoveryScreens(page: Page, info: TestInfo) {
++  const summary = page.getByRole('region', { name: 'Check the imported email before you save' });
++  for (const width of [1440, 390]) {
++    await page.setViewportSize({ width, height: 1000 });
++    await summary.screenshot({ path: info.outputPath(`design-input-recovered-${width}.png`) });
++  }
++  await page.setViewportSize({ width: 1440, height: 1000 });
++}

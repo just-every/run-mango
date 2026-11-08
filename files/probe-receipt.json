@@ -1,0 +1,40 @@
+{
+  "test_passed": true,
+  "assertion_width": 1440,
+  "screenshot_widths": [
+    1440,
+    390
+  ],
+  "cases": [
+    {
+      "case": "file-size",
+      "door": "Import design / selected LayerDoc and PNG",
+      "input": "3 MiB ignored padding in a valid-envelope LayerDoc",
+      "observed": "The LayerDoc file is larger than 2 MB. The email body was not changed."
+    },
+    {
+      "case": "total-layers",
+      "door": "Import design / selected LayerDoc and PNG",
+      "input": "eight groups of 400 children; 3208 nodes total",
+      "observed": "The LayerDoc has more than 2000 layers. The email body was not changed."
+    },
+    {
+      "case": "nesting",
+      "door": "Import design / selected LayerDoc and PNG",
+      "input": "96 nested groups",
+      "observed": "The LayerDoc nests layers more than 64 deep. The email body was not changed."
+    },
+    {
+      "case": "deep-input",
+      "door": "Import design / selected LayerDoc and PNG",
+      "input": "12000 nested groups assembled as text",
+      "observed": "The LayerDoc nests layers more than 64 deep. The email body was not changed."
+    },
+    {
+      "case": "recovery",
+      "door": "Import design / existing valid file pair",
+      "input": "existing synthetic PNG plus original valid LayerDoc",
+      "observed": "Check the imported email before you save; unsaved imported body; unchanged saved revision and empty authority before ordinary save/approval"
+    }
+  ]
+}

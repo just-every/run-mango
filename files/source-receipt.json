@@ -1,0 +1,18 @@
+{
+  "CONTRACT.md": {
+    "blob": "583222e71deb72e130b615ac9a53f04a0f350792",
+    "bytes": 493717
+  },
+  "sources.lock.json": {
+    "blob": "0b7999cbae69fbca4cd472f02eed77a7519cd1c7",
+    "bytes": 413854
+  },
+  "tests/campaign-authoring/design-import.spec.ts": {
+    "blob": "ffc1cc952da2beba31bbfc50e6d4684e8a80b29b",
+    "bytes": 14486
+  },
+  "tests/campaign-authoring/design-input-bounds.ts": {
+    "blob": "ea4afa31b04ecb95b88255bc7127e79581028f0b",
+    "bytes": 5845
+  }
+}
