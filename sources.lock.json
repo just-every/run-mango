@@ -1626,7 +1626,7 @@
       "executable": false
     },
     "migrations/core/0105_incumbent_restrictions.sql": {
-      "sha256": "f1eee50f34515cdaca9a6518a93631e25388ebce2b4479d54527946d0c232c1c",
+      "sha256": "41ded470a9d45f18bacc7ec3119f512ac4e1b523cddf6452f61bdaddd4d5f1c8",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -5374,11 +5374,11 @@
       "executable": false
     },
     "src/core/features/move-in/restriction-routes.ts": {
-      "sha256": "0fcdca9f92a7b8f9137a5b3d9e68f664e146e07182a71f0c9230d67c8a38fe40",
+      "sha256": "e25995b6eca8539f5ec355d4897550f431000a4ff10b93373590a34c537713ea",
       "executable": false
     },
     "src/core/features/move-in/restriction-sync.ts": {
-      "sha256": "4985074a6d9cfda23b6a6dbf44f0e3deb882eea32ebda4786988856c154bd1f1",
+      "sha256": "db6dab9d27d9633fc85393e0415182a06f19a9af65b49944a020647b8bea851c",
       "executable": false
     },
     "src/core/features/move-in/routes.ts": {
@@ -5410,7 +5410,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "085b612c99961560de3d1fb0d424ae8b02f55adbf4799e5743adf9ebe56715d3",
+      "sha256": "018b1ca04ceff8f76f52cf0caea17e95239f4595c122e32d6931051e8f4bd5c6",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -9091,6 +9091,10 @@
     },
     "tests/go-live/restore.ts": {
       "sha256": "a0c91d87e4026ffe4304a1657587f9d6cce83d42a41d84f8a9c566348641c2b1",
+      "executable": false
+    },
+    "tests/go-live/restriction-private-journey.ts": {
+      "sha256": "6caa9fa41b1350d3540d97943f934040f2a8fd4b44d8a4a45046b254c9332af8",
       "executable": false
     },
     "tests/go-live/resubscribe-support.ts": {

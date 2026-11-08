@@ -31,14 +31,20 @@ export function createRestrictionSync(platform:Platform,audience:ReturnType<type
       if(!destination)throw new Error(failed);
       const hash=await sha256(`${platform.config.contactHashSalt}:${destination}`);
       await repository.claimPortableRestrictions(platform.config.contactHashSalt,[destination]);
-      const occurredAt=new Date(member.last_changed??Date.now());
+      const occurredAt=new Date(member.last_changed??NaN);
       if(!Number.isFinite(occurredAt.getTime()))throw new Error(failed);
-      if(member.status==='unsubscribed') {
-        await audience.recordChannelOptOut({destination,channel:'email',reason:'incumbent-unsubscribe',occurredAt,
-          stableId:`incumbent:${connection.id}:${hash}:${occurredAt.getTime()}`});incoming++;
-      } else if(member.status==='cleaned') {
-        await audience.recordProviderSuppression({destination,channel:'email',cause:'import-cleaned-or-bounced',occurredAt,
-          providerEventId:`incumbent:${connection.id}:${hash}:${occurredAt.getTime()}`});incoming++;
+      const eventId=await sha256(`${connection.id}:${hash}:${member.status}:${occurredAt.getTime()}`);
+      const seen=await platform.database.$client.prepare('SELECT 1 FROM incumbent_restriction_receipts WHERE id=?').bind(eventId).first();
+      if(!seen&&['unsubscribed','cleaned'].includes(member.status)) {
+        if(member.status==='unsubscribed') {
+          await audience.recordChannelOptOut({destination,channel:'email',reason:'import-unsubscribed',occurredAt,stableId:eventId});
+        } else {
+          await audience.recordProviderSuppression({destination,channel:'email',cause:'import-cleaned-or-bounced',occurredAt,providerEventId:eventId});
+        }
+        // Hash-only replay custody prevents an unchanged old snapshot from
+        // undoing a recipient's later confirmed resubscribe. It holds no address.
+        await platform.database.$client.prepare('INSERT INTO incumbent_restriction_receipts(id,connection_id,occurred_at) VALUES(?,?,?) ON CONFLICT DO NOTHING')
+          .bind(eventId,connection.id,occurredAt.getTime()).run();incoming++;
       }
       const [optOut,suppressed,contact]=await Promise.all([repository.getSurvivingOptOut(hash,'email'),
         repository.hasDestinationSuppression(hash,'email'),repository.findContactByEmail(destination)]);

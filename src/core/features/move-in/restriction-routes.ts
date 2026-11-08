@@ -35,7 +35,8 @@ export function restrictionRoutes(platform:Platform,synchronize:()=>Promise<unkn
     if(context.get('operator').role!=='owner')return context.json({error:'owner_required'},403);
     try {await synchronize();}catch{return context.json({error:'pending_restrictions'},409);}
     const id=context.req.param('id');
-    await db.batch([db.prepare('DELETE FROM incumbent_restriction_connections WHERE id=?').bind(id),
+    await db.batch([db.prepare('DELETE FROM incumbent_restriction_receipts WHERE connection_id=?').bind(id),
+      db.prepare('DELETE FROM incumbent_restriction_connections WHERE id=?').bind(id),
       activityStatement(db,{key:crypto.randomUUID(),action:'incumbent-restrictions-disconnected',entityType:'integration',entityId:id,actorId:context.get('operator').id})]);
     return context.json({disconnected:true});
   });
