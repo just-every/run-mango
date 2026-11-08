@@ -14,5 +14,9 @@
   "transition_mailbox_alone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/mailbox-provider.journeys.ts",
   "transition_presend_alone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/presend-checks.journeys.ts",
   "transition_full_go_live": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 2700 pnpm exec playwright test --config tests/go-live/playwright.config.js --workers=2",
-  "superseded_ci_log": "gh run view 42485646853 --repo just-every/run-mango --job 128747202834 --log-failed"
+  "superseded_ci_log": "gh run view 42485646853 --repo just-every/run-mango --job 128747202834 --log-failed",
+  "final_isolated_presend": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/presend-checks.journeys.ts (no other browser jobs)",
+  "final_full_go_live": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 2700 pnpm exec playwright test --config tests/go-live/playwright.config.js --workers=2 (after isolated presend, no additional browser jobs)",
+  "phone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config tests/newsletter-ui/playwright.config.js",
+  "focused": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test tests/rendering.spec.ts tests/audience-controls/segments.spec.ts --workers=2"
 }

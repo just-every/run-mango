@@ -90,5 +90,69 @@
     "passed": 1,
     "duration": "4.2m",
     "later_save_notice": "passed"
+  },
+  "transition_full_go_live_superseded": {
+    "exit": 130,
+    "passed": 18,
+    "interrupted": 2,
+    "not_run": 3
+  },
+  "app_full_before_main_merge": {
+    "exit": 130,
+    "passed": 0,
+    "interrupted": 2,
+    "not_run": 21,
+    "reason": "Restarted for newly merged main test changes."
+  },
+  "merged_four_worker_probe": {
+    "exit": 130,
+    "passed": 3,
+    "interrupted": 4,
+    "not_run": 16,
+    "reason": "Returned to maintained two-worker capacity after overlapping save-notice timeout."
+  },
+  "commit_ready_date_and_zone": {
+    "exit": 0,
+    "passed": 1,
+    "immediate_date_after_readiness": true
+  },
+  "commit_ready_rendering_and_segments": {
+    "exit": 0,
+    "passed": 3
+  },
+  "app_phone": {
+    "exit": 0,
+    "passed": 1,
+    "duration": "5.7m"
+  },
+  "app_presend_concurrent": {
+    "exit": 1,
+    "passed": 0,
+    "failure": "email-size.flow.ts:78; five-second notice timeout while save still busy; other browser runs overlapped"
+  },
+  "commit_ready_typecheck": {
+    "exit": 0
+  },
+  "merged_typecheck": {
+    "exit": 0
+  },
+  "commit_ready_build": {
+    "exit": 0
+  },
+  "commit_ready_first_party": {
+    "exit": 0
+  },
+  "commit_ready_source_check": {
+    "exit": 0
+  },
+  "commit_ready_integration_check": {
+    "exit": 0
+  },
+  "final_isolated_presend": {
+    "exit": 0,
+    "passed": 1,
+    "duration": "3.2m",
+    "other_browser_jobs": 0,
+    "assertions_and_timeouts_unchanged": true
   }
 }

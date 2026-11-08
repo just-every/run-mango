@@ -100,3 +100,30 @@ Chosen catalog proof: terminal availability cases
   ✓  13 tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery (51.7s)
   ✓  14 tests/go-live/personalisation.journeys.ts:9:1 › [MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation (39.1s)
   ✓  12 tests/go-live/open-estimates.journeys.ts:9:1 › [RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased (1.9m)
+  ✓  16 tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery (2.7m)
+Operator access: start native HTTP installation
+(node:21790) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: claim owner
+Operator access: confirm teammate
+Operator access: cancel pending invitation
+Operator access: confirm while removal is pending
+Operator access: revoke active sessions
+Flow proof 1440: open
+Flow proof 1440: build
+Flow proof 1440: connect
+Flow proof 1440: saved, inspect reload
+  ✓  15 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (3.6m)
+  ✓  17 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (2.3m)
+  ✓  19 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.2m)
+NATIVE_CRON_PUNCTUALITY {"driver":"Configured wall-clock driver; Vite does not initiate Cron Triggers; not hosted acceptance","ticks":[{"scheduledAt":"2026-11-08T14:16:00.000Z","enteredAt":"2026-11-08T14:16:00.002Z","finishedAt":"2026-11-08T14:16:00.076Z"},{"scheduledAt":"2026-11-08T14:17:00.000Z","enteredAt":"2026-11-08T14:17:00.004Z","finishedAt":"2026-11-08T14:17:00.067Z"}],"scheduledAt":"2026-11-08T14:17:02.000Z","startedAt":"2026-11-08T14:17:02.715Z","latenessMs":715}
+  ✘  20 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (19.1s)
+  ✘  18 tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth (3.1m)
+
+  Slow test file: tests/go-live/go-live.journeys.ts (6.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 interrupted
+    tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth 
+    tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority 
+  3 did not run
+  18 passed (23.4m)

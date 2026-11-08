@@ -1,0 +1,35 @@
+{
+  "calls_used": 10,
+  "limit": 10,
+  "superseded_runs": [
+    {
+      "head": "2b1bda4efbbf42400627653c63f9e6689b4b4fe9",
+      "run_id": 42485646853,
+      "conclusion": "failure",
+      "archive_jobs_read_once": [
+        128747202834
+      ]
+    },
+    {
+      "head": "cb141908f50e4b314aa255e51746f8611d5e7d26",
+      "run_id": 42487392666,
+      "conclusion": "failure",
+      "failed_shards": [
+        "native",
+        "connections",
+        "phone",
+        "identity-data"
+      ],
+      "archive_jobs_read_once": [
+        128752515474,
+        128752515528
+      ],
+      "unread_failed_shards_due_budget": [
+        "connections",
+        "phone"
+      ]
+    }
+  ],
+  "final_head": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2",
+  "final_verify": "unconfirmed: API budget exhausted; no further GitHub API or archive calls will be made"
+}

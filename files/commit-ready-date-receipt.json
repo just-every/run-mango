@@ -1,0 +1,29 @@
+{
+  "records": [
+    {
+      "preference": null,
+      "heading": "Saved 9 Nov 2026, 12:19 am",
+      "hydrated": "true",
+      "readyState": "complete",
+      "interactions": [],
+      "zone": null
+    },
+    {
+      "preference": "America/New_York",
+      "heading": "Saved 8 Nov 2026, 9:19 am",
+      "hydrated": "true",
+      "readyState": "complete",
+      "interactions": [],
+      "zone": "America/New_York"
+    },
+    {
+      "kind": "picker change",
+      "heading": "Saved 8 Nov 2026, 2:19 pm"
+    },
+    {
+      "kind": "cross-tab storage",
+      "heading": "Saved 8 Nov 2026, 3:19 pm"
+    }
+  ],
+  "errors": []
+}

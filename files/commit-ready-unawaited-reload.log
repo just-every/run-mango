@@ -1,0 +1,28 @@
+
+Running 1 test using 1 worker
+
+(node:35937) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 ../../home/agent/rer-consolidation/work/sd-mango-hydration-date-3/packet/commit-ready-proof.ts:7:1 › saved newsletter dates format after reload without any interaction (25.4s)
+
+
+  1) ../../home/agent/rer-consolidation/work/sd-mango-hydration-date-3/packet/commit-ready-proof.ts:7:1 › saved newsletter dates format after reload without any interaction 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Saved 9 Nov 2026, 12:18 am"
+    Received: "Saved …"
+
+      28 |    for(let reload=0;reload<10;reload++) {
+      29 |     await page.reload();
+    > 30 |     await page.waitForFunction(()=>document.documentElement.dataset.mangoHydrated==='true');
+         |                                         ^
+      31 |     expect(await heading.textContent()).toBe(`Saved ${expected}`);
+      32 |    }
+      33 |    const state=await page.evaluate(()=>({hydrated:document.documentElement.dataset.mangoHydrated,readyState:document.readyState,interactions:(window as any).proofInteractions,zone:localStorage.getItem('mango-time-zone')}));
+        at /home/agent/rer-consolidation/work/sd-mango-hydration-date-3/packet/commit-ready-proof.ts:30:41
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-hydration-date-3/date-proof-output/commit-ready-proof.ts-save-44126-oad-without-any-interaction/error-context.md
+
+  1 failed
+    ../../home/agent/rer-consolidation/work/sd-mango-hydration-date-3/packet/commit-ready-proof.ts:7:1 › saved newsletter dates format after reload without any interaction 

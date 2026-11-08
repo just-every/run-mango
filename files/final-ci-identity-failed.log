@@ -1,0 +1,184 @@
+shards (identity-data)	Run this shard	﻿2026-11-08T13:59:24.6703348Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6703704Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6720870Z shell: /usr/bin/bash -e {0}
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6721095Z env:
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6721262Z   CI: true
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6721445Z   WRANGLER_SEND_METRICS: false
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6721675Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6721966Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6722265Z   SHARD: identity-data
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6723935Z   MANGO_VERIFY_MEMBERS: [
+shards (identity-data)	Run this shard	  {
+shards (identity-data)	Run this shard	    "name": "main",
+shards (identity-data)	Run this shard	    "stage": "main",
+shards (identity-data)	Run this shard	    "files": [
+shards (identity-data)	Run this shard	      "audience-controls/segments.spec.ts",
+shards (identity-data)	Run this shard	      "audience-import/signup.spec.ts",
+shards (identity-data)	Run this shard	      "docs.spec.ts",
+shards (identity-data)	Run this shard	      "rendering.spec.ts",
+shards (identity-data)	Run this shard	      "portability.spec.ts",
+shards (identity-data)	Run this shard	      "production-entry.spec.ts",
+shards (identity-data)	Run this shard	      "shopify/connection.spec.ts",
+shards (identity-data)	Run this shard	      "proposals-decision/decision-routes.spec.ts",
+shards (identity-data)	Run this shard	      "proposals-decision/content-editing.spec.ts",
+shards (identity-data)	Run this shard	      "proposals-decision/owner-control.spec.ts",
+shards (identity-data)	Run this shard	      "proposals-decision/forecast-provenance.spec.ts",
+shards (identity-data)	Run this shard	      "proposals-decision/grounding-citations.spec.ts"
+shards (identity-data)	Run this shard	    ]
+shards (identity-data)	Run this shard	  },
+shards (identity-data)	Run this shard	  {
+shards (identity-data)	Run this shard	    "name": "local-start",
+shards (identity-data)	Run this shard	    "stage": "local-start",
+shards (identity-data)	Run this shard	    "files": [
+shards (identity-data)	Run this shard	      "editor.journey.ts"
+shards (identity-data)	Run this shard	    ]
+shards (identity-data)	Run this shard	  }
+shards (identity-data)	Run this shard	]
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6725755Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/identity-data
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6726081Z ##[endgroup]
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.6986514Z VERIFY_MEMBER main
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.7454862Z VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.7458582Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/identity-data/members/main/evidence/4b3746152534/verify/main-1BVGD8
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.7612006Z VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-08T13:59:24.745Z"}
+shards (identity-data)	Run this shard	2026-11-08T13:59:24.7661645Z main
+shards (identity-data)	Run this shard	2026-11-08T13:59:48.9595073Z 
+shards (identity-data)	Run this shard	2026-11-08T13:59:48.9595807Z Running 17 tests using 2 workers
+shards (identity-data)	Run this shard	2026-11-08T13:59:48.9608839Z 
+shards (identity-data)	Run this shard	2026-11-08T14:00:23.7492908Z PROBE AUD-010 acceptance-1: saved nested rules -> authenticated collection and campaign row retain all conditions; one eligible customer 5, no delivery authority
+shards (identity-data)	Run this shard	2026-11-08T14:00:26.0374601Z   ✘   1 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (35.2s)
+shards (identity-data)	Run this shard	2026-11-08T14:00:47.8380941Z   ✓   3 tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out (20.0s)
+shards (identity-data)	Run this shard	2026-11-08T14:00:50.7769371Z PROBE AUD-001 acceptance-1: native checks bracket 1794146435512..1794146435512 -> saved as-of 2026-11-08T14:00:35.512Z matches native and persisted readback after reload and reopen
+shards (identity-data)	Run this shard	2026-11-08T14:00:50.7771762Z PROBE AUD-001 acceptance-3-email: two native saved email steps and two known eligible contacts -> four labeled email recipient steps, unchanged draft authority and no handoff
+shards (identity-data)	Run this shard	2026-11-08T14:01:04.6171939Z   ✓   4 tests/contract.js:7:10 › public documentation › [DOCS-001] every manifest page renders with one h1, section navigation, previous and next, and no cookie or foreign request (16.7s)
+shards (identity-data)	Run this shard	2026-11-08T14:01:05.3397787Z   ✓   5 tests/contract.js:7:10 › public documentation › [DOCS-001] lists the page sections under On this page and links the header to the app (709ms)
+shards (identity-data)	Run this shard	2026-11-08T14:01:06.0731146Z   ✓   6 tests/contract.js:7:10 › public documentation › [DOCS-001] the docs home answers at /docs and /docs/; unknown, miscased, nested and index slugs are a 404 in the shared frame (715ms)
+shards (identity-data)	Run this shard	2026-11-08T14:01:13.2156561Z   ✓   7 tests/contract.js:7:10 › public documentation › [DOCS-001] the docs fit the screen at desktop and phone widths and the phone shows a Contents disclosure (7.1s)
+shards (identity-data)	Run this shard	2026-11-08T14:01:13.2723069Z   ✓   8 tests/contract.js:7:10 › public documentation › [DOCS-001] documentation is public while the operator app still requires a session (48ms)
+shards (identity-data)	Run this shard	2026-11-08T14:01:59.8085372Z PROBE AUD-001 acceptance-2: native checks with three known contacts -> three candidates, one excluded, two eligible and all three saved exclusion reasons rendered after reopening
+shards (identity-data)	Run this shard	2026-11-08T14:01:59.8087728Z PROBE AUD-001 acceptance-3: two email steps and three SMS steps with independent confirmed permissions -> email 4, SMS 3; pending SMS excluded; saved rows and rendered counts agree with no new authority
+shards (identity-data)	Run this shard	2026-11-08T14:03:25.9091388Z   ✓   2 tests/audience-controls/segments.spec.ts:7:1 › [CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent (3.6m)
+shards (identity-data)	Run this shard	2026-11-08T14:03:49.3589599Z   ✓  10 tests/production-entry.spec.ts:6:1 › [BASE-OPS-001][OPER-001] production entry keeps local authority private and reports healthy, failed and recovering dependencies (23.4s)
+shards (identity-data)	Run this shard	2026-11-08T14:03:56.4856044Z PROBE PROP-004 acceptance-1 email body: generate, adopt, PATCH and repeated campaign and review GET -> chosen saved HTML and text, unchanged name and subject
+shards (identity-data)	Run this shard	2026-11-08T14:03:56.4865799Z PROBE PROP-004 acceptance-3 email sender: authenticated PATCH and repeated campaign and review GET -> chosen sender name, From, Reply-to and postal address match persisted revision
+shards (identity-data)	Run this shard	2026-11-08T14:03:56.4867734Z PROBE PROP-004 acceptance-3 destination links: authenticated PATCH and repeated campaign and review GET -> replacement destination and label only, stable persisted link row
+shards (identity-data)	Run this shard	2026-11-08T14:03:56.4869708Z PROBE PROP-004 draft safety: unauthenticated PATCH refused; authorized edits and reads -> unchanged original proposal evidence, draft only, no approval, recipients, dispatch rows or commands
+shards (identity-data)	Run this shard	2026-11-08T14:03:56.5132756Z   ✓  11 tests/proposals-decision/content-editing.spec.ts:4:1 › [PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority (7.1s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:15.2715020Z   ✓  12 tests/proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes (18.7s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:16.0087843Z   ✓   9 tests/portability.spec.ts:5:1 › [DATA-001][CONT-013] upgrade and restore populated records and assets, then enforce the current erasure fence (3.0m)
+shards (identity-data)	Run this shard	2026-11-08T14:04:21.9405412Z PROBE PROP-008 acceptance-2 summary: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:23.0374638Z PROBE PROP-006 acceptances-2-3 summary, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:23.8027126Z PROBE PROP-008 acceptance-2 audience explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:24.9242894Z PROBE PROP-006 acceptances-2-3 summary, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:25.5984688Z PROBE PROP-008 acceptance-2 timing explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:26.7971647Z PROBE PROP-006 acceptances-2-3 audience explanation, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:27.3400758Z PROBE PROP-008 acceptance-2 provider forecast: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:28.5440918Z PROBE PROP-006 acceptances-2-3 audience explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:29.1382717Z PROBE PROP-008 acceptance-2 provider benchmark with owned history identifiers: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:30.4273728Z PROBE PROP-006 acceptances-2-3 timing explanation, unknown [REDACTED] generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:31.1041724Z PROBE PROP-008 recovery control: valid native generation after all benchmark refusals -> HTTP 201, independently expected owned revenue forecast, draft only, original forecast unchanged, no recipient or dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:31.1044436Z PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch
+shards (identity-data)	Run this shard	2026-11-08T14:04:31.1376195Z   ✓  13 tests/proposals-decision/forecast-provenance.spec.ts:6:1 › [PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads (15.8s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:32.1736864Z PROBE PROP-006 acceptances-2-3 timing explanation, altered observed value: native generation -> HTTP 409 invalid_ai_output; repeated detail and desk reads retain failed proposal, no composition or accepted forecast, refused adoption and unchanged existing campaign, revision, recipient and dispatch authority
+shards (identity-data)	Run this shard	2026-11-08T14:04:35.0995804Z PROBE PROP-006 valid control: native generation after all six citation refusals -> HTTP 201 with retained grounded proposal, owned-history forecast and draft only; existing work unchanged, no approval or dispatch
+shards (identity-data)	Run this shard	2026-11-08T14:04:35.1426780Z   ✓  14 tests/proposals-decision/grounding-citations.spec.ts:17:1 › [PROP-006] forged citations and altered observations fail without composition or campaign authority, then valid generation recovers (19.1s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:39.5370617Z   ✓  16 tests/rendering.spec.ts:6:1 › [BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authenticates its actual generated operator transport (4.4s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:40.0705537Z   ✓  15 tests/proposals-decision/owner-control.spec.ts:17:1 › [PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs (8.9s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.6010649Z   ✓  17 tests/shopify/connection.spec.ts:4:1 › [STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry (4.0s)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8646943Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8648799Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8664686Z   1) tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8665777Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8666579Z     Error: expect(received).toEqual(expected) // deep equality
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8666954Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8667103Z     - Expected  - 1
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8667426Z     + Received  + 1
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8667593Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8667751Z     @@ -24,10 +24,10 @@
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8668046Z           Object {
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8668360Z             "comparator": "gte",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8668871Z             "field": "count",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8669229Z             "lookbackDays": 90,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8669596Z             "sourceType": "order",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8669962Z     -       "value": 1,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8670254Z     +       "value": 2,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8670530Z           },
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8670835Z         ],
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8671097Z         "version": 1,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8671369Z       }
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8671514Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8671780Z        at audience-controls/audience-summary-journey.ts:42
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8672097Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8672577Z       40 |     const saved=async(expectedInclusion:InclusionRule,expectedExclusions:ExclusionRule[])=>{
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8673274Z       41 |       const detail=await read();
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8674030Z     > 42 |       expect(JSON.parse(detail.revision.inclusionRuleJson)).toEqual(expectedInclusion);
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8674739Z          |                                                             ^
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8675421Z       43 |       expect(JSON.parse(detail.revision.exclusionRulesJson)).toEqual(expectedExclusions);
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8676590Z       44 |       expect(detail.campaign.state).toBe('draft');expect(detail.revision.state).toBe('draft');expect(detail.revision.approvedAt).toBeNull();
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8677395Z       45 |       return detail;
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8677971Z         at saved ([REDACTED]/tests/audience-controls/audience-summary-journey.ts:42:61)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8679488Z         at audienceSummaryJourney ([REDACTED]/tests/audience-controls/audience-summary-journey.ts:98:5)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8680039Z         at [REDACTED]/tests/audience-controls/segments.spec.ts:21:3
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8680258Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8680831Z     Error Context: ../../_temp/mango-verification/identity-data/members/main/evidence/4b3746152534/main/audience-controls-segments-ad74d-lusion-and-custom-exclusion/error-context.md
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8681402Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8681484Z   1 failed
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8682147Z     tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.8682656Z   16 passed (5.3m)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9551188Z Verification failed: main: exit 1, signal none.
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9553766Z Command: pnpm
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9554098Z Last output (up to 40 lines):
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9554300Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9554308Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9555315Z   1) tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9556021Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9556274Z     Error: expect(received).toEqual(expected) // deep equality
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9556598Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9556750Z     - Expected  - 1
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557053Z     + Received  + 1
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557162Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557259Z     @@ -24,10 +24,10 @@
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557459Z           Object {
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557706Z             "comparator": "gte",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9557956Z             "field": "count",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9558206Z             "lookbackDays": 90,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9558626Z             "sourceType": "order",
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9558968Z     -       "value": 1,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9559169Z     +       "value": 2,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9559391Z           },
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9559564Z         ],
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9559758Z         "version": 1,
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9559957Z       }
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9560054Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9560213Z        at audience-controls/audience-summary-journey.ts:42
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9560923Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9561247Z       40 |     const saved=async(expectedInclusion:InclusionRule,expectedExclusions:ExclusionRule[])=>{
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9561705Z       41 |       const detail=await read();
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9562164Z     > 42 |       expect(JSON.parse(detail.revision.inclusionRuleJson)).toEqual(expectedInclusion);
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9562623Z          |                                                             ^
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9563100Z       43 |       expect(JSON.parse(detail.revision.exclusionRulesJson)).toEqual(expectedExclusions);
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9563816Z       44 |       expect(detail.campaign.state).toBe('draft');expect(detail.revision.state).toBe('draft');expect(detail.revision.approvedAt).toBeNull();
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9564365Z       45 |       return detail;
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9564776Z         at saved ([REDACTED]/tests/audience-controls/audience-summary-journey.ts:42:61)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9565348Z         at audienceSummaryJourney ([REDACTED]/tests/audience-controls/audience-summary-journey.ts:98:5)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9565845Z         at [REDACTED]/tests/audience-controls/segments.spec.ts:21:3
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9566057Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9566961Z     Error Context: ../../_temp/mango-verification/identity-data/members/main/evidence/4b3746152534/main/audience-controls-segments-ad74d-lusion-and-custom-exclusion/error-context.md
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9567924Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9568048Z   1 failed
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9569107Z     tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9569900Z   16 passed (5.3m)
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9570584Z Log: /home/runner/work/_temp/mango-verification/identity-data/members/main/evidence/4b3746152534/verify/main-1BVGD8/main/install.log
+shards (identity-data)	Run this shard	2026-11-08T14:04:43.9595565Z VERIFY_MEMBER local-start
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.0057767Z VERIFY_SCHEDULE {"selection":"local-start","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.0061939Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/identity-data/members/local-start/evidence/4b3746152534/verify/local-start-T35NTy
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.0210446Z VERIFY_STAGE {"name":"local-start","event":"start","at":"2026-11-08T14:04:44.006Z"}
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.0259513Z local-start
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.9658085Z 
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.9658947Z Running 1 test using 1 worker
+shards (identity-data)	Run this shard	2026-11-08T14:04:44.9672004Z 
+shards (identity-data)	Run this shard	2026-11-08T14:05:54.9382839Z   ✓  1 tests/local-start/editor.journey.ts:8:1 › [MGMT-002] native owner editor mounts at 1440, refuses visitors and loses its grant on sign-out (1.2m)
+shards (identity-data)	Run this shard	2026-11-08T14:05:54.9767211Z 
+shards (identity-data)	Run this shard	2026-11-08T14:05:54.9771883Z   1 passed (1.2m)
+shards (identity-data)	Run this shard	2026-11-08T14:05:55.0499850Z VERIFY_STAGE {"name":"local-start","status":"PASS","startedAt":"2026-11-08T14:04:44.006Z","durationMs":71041,"exitCode":0,"signal":null,"event":"end"}
+shards (identity-data)	Run this shard	2026-11-08T14:05:55.0519284Z VERIFY_TOTAL {"status":"PASS","durationMs":71055,"boundary":"coordinator"}
+shards (identity-data)	Run this shard	2026-11-08T14:05:55.0605947Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,24 @@
+[WebServer] (node:36343) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 2 workers
+
+(node:36514) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE AUD-010 acceptance-1: saved nested rules -> authenticated collection and campaign row retain all conditions; one eligible customer 5, no delivery authority
+PROBE AUD-010 acceptance-2: edited numeric predicate and custom exclusion -> saved reload retains all and any, editor labels, values, comparison and 90-day window; sole eligible identity changes to customer 1
+  ✓  1 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (57.5s)
+  ✓  3 tests/rendering.spec.ts:6:1 › [BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authenticates its actual generated operator transport (14.3s)
+PROBE AUD-001 acceptance-1: native checks bracket 1794147590770..1794147590770 -> saved as-of 2026-11-08T14:19:50.770Z matches native and persisted readback after reload and reopen
+PROBE AUD-001 acceptance-3-email: two native saved email steps and two known eligible contacts -> four labeled email recipient steps, unchanged draft authority and no handoff
+PROBE AUD-001 acceptance-2: native checks with three known contacts -> three candidates, one excluded, two eligible and all three saved exclusion reasons rendered after reopening
+PROBE AUD-001 acceptance-3: two email steps and three SMS steps with independent confirmed permissions -> email 4, SMS 3; pending SMS excluded; saved rows and rendered counts agree with no new authority
+(node:36520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/audience-controls/segments.spec.ts:7:1 › [CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent (5.7m)
+
+  3 passed (6.1m)

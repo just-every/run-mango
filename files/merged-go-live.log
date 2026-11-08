@@ -1,0 +1,82 @@
+
+Running 23 tests using 4 workers
+
+(node:42235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42237) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42243) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Source CSV beehiiv: upload
+Source CSV beehiiv: attest
+Source CSV beehiiv: review
+Source CSV beehiiv: applied
+Source CSV omnisend: upload
+Source CSV omnisend: attest
+Source CSV omnisend: review
+Source CSV omnisend: applied
+Source CSV customerio: upload
+Source CSV customerio: attest
+Source CSV customerio: review
+Source CSV customerio: applied
+Source API activecampaign: read
+Source API activecampaign: review
+activecampaign: membership consent
+activecampaign: topic-only campaign
+activecampaign: topic-only checks
+activecampaign: draft API
+activecampaign: draft UI
+activecampaign: draft hydrated
+Source API klaviyo: read
+Source API klaviyo: review
+klaviyo: membership consent
+klaviyo: topic-only campaign
+klaviyo: topic-only checks
+klaviyo: draft API
+klaviyo: draft UI
+klaviyo: draft hydrated
+Conversion proof: apply archive
+Conversion proof: read archive
+Conversion proof: start template 151
+Conversion proof: inspect mapped body
+Conversion proof: run mapped checks
+Conversion proof: open mapped preview
+Conversion proof: mapped preview 1440
+Conversion proof: corrected footer
+Conversion proof: start template 152
+Shared pacing step: before-restart-receipts-settled marketing= 1
+  ✓   3 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (3.1m)
+SEND005 initial installation phase=126954ms total=126954ms
+SEND005 outage probe started phase=430ms total=127384ms
+SEND005 barrier wait phase=263ms total=127647ms
+  ✓   4 tests/go-live/contact-links.journeys.ts:11:1 › [DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking (3.2m)
+SEND005 before restart 1 phase=644ms total=128291ms
+SEND005 close 1 phase=288ms total=128580ms
+Shared pacing step: screen-open-with-shared-backlog marketing= 1
+Shared pacing step: b-acceptance-recorded marketing= 6
+Shared pacing step: b-acceptance-visible-without-navigation marketing= 6
+SEND005 installation 2 phase=29483ms total=158063ms
+PROBE CAMP-007 acceptance-1: edit-schedule POST and draft PATCH -> original active revision, immutable approval and queued recipient unchanged; replacement has no authority
+SEND005 before restart 2 phase=722ms total=158786ms
+SEND005 close 2 phase=277ms total=159064ms
+Shared pacing step: terminal marketing= 10
+  ✓   2 tests/go-live/delivery.journeys.ts:8:1 › [SEND-003][SEND-004] shared provider pacing survives a native restart and the open screen follows durable receipts (3.8m)
+SEND005 installation 3 phase=23056ms total=182120ms
+PROBE CAMP-007 acceptance-2: forced replacement-first and dispatch-first approval orderings -> replacement alone sends or approval conflicts; stale dispatch replay sends nothing
+SEND005 dispatch queued phase=1722ms total=183842ms
+SEND005 dispatch wait phase=52ms total=183894ms
+SEND005 browser clock installed phase=37ms total=183931ms
+  ✘   7 tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (29.9s)
+  ✘   5 tests/go-live/delivery.journeys.ts:11:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation (1.2m)
+  ✘   6 tests/go-live/delivery.journeys.ts:14:1 › [CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch (1.1m)
+  ✘   1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (4.3m)
+
+  4 interrupted
+    tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends 
+    tests/go-live/delivery.journeys.ts:11:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation 
+    tests/go-live/delivery.journeys.ts:14:1 › [CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch 
+    tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame 
+  16 did not run
+  3 passed (4.3m)

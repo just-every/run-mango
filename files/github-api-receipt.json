@@ -1,0 +1,124 @@
+[
+  {
+    "call": 1,
+    "time": 1794144904.025454,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=2b1bda4efbbf42400627653c63f9e6689b4b4fe9&per_page=100",
+      "--jq",
+      ".workflow_runs[] | {id,name,event,status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "call": 2,
+    "time": 1794145205.0535367,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42485646853",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "call": 3,
+    "time": 1794145506.0765064,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42485646853",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "call": 4,
+    "time": 1794145807.107652,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42485646853",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "call": 5,
+    "time": 1794145850.3924706,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42485646853/jobs?per_page=100",
+      "--jq",
+      ".jobs[] | select(.conclusion == \"failure\" or .conclusion == \"cancelled\") | {id,name,status,conclusion,html_url,steps:[.steps[] | select(.conclusion == \"failure\") | {name,number,conclusion}]}"
+    ]
+  },
+  {
+    "call": 6,
+    "time": 1794145862.7351708,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42485646853",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "128747202834",
+      "--log-failed"
+    ]
+  },
+  {
+    "call": 7,
+    "time": 1794147172.6422458,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=cb141908f50e4b314aa255e51746f8611d5e7d26&per_page=100",
+      "--jq",
+      ".workflow_runs[] | select(.name == \"Verify\" and .event == \"push\") | {id,name,event,status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "call": 8,
+    "time": 1794147222.2382967,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42487392666/jobs?per_page=100",
+      "--jq",
+      ".jobs[] | select(.conclusion == \"failure\" or .conclusion == \"cancelled\") | {id,name,status,conclusion,html_url,steps:[.steps[] | select(.conclusion == \"failure\") | {name,number,conclusion}]}"
+    ]
+  },
+  {
+    "call": 9,
+    "time": 1794147238.5638103,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42487392666",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "128752515474",
+      "--log-failed"
+    ]
+  },
+  {
+    "call": 10,
+    "time": 1794147253.468208,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42487392666",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "128752515528",
+      "--log-failed"
+    ]
+  }
+]

@@ -1,14 +1,16 @@
 {
   "repository": "just-every/run-mango",
   "branch": "cloud/sd-mango-hydration-date-3",
-  "head": "cb141908f50e4b314aa255e51746f8611d5e7d26",
-  "remote_head": "cb141908f50e4b314aa255e51746f8611d5e7d26",
-  "base": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "head": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2",
+  "remote_head": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2",
+  "initial_main": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "merged_main": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
   "checkout": "/workspace/mango-diagnostic",
   "initial_clone": "/workspace/run-mango",
-  "worktree_note": "Isolated worktree from the same full-history clone; original checkout detached at superseded candidate to preserve that run until cancellation.",
   "pushed": true,
   "commits": [
+    "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2 Merge remote-tracking branch 'origin/main' into cloud/sd-mango-hydration-date-3",
+    "514201cf5985749987b3852bc0bedaeb06b0814f Publish app hydration readiness after streamed content commits",
     "cb141908f50e4b314aa255e51746f8611d5e7d26 Schedule browser time zone publication through streamed hydration",
     "2b1bda4efbbf42400627653c63f9e6689b4b4fe9 Refresh source lock for document time zone hydration",
     "39c03ea45c11d92edecc0c5abfc94ad396e47752 Publish browser time zone above streamed app routes [skip ci]"
@@ -16,20 +18,17 @@
   "changed_files": [
     "sources.lock.json",
     "src/core/app/client/lib/time-zone.ts",
+    "src/core/app/client/ui/layout.tsx",
     "src/routes/__root.tsx"
   ],
   "source_sha256": {
-    "src/routes/__root.tsx": "c25c5b8143f39cb84d940b138d1ad8a4e85209258e5667689f36b47222ecf944",
+    "src/routes/__root.tsx": "cb5927f7cc4274e77117e38fd801bfeefc3c776575d23a215613380851d2c6f4",
+    "src/core/app/client/ui/layout.tsx": "f592f2b838a518edd1a054f52b240640a415a7c80e53cda0f9e17193778b5a20",
     "src/core/app/client/lib/time-zone.ts": "fa14e5be65b7fbeb78b42bfac6c00f1c93f83a6915d9aab12105436ff3ab756e"
   },
   "generated_views_changed": false,
   "contract_changed": false,
   "pr": null,
-  "superseded_ci": {
-    "run_id": 42485646853,
-    "conclusion": "failure",
-    "job_id": 128747202834,
-    "assertion": "duplicate complaint rows in compliance-journey.ts:40"
-  },
-  "readiness": "pending final local full suite and exact-SHA Verify"
+  "final_verify": "unconfirmed: ten-call API budget exhausted",
+  "readiness": "PUSHED pending independent exact-SHA Verify; final local suite pending"
 }
