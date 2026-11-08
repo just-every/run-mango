@@ -18,7 +18,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   const due=new Date((await site.control('/_golive/clock')).now+90_000);
   const campaign=await draftCampaign(site,cookie,'Parallel garden letter',addresses,due);
   await approve(site,cookie,campaign);
-  const connection={dataCenter:incumbent.dataCenter,audienceId:incumbent.audienceId,apiKey:'synthetic-mango-24',consent:true};
+  const connection={dataCenter:incumbent.dataCenter,audienceId:incumbent.audienceId,apiKey:'synthetic-mango-2499',consent:true};
   expect((await site.call('/api/settings/incumbent-restrictions',{method:'POST',body:connection})).status).toBe(401);
   expect((await site.call('/api/settings/incumbent-restrictions',{method:'POST',cookie,body:{...connection,consent:false}})).status).toBe(400);
   const outsiderId='synthetic-mango-2405',outsider=await site.open([outsiderId,'example.test'].join('@'),outsiderId);
@@ -31,7 +31,9 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   await panel.getByLabel('Mailchimp audience ID',{exact:true}).fill(connection.audienceId);
   await panel.getByLabel('Mailchimp API key',{exact:true}).fill(connection.apiKey);
   await panel.getByRole('checkbox').check();
+  const connectResponse=page.waitForResponse(response=>response.url().endsWith('/api/settings/incumbent-restrictions')&&response.request().method()==='POST');
   await panel.getByRole('button',{name:'Connect parallel audience',exact:true}).click();
+  const connected=await connectResponse;expect(connected.status(),await connected.text()).toBe(201);
   await expect(panel.getByText('Audience '+incumbent.audienceId+' · '+incumbent.dataCenter,{exact:true})).toBeVisible();
   await expect(panel.getByLabel('Mailchimp API key',{exact:true})).toHaveValue('');
   const status=await json(await site.call('/api/settings/incumbent-restrictions',{cookie}),200);
@@ -91,6 +93,16 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   expect(skipped.map(row=>row.skip_reason)).toEqual(Array(4).fill('channel-not-subscribed'));
   expect(edge.sends.filter(send=>addresses.includes(send.to)&&send.body.headers?.['List-Unsubscribe'])).toEqual([]);
   console.log('PROBE CONT-004 3: parallel Mailchimp snapshots and failed writeback retry -> restrictions persist both ways, queued four skipped, independent allowed recipient accepted');
+  let erasure=await site.call('/api/contacts/'+contacts[0].id,{method:'DELETE',cookie}),receipt=await erasure.json();
+  for(let turn=0;erasure.status===202&&turn<400;turn++) {
+    erasure=await site.call('/api/audience/erasures/'+receipt.receipt.reference+'/resume',{method:'POST',cookie,body:{}});receipt=await erasure.json();
+  }
+  expect(erasure.status,JSON.stringify(receipt)).toBe(200);
+  incumbent.members[0].status='subscribed';
+  await json(await site.call('/api/settings/incumbent-restrictions/sync',{method:'POST',cookie}),200);
+  expect(incumbent.members[0].status).toBe('unsubscribed');
+  expect((await site.call('/api/contacts/'+contacts[0].id,{cookie})).status).toBe(404);
+  expect((await json(await site.call('/api/contacts/search?address='+encodeURIComponent(addresses[0]),{cookie}),200)).contacts).toEqual([]);
   await json(await site.call('/api/settings/incumbent-restrictions/'+status.connections[0].id,{method:'DELETE',cookie}),200);
   const calls=incumbent.requests.length;
   await json(await site.call('/api/settings/incumbent-restrictions/sync',{method:'POST',cookie}),200);

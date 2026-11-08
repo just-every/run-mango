@@ -10,7 +10,7 @@ export function mailchimpMember(email:string,status:string = 'subscribed'):Mailc
 /** Real HTTP shapes at the test network boundary; no application behavior lives here. */
 export function mailchimpEdge(options:{dataCenter?:string; audienceId?:string; apiKey?:string; members?:MailchimpMember[]; pageSize?:number} = {}) {
   const dataCenter = options.dataCenter ?? 'us24', audienceId = options.audienceId ?? 'a24b24c24d';
-  const apiKey = options.apiKey ?? 'synthetic-mango-24';
+  const apiKey = options.apiKey ?? 'synthetic-mango-2499';
   const members = options.members ?? [];
   const requests:MailchimpEdgeRequest[] = [];
   const failures = {readStatus:0,writeStatus:0,nextStatus:0,redirectTo:'',malformedRead:false,totalDelta:0,dropWriteResponse:false};
