@@ -119,8 +119,8 @@ export async function channelStatusJourney(page:Page,info:TestInfo){
     const checked=await json(await site.call('/api/campaigns/'+campaign.campaignId+'/checks',{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
     expect(checked).toMatchObject({candidateCount:5,eligibleCount:2});
     expect(checked.channelCounts).toEqual([
-      {channel:'email',eligibleContactCount:1,recipientStepCount:1},
-      {channel:'sms',eligibleContactCount:1,recipientStepCount:1},
+      {channel:'email',eligibleContactCount:1,recipientStepCount:1,fallbackContactCount:0},
+      {channel:'sms',eligibleContactCount:1,recipientStepCount:1,fallbackContactCount:0},
     ]);
     expect([...checked.exclusions].sort((a,b)=>a.reason.localeCompare(b.reason))).toEqual(
       ['email-non-subscribed','email-pending','email-suppressed','email-unsubscribed','sms-non-subscribed','sms-pending','sms-suppressed','sms-unsubscribed'].map(reason=>({reason,count:1})));
