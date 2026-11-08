@@ -87,9 +87,9 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     }
     const start = Math.floor(clock.now / 1000) * 1000;
     const bounces = [
-      { id: 'synthetic-mango-681', at: start + 2000, messageId: 'synthetic-mango-691', count: 1 },
-      { id: 'synthetic-mango-682', at: start + 4000, messageId: 'synthetic-mango-692', count: 2 },
-      { id: 'synthetic-mango-683', at: start + 7000, messageId: 'synthetic-mango-693', count: 3 },
+      { id: 'synthetic-mango-701', at: start + 3000, messageId: 'synthetic-mango-711', count: 1 },
+      { id: 'synthetic-mango-702', at: start + 6000, messageId: 'synthetic-mango-712', count: 2 },
+      { id: 'synthetic-mango-703', at: start + 10000, messageId: 'synthetic-mango-713', count: 3 },
     ];
     const softFact = (fact: typeof bounces[number]) => event('bounce', carol, fact.at, fact.messageId, {}, {
       sg_event_id: fact.id, type: 'blocked', reason: '452 mailbox full',
@@ -112,10 +112,20 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
       .sort((a: any, b: any) => a.occurredAt.localeCompare(b.occurredAt))).toEqual(expectedHistory);
     const earlierFacts = await bounceRows();
     expect(earlierFacts.map(({ kind, occurred_at }) => ({ kind, occurred_at }))).toEqual(bounces.map(fact => ({ kind: 'soft-bounce', occurred_at: fact.at })));
+    const recipientOptOut = () => site.rows("SELECT * FROM surviving_opt_outs WHERE reason='recipient-unsubscribe'");
+    const originalOptOut = await recipientOptOut();
+    expect(originalOptOut).toHaveLength(1);
+    // Duplicates must preserve the active restriction as well as the later reset.
+    expect(await post(softFact(bounces[2]), softFact(bounces[0]), softFact(bounces[1]))).toBe(204);
+    expect(await bounceRows()).toEqual(earlierFacts);
+    const suppressedReplay = await detail();
+    expect(suppressedReplay.history).toEqual(beforeDelivery.history);
+    expect(suppressedReplay.suppressions).toEqual(beforeDelivery.suppressions);
+    expect(suppressedReplay.contact.emailStatus).toBe('suppressed');
     const nonzeroCount = await count();
     expect(nonzeroCount).toBeGreaterThan(0);
-    const deliveredAt = start + 11000;
-    const delivered = event('delivered', carol, deliveredAt, sent.messageId, { mango_recipient_step, mango_handoff_key }, { sg_event_id: 'synthetic-mango-684' });
+    const deliveredAt = start + 14000;
+    const delivered = event('delivered', carol, deliveredAt, sent.messageId, { mango_recipient_step, mango_handoff_key }, { sg_event_id: 'synthetic-mango-704' });
     await step('delivered', await post(delivered));
     const resetCount = await count();
     expect(resetCount).toBe(0);
@@ -125,9 +135,14 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(afterDelivery.history.filter((row: any) => row.kind === 'provider-delivery')).toEqual([
       expect.objectContaining({ occurredAt: new Date(deliveredAt).toISOString() }),
     ]);
-    expect((await bounceRows()).filter(row => row.kind === 'soft-bounce')).toEqual(earlierFacts);
+    const resetFacts = await bounceRows();
+    expect(resetFacts.filter(row => row.kind === 'soft-bounce')).toEqual(earlierFacts);
+    expect(resetFacts.filter(row => row.kind === 'delivery')).toEqual([
+      { provider_event_id: expect.any(String), kind: 'delivery', occurred_at: deliveredAt },
+    ]);
+    expect(await recipientOptOut()).toEqual(originalOptOut);
 
-    const fresh = { id: 'synthetic-mango-685', at: start + 17000, messageId: 'synthetic-mango-695', count: 1 };
+    const fresh = { id: 'synthetic-mango-705', at: start + 21000, messageId: 'synthetic-mango-715', count: 1 };
     expect(await post(softFact(fresh))).toBe(204);
     const freshCount = await count();
     expect(freshCount).toBe(1);
@@ -141,6 +156,12 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(historyFacts.map(({ kind, detail, occurredAt }: any) => ({ kind, detail, occurredAt })).sort((a: any, b: any) => a.occurredAt.localeCompare(b.occurredAt))).toEqual(allExpectedHistory);
     const timeline: ContactTimelineEntry[] = afterFresh.timeline;
     expect(timeline.filter(row => row.kind === 'soft-bounce').map(({ kind, detail, occurredAt }) => ({ kind, detail, occurredAt })).reverse()).toEqual(allExpectedHistory);
+    expect(timeline.filter(row => row.kind === 'soft-bounce').map(({ kind, detail, occurredAt, source }) => ({ kind, detail, occurredAt, source })).reverse())
+      .toEqual(allExpectedHistory.map(fact => ({ ...fact, source: 'Contact ledger' })));
+    expect(timeline.filter(row => row.kind === 'provider-delivery')).toEqual([
+      expect.objectContaining({ kind: 'provider-delivery', detail: 'email delivery confirmed by the provider.',
+        source: 'Contact ledger', occurredAt: new Date(deliveredAt).toISOString() }),
+    ]);
     expect(timeline.filter(row => row.kind === 'soft-bounce').map(row => row.id).sort()).toEqual(historyFacts.map((row: any) => `history:${row.id}`).sort());
 
     const settledFacts = await bounceRows();
@@ -152,6 +173,7 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(afterReplay.history).toEqual(afterFresh.history);
     expect(afterReplay.timeline).toEqual(afterFresh.timeline);
     expect(afterReplay.contact.emailStatus).toBe('unsubscribed');
+    expect(await recipientOptOut()).toEqual(originalOptOut);
     expect((await site.rows('SELECT reason FROM surviving_opt_outs ORDER BY reason')).map(row => row.reason)).toEqual(['recipient-unsubscribe']);
 
     const [cookieName, cookieValue] = cookie.split('=');
@@ -166,6 +188,7 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
       const entry = activity.locator(`[data-timeline-id="${fact.id}"]`);
       await expect(entry).toBeVisible();
       await expect(entry.locator('p').first()).toHaveText(fact.detail);
+      await expect(entry.locator('small')).toHaveText('Source: Contact ledger');
       await expect(entry.locator('time')).toHaveAttribute('datetime', fact.occurredAt);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
@@ -177,6 +200,8 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
       await info.attach(`soft-bounce-history-${width}`, { path: screenshot, contentType: 'image/png' });
     }
     const reconciliation = JSON.stringify({ nonzeroCount, resetCount, freshCount, replayCount, expectedHistory: allExpectedHistory,
+      replayWhileSuppressed: { status: suppressedReplay.contact.emailStatus, historyUnchanged: true, suppressionsUnchanged: true },
+      recipientOptOutUnchanged: true,
       recordedHistory: historyFacts, bounceFacts: settledFacts,
       timeline: timeline.filter(row => row.kind === 'soft-bounce' || row.kind === 'provider-delivery' || row.kind === 'opt-out') }, null, 2) + '\n';
     await info.attach('soft-bounce-reconciliation', { body: reconciliation, contentType: 'application/json' });
