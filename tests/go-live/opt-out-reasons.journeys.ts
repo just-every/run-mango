@@ -4,6 +4,9 @@ import { join } from 'node:path';
 import seed from '../../seed.json' with { type: 'json' };
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
+import { localSessionCookieName } from '../support/local-session';
+import { openPage } from '../support/navigation';
+import type { ContactTimelineEntry } from '../../src/core/features/audience/contact-timeline';
 import { approve, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost } from './harness';
 
 // A person's opt-out outlives provider reconciliation: soft-bounce suppression and a later
@@ -82,9 +85,105 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       await page.screenshot({ path: info.outputPath(`unsubscribe-success-${width}.png`), fullPage: true });
     }
-    const start = clock.now + 1000;
-    for (const n of [1, 2, 3]) await step(`soft bounce ${n}`, await post(event('bounce', carol, start + n * 1000, `other${n}`, {}, { type: 'blocked', reason: '452 mailbox full' })));
-    await step('delivered', await post(event('delivered', carol, start + 5000, sent.messageId, { mango_recipient_step, mango_handoff_key })));
+    const start = Math.floor(clock.now / 1000) * 1000;
+    const bounces = [
+      { id: 'synthetic-mango-681', at: start + 2000, messageId: 'synthetic-mango-691', count: 1 },
+      { id: 'synthetic-mango-682', at: start + 4000, messageId: 'synthetic-mango-692', count: 2 },
+      { id: 'synthetic-mango-683', at: start + 7000, messageId: 'synthetic-mango-693', count: 3 },
+    ];
+    const softFact = (fact: typeof bounces[number]) => event('bounce', carol, fact.at, fact.messageId, {}, {
+      sg_event_id: fact.id, type: 'blocked', reason: '452 mailbox full',
+    });
+    const [{ contact_id: contactId }] = await site.rows(`SELECT contact_id FROM contact_email_addresses WHERE email='${carol}'`);
+    const count = async () => {
+      const rows = await site.rows(`SELECT consecutive_soft_bounces FROM contact_bounce_states WHERE contact_id='${contactId}'`);
+      expect(rows).toHaveLength(1);
+      return rows[0].consecutive_soft_bounces;
+    };
+    const detail = () => site.call(`/api/contacts/${contactId}`, { cookie }).then(response => json(response, 200));
+    const bounceRows = () => site.rows(`SELECT provider_event_id, kind, occurred_at FROM contact_bounce_facts WHERE contact_id='${contactId}' ORDER BY occurred_at, provider_event_id`);
+    const expectedHistory = bounces.map(fact => ({ kind: 'soft-bounce', detail: `Consecutive soft bounce count: ${fact.count}.`, occurredAt: new Date(fact.at).toISOString() }));
+    for (const [index, fact] of bounces.entries()) {
+      await step(`soft bounce ${index + 1}`, await post(softFact(fact)));
+      expect(await count()).toBe(fact.count);
+    }
+    const beforeDelivery = await detail();
+    expect(beforeDelivery.history.filter((row: any) => row.kind === 'soft-bounce').map(({ kind, detail, occurredAt }: any) => ({ kind, detail, occurredAt }))
+      .sort((a: any, b: any) => a.occurredAt.localeCompare(b.occurredAt))).toEqual(expectedHistory);
+    const earlierFacts = await bounceRows();
+    expect(earlierFacts.map(({ kind, occurred_at }) => ({ kind, occurred_at }))).toEqual(bounces.map(fact => ({ kind: 'soft-bounce', occurred_at: fact.at })));
+    const nonzeroCount = await count();
+    expect(nonzeroCount).toBeGreaterThan(0);
+    const deliveredAt = start + 11000;
+    const delivered = event('delivered', carol, deliveredAt, sent.messageId, { mango_recipient_step, mango_handoff_key }, { sg_event_id: 'synthetic-mango-684' });
+    await step('delivered', await post(delivered));
+    const resetCount = await count();
+    expect(resetCount).toBe(0);
+    const afterDelivery = await detail();
+    expect(afterDelivery.contact.emailStatus).toBe('unsubscribed');
+    expect(afterDelivery.history.filter((row: any) => row.kind === 'soft-bounce')).toEqual(beforeDelivery.history.filter((row: any) => row.kind === 'soft-bounce'));
+    expect(afterDelivery.history.filter((row: any) => row.kind === 'provider-delivery')).toEqual([
+      expect.objectContaining({ occurredAt: new Date(deliveredAt).toISOString() }),
+    ]);
+    expect((await bounceRows()).filter(row => row.kind === 'soft-bounce')).toEqual(earlierFacts);
+
+    const fresh = { id: 'synthetic-mango-685', at: start + 17000, messageId: 'synthetic-mango-695', count: 1 };
+    expect(await post(softFact(fresh))).toBe(204);
+    const freshCount = await count();
+    expect(freshCount).toBe(1);
+    const afterFresh = await detail();
+    expect(afterFresh.contact.emailStatus).toBe('unsubscribed');
+    expect(afterFresh.suppressions).toEqual([]);
+    expect(afterFresh.history.filter((row: any) => row.kind === 'opt-out')).toEqual(beforeDelivery.history.filter((row: any) => row.kind === 'opt-out'));
+    expect((await bounceRows()).filter(row => row.kind === 'soft-bounce' && row.occurred_at < deliveredAt)).toEqual(earlierFacts);
+    const allExpectedHistory = [...expectedHistory, { kind: 'soft-bounce', detail: 'Consecutive soft bounce count: 1.', occurredAt: new Date(fresh.at).toISOString() }];
+    const historyFacts = afterFresh.history.filter((row: any) => row.kind === 'soft-bounce');
+    expect(historyFacts.map(({ kind, detail, occurredAt }: any) => ({ kind, detail, occurredAt })).sort((a: any, b: any) => a.occurredAt.localeCompare(b.occurredAt))).toEqual(allExpectedHistory);
+    const timeline: ContactTimelineEntry[] = afterFresh.timeline;
+    expect(timeline.filter(row => row.kind === 'soft-bounce').map(({ kind, detail, occurredAt }) => ({ kind, detail, occurredAt })).reverse()).toEqual(allExpectedHistory);
+    expect(timeline.filter(row => row.kind === 'soft-bounce').map(row => row.id).sort()).toEqual(historyFacts.map((row: any) => `history:${row.id}`).sort());
+
+    const settledFacts = await bounceRows();
+    expect(await post(softFact(bounces[1]), delivered, softFact(fresh), softFact(bounces[0]), softFact(bounces[2]))).toBe(204);
+    const replayCount = await count();
+    expect(replayCount).toBe(1);
+    expect(await bounceRows()).toEqual(settledFacts);
+    const afterReplay = await detail();
+    expect(afterReplay.history).toEqual(afterFresh.history);
+    expect(afterReplay.timeline).toEqual(afterFresh.timeline);
+    expect(afterReplay.contact.emailStatus).toBe('unsubscribed');
+    expect((await site.rows('SELECT reason FROM surviving_opt_outs ORDER BY reason')).map(row => row.reason)).toEqual(['recipient-unsubscribe']);
+
+    const [cookieName, cookieValue] = cookie.split('=');
+    expect(cookieName).toBe(localSessionCookieName(site.runtime.url));
+    await page.context().addCookies([{ name: cookieName, value: cookieValue, url: site.runtime.url }]);
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await openPage(page, `${site.runtime.url}/app/audience/${contactId}`);
+    const activity = page.getByRole('region', { name: 'Recorded contact activity' });
+    while (await activity.getByRole('button', { name: /Show more activity/ }).count()) await activity.getByRole('button', { name: /Show more activity/ }).click();
+    await expect(activity.locator('[data-timeline-kind="soft-bounce"]')).toHaveCount(allExpectedHistory.length);
+    for (const fact of timeline.filter(row => row.kind === 'soft-bounce' || row.kind === 'provider-delivery' || row.kind === 'opt-out')) {
+      const entry = activity.locator(`[data-timeline-id="${fact.id}"]`);
+      await expect(entry).toBeVisible();
+      await expect(entry.locator('p').first()).toHaveText(fact.detail);
+      await expect(entry.locator('time')).toHaveAttribute('datetime', fact.occurredAt);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      const screenshot = info.outputPath(`soft-bounce-history-${width}.png`);
+      await page.screenshot({ path: screenshot, fullPage: true });
+      await info.attach(`soft-bounce-history-${width}`, { path: screenshot, contentType: 'image/png' });
+    }
+    const reconciliation = JSON.stringify({ nonzeroCount, resetCount, freshCount, replayCount, expectedHistory: allExpectedHistory,
+      recordedHistory: historyFacts, bounceFacts: settledFacts,
+      timeline: timeline.filter(row => row.kind === 'soft-bounce' || row.kind === 'provider-delivery' || row.kind === 'opt-out') }, null, 2) + '\n';
+    await info.attach('soft-bounce-reconciliation', { body: reconciliation, contentType: 'application/json' });
+    if (process.env.GO_LIVE_EVIDENCE) {
+      await mkdir(process.env.GO_LIVE_EVIDENCE, { recursive: true });
+      await writeFile(join(process.env.GO_LIVE_EVIDENCE, 'soft-bounce-reconciliation.json'), reconciliation);
+    }
     if (process.env.GO_LIVE_EVIDENCE) {
       await mkdir(process.env.GO_LIVE_EVIDENCE, { recursive: true });
       await writeFile(join(process.env.GO_LIVE_EVIDENCE, 'opt-out-reasons.json'), JSON.stringify(steps, null, 2) + '\n');

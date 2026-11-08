@@ -706,8 +706,8 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 1. The states are draft with nothing scheduled, scheduled with an approved revision and future step, dispatching once hand-off begins, paused under SEND-009, completed under SEND-007, canceled under CAMP-009, or failed when the first step misses its deadline because its required provider or sender registration is unavailable.
 2. Each transition records its actor or acting feature and its time, and an invalid transition is rejected.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
-**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected. Missing public-door journey: “States — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”, invoking `tests/go-live/pause.flow.ts`: distinct scheduled and mid-dispatch operator pause and resume requests independently bracketed by the installation clock; authenticated Activity reconciled with persisted actor, revision and original audit and channel-pause times; later replay, reload and named invalid transitions retain events, times, approval and recipient authority and handoff counts.
+**Gap.** Remaining acceptance 1 proof: the complete campaign-state, deadline and provider matrix, including Draft state, SEND-009 provider-pause semantics and Failed after a first-step deadline missed for an unavailable provider or sender registration. Remaining acceptance 2 proof: actor or acting feature, occurrence time, retention and invalid-transition refusal across every other transition and acting feature; the native operator pause and resume slice is now asserted. Existing Scheduled, Dispatching, Completed and Canceled evidence is retained.
 
 #### CAMP-002 — Draft editing
 
@@ -899,8 +899,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. A recipient-step not handed off by that instant is skipped with a deadline-passed reason.
 3. A step whose deadline passed before dispatch begins sends nothing.
 
-**Evidence.** `tests/go-live/scheduler.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch. Missing public-door journey: “Step deadline — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/scheduler.journeys.ts`; `tests/campaign-authoring/step-deadline.spec.ts` — “[CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving”: authenticated native draft save with both send-by fields omitted; independently specified ordinary, spring-forward and fall-back UTC values reconciled with persisted steps and repeated detail and review reads; reopened and reloaded deadline controls; no approval, recipients or dispatch jobs.
+**Gap.** Acceptance 1 is proved for native email draft PATCH with a local scheduled time and IANA zone, defaulting to 23:59 of its local day across ordinary and daylight-saving days. Unasserted: the other channel and scheduling doors for step send-by instants and their local-day-end defaults; acceptance 2’s complete recipient deadline skip and named-reason matrix; acceptance 3’s complete no-late-dispatch matrix. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration. Carried expiry evidence and reason terminology remain unchanged.
 
 #### CAMP-011 — Dispatch punctuality
 
