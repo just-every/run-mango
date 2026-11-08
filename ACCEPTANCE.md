@@ -736,8 +736,8 @@ Core · published · **partial** · From AUD-001 · Rules D-2
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. Missing public-door journey: “Derived audience rule summaries — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts`: acceptance 1 campaign collection and actual row derive from saved inclusion and exclusion rules; acceptance 2 one independently specified nested all and any fixture retains every condition, editor field label, comparison, value, property scope and order lookback. Predicate and exclusion edits survive save and reload, swap the independently known eligible identity, and create no approval, recipients or dispatch. Editor and campaign-row captures at 1440 and 390. Existing builder and review evidence remains in the original segments journey.
+**Gap.** Acceptance 1: complete review, approval-check, scheduled-page and audience-snapshot derivation matrix still needs public-door proof. Acceptance 2: other condition, comparison, value, lookback and editor-label cases remain unproved; the nested fixture is one case, not the complete matrix.
 
 ### Campaigns — Live audience authoring counts
 
