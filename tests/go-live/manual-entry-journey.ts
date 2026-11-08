@@ -74,7 +74,7 @@ export async function manualEntryJourney(site:Installation,edge:Awaited<ReturnTy
  expect((await site.rows(`SELECT sms_status FROM contacts WHERE id='${contact.id}'`))[0].sms_status).toBe('unsubscribed');
  const smsAudience=await json(await site.call('/api/campaign-authoring/audience',{method:'POST',cookie:owner,body:{inclusionRuleJson:rule([email]),exclusionRulesJson:'[]',channels:['sms']}}),200);
  expect(smsAudience.eligibleCount).toBe(0);
- const dispatchClock=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:Math.max(1,smsAt.getTime()-dispatchClock.now+1),hold:true});
+ const dispatchClock=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:Math.max(1,smsAt.getTime()-dispatchClock.now+1),hold:false});
  const smsOutcomes=await dispatch(site,queuedSms.campaignId,smsAt);
  expect(smsOutcomes.map(row=>[row.email,row.transport_disposition])).toEqual([['+61411111111','skipped'],['+61422222222','accepted']]);
  expect(edge.sms.sends.filter(send=>send.body.messages[0].message.includes(marketingText)).map(send=>send.body.messages[0].to)).toEqual(['61422222222']);
