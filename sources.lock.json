@@ -2822,7 +2822,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "0358b726d00353adf7a459077fbe3abfd3f9d5bfeae98c2a4e6cd117cb57a442",
+      "sha256": "936730712ed9b9ab46a1525dabd050f13cf5cb62f5b9ed6e10c5e2ef8a4f78c0",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3046,7 +3046,7 @@
       "executable": false
     },
     "src/core/app/scheduled.ts": {
-      "sha256": "846de48aabbfb0fd2aa2a80d325bbc392d15ce1361818456625a110ac8e0723a",
+      "sha256": "5fd113c6f3f27d56c6595c8f93f1462c069496d607ee0ccad17f75723ad0df3f",
       "executable": false
     },
     "src/core/app/worker.dev.ts": {
@@ -3138,7 +3138,7 @@
       "executable": false
     },
     "src/core/features/audience/eligibility.ts": {
-      "sha256": "50b7b0473924facba254a23174eec74497c751d09706e447045dadad43f813d2",
+      "sha256": "5e6f5968a4c61a5e5b1adea199ad352487124d0ff19d23a25ad227a03a53b596",
       "executable": false
     },
     "src/core/features/audience/erasure/batched-preparation.ts": {
@@ -3438,7 +3438,7 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "bc8040635dfb4baa8339913fa43220509d3391e7e268571ef05a9e0aeafcd79a",
+      "sha256": "4ec4538dc4a4936d5ff62c8d05cca89eeeafee8764380ebf13d2cc66d38547f2",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
@@ -3470,7 +3470,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "552efeb7f532f06e7ff03e4ba636d1de20acdb54a899b3ca5d24c471b1892186",
+      "sha256": "8239c02af6b7325a6337fd335c0a41c274603eb9bb4a18be6c603f5ba3989005",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -5214,7 +5214,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/recipient-handoff-guard.ts": {
-      "sha256": "5558e304627de75cf3148c550924b6003fb70e975efccab14badc53039dc8225",
+      "sha256": "42af8d56fb69ba6f6daa52d1de4364109c417540d3f42e606cdebd55ca23114d",
       "executable": false
     },
     "src/core/features/lifecycle/recipient-repository.ts": {
@@ -5286,7 +5286,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/types.ts": {
-      "sha256": "dc0672fb9508adb1759ec0fe3347a8385b90d800355b4e2c2c600687a1623e76",
+      "sha256": "7d9bc0ccb0bcae94fb7b1f87cdea7d99cc6137b4bcbcf6b33d1667460ec6bfb7",
       "executable": false
     },
     "src/core/features/lifecycle/webhook-facts.ts": {
@@ -5386,7 +5386,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "1f0ea37092a16e5dc12efd4d7bd0a28b36ed15c68e00bd9a7e5ab79cd51348a7",
+      "sha256": "085b612c99961560de3d1fb0d424ae8b02f55adbf4799e5743adf9ebe56715d3",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -5918,7 +5918,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-page.tsx": {
-      "sha256": "de0925603cc6a836ce9651a3d4e83c8f8bdf6a715b8fc2430c72daaa8df02bd1",
+      "sha256": "98f5c63e808d78f11aaafbca0f0ed4823488abfe61f31c7200b5b94eac5591ed",
       "executable": false
     },
     "src/core/features/store/ui/settings-paid-tier.tsx": {
