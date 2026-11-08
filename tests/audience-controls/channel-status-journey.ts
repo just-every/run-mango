@@ -14,7 +14,6 @@ export async function channelStatusJourney(page:Page,info:TestInfo){
   try{
     const cookie=await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
-    await site.control('/_golive/sender-evidence');
     const initial=await site.control('/_golive/clock');
     const {now}=await site.control('/_golive/clock',{hold:true,
       advanceMs:(43200000-((initial.now+36000000)%86400000)+86400000)%86400000});
@@ -109,6 +108,7 @@ export async function channelStatusJourney(page:Page,info:TestInfo){
     console.log('PROBE CONT-002 1: native contact and destination reads after capture, confirmation and restrictive import -> all five states independently represented on email and SMS');
     console.log('PROBE CONT-002 3: consent on restricted opposite channels, customer sync and signed paid-order webhooks -> opposite state and evidence unchanged; commerce facts visible');
 
+    await site.control('/_golive/sender-evidence');
     const at=activity.now+3600000;
     const campaign=await draftCampaign(site,cookie,'Channel consent at the market',contacts.map(person=>person.email),new Date(at));
     await json(await site.call('/api/campaign-revisions/'+campaign.revisionId,{method:'PATCH',cookie,body:{

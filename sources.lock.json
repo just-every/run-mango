@@ -8350,7 +8350,7 @@
       "executable": false
     },
     "tests/audience-controls/channel-status-journey.ts": {
-      "sha256": "38d179fa1db8b33ad021bef44e8a9f0a3f5387fb94583f8be388872440ea7055",
+      "sha256": "bf94f989864694292c34fcd9ae25c582a2c5a2190f829b96d42560ddcb15034d",
       "executable": false
     },
     "tests/audience-controls/contact-profile-flow.ts": {
