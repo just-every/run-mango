@@ -18,7 +18,11 @@ async function captureState(site:ResubscribeSite, id:string, email:string) {
     handoffs:await site.rows(`SELECT * FROM consent_handoff_claims WHERE contact_id='${id}' ORDER BY id`),
     requests:await site.rows(`SELECT r.* FROM audience_signup_requests r WHERE r.destination_hash IN
       (SELECT r.destination_hash FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id WHERE e.destination='${email}') ORDER BY r.id`),
-    history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' AND kind<>'resubscribe-refused' ORDER BY id`),
+    // Read the complete ledgers as well: joining through consent alone would
+    // hide an orphan reservation created by an exhausted request.
+    reservations:await site.rows('SELECT * FROM audience_signup_requests ORDER BY id'),
+    destinationCounters:await site.rows("SELECT key,window,count FROM oa_limits WHERE key LIKE 'signup-email:%' ORDER BY key"),
+    history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' ORDER BY id`),
   };
 }
 
@@ -72,6 +76,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
       expect(await messagesFor(site,email)).toEqual([]);
       expect(await destinationCounter(site,email)).toEqual([]);
       const original=await contactDetail(site,id);
+      const disclosures=new Set<string>();
       // Reserve a real database hour for the short burst, including its UTC-day bucket.
       // This does not advance application time or manufacture a next-day reset.
       await signupCounterWindow(site,'signup-challenged-global');
@@ -81,9 +86,12 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect((await site.settings({frequencyDisclosure,embedOrigins:[],kioskEnabled:kiosk,kioskDeviceLabel:'Market tablet'})).status).toBe(200);
         const description=await responseJson(await site.call('/subscribe/info'));
         expect(description.kioskEnabled).toBe(kiosk);
+        expect(disclosures.has(description.disclosure)).toBe(false);
+        disclosures.add(description.disclosure);
         const before=await captureState(site,id,email),beforeCounter=await destinationCounter(site,email),beforeRefusals=await refusals(site);
         const beforeAccounting=await refusalAccounting(site);
         const beforeMail=await messagesFor(site,email);
+        const beforeOutbox=await site.control('/_kiosk/messages');
         expect(beforeMail).toHaveLength(Math.min(index,3));
         const ip=`198.51.${(order?110:100)+index}.1`;
         await page.setExtraHTTPHeaders({'CF-Connecting-IP':ip});
@@ -103,6 +111,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect(body).toEqual({status:'confirmation-required'});
         if(index===0)acknowledgment=body;
         expect(body).toEqual(acknowledgment);
+        expect(response.headers()['retry-after']).toBeUndefined();
         expect(submitted.disclosure).toBe(description.disclosure);
         expect(tokens.has(submitted['cf-turnstile-response'])).toBe(false);
         tokens.add(submitted['cf-turnstile-response']);
@@ -116,14 +125,22 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect(counter[0].count).toBe(Math.min(index+1,3));
         expect(after.requests).toHaveLength(Math.min(index+1,3));
         expect(after.requests.every(row=>row.status==='sent')).toBe(true);
+        expect(after.confirmations.map(row=>row.consent_evidence_id).sort()).toEqual(after.requests.map(row=>row.id).sort());
         expect(after.handoffs.map(row=>row.id)).toEqual(after.confirmations.map(row=>row.id));
         expect(after.handoffs).toHaveLength(Math.min(index+1,3));
+        expect(after.destinationCounters.filter(row=>row.key!==counter[0].key))
+          .toEqual(before.destinationCounters.filter(row=>row.key!==counter[0].key));
+        expect(after.destinationCounters.filter(row=>row.key===counter[0].key)).toEqual(counter);
         for(const row of after.requests)expect(Math.floor(row.created_at/86400000)).toBe(counter[0].window);
         const detail=await contactDetail(site,id);
         if(index<3) {
           expect(after.evidence.length).toBe(before.evidence.length+1);
           expect(after.metadata.length).toBe(before.metadata.length+1);
           expect(after.confirmations.length).toBe(before.confirmations.length+1);
+          const addedRequests=after.reservations.filter(row=>!before.reservations.some(old=>old.id===row.id));
+          expect(addedRequests).toHaveLength(1);
+          expect(after.reservations.filter(row=>before.reservations.some(old=>old.id===row.id))).toEqual(before.reservations);
+          expect(addedRequests).toEqual(after.requests.filter(row=>!before.requests.some(old=>old.id===row.id)));
           const evidence=detail.consent.find((row:any)=>!original.consent.some((old:any)=>old.id===row.id)&&row.captureIp===ip);
           expect(evidence).toMatchObject({captureMethod:kiosk?'kiosk':'hosted-signup-form',captureIp:ip,frequencyDisclosure,confirmedAt:null,confirmationRequired:true});
           const link=confirmationLink(site,mail[index]);
@@ -132,9 +149,14 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
           expect(await refusals(site)).toEqual(beforeRefusals);
           expect(await refusalAccounting(site)).toEqual(beforeAccounting);
         } else {
-          expect(after).toEqual(before);
+          const addedHistory=after.history.filter(row=>!before.history.some(old=>old.id===row.id));
+          expect(addedHistory).toEqual([expect.objectContaining({
+            contact_id:id,kind:'resubscribe-refused',detail:'Daily confirmation allowance exhausted.',
+          })]);
+          expect({...after,history:after.history.filter(row=>before.history.some(old=>old.id===row.id))}).toEqual(before);
           expect(counter).toEqual(beforeCounter);
           expect(mail).toEqual(beforeMail);
+          expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);
           const expected={...beforeRefusals};expected[kiosk?'kiosk':'hosted']++;
           expect(await refusals(site)).toEqual(expected);
           const key=`${kiosk?'kiosk':'hosted'}:daily-allowance`;
@@ -153,6 +175,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
           capturesAdded:after.evidence.length-before.evidence.length,handoffs:after.handoffs.length,
           confirmationEvidenceIds:after.confirmations.map(row=>row.consent_evidence_id),
           requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,
+          reservationsAdded:after.reservations.length-before.reservations.length,
           outboxAfter:(await site.control('/_kiosk/messages')).length,
           counter,refusals:await refusalAccounting(site)});
       }
