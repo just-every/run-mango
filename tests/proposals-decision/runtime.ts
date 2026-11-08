@@ -68,8 +68,8 @@ export async function decisionRuntime() {
     await services.audienceService.recordChannelOptOut({channel:'email',destination:'excluded@example.test',occurredAt:new Date(),reason:'fixture-optout'});
     await synchronizeProposalSource(services);
     const app=createApp(env,platform,undefined,true);
-    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST',token=session.token)=>{
-      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',Origin:'http://127.0.0.1',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
+    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST',token=session.token,extraHeaders:Record<string,string>={})=>{
+      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',Origin:'http://127.0.0.1',...extraHeaders,...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
       const text=await response.text();
       return {status:response.status,body:text?JSON.parse(text):null as any};
     };
@@ -82,7 +82,9 @@ export async function decisionRuntime() {
         .bind(crypto.randomUUID(),await hashToken(platform.config.sessionSigningKey,'link',token),now,now+600000,await hashToken(platform.config.sessionSigningKey,'session',session.token)).run();
       return call('/auth/confirm',{token});
     };
-    return {db,platform,services,controls,jobs,marketingHandoffs,call,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+    /** A service credential's own door: bearer token only, never the operator session. */
+    const agent=(secret:string)=>(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(`/api/integrations/v1${path}`,body,false,method,undefined,{Authorization:`Bearer ${secret}`});
+    return {db,platform,services,controls,jobs,marketingHandoffs,call,agent,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
   }catch(error){await native.dispose();throw error;}
 }
 

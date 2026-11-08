@@ -1,6 +1,6 @@
 import {hasPermission,type Capability} from '@/core/features/auth/permissions';
 import { Await, Link, Outlet, useRouterState, useLoaderData } from '@tanstack/react-router';
-import {useEffect, useRef, useState, type ReactNode} from 'react';
+import {Suspense, useEffect, useRef, useState, type ReactNode} from 'react';
 
 import { productConfig } from '@/ext/config';
 import { MangoMark } from '@/core/features/site/brand/MangoMark';
@@ -8,6 +8,13 @@ import { SkipLink } from '@/core/features/site/SkipLink';
 import './materials';
 import { ResourceSnapshot } from '../lib/resource-snapshot';
 import { TimeZonePicker } from './time-zone-picker';
+import { useHydrated } from '../lib/time-zone';
+
+function AppHydration() {
+  const hydrated = useHydrated();
+  useEffect(() => {if (hydrated) document.documentElement.dataset.mangoHydrated = 'true';}, [hydrated]);
+  return null;
+}
 
 /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
 export function Brand() {
@@ -40,7 +47,10 @@ export function OperatorLayout() {
   const close = () => {setOpen(false); trigger.current?.focus();};
   useEffect(() => {setOpen(false);}, [pathname]);
   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
-  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
+  // Await only creates a Suspense boundary for a truthy fallback. Own the
+  // streamed resources here: null must not let them suspend the app shell while
+  // the document publishes its hydrated time zone.
+  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /><AppHydration /></ResourceSnapshot.Provider>;
   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
     <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label="Mango"><Brand /></Link>
     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
@@ -48,7 +58,7 @@ export function OperatorLayout() {
       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
       <form method="post" action="/auth/signout" className="operator-signout"><input type="hidden" name="returnTo" value="/signin" /><span>{operator.displayName}</span><button type="submit" className="operator-nav__link">Sign out</button></form>
     </nav>
-  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Await key={locationKey} promise={operator.resources} fallback={null}>{content}</Await> : content(operator.snapshot) : null}</main><footer className="operator-footer"><TimeZonePicker /></footer></div>;
+  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Suspense key={locationKey} fallback={null}><Await promise={operator.resources}>{content}</Await></Suspense> : content(operator.snapshot) : null}</main><footer className="operator-footer"><TimeZonePicker /></footer></div>;
 }
 
 export function LoadState({ error, children }: { error?: string; children?: ReactNode }) {
