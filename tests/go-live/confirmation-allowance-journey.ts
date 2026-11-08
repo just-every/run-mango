@@ -15,6 +15,7 @@ async function captureState(site:ResubscribeSite, id:string, email:string) {
     evidence:await site.rows(`SELECT * FROM consent_evidence WHERE contact_id='${id}' ORDER BY id`),
     metadata:await site.rows(`SELECT * FROM consent_capture_metadata WHERE contact_id='${id}' ORDER BY id`),
     confirmations:await site.rows(`SELECT c.* FROM consent_confirmations c JOIN consent_evidence e ON e.id=c.consent_evidence_id WHERE e.contact_id='${id}' ORDER BY c.id`),
+    handoffs:await site.rows(`SELECT * FROM consent_handoff_claims WHERE contact_id='${id}' ORDER BY id`),
     requests:await site.rows(`SELECT r.* FROM audience_signup_requests r WHERE r.destination_hash IN
       (SELECT r.destination_hash FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id WHERE e.destination='${email}') ORDER BY r.id`),
     history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' AND kind<>'resubscribe-refused' ORDER BY id`),
@@ -33,6 +34,16 @@ async function refusals(site:ResubscribeSite) {
   return totals;
 }
 
+async function refusalAccounting(site:ResubscribeSite) {
+  const report=await responseJson(await ownerRequest(site,'/api/audience/signup/refusals'));
+  const counts:Record<string,number>={};
+  for(const row of report.hours) {
+    const key=`${row.form}:${row.reason}`;
+    counts[key]=(counts[key]??0)+row.refusals;
+  }
+  return {counts,refusedLastHour:report.refusedLastHour};
+}
+
 async function responseScreens(page:Page,info:TestInfo,name:string) {
   // Assertions execute at the desktop width; the same response is also recorded on a phone.
   for(const width of [1440,390]) {
@@ -46,7 +57,7 @@ async function responseScreens(page:Page,info:TestInfo,name:string) {
  * Only the existing challenge and mail HTTP edges are synthetic. */
 export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:Browser,info:TestInfo) {
   const visitor=await browser.newContext({viewport:{width:1440,height:1000}}),page=await visitor.newPage();
-  const receipt:Array<Record<string,unknown>>=[],tokens=new Set<string>();
+  const receipt:Array<Record<string,unknown>>=[],tokens=new Set<string>(),links=new Set<string>();
   try {
     await kioskChallenge(page);
     await page.clock.install();
@@ -65,13 +76,15 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
       await signupCounterWindow(site,'signup-challenged-global');
       let acknowledgment:unknown;
       for(const [index,kiosk] of modes.entries()) {
-        expect((await site.settings({frequencyDisclosure:'Monthly newsletter',embedOrigins:[],kioskEnabled:kiosk,kioskDeviceLabel:'Market tablet'})).status).toBe(200);
+        const frequencyDisclosure=['Monthly newsletter','Weekly newsletter','Fortnightly newsletter','Occasional newsletter'][index];
+        expect((await site.settings({frequencyDisclosure,embedOrigins:[],kioskEnabled:kiosk,kioskDeviceLabel:'Market tablet'})).status).toBe(200);
         const description=await responseJson(await site.call('/subscribe/info'));
         expect(description.kioskEnabled).toBe(kiosk);
         const before=await captureState(site,id,email),beforeCounter=await destinationCounter(site,email),beforeRefusals=await refusals(site);
+        const beforeAccounting=await refusalAccounting(site);
         const beforeMail=await messagesFor(site,email);
         expect(beforeMail).toHaveLength(Math.min(index,3));
-        const ip=`198.51.${order?102:101}.${index+1}`;
+        const ip=`198.51.${(order?110:100)+index}.1`;
         await page.setExtraHTTPHeaders({'CF-Connecting-IP':ip});
         await openPage(page,site.runtime.url+'/subscribe');
         await page.getByRole('textbox',{name:'Email address'}).click();
@@ -102,6 +115,8 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect(counter[0].count).toBe(Math.min(index+1,3));
         expect(after.requests).toHaveLength(Math.min(index+1,3));
         expect(after.requests.every(row=>row.status==='sent')).toBe(true);
+        expect(after.handoffs.map(row=>row.id)).toEqual(after.confirmations.map(row=>row.id));
+        expect(after.handoffs).toHaveLength(Math.min(index+1,3));
         for(const row of after.requests)expect(Math.floor(row.created_at/86400000)).toBe(counter[0].window);
         const detail=await contactDetail(site,id);
         if(index<3) {
@@ -109,21 +124,33 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
           expect(after.metadata.length).toBe(before.metadata.length+1);
           expect(after.confirmations.length).toBe(before.confirmations.length+1);
           const evidence=detail.consent.find((row:any)=>!original.consent.some((old:any)=>old.id===row.id)&&row.captureIp===ip);
-          expect(evidence).toMatchObject({captureMethod:kiosk?'kiosk':'hosted-signup-form',captureIp:ip,confirmedAt:null,confirmationRequired:true});
+          expect(evidence).toMatchObject({captureMethod:kiosk?'kiosk':'hosted-signup-form',captureIp:ip,frequencyDisclosure,confirmedAt:null,confirmationRequired:true});
+          const link=confirmationLink(site,mail[index]);
+          expect(links.has(link)).toBe(false);
+          links.add(link);
           expect(await refusals(site)).toEqual(beforeRefusals);
+          expect(await refusalAccounting(site)).toEqual(beforeAccounting);
         } else {
           expect(after).toEqual(before);
           expect(counter).toEqual(beforeCounter);
           expect(mail).toEqual(beforeMail);
           const expected={...beforeRefusals};expected[kiosk?'kiosk':'hosted']++;
           expect(await refusals(site)).toEqual(expected);
+          const key=`${kiosk?'kiosk':'hosted'}:daily-allowance`;
+          expect(await refusalAccounting(site)).toEqual({
+            counts:{...beforeAccounting.counts,[key]:(beforeAccounting.counts[key]??0)+1},
+            refusedLastHour:beforeAccounting.refusedLastHour+1,
+          });
           const refusal=detail.history.filter((row:any)=>row.kind==='resubscribe-refused');
           expect(refusal).toEqual([expect.objectContaining({detail:'Daily confirmation allowance exhausted.'})]);
         }
         expect(detail.history.filter((row:any)=>row.kind==='resubscribe-request')).toHaveLength(Math.min(index+1,3));
         expect(detail.history.filter((row:any)=>row.kind==='confirmation-handed-off')).toHaveLength(Math.min(index+1,3));
         expect(detail.history.some((row:any)=>row.kind==='resubscribed')).toBe(false);
-        receipt.push({order:label,request:index+1,carrier:kiosk?'kiosk':'hosted',status:response.status(),mail:mail.length,counter});
+        receipt.push({order:label,request:index+1,carrier:kiosk?'kiosk':'hosted',network:ip,
+          status:response.status(),acknowledgment:body,mailBefore:beforeMail.length,mailAfter:mail.length,
+          capturesAdded:after.evidence.length-before.evidence.length,handoffs:after.handoffs.length,
+          counter,refusals:await refusalAccounting(site)});
       }
       const detail=await contactDetail(site,id);
       expect(detail.consent.filter((row:any)=>!original.consent.some((old:any)=>old.id===row.id))).toHaveLength(3);
