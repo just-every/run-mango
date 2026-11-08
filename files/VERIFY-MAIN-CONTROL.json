@@ -1,0 +1,13 @@
+{
+  "head": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+  "command": [
+    "timeout",
+    "1200",
+    "node",
+    "scripts/verification/ci.mjs",
+    "campaigns"
+  ],
+  "exit": 0,
+  "shard": "campaigns",
+  "runner": "same cloud VM and pinned toolchain as candidate reproduction"
+}

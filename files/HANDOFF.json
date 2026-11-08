@@ -1,0 +1,85 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f145",
+  "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+  "ciRun": 42493957794,
+  "status": "BLOCKED",
+  "clause": "CONT-042",
+  "claim": "PARTIAL",
+  "selectedPortions": [
+    1,
+    2,
+    4
+  ],
+  "countsBefore": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "receiptSha256": {
+    "BROWSER-RECEIPT.json": "f94789cc42628cb2806ef60081ba518bde2cc946c86c25b9d55d160c3a78b7fa",
+    "COMMAND-RECEIPT.json": "7329ada708fb960214bf691db710f4a69f8a0c8c11141d1c6b9ac747dcfda0e6",
+    "MECHANICAL.json": "b0c0ab01b19cf7358633a1ebdcb3ae3c9c578b403bce39e841db61c9fa07c455",
+    "LOCAL-CHECKS.json": "8ab115e586fa25edeabc1520f7f9cba91352f7e917a07c10b1730fb099c04f0c",
+    "confirmation-allowance-reconciliation.json": "1faacfd728caab217be0babbfefda518e161aace404aca810570c3b2a17e1c9a",
+    "VERIFY-CI-FAILURE.json": "86f1b7d16958f46f2268ec2ee02b836687823a14d44fbfad7595044e63915fa2",
+    "VERIFY-REPRO-CANDIDATE.json": "c9b8267dbda174fe8336d8c131e4c14db4e7562558d0549d9c20c8614dccfd46",
+    "VERIFY-MAIN-CONTROL.json": "0b3776fb33b27a6cdccbeed50a30c6fbf9b29201468d7173b42b328b0d7b2105"
+  },
+  "mainLanding": "fleet-owned",
+  "publicationScan": "fleet-owned; NOT RUN in cloud",
+  "githubCalls": 8,
+  "ci": {
+    "run": 42493957794,
+    "conclusion": "failure",
+    "failedJob": 128772486199,
+    "reportsJob": 128772486262,
+    "reportsConclusion": "success"
+  },
+  "ciFailure": {
+    "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+    "run": 42493957794,
+    "job": 128772486199,
+    "command": "node scripts/verification/ci.mjs campaigns",
+    "test": "tests/go-live/presend-checks.journeys.ts#preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+    "exit": 1,
+    "source": "completed CI job log",
+    "failure": "Expected 200; received 409: Link host shop.example.test could not be resolved and checked.",
+    "reproduced": false,
+    "candidateReproductionExit": 0,
+    "mainControlExit": 0
+  },
+  "candidateControl": {
+    "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+    "job": 128772486199,
+    "command": [
+      "timeout",
+      "1200",
+      "node",
+      "scripts/verification/ci.mjs",
+      "campaigns"
+    ],
+    "exit": 0,
+    "shard": "campaigns",
+    "test": "tests/go-live/presend-checks.journeys.ts#preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+    "ciFailure": "Expected 200; received 409: Link host shop.example.test could not be resolved and checked."
+  },
+  "mainControl": {
+    "head": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+    "command": [
+      "timeout",
+      "1200",
+      "node",
+      "scripts/verification/ci.mjs",
+      "campaigns"
+    ],
+    "exit": 0,
+    "shard": "campaigns",
+    "runner": "same cloud VM and pinned toolchain as candidate reproduction"
+  }
+}

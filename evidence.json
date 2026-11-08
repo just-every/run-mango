@@ -7,22 +7,52 @@
       "sha256": "f94789cc42628cb2806ef60081ba518bde2cc946c86c25b9d55d160c3a78b7fa"
     },
     {
+      "blob": "904da5a0903bd1ae60389114b4169a5ef3c49d69",
+      "bytes": 13817,
+      "path": "CI-CAMPAIGNS-FAILED.log",
+      "sha256": "65079b7905b672da8cd484e64deae9e4fd6628b2df88dd3398460c210cacb58a"
+    },
+    {
       "blob": "d23b784051c30b4eb0c16f0d1be2471565f07ad6",
       "bytes": 223,
       "path": "CI-DISCOVERY.jsonl",
       "sha256": "26e0d297274c2db9c0834bbb9b373b27ddfbd94b71281e36aa34be2cf905ce42"
     },
     {
-      "blob": "c4b51c525645811b44a24c73b2ccbaeac49246a8",
-      "bytes": 175,
+      "blob": "65519793ccbca55477251374bda2cdadd774fe0e",
+      "bytes": 178,
       "path": "CI-FINAL.json",
-      "sha256": "6300c2ce2e7160c19946d356ecfb57bc9f4478fcb576f4166b951b5ec819a690"
+      "sha256": "f49791af98faf84a64dbd1200088ac3b950824198253846fcb6df45e34d1afae"
+    },
+    {
+      "blob": "61dae97ebe76887233b11b70e85934fb6c794888",
+      "bytes": 1872,
+      "path": "CI-JOBS.jsonl",
+      "sha256": "744405872cf40c191f95d2c0b642b684bd235804637dd3f49b69ca51fe68763d"
     },
     {
       "blob": "5839700d89c46106bbe8d6e84e410a99e39d35f3",
       "bytes": 313,
       "path": "COMMAND-RECEIPT.json",
       "sha256": "7329ada708fb960214bf691db710f4a69f8a0c8c11141d1c6b9ac747dcfda0e6"
+    },
+    {
+      "blob": "55bfeff023c4ae17dc59e12f86f446b1960e6b53",
+      "bytes": 85,
+      "path": "EVIDENCE-IDENTITY.txt",
+      "sha256": "148bad84b5b174568017df50d58e073566703d43c6c9fe7fa6f1af04420adf55"
+    },
+    {
+      "blob": "9b0bddc5118565fa7de4a7b10cb6741855f8f163",
+      "bytes": 6492,
+      "path": "EVIDENCE-TRANSFER.json",
+      "sha256": "45ef79001afa0a2037604dd0cf591babe794e91894e37de45587e0e242fa51ab"
+    },
+    {
+      "blob": "0b632c10cb856b8ed23c24418acc349cb4550a51",
+      "bytes": 2960,
+      "path": "HANDOFF.json",
+      "sha256": "937bb2906a72068aa0bed0a3a71fc53e96fe6a5817b66b28f89e1e478cb2e952"
     },
     {
       "blob": "8ab2444ddaa1f0a732fd6da47f89b697f787106b",
@@ -37,10 +67,10 @@
       "sha256": "bebd14c2976af3c82732395800b1877f2bce97efc547cdf8d38d82d3d735928d"
     },
     {
-      "blob": "5cd571fe1cc412cd2df663b6f3dd240ff50f6edb",
-      "bytes": 1915,
+      "blob": "3af5f6736b239ef09da65fa4698468520d3009b0",
+      "bytes": 2224,
       "path": "LOCAL-CHECKS.json",
-      "sha256": "fed49ada996c713fa19de996672dfe098a3ab519aad2af0cbb24163ecb36a82b"
+      "sha256": "8ab115e586fa25edeabc1520f7f9cba91352f7e917a07c10b1730fb099c04f0c"
     },
     {
       "blob": "0d7ad18c419233452efd5ad991d4701a05eac893",
@@ -61,10 +91,40 @@
       "sha256": "7c754c99cbe8e5c632d49e5226e6f192161cd3bc200d5e89ec2e9f51c998f439"
     },
     {
-      "blob": "6352a4a2c7580068571f8de3bf5cf306d8a6a1dd",
-      "bytes": 13902,
+      "blob": "8454ef8dca2af48d45e8811ffa645f08e0ea5b16",
+      "bytes": 19130,
       "path": "REPORT.md",
-      "sha256": "5128d31cfaea529ebf3bb10658c4e2ba6f72e9b2ae1cd45bc1be865396b42b34"
+      "sha256": "b098d360deac20fb0ec9c9d963b32585da0a78eb0ac3147b6cde6d6fa81af27a"
+    },
+    {
+      "blob": "8914183553e23565237eebe7fb1a7d6a8ad3cf7b",
+      "bytes": 542,
+      "path": "VERIFY-CI-FAILURE.json",
+      "sha256": "86f1b7d16958f46f2268ec2ee02b836687823a14d44fbfad7595044e63915fa2"
+    },
+    {
+      "blob": "5fbec494b2d145af4ee945b99690203dfdc1838a",
+      "bytes": 280,
+      "path": "VERIFY-MAIN-CONTROL.json",
+      "sha256": "0b3776fb33b27a6cdccbeed50a30c6fbf9b29201468d7173b42b328b0d7b2105"
+    },
+    {
+      "blob": "e4e269f9e092212c64709ebfe257cb553fbaa0a2",
+      "bytes": 2717,
+      "path": "VERIFY-MAIN-CONTROL.log",
+      "sha256": "607a1d355ee0c08b0d2306fb78870ab9ad65ef2d2ddb270e7df21ab9737c5ade"
+    },
+    {
+      "blob": "4473705f7bcba6adf8f21baec2f965c41872cc1c",
+      "bytes": 480,
+      "path": "VERIFY-REPRO-CANDIDATE.json",
+      "sha256": "c9b8267dbda174fe8336d8c131e4c14db4e7562558d0549d9c20c8614dccfd46"
+    },
+    {
+      "blob": "1b075bfc423be035a1c1e04b7982a26812ceda57",
+      "bytes": 2722,
+      "path": "VERIFY-REPRO-CANDIDATE.log",
+      "sha256": "bb1bf7425f82207f0fef90c17c0937f9fad0c13f13658df267460fe14ffeb8f4"
     },
     {
       "blob": "888e66dc0fc18a45aedc474b53e4c125d6520018",

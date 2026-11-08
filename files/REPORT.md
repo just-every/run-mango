@@ -3,6 +3,8 @@
 Product repository: just-every/run-mango.
 Branch: cloud/sd-mango-c-f145.
 Candidate: 0b62989e1eed326d17f14a71f9e7a8a60da9a1a7.
+
+Current CI state: Verify 42493957794 completed with failure. Reports job 128772486262, which loads the CONT-042 journey, succeeded. The unrelated campaigns job 128772486199 failed. No READY is claimed while that result is unresolved.
 Base main at final integration: 7b95de610793d2dad6e17495da3e8f2e67e27418.
 Product push succeeded on its first attempt. No PR is required: the existing push workflow accepts this branch. No default branch was pushed or rewritten.
 
@@ -47,7 +49,7 @@ Response states for hosted and kiosk admission and exhaustion were captured at 1
 
 1. PARTIAL: selected outcomes are reached through real doors, but the explicitly held carriers and clock and failure outcomes are not. Proof: R1–R4 and the candidate browser receipt.
 2. PASS for selected scope: seeded native unsubscribed destinations, successful mail handoffs, fourth-request refusal with no consent side effects, and an independently successful fresh destination. Proof: journey lines 69–203.
-3. CI gate recorded separately below: the registered journey is included in the existing reports push pack. No broader full-clause DONE proof is claimed.
+3. FAIL for the whole Verify gate: reports job 128772486262 passed the registered CONT-042 journey, but campaigns job 128772486199 and therefore Verify 42493957794 failed. Full-clause DONE and READY are not claimed.
 4. PASS for local selected proof: final browser receipt names the exact candidate; final source and test bytes match the successful execution. No relevant edit follows it.
 5. INSPECTED: CONT-042 already inherits CONT-027; selected privacy behavior remains CONT-041's duty. No new inherited acceptance or Base duty was claimed or altered.
 6. PASS mechanically: generator write and check succeeded, generated views restored from main, Status cells unchanged. Counts remain 21, 197, 98. Provenance and status promotion remain lander-owned.
@@ -84,3 +86,28 @@ The first permitted CI status poll returned in_progress, no conclusion, with the
 CLAIM CONT-042 PARTIAL points=1,2,4 tests=tests/go-live/shared-kiosk.journeys.ts#[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation
 
 The numeric claim points identify the selected portions described in R1, R2 and R4; the GAP above explicitly retains every unproved remainder. No whole acceptance point or full-clause DONE promotion is requested.
+
+## Completed Verify failure and reproduction
+
+The single completed failed shard is campaigns, job 128772486199, in Verify 42493957794 on the exact candidate. Its aggregate verify job 128775359929 also failed because the campaigns shard failed. Reports job 128772486262 succeeded; build and every other active shard succeeded.
+
+Failing test: tests/go-live/presend-checks.journeys.ts — “[BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion”. The assertion in tests/go-live/email-size.flow.ts, line 79, expected HTTP 200 and received HTTP 409: “Link host shop.example.test could not be resolved and checked.” The exact failed shard command is node scripts/verification/ci.mjs campaigns, using the workflow campaigns member list, CI=true, WRANGLER_SEND_METRICS=false, PLAYWRIGHT_SKIP_BROWSER_GC=1 and two Playwright workers.
+
+The failed job archive was read once with gh run view 42493957794 --repo just-every/run-mango --job 128772486199 --log-failed, exit 0. CI-CAMPAIGNS-FAILED.log retains its test output and omits its environment header. No direct job-log download, workflow edit, test change, dispatch or repair has been attempted. The relevant production paths, campaign shard membership and affected presend journey have no diff from main. Reproduction uses the exact candidate first, then the same command on main on this VM, with the same toolchain and network fixtures.
+
+## Terminal disposition
+
+BLOCKED branch=cloud/sd-mango-c-f145 head=0b62989e1eed326d17f14a71f9e7a8a60da9a1a7 reason=Verify 42493957794 is red and its campaigns failure did not reproduce.
+
+Candidate reproduction: exact failed shard command, same member list, two workers and CI flags, at 0b62989e1eed326d17f14a71f9e7a8a60da9a1a7: 4 passed in 6.5 minutes, exit 0. Main control: same shard and command on the same cloud VM at 7b95de610793d2dad6e17495da3e8f2e67e27418: 4 passed in 6.3 minutes, exit 0. The original presend assertion passed on both. VERIFY-REPRO-CANDIDATE.json, VERIFY-MAIN-CONTROL.json and their complete logs record these outcomes. VERIFY-CI-FAILURE.json records the real CI exit 1 separately from the successful reproduction exit codes.
+
+VERIFY_UNREPRODUCED head=0b62989e1eed326d17f14a71f9e7a8a60da9a1a7 job=128772486199 command="node scripts/verification/ci.mjs campaigns" candidate_exit=0 main_exit=0 failure="Expected 200; received 409: Link host shop.example.test could not be resolved and checked."
+
+The brief's Verify-repair instruction says: “If it does not reproduce, stop BLOCKED with that output; do not guess a fix.” That rule applies here. No speculative repair, source change or assertion change was made after the candidate push; no repair round was attempted. A specific infrastructure class has not been established, so no failed-job rerun was requested under the proven-flake exception. Eight explicit GitHub calls were used. No green result from main or the predecessor is presented as candidate green. No READY is emitted for a known unresolved red run.
+
+This block concerns the whole-candidate Verify result; it does not retract the passed local and reports-shard evidence for the selected CONT-042 portions. The clause remains PARTIAL and all held remainders above remain named. No status cells were changed, no main ref was pushed, and the product branch remains exactly the pushed candidate. The branch checkout was restored after the detached main control, and all native runtime and browser processes owned by those commands exited.
+
+The first evidence publication was fetched into isolated Git storage and all 32 file hashes verified against its manifest. EVIDENCE-TRANSFER.json records that first packet, head 8eb7d32d0b30b91fe63f6e0c89c967be47c4f10f, and its binding to the product candidate. The terminal evidence publication supersedes it by a normal child commit, adding the completed CI failure and both control receipts. Evidence transport is separate from product acceptance and never signals READY. The terminal message supplies its exact final ref and head.
+
+POST lanes/fv/INBOX.md: sd-mango-c-f145 UNREPRODUCED just-every/run-mango Verify run=42493957794 job=128772486199 head=0b62989e1eed326d17f14a71f9e7a8a60da9a1a7 campaigns presend expected 200, got 409: synthetic shop.example.test could not be resolved and checked. Exact candidate shard 4 passed exit=0; same main shard 4 passed exit=0. No repair or rerun guessed; reports job=128772486262 passed.
+POST lanes/sd/INBOX.md: sd-mango-c-f145 CONT-042 PARTIAL unchanged; selected portions 1,2,4 proved in registered shared-kiosk journey; counts 21 DONE,197 PARTIAL,98 MISSING unchanged; cloud/sd-mango-c-f145 head=0b62989e1eed326d17f14a71f9e7a8a60da9a1a7 pushed; Verify run=42493957794 failed campaigns job=128772486199, target reports job=128772486262 passed; BLOCKED under unreproduced-Verify rule after candidate and main both passed all four campaigns tests.

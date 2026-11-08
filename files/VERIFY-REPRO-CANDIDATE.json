@@ -1,0 +1,15 @@
+{
+  "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+  "job": 128772486199,
+  "command": [
+    "timeout",
+    "1200",
+    "node",
+    "scripts/verification/ci.mjs",
+    "campaigns"
+  ],
+  "exit": 0,
+  "shard": "campaigns",
+  "test": "tests/go-live/presend-checks.journeys.ts#preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion",
+  "ciFailure": "Expected 200; received 409: Link host shop.example.test could not be resolved and checked."
+}

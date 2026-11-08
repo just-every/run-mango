@@ -44,7 +44,7 @@
     "findings": null,
     "state": "NOT RUN in cloud; independent fleet lander owns the exact-tree publication scan"
   },
-  "githubCalls": 4,
+  "githubCalls": 8,
   "exactCandidateRun": {
     "commandReceipt": "COMMAND-RECEIPT.json",
     "browserReceipt": "BROWSER-RECEIPT.json",
@@ -55,5 +55,16 @@
     "browserStatus": "passed",
     "outerShellObservedExit": 1,
     "resolution": "Instrumented repeat recorded underlying command exit 0 and outer subreaper exit 0. No product or test edit was made."
-  }
+  },
+  "ci": {
+    "run": 42493957794,
+    "conclusion": "failure",
+    "failedJob": 128772486199,
+    "reportsJob": 128772486262,
+    "reportsConclusion": "success"
+  },
+  "terminalStatus": "BLOCKED",
+  "blocker": "Unreproduced completed Verify failure",
+  "candidateReproductionExit": 0,
+  "mainControlExit": 0
 }
