@@ -58,6 +58,7 @@ async function responseScreens(page:Page,info:TestInfo,name:string) {
 export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:Browser,info:TestInfo) {
   const visitor=await browser.newContext({viewport:{width:1440,height:1000}}),page=await visitor.newPage();
   const receipt:Array<Record<string,unknown>>=[],tokens=new Set<string>(),links=new Set<string>();
+  const exhausted:Array<{email:string;counter:Array<Record<string,any>>}>=[];
   try {
     await kioskChallenge(page);
     await page.clock.install();
@@ -161,11 +162,15 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         receipt.push({order:label,request:index+1,carrier:kiosk?'kiosk':'hosted',network:ip,
           status:response.status(),acknowledgment:body,mailBefore:beforeMail.length,mailAfter:mail.length,
           capturesAdded:after.evidence.length-before.evidence.length,handoffs:after.handoffs.length,
+          confirmationEvidenceIds:after.confirmations.map(row=>row.consent_evidence_id),
+          requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,
+          outboxAfter:(await site.control('/_kiosk/messages')).length,
           counter,refusals:await refusalAccounting(site)});
       }
       const detail=await contactDetail(site,id);
       expect(detail.consent.filter((row:any)=>!original.consent.some((old:any)=>old.id===row.id))).toHaveLength(3);
       expect((await captureState(site,id,email)).confirmations.every(row=>row.confirmed_at===null)).toBe(true);
+      exhausted.push({email,counter:await destinationCounter(site,email)});
     }
     // Exhaustion is destination-specific: a fresh reader still receives and confirms mail.
     const email=address(423);
@@ -180,7 +185,10 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
     expect((await confirm(confirmationLink(site,mail[0]))).status).toBe(200);
     await expectEmailStatus(site,email,'subscribed');
     expect(await messagesFor(site,email)).toEqual(mail);
+    const controlCounter=await destinationCounter(site,email);
+    expect(controlCounter).toEqual([expect.objectContaining({count:1})]);
+    for(const destination of exhausted)expect(await destinationCounter(site,destination.email)).toEqual(destination.counter);
     expect(await refusals(site)).toEqual({hosted:1,kiosk:1});
-    await info.attach('confirmation-allowance-reconciliation',{contentType:'application/json',body:JSON.stringify({requests:receipt,freshControl:{mail:mail.length,status:'subscribed'}},null,2)});
+    await info.attach('confirmation-allowance-reconciliation',{contentType:'application/json',body:JSON.stringify({requests:receipt,freshControl:{mail:mail.length,status:'subscribed',counter:controlCounter}},null,2)});
   } finally {await visitor.close();}
 }
