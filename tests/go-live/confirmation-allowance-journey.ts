@@ -81,7 +81,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         await page.getByRole('checkbox').check();
         await page.getByRole('button',{name:'Complete verification'}).click();
         // Keep the kiosk's two-second acknowledgment visible for both screenshots.
-        await page.clock.pauseAt(new Date());
+        await page.clock.pauseAt(await page.evaluate(()=>Date.now()+10000));
         const posting=page.waitForResponse(response=>new URL(response.url()).pathname==='/subscribe'&&response.request().method()==='POST');
         await page.getByRole('button',{name:'Request confirmation',exact:true}).click();
         const response=await posting,body=await response.json(),submitted=response.request().postDataJSON();
