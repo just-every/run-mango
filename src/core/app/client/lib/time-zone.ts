@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { createContext, createElement, useContext, useEffect, useState, type ReactNode } from 'react';
 
 const key = 'mango-time-zone';
 const listeners = new Set<() => void>();
@@ -33,16 +33,32 @@ const subscribe = (listener: () => void) => {
   return () => { listeners.delete(listener); window.removeEventListener('storage', listener); };
 };
 
-/** The zone times are shown in. A Worker cannot know it, so the server and the first client render read UTC. */
-export function useTimeZone() {
-  return useSyncExternalStore(subscribe, chosenZone, () => 'UTC');
+const TimeZoneContext = createContext({ hydrated: false, timeZone: 'UTC' });
+
+/**
+ * Mount in the document, above streamed routes. Those routes can paint server
+ * HTML before their effects run; the document publishes browser knowledge once
+ * it hydrates so dates do not wait for an interaction to hydrate their boundary.
+ */
+export function TimeZoneProvider({ children }: { children: ReactNode }) {
+  const [value, setValue] = useState({ hydrated: false, timeZone: 'UTC' });
+  useEffect(() => {
+    const publish = () => setValue({ hydrated: true, timeZone: chosenZone() });
+    const unsubscribe = subscribe(publish);
+    publish();
+    return unsubscribe;
+  }, []);
+  return createElement(TimeZoneContext.Provider, { value }, children);
 }
 
-const never = () => () => {};
+/** A Worker cannot know the zone: server and first client render read UTC. */
+export function useTimeZone() {
+  return useContext(TimeZoneContext).timeZone;
+}
 
-/** True once the page has hydrated: server and first client render agree, then the browser's own knowledge applies. */
+/** Server and first client render agree, then the document publishes hydration. */
 export function useHydrated() {
-  return useSyncExternalStore(never, () => true, () => false);
+  return useContext(TimeZoneContext).hydrated;
 }
 
 /**

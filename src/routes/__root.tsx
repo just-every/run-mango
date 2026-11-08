@@ -4,9 +4,10 @@ import stylesheet from '../core/app/client/styles.css?url';
 import {MangoEditor, editorLeaf} from '@/core/features/editor/client';
 import { fontLinks } from '../core/features/site/font-head';
 import { trackPointerFocus } from '../core/app/client/lib/pointer-focus';
+import { TimeZoneProvider } from '../core/app/client/lib/time-zone';
 function Document() {
  useEffect(() => {document.documentElement.dataset.mangoHydrated = 'true'; return trackPointerFocus();}, []);
- return <html lang="en"><head><HeadContent /></head><body><Outlet /><MangoEditor /><Scripts /></body></html>;
+ return <html lang="en"><head><HeadContent /></head><body><TimeZoneProvider><Outlet /><MangoEditor /></TimeZoneProvider><Scripts /></body></html>;
 }
 export const Route = createRootRoute({
  head: () => ({
