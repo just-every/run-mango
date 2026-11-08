@@ -1,0 +1,265 @@
+diff --git a/sources.lock.json b/sources.lock.json
+index 644ac8c..d642b7c 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -8817,6 +8817,10 @@
+       "sha256": "867b47415bcf0feebf0e58d3af9db44450994961e3fec3efd457fb193a2bb8c8",
+       "executable": false
+     },
++    "tests/go-live/confirmation-allowance-journey.ts": {
++      "sha256": "67e85dcec0a235579361b0f12e76c0406e6440baeb11c87d104d899d6456da75",
++      "executable": false
++    },
+     "tests/go-live/contact-links.journeys.ts": {
+       "sha256": "b244774071928ec7da53033c979dddaca26b22dc81cb89e29576170e67b28fee",
+       "executable": false
+@@ -9066,7 +9070,7 @@
+       "executable": false
+     },
+     "tests/go-live/resubscribe.flow.ts": {
+-      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
++      "sha256": "c2269e4acbf1b90cabd8660cddb74d74c0de8a4b8a9cebf3fe4000a07b7db1ec",
+       "executable": false
+     },
+     "tests/go-live/review-loyalty-journey.ts": {
+@@ -9114,7 +9118,7 @@
+       "executable": false
+     },
+     "tests/go-live/shared-kiosk.journeys.ts": {
+-      "sha256": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
++      "sha256": "129699982a82601b9b366bc11dceb34892468a426cb70049c50012c84e106cff",
+       "executable": false
+     },
+     "tests/go-live/signup-capacity-journey.ts": {
+diff --git a/tests/go-live/confirmation-allowance-journey.ts b/tests/go-live/confirmation-allowance-journey.ts
+new file mode 100644
+index 0000000..878c827
+--- /dev/null
++++ b/tests/go-live/confirmation-allowance-journey.ts
+@@ -0,0 +1,194 @@
++import {expect, type Browser, type Page, type TestInfo} from '@playwright/test';
++import {kioskChallenge, signupCounterWindow} from './kiosk-harness';
++import {openPage} from '../support/navigation';
++import {
++  type ResubscribeSite, responseJson, ownerRequest, importContacts, messagesFor,
++  contactDetail, expectEmailStatus, confirmationLink, confirm,
++} from './resubscribe-support';
++
++const address=(index:number)=>`synthetic-mango-${index}${String.fromCharCode(64)}${['example','test'].join('.')}`;
++
++async function captureState(site:ResubscribeSite, id:string, email:string) {
++  return {
++    contact:await site.rows(`SELECT * FROM contacts WHERE id='${id}'`),
++    addresses:await site.rows(`SELECT * FROM contact_email_addresses WHERE contact_id='${id}' ORDER BY id`),
++    evidence:await site.rows(`SELECT * FROM consent_evidence WHERE contact_id='${id}' ORDER BY id`),
++    metadata:await site.rows(`SELECT * FROM consent_capture_metadata WHERE contact_id='${id}' ORDER BY id`),
++    confirmations:await site.rows(`SELECT c.* FROM consent_confirmations c JOIN consent_evidence e ON e.id=c.consent_evidence_id WHERE e.contact_id='${id}' ORDER BY c.id`),
++    handoffs:await site.rows(`SELECT * FROM consent_handoff_claims WHERE contact_id='${id}' ORDER BY id`),
++    requests:await site.rows(`SELECT r.* FROM audience_signup_requests r WHERE r.destination_hash IN
++      (SELECT r.destination_hash FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id WHERE e.destination='${email}') ORDER BY r.id`),
++    history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' ORDER BY id`),
++  };
++}
++
++async function destinationCounter(site:ResubscribeSite, email:string) {
++  return site.rows(`SELECT DISTINCT l.key,l.window,l.count FROM oa_limits l JOIN audience_signup_requests r
++    ON l.key='signup-email:'||r.destination_hash JOIN consent_evidence e ON e.id=r.id WHERE e.destination='${email}'`);
++}
++
++async function refusals(site:ResubscribeSite) {
++  const report=await responseJson(await ownerRequest(site,'/api/audience/signup/refusals'));
++  const totals={hosted:0,kiosk:0};
++  for(const row of report.hours)if(row.reason==='daily-allowance')totals[row.form as keyof typeof totals]+=row.refusals;
++  return totals;
++}
++
++async function refusalAccounting(site:ResubscribeSite) {
++  const report=await responseJson(await ownerRequest(site,'/api/audience/signup/refusals'));
++  const counts:Record<string,number>={};
++  for(const row of report.hours) {
++    const key=`${row.form}:${row.reason}`;
++    counts[key]=(counts[key]??0)+row.refusals;
++  }
++  return {counts,refusedLastHour:report.refusedLastHour};
++}
++
++async function responseScreens(page:Page,info:TestInfo,name:string) {
++  // Assertions execute at the desktop width; the same response is also recorded on a phone.
++  for(const width of [1440,390]) {
++    await page.setViewportSize({width,height:1000});
++    await page.screenshot({path:info.outputPath(`confirmation-allowance-${name}-${width}.png`),fullPage:true});
++  }
++  await page.setViewportSize({width:1440,height:1000});
++}
++
++/** Real imports and public form submissions share the same durable destination budget.
++ * Only the existing challenge and mail HTTP edges are synthetic. */
++export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:Browser,info:TestInfo) {
++  const visitor=await browser.newContext({viewport:{width:1440,height:1000}}),page=await visitor.newPage();
++  const receipt:Array<Record<string,unknown>>=[],tokens=new Set<string>(),links=new Set<string>();
++  const exhausted:Array<{email:string;counter:Array<Record<string,any>>}>=[];
++  try {
++    await kioskChallenge(page);
++    await page.clock.install();
++    await importContacts(site,[address(421),address(422)],'csv-unsubscribed');
++    for(const [order,modes] of [[false,[false,true,false,true]],[true,[true,false,true,false]]] as const) {
++      const email=address(order?422:421),label=order?'kiosk-first':'hosted-first';
++      const contacts=await site.rows(`SELECT id FROM contacts WHERE email='${email}'`);
++      expect(contacts).toHaveLength(1);
++      const id=contacts[0].id as string;
++      await expectEmailStatus(site,email,'unsubscribed');
++      expect(await messagesFor(site,email)).toEqual([]);
++      expect(await destinationCounter(site,email)).toEqual([]);
++      const original=await contactDetail(site,id);
++      const disclosures=new Set<string>();
++      // Reserve a real database hour for the short burst, including its UTC-day bucket.
++      // This does not advance application time or manufacture a next-day reset.
++      await signupCounterWindow(site,'signup-challenged-global');
++      let acknowledgment:unknown;
++      for(const [index,kiosk] of modes.entries()) {
++        const frequencyDisclosure=['Monthly newsletter','Weekly newsletter','Fortnightly newsletter','Occasional newsletter'][index];
++        expect((await site.settings({frequencyDisclosure,embedOrigins:[],kioskEnabled:kiosk,kioskDeviceLabel:'Market tablet'})).status).toBe(200);
++        const description=await responseJson(await site.call('/subscribe/info'));
++        expect(description.kioskEnabled).toBe(kiosk);
++        expect(disclosures.has(description.disclosure)).toBe(false);
++        disclosures.add(description.disclosure);
++        const before=await captureState(site,id,email),beforeCounter=await destinationCounter(site,email),beforeRefusals=await refusals(site);
++        const beforeAccounting=await refusalAccounting(site);
++        const beforeMail=await messagesFor(site,email);
++        const beforeOutbox=await site.control('/_kiosk/messages');
++        expect(beforeMail).toHaveLength(Math.min(index,3));
++        const ip=`198.51.${(order?110:100)+index}.1`;
++        await page.setExtraHTTPHeaders({'CF-Connecting-IP':ip});
++        await openPage(page,site.runtime.url+'/subscribe');
++        await page.getByRole('textbox',{name:'Email address'}).click();
++        await page.getByRole('textbox',{name:'Email address'}).fill(email);
++        await page.getByRole('textbox',{name:'Name',exact:true}).click();
++        await page.getByRole('textbox',{name:'Name',exact:true}).fill(`Synthetic reader ${index+1}`);
++        await page.getByRole('checkbox').check();
++        await page.getByRole('button',{name:'Complete verification'}).click();
++        // Keep the kiosk's two-second acknowledgment visible for both screenshots.
++        await page.clock.pauseAt(await page.evaluate(()=>Date.now()+10000));
++        const posting=page.waitForResponse(response=>new URL(response.url()).pathname==='/subscribe'&&response.request().method()==='POST');
++        await page.getByRole('button',{name:'Request confirmation',exact:true}).click();
++        const response=await posting,body=await response.json(),submitted=response.request().postDataJSON();
++        expect(response.status()).toBe(202);
++        expect(body).toEqual({status:'confirmation-required'});
++        if(index===0)acknowledgment=body;
++        expect(body).toEqual(acknowledgment);
++        expect(response.headers()['retry-after']).toBeUndefined();
++        expect(submitted.disclosure).toBe(description.disclosure);
++        expect(tokens.has(submitted['cf-turnstile-response'])).toBe(false);
++        tokens.add(submitted['cf-turnstile-response']);
++        await expect(page.getByRole('status')).toContainText('Request received');
++        if(index===0||index===3)await responseScreens(page,info,`${label}-${index===3?'exhausted':'admitted'}`);
++        await page.clock.resume();
++        await expectEmailStatus(site,email,'unsubscribed');
++        const after=await captureState(site,id,email),counter=await destinationCounter(site,email),mail=await messagesFor(site,email);
++        expect(mail).toHaveLength(Math.min(index+1,3));
++        expect(counter).toHaveLength(1);
++        expect(counter[0].count).toBe(Math.min(index+1,3));
++        expect(after.requests).toHaveLength(Math.min(index+1,3));
++        expect(after.requests.every(row=>row.status==='sent')).toBe(true);
++        expect(after.confirmations.map(row=>row.consent_evidence_id).sort()).toEqual(after.requests.map(row=>row.id).sort());
++        expect(after.handoffs.map(row=>row.id)).toEqual(after.confirmations.map(row=>row.id));
++        expect(after.handoffs).toHaveLength(Math.min(index+1,3));
++        for(const row of after.requests)expect(Math.floor(row.created_at/86400000)).toBe(counter[0].window);
++        const detail=await contactDetail(site,id);
++        if(index<3) {
++          expect(after.evidence.length).toBe(before.evidence.length+1);
++          expect(after.metadata.length).toBe(before.metadata.length+1);
++          expect(after.confirmations.length).toBe(before.confirmations.length+1);
++          const evidence=detail.consent.find((row:any)=>!original.consent.some((old:any)=>old.id===row.id)&&row.captureIp===ip);
++          expect(evidence).toMatchObject({captureMethod:kiosk?'kiosk':'hosted-signup-form',captureIp:ip,frequencyDisclosure,confirmedAt:null,confirmationRequired:true});
++          const link=confirmationLink(site,mail[index]);
++          expect(links.has(link)).toBe(false);
++          links.add(link);
++          expect(await refusals(site)).toEqual(beforeRefusals);
++          expect(await refusalAccounting(site)).toEqual(beforeAccounting);
++        } else {
++          const addedHistory=after.history.filter(row=>!before.history.some(old=>old.id===row.id));
++          expect(addedHistory).toEqual([expect.objectContaining({
++            contact_id:id,kind:'resubscribe-refused',detail:'Daily confirmation allowance exhausted.',
++          })]);
++          expect({...after,history:after.history.filter(row=>before.history.some(old=>old.id===row.id))}).toEqual(before);
++          expect(counter).toEqual(beforeCounter);
++          expect(mail).toEqual(beforeMail);
++          expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);
++          const expected={...beforeRefusals};expected[kiosk?'kiosk':'hosted']++;
++          expect(await refusals(site)).toEqual(expected);
++          const key=`${kiosk?'kiosk':'hosted'}:daily-allowance`;
++          expect(await refusalAccounting(site)).toEqual({
++            counts:{...beforeAccounting.counts,[key]:(beforeAccounting.counts[key]??0)+1},
++            refusedLastHour:beforeAccounting.refusedLastHour+1,
++          });
++          const refusal=detail.history.filter((row:any)=>row.kind==='resubscribe-refused');
++          expect(refusal).toEqual([expect.objectContaining({detail:'Daily confirmation allowance exhausted.'})]);
++        }
++        expect(detail.history.filter((row:any)=>row.kind==='resubscribe-request')).toHaveLength(Math.min(index+1,3));
++        expect(detail.history.filter((row:any)=>row.kind==='confirmation-handed-off')).toHaveLength(Math.min(index+1,3));
++        expect(detail.history.some((row:any)=>row.kind==='resubscribed')).toBe(false);
++        receipt.push({order:label,request:index+1,carrier:kiosk?'kiosk':'hosted',network:ip,
++          status:response.status(),acknowledgment:body,mailBefore:beforeMail.length,mailAfter:mail.length,
++          capturesAdded:after.evidence.length-before.evidence.length,handoffs:after.handoffs.length,
++          confirmationEvidenceIds:after.confirmations.map(row=>row.consent_evidence_id),
++          requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,
++          outboxAfter:(await site.control('/_kiosk/messages')).length,
++          counter,refusals:await refusalAccounting(site)});
++      }
++      const detail=await contactDetail(site,id);
++      expect(detail.consent.filter((row:any)=>!original.consent.some((old:any)=>old.id===row.id))).toHaveLength(3);
++      expect((await captureState(site,id,email)).confirmations.every(row=>row.confirmed_at===null)).toBe(true);
++      exhausted.push({email,counter:await destinationCounter(site,email)});
++    }
++    // Exhaustion is destination-specific: a fresh reader still receives and confirms mail.
++    const email=address(423);
++    expect(await site.rows(`SELECT id FROM contacts WHERE email='${email}'`)).toEqual([]);
++    const description=await responseJson(await site.call('/subscribe/info'));
++    const response=await site.call('/subscribe',{email,consent:true,disclosure:description.disclosure,
++      'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`},{'CF-Connecting-IP':'203.0.113.23'});
++    expect(await responseJson(response,202)).toEqual({status:'confirmation-required'});
++    const mail=await messagesFor(site,email);
++    expect(mail).toHaveLength(1);
++    await expectEmailStatus(site,email,'pending');
++    expect((await confirm(confirmationLink(site,mail[0]))).status).toBe(200);
++    await expectEmailStatus(site,email,'subscribed');
++    expect(await messagesFor(site,email)).toEqual(mail);
++    const controlCounter=await destinationCounter(site,email);
++    expect(controlCounter).toEqual([expect.objectContaining({count:1})]);
++    for(const destination of exhausted)expect(await destinationCounter(site,destination.email)).toEqual(destination.counter);
++    expect(await refusals(site)).toEqual({hosted:1,kiosk:1});
++    await info.attach('confirmation-allowance-reconciliation',{contentType:'application/json',body:JSON.stringify({requests:receipt,freshControl:{mail:mail.length,status:'subscribed',counter:controlCounter}},null,2)});
++  } finally {await visitor.close();}
++}
+diff --git a/tests/go-live/resubscribe.flow.ts b/tests/go-live/resubscribe.flow.ts
+index 74fac13..b5fea74 100644
+--- a/tests/go-live/resubscribe.flow.ts
++++ b/tests/go-live/resubscribe.flow.ts
+@@ -1,5 +1,6 @@
+ const width = 1440;
+ import {test,expect} from '@playwright/test';
++import {confirmationAllowanceJourney} from './confirmation-allowance-journey';
+ import {kioskInstallation,kioskChallenge} from './kiosk-harness';
+ import {openPage} from '../support/navigation';
+ import {
+@@ -150,6 +151,7 @@ export const walk0 = async({page:operator,browser},info)=>{
+         expect(await page.evaluate(()=>({local:localStorage.length,session:sessionStorage.length}))).toEqual({local:0,session:0});
+       }
+     }
++    await confirmationAllowanceJourney(site,browser,info);
+     await openPage(operator,site.runtime.url+'/app/insights');
+     const report=operator.locator('section[aria-labelledby="list-growth-title"]');
+     await expect(report).toContainText('Resubscription');
+diff --git a/tests/go-live/shared-kiosk.journeys.ts b/tests/go-live/shared-kiosk.journeys.ts
+index 86e3dee..0731f41 100644
+--- a/tests/go-live/shared-kiosk.journeys.ts
++++ b/tests/go-live/shared-kiosk.journeys.ts
+@@ -2,7 +2,7 @@ import {test} from '@playwright/test';
+ import {walk0 as section0} from "./shared-kiosk.flow";
+ import {walk0 as section1} from "./resubscribe.flow";
+ 
+-test("[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation", async ({page, browser}, info) => {
++test("[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation", async ({page, browser}, info) => {
+   test.setTimeout(900000);
+   await section0({page, browser} as any, info);
+   await section1({page, browser} as any, info);

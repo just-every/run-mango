@@ -1,0 +1,4 @@
+CI_RUN {"id": 42500609742, "status": "in_progress", "conclusion": null, "head_sha": "baa97d9baaf355976de4a475275b607a39969f27", "html_url": "https://github.com/just-every/run-mango/actions/runs/42500609742", "name": "Verify", "event": "push"}
+CI_RUN {"id": 42500609742, "status": "in_progress", "conclusion": null, "head_sha": "baa97d9baaf355976de4a475275b607a39969f27", "html_url": "https://github.com/just-every/run-mango/actions/runs/42500609742", "name": "Verify", "event": "push"}
+CI_RUN {"id": 42500609742, "status": "in_progress", "conclusion": null, "head_sha": "baa97d9baaf355976de4a475275b607a39969f27", "html_url": "https://github.com/just-every/run-mango/actions/runs/42500609742", "name": "Verify", "event": "push"}
+CI_RUN {"id": 42500609742, "status": "completed", "conclusion": "success", "head_sha": "baa97d9baaf355976de4a475275b607a39969f27", "html_url": "https://github.com/just-every/run-mango/actions/runs/42500609742", "name": "Verify", "event": "push"}

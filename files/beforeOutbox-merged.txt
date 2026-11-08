@@ -1,0 +1,3 @@
+tests/go-live/confirmation-allowance-journey.ts:90:        const beforeOutbox=await site.control('/_kiosk/messages');
+tests/go-live/confirmation-allowance-journey.ts:148:          expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);
+tests/go-live/confirmation-allowance-journey.ts:166:          requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,

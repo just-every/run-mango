@@ -1,0 +1,26 @@
+{
+  "head": "baa97d9baaf355976de4a475275b607a39969f27",
+  "counts": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "total": 316,
+  "CONT042": {
+    "id": "CONT-042",
+    "title": "Shared destination confirmation allowance",
+    "kind": "target",
+    "status": "partial",
+    "evidence": [
+      "tests/go-live/shared-kiosk.journeys.ts",
+      "src/core/features/audience/public-capture-writer.ts",
+      "src/core/features/audience/confirmation-handoff.ts"
+    ],
+    "gap": "Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked.",
+    "area": "Target: Contacts and consent",
+    "text": "*Tier:* Core · *From:* CONT-027 · *Rules:* D-2 **Requirement.** Confirmation admission bounds mail to one address across every public capture carrier without revealing whether admission succeeded. **Acceptance.** 1. At most three confirmation reservations and emails per destination per UTC day are shared across public forms and kiosk capture, including requests from different networks. 2. The fourth eligible request sends no confirmation and returns the same acknowledgment; the allowance resets at midnight UTC with confirmation and suppression guards unchanged. 3. An uncertain or failed confirmation hand-off is not retried automatically under the unchanged signup delivery rule. 4. The cross-carrier journey reads the exact email count before and after exhaustion and next-day reset.",
+    "line": 1719,
+    "row": 4200
+  },
+  "source_unchanged_from_main": true
+}

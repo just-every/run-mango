@@ -1,0 +1,14 @@
+{
+  "tag": "sd-mango-c-f144-rb1",
+  "repository": "just-every/run-mango",
+  "clone": "git clone --filter=blob:none https://github.com/just-every/run-mango.git",
+  "shallow": false,
+  "pinned_builder_expected": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "pinned_builder_actual": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "fresh_origin_main": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "old_failed_landing_candidate": "2a365f79540f0f2007dbaf5abcf2a14bcf90dc29",
+  "setup_command": "cloud_run timeout 900 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+  "setup_exit": 0,
+  "browser": "/usr/bin/chromium --no-sandbox",
+  "clause_judgment_changes_authorized": false
+}

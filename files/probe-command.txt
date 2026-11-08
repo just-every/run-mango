@@ -1,0 +1,4 @@
+cloud_run timeout --signal=TERM --kill-after=30 1100 pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --workers=1 --reporter=list
+MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium
+MANGO_TEST_WORK_DIR=/home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/probe
+WRANGLER_SEND_METRICS=false

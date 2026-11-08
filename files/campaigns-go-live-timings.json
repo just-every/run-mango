@@ -1,0 +1,62 @@
+{
+  "startedAt": "2026-11-08T16:17:57.094Z",
+  "finishedAt": "2026-11-08T16:33:19.356Z",
+  "durationMs": 922262,
+  "status": "FAIL",
+  "error": "go-live: exit 1, signal none.\nCommand: pnpm\nLast output (up to 40 lines):\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md\n\n  2) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: getByText('Draft saved. Preview and checks are up to date.', { exact: true })\n    Expected: visible\n    Timeout: 5000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect \"toBeVisible\" getByText('Draft saved. Preview and checks are up to date.', { exact: true }) with timeout 5000ms\n      - waiting for getByText('Draft saved. Preview and checks are up to date.', { exact: true })\n\n\n       at email-size.flow.ts:78\n\n      76 |     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);\n      77 |     await page.getByRole('button',{name:'Save full draft',exact:true}).click();\n    > 78 |     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();\n         |                                                                                                  ^\n      79 |     await approve(site,cookie,campaign);\n      80 |     await site.control('/_golive/clock',{advanceMs:3600001});\n      81 |     const recipients=await dispatch(site,campaign.campaignId,due);\n        at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:78:98)\n        at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md\n\n  Slow test file: tests/go-live/go-live.journeys.ts (15.0m)\n  Slow test file: tests/go-live/presend-checks.journeys.ts (9.3m)\n  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel\n  2 failed\n    tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore \n    tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion \n  2 passed (15.3m)\nLog: /home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/campaigns/members/go-live/evidence/b98aaec5598c/verify/go-live-owxUQA/go-live/install.log",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "go-live",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "go-live",
+      "status": "FAIL",
+      "startedAt": "2026-11-08T16:17:57.132Z",
+      "durationMs": 922201,
+      "exitCode": null,
+      "signal": null,
+      "error": "go-live: exit 1, signal none.\nCommand: pnpm\nLast output (up to 40 lines):\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md\n\n  2) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: getByText('Draft saved. Preview and checks are up to date.', { exact: true })\n    Expected: visible\n    Timeout: 5000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect \"toBeVisible\" getByText('Draft saved. Preview and checks are up to date.', { exact: true }) with timeout 5000ms\n      - waiting for getByText('Draft saved. Preview and checks are up to date.', { exact: true })\n\n\n       at email-size.flow.ts:78\n\n      76 |     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);\n      77 |     await page.getByRole('button',{name:'Save full draft',exact:true}).click();\n    > 78 |     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();\n         |                                                                                                  ^\n      79 |     await approve(site,cookie,campaign);\n      80 |     await site.control('/_golive/clock',{advanceMs:3600001});\n      81 |     const recipients=await dispatch(site,campaign.campaignId,due);\n        at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:78:98)\n        at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3\n\n    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md\n\n  Slow test file: tests/go-live/go-live.journeys.ts (15.0m)\n  Slow test file: tests/go-live/presend-checks.journeys.ts (9.3m)\n  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel\n  2 failed\n    tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore \n    tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion \n  2 passed (15.3m)\nLog: /home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/campaigns/members/go-live/evidence/b98aaec5598c/verify/go-live-owxUQA/go-live/install.log",
+      "files": {
+        "status": "failed",
+        "files": [
+          {
+            "file": "tests/go-live/go-live.journeys.ts",
+            "attempts": 1,
+            "durationMs": 900724,
+            "statuses": {
+              "timedOut": 1
+            }
+          },
+          {
+            "file": "tests/go-live/presend-checks.journeys.ts",
+            "attempts": 1,
+            "durationMs": 558751,
+            "statuses": {
+              "failed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/contact-links.journeys.ts",
+            "attempts": 1,
+            "durationMs": 191062,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/typed-tests.journeys.ts",
+            "attempts": 1,
+            "durationMs": 156794,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

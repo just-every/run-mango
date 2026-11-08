@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "file": "tests/go-live/managed-mail.journeys.ts",
+      "attempts": 1,
+      "durationMs": 361320,
+      "statuses": {
+        "passed": 1
+      }
+    },
+    {
+      "file": "tests/go-live/shared-kiosk.journeys.ts",
+      "attempts": 1,
+      "durationMs": 209700,
+      "statuses": {
+        "passed": 1
+      }
+    },
+    {
+      "file": "tests/go-live/opt-out-reasons.journeys.ts",
+      "attempts": 1,
+      "durationMs": 99240,
+      "statuses": {
+        "passed": 1
+      }
+    }
+  ]
+}

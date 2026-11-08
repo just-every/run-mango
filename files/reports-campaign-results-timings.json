@@ -1,0 +1,44 @@
+{
+  "startedAt": "2026-11-08T16:22:01.874Z",
+  "finishedAt": "2026-11-08T16:33:30.912Z",
+  "durationMs": 689038,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "campaign-results",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "campaign-results",
+      "status": "PASS",
+      "startedAt": "2026-11-08T16:22:01.904Z",
+      "durationMs": 688996,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/campaign-results/performance.journeys.ts",
+            "attempts": 1,
+            "durationMs": 619739,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/campaign-results/results.journeys.ts",
+            "attempts": 1,
+            "durationMs": 501512,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

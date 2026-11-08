@@ -1,0 +1,10 @@
+commit baa97d9baaf355976de4a475275b607a39969f27
+Merge: 80bc36a f936cb5
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Sun Nov 8 16:34:43 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Sun Nov 8 16:34:43 2026 +0000
+
+    Replay CONT-042 candidate onto fresh main with scoped outbox snapshot
+    
+    Merge main into pinned builder 80bc36a87109a3da22509aa422b30415de462dc6, preserving main's newer judgments and tests. Retain the builder's pre-action beforeOutbox capture and full-outbox equality assertion.

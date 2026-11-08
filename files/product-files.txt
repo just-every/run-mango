@@ -1,0 +1,4 @@
+sources.lock.json
+tests/go-live/confirmation-allowance-journey.ts
+tests/go-live/resubscribe.flow.ts
+tests/go-live/shared-kiosk.journeys.ts

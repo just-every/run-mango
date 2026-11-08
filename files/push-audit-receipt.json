@@ -1,0 +1,13 @@
+{
+  "checked_all_candidate_commits_including_side_parents": [
+    "baa97d9baaf355976de4a475275b607a39969f27",
+    "80bc36a87109a3da22509aa422b30415de462dc6",
+    "165cf8d41b2b51027e65dce524ea7473206ab4a6",
+    "3ea2fb5227abbf479c7a190507b4199fba600993",
+    "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+    "ebbb4827222d4278835fd1ca95a5ef03dd62d9a6"
+  ],
+  "identity_ok": true,
+  "trailers_ok": true,
+  "openai_codex_coauthors_absent": true
+}

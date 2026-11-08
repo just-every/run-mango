@@ -1,0 +1,135 @@
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/campaigns/members/go-live/evidence/b98aaec5598c/verify/go-live-owxUQA
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T16:17:57.132Z"}
+go-live
+
+Running 4 tests using 2 workers
+
+(node:3654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3655) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Source CSV beehiiv: upload
+Source CSV beehiiv: attest
+Source CSV beehiiv: review
+Source CSV beehiiv: applied
+Source CSV omnisend: upload
+Source CSV omnisend: attest
+Source CSV omnisend: review
+Source CSV omnisend: applied
+Source CSV customerio: upload
+Source CSV customerio: attest
+Source CSV customerio: review
+Source CSV customerio: applied
+Source API activecampaign: read
+Source API activecampaign: review
+activecampaign: membership consent
+activecampaign: topic-only campaign
+activecampaign: topic-only checks
+activecampaign: draft API
+activecampaign: draft UI
+activecampaign: draft hydrated
+Source API klaviyo: read
+Source API klaviyo: review
+klaviyo: membership consent
+klaviyo: topic-only campaign
+klaviyo: topic-only checks
+klaviyo: draft API
+klaviyo: draft UI
+klaviyo: draft hydrated
+  ✓  1 tests/go-live/contact-links.journeys.ts:11:1 › [DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking (3.2m)
+  ✘  3 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (9.3m)
+(node:7953) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (15.0m)
+  ✓  4 tests/go-live/typed-tests.journeys.ts:10:1 › [CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowance and recorded destinations (2.6m)
+
+
+  1) tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 
+
+    Test timeout of 900000ms exceeded.
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+  2) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Draft saved. Preview and checks are up to date.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+
+
+       at email-size.flow.ts:78
+
+      76 |     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);
+      77 |     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    > 78 |     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();
+         |                                                                                                  ^
+      79 |     await approve(site,cookie,campaign);
+      80 |     await site.control('/_golive/clock',{advanceMs:3600001});
+      81 |     const recipients=await dispatch(site,campaign.campaignId,due);
+        at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:78:98)
+        at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md
+
+  Slow test file: tests/go-live/go-live.journeys.ts (15.0m)
+  Slow test file: tests/go-live/presend-checks.journeys.ts (9.3m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 failed
+    tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 
+    tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+  2 passed (15.3m)
+Verification failed: go-live: exit 1, signal none.
+Command: pnpm
+Last output (up to 40 lines):
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+  2) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Draft saved. Preview and checks are up to date.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Draft saved. Preview and checks are up to date.', { exact: true })
+
+
+       at email-size.flow.ts:78
+
+      76 |     await page.getByRole('textbox',{name:'Email body',exact:true}).fill(body);
+      77 |     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    > 78 |     await expect(page.getByText('Draft saved. Preview and checks are up to date.',{exact:true})).toBeVisible();
+         |                                                                                                  ^
+      79 |     await approve(site,cookie,campaign);
+      80 |     await site.control('/_golive/clock',{advanceMs:3600001});
+      81 |     const recipients=await dispatch(site,campaign.campaignId,due);
+        at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:78:98)
+        at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3
+
+    Error Context: ../campaigns/members/go-live/evidence/b98aaec5598c/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md
+
+  Slow test file: tests/go-live/go-live.journeys.ts (15.0m)
+  Slow test file: tests/go-live/presend-checks.journeys.ts (9.3m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 failed
+    tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 
+    tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+  2 passed (15.3m)
+Log: /home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/campaigns/members/go-live/evidence/b98aaec5598c/verify/go-live-owxUQA/go-live/install.log

@@ -1,0 +1,22 @@
+{
+  "CONTRACT.md": {
+    "candidate_blob": "bfea86a87bfdfbd9ad8f2c0b3709b7f91b6faed3",
+    "main_blob": "bfea86a87bfdfbd9ad8f2c0b3709b7f91b6faed3",
+    "identical": true
+  },
+  "ACCEPTANCE.md": {
+    "candidate_blob": "41ccadb1fee805cf1a40132916fda6cd47a14e27",
+    "main_blob": "41ccadb1fee805cf1a40132916fda6cd47a14e27",
+    "identical": true
+  },
+  "docs/CLAIMS.md": {
+    "candidate_blob": "f18fb1bffe865053b14365d365c41aef67fd36ce",
+    "main_blob": "f18fb1bffe865053b14365d365c41aef67fd36ce",
+    "identical": true
+  },
+  "docs/contract/ID-MAP.json": {
+    "candidate_blob": "19700f769c2b9ebd7586740bdcd4bcb7e2e8bc26",
+    "main_blob": "19700f769c2b9ebd7586740bdcd4bcb7e2e8bc26",
+    "identical": true
+  }
+}

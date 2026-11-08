@@ -1,0 +1,10 @@
+Wrote 0 contract documents.
+views_write_exit=0
+Contract documents are current.
+views_check_exit=0
+views_restore_exit=0
+lock_command=node scripts/edition-authoring/cli.mjs lock
+lock_exit=0
+lock_check_command=node scripts/edition-authoring/cli.mjs check
+lock_check_exit=0
+restored_views_check_exit=0

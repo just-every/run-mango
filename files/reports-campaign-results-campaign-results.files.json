@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "file": "tests/campaign-results/performance.journeys.ts",
+      "attempts": 1,
+      "durationMs": 619739,
+      "statuses": {
+        "passed": 1
+      }
+    },
+    {
+      "file": "tests/campaign-results/results.journeys.ts",
+      "attempts": 1,
+      "durationMs": 501512,
+      "statuses": {
+        "passed": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+TYPECHECK exit=0

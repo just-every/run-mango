@@ -1,0 +1,29 @@
+
+Running 1 test using 1 worker
+
+(node:2049) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation (2.2m)
+
+
+  1) tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation 
+
+    ReferenceError: beforeOutbox is not defined
+
+       at confirmation-allowance-journey.ts:155
+
+      153 |           capturesAdded:after.evidence.length-before.evidence.length,handoffs:after.handoffs.length,
+      154 |           confirmationEvidenceIds:after.confirmations.map(row=>row.consent_evidence_id),
+    > 155 |           requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,
+          |                                                                   ^
+      156 |           outboxAfter:(await site.control('/_kiosk/messages')).length,
+      157 |           counter,refusals:await refusalAccounting(site)});
+      158 |       }
+        at confirmationAllowanceJourney (/home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/run-mango/tests/go-live/confirmation-allowance-journey.ts:155:67)
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/run-mango/tests/go-live/resubscribe.flow.ts:154:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f144-rb1/run-mango/tests/go-live/shared-kiosk.journeys.ts:8:3
+
+    Error Context: ../repro/evidence/b98aaec5598c/go-live/shared-kiosk.journeys.ts---3c3ce-ir-affirmative-confirmation/error-context.md
+
+  1 failed
+    tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation 

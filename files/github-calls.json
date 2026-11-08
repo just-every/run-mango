@@ -1,0 +1,48 @@
+[
+  {
+    "call": 1,
+    "time": 1794155694.4281259,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=baa97d9baaf355976de4a475275b607a39969f27&per_page=100"
+    ],
+    "exit": 0
+  },
+  {
+    "call": 2,
+    "time": 1794155994.478869,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42500609742",
+      "--jq",
+      "{id,status,conclusion,head_sha,html_url,name,event}"
+    ],
+    "exit": 0
+  },
+  {
+    "call": 3,
+    "time": 1794156294.4429705,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42500609742",
+      "--jq",
+      "{id,status,conclusion,head_sha,html_url,name,event}"
+    ],
+    "exit": 0
+  },
+  {
+    "call": 4,
+    "time": 1794156594.4377499,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42500609742",
+      "--jq",
+      "{id,status,conclusion,head_sha,html_url,name,event}"
+    ],
+    "exit": 0
+  }
+]
