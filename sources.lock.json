@@ -8817,6 +8817,10 @@
       "sha256": "867b47415bcf0feebf0e58d3af9db44450994961e3fec3efd457fb193a2bb8c8",
       "executable": false
     },
+    "tests/go-live/confirmation-allowance-journey.ts": {
+      "sha256": "33c0319353682a05b014effe450573bd3d4c1fa01bb5ffbc952036bf88d20931",
+      "executable": false
+    },
     "tests/go-live/contact-links.journeys.ts": {
       "sha256": "b244774071928ec7da53033c979dddaca26b22dc81cb89e29576170e67b28fee",
       "executable": false
@@ -9066,7 +9070,7 @@
       "executable": false
     },
     "tests/go-live/resubscribe.flow.ts": {
-      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
+      "sha256": "c2269e4acbf1b90cabd8660cddb74d74c0de8a4b8a9cebf3fe4000a07b7db1ec",
       "executable": false
     },
     "tests/go-live/review-loyalty-journey.ts": {
@@ -9114,7 +9118,7 @@
       "executable": false
     },
     "tests/go-live/shared-kiosk.journeys.ts": {
-      "sha256": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
+      "sha256": "129699982a82601b9b366bc11dceb34892468a426cb70049c50012c84e106cff",
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {

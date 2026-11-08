@@ -1,5 +1,6 @@
 const width = 1440;
 import {test,expect} from '@playwright/test';
+import {confirmationAllowanceJourney} from './confirmation-allowance-journey';
 import {kioskInstallation,kioskChallenge} from './kiosk-harness';
 import {openPage} from '../support/navigation';
 import {
@@ -150,6 +151,7 @@ export const walk0 = async({page:operator,browser},info)=>{
         expect(await page.evaluate(()=>({local:localStorage.length,session:sessionStorage.length}))).toEqual({local:0,session:0});
       }
     }
+    await confirmationAllowanceJourney(site,browser,info);
     await openPage(operator,site.runtime.url+'/app/insights');
     const report=operator.locator('section[aria-labelledby="list-growth-title"]');
     await expect(report).toContainText('Resubscription');
