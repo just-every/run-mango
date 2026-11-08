@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f135",
+  "head": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+  "base": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "product_files": {
+    "sources.lock.json": "b24db3bee2726dbc4831895b98009d0873673d9373247b3ffc447223c6ad2546",
+    "tests/go-live/delivery-recovery.flow.ts": "43276e37578292af0abba860d5b6434066e9a624f2eda3f874505d894e547a7c",
+    "tests/go-live/delivery-recovery.journeys.ts": "c047a63ffbf5386c80c25f6e7532bd5e2dbc1db4332bba64cf8746cf2478f84a",
+    "tests/go-live/permanent-rejection-journey.ts": "2f88b7a6fe8e28e0ebd3af15822707311dae0ad6ab06cc7d16e2ec37c4beac17"
+  },
+  "contract_changed": false,
+  "walk1_unchanged": true,
+  "registrations": {
+    "focused_before": 1,
+    "focused_after": 1,
+    "added": 0,
+    "deleted": 0
+  },
+  "counts_before": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "counts_after": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "ci_calls_so_far": 3,
+  "pr": null,
+  "landing": "fleet-owned; product branch only"
+}

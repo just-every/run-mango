@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "head": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email <fleet-address> --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js delivery-recovery.journeys.ts",
+      "head": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+      "exit": 0,
+      "result": "1 passed (1.9m)",
+      "log": "JOURNEY.log",
+      "browser": "system Chromium, headless, no sandbox",
+      "assertion_width": 1440,
+      "screenshot_widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+      "exit": 0,
+      "log": "TYPECHECK.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "VIEWS-WRITE.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "VIEWS-CHECK.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "views_committed": false
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "git diff --cached -- CONTRACT.md; git diff origin/main...HEAD -- CONTRACT.md",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "git fetch origin main; git rebase origin/main",
+      "exit": 0,
+      "result": "Current branch is up to date; no candidate bytes changed."
+    },
+    {
+      "command": "migration ledger check",
+      "status": "not applicable; no migration changed"
+    }
+  ],
+  "push": {
+    "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f135",
+    "exit": 0,
+    "attempts": 1,
+    "head": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+    "branch": "cloud/sd-mango-c-f135"
+  },
+  "probe": "Native confirmed contact, saved draft and approval -> single SendGrid HTTP 400; one failed recipient, safe provider_rejected reason, terminal time, null retry and message identity, no accepted handoff; Cron and native dispatch replay after one hour plus reload -> identical failed record and one provider attempt.",
+  "publication_scan": {
+    "commit": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "status": "NOT RUN; fleet lander owns publication scan"
+  },
+  "landing": {
+    "main_equals_candidate": false,
+    "status": "branch only; lander pending"
+  },
+  "policy_defaults": [],
+  "clause_claim": {
+    "id": "SEND-004",
+    "status": "PARTIAL",
+    "points": [
+      3
+    ],
+    "unchanged_remainders": [
+      1,
+      2,
+      4
+    ]
+  },
+  "screenshots": {
+    "permanent-rejection-1440.png": "526d085ae3a091560d6b94dcdf6a57c9f88d16ff86e51073cb9f08ea21af26b0",
+    "permanent-rejection-390.png": "9ef8b2f9aa9ba7d721eae121f8825ae29f31a332f25dcfc14ed0c79c3c117e6e"
+  },
+  "ci": {
+    "run_id": 42484193868,
+    "event": "push",
+    "conclusion": null,
+    "head_sha": "441e1cf74a099092013301b9f9bf45ad5a7d4986",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42484193868",
+    "status": "in_progress",
+    "observed_at": "2026-11-08T13:22:09Z",
+    "github_calls": 3,
+    "poll_interval_seconds": 307
+  },
+  "terminal_product_custody": "PUSHED; exact-head Verify remains in progress; no known failure; landing and complete scan remain fleet-owned."
+}
