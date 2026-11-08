@@ -23,7 +23,7 @@ A claim is done when every clause behind it is done, missing when every one is m
 | 15 | What you approve is exactly what goes out. | `CAMP-003` partial; `CAMP-022` partial; `CAMP-004` partial; `CAMP-007` partial | partial |
 | 16 | Mango records who approved the letter and when, against the exact content they saw. | `CAMP-004` partial; `CAMP-005` done | partial |
 | 17 | After approval the letter can't be edited. To send something different, write it and approve it on its own. | `CAMP-007` partial | partial |
-| 18 | Mango blocks approval until the sender, the unsubscribe link, the links and the audience rules are right. | `CAMP-004` partial; `MSG-001` partial; `MSG-003` partial; `MSG-006` partial; `AUD-001` done; `AUD-010` partial | partial |
+| 18 | Mango blocks approval until the sender, the unsubscribe link, the links and the audience rules are right. | `CAMP-004` partial; `MSG-001` partial; `MSG-003` partial; `MSG-006` partial; `AUD-001` partial; `AUD-010` partial | partial |
 | 19 | Choose the local time; Mango works out the exact moment. | `CAMP-006` partial | partial |
 | 20 | Each step is set in your newsletter's time zone, with the exact UTC moment shown beside it. | `CAMP-006` partial | partial |
 | 21 | Campaign history shows each step's time, state and recipient outcomes. | `RESULT-001` partial | partial |
