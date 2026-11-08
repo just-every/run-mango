@@ -1,0 +1,53 @@
+{
+  "environment": {
+    "node": "22.20.0",
+    "pnpm": "10.12.4",
+    "chromiumExecutable": "/usr/bin/chromium",
+    "browserArgs": [
+      "--no-sandbox"
+    ],
+    "assertionWidth": 1440,
+    "proofWidths": [
+      1440,
+      390
+    ]
+  },
+  "setup": "cloud_run timeout 900 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+  "reproMailbox": "cloud_run timeout -s TERM -k 30 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js mailbox-provider.journeys.ts (initial VM Node 24.19.0)",
+  "diagnostic": "cloud_run timeout -s TERM -k 30 360 pnpm exec playwright test --config .task-hydration/playwright.config.ts",
+  "presendAlone": "cloud_run timeout -s TERM -k 30 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js presend-checks.journeys.ts",
+  "mailboxAlone": "cloud_run timeout -s TERM -k 30 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js mailbox-provider.journeys.ts",
+  "goLiveFull": "cloud_run timeout -s TERM -k 45 5400 node scripts/verification/run.mjs --stage go-live",
+  "typecheck": "cloud_run timeout -s TERM -k 20 360 pnpm run typecheck",
+  "firstParty": "cloud_run timeout -s TERM -k 20 360 npx -y @runeditrun/rer check --profile first-party",
+  "build": "cloud_run timeout -s TERM -k 30 900 npx -y @runeditrun/rer build",
+  "mechanical": [
+    "node src/base/contract-docs.mjs write",
+    "node src/base/contract-docs.mjs check",
+    "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+    "node scripts/edition-authoring/cli.mjs lock",
+    "node scripts/edition-authoring/cli.mjs check"
+  ],
+  "nativeMember": {
+    "environment": {
+      "MANGO_VERIFY_MEMBERS": [
+        {
+          "name": "go-live",
+          "stage": "go-live",
+          "files": [
+            "mailbox-provider.journeys.ts",
+            "embed-origin.journeys.ts"
+          ]
+        }
+      ]
+    },
+    "command": "cloud_run timeout -s TERM -k 45 1800 node scripts/verification/ci.mjs native"
+  },
+  "correctedStore": {
+    "diagnostic": "cloud_run timeout -s TERM -k 30 360 pnpm exec playwright test --config .task-hydration/playwright.config.ts (50-load test)",
+    "presend": "cloud_run timeout -s TERM -k 30 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js presend-checks.journeys.ts",
+    "mailbox": "cloud_run timeout -s TERM -k 30 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js mailbox-provider.journeys.ts",
+    "zoneStorage": "cloud_run timeout -s TERM -k 30 360 pnpm exec playwright test --config .task-hydration/playwright.config.ts --grep \"zone choices\"",
+    "wholeGoLive": "cloud_run timeout -s TERM -k 45 5400 node scripts/verification/run.mjs --stage go-live"
+  }
+}

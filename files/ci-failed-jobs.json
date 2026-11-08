@@ -1,0 +1,360 @@
+[
+  {
+    "id": 128781587847,
+    "name": "shards (native)",
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42496937599/job/128781587847",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-08T15:53:25Z",
+        "completed_at": "2026-11-08T15:53:27Z"
+      },
+      {
+        "name": "Set runner-owned browser cache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-08T15:53:27Z",
+        "completed_at": "2026-11-08T15:53:27Z"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-08T15:53:27Z",
+        "completed_at": "2026-11-08T15:53:29Z"
+      },
+      {
+        "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-08T15:53:29Z",
+        "completed_at": "2026-11-08T15:53:34Z"
+      },
+      {
+        "name": "Check edition source lock freshness",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 5,
+        "started_at": "2026-11-08T15:53:34Z",
+        "completed_at": "2026-11-08T15:53:34Z"
+      },
+      {
+        "name": "Run npm install --global pnpm@10.12.4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-08T15:53:34Z",
+        "completed_at": "2026-11-08T15:53:35Z"
+      },
+      {
+        "name": "Set runner-owned pnpm store",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-08T15:53:35Z",
+        "completed_at": "2026-11-08T15:53:35Z"
+      },
+      {
+        "name": "Prepare runner-owned browser and apt caches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-08T15:53:35Z",
+        "completed_at": "2026-11-08T15:53:35Z"
+      },
+      {
+        "name": "Cache frozen dependencies and Chromium",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-08T15:53:35Z",
+        "completed_at": "2026-11-08T15:53:42Z"
+      },
+      {
+        "name": "Install frozen dependencies and reserve native runtime disk",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-08T15:53:42Z",
+        "completed_at": "2026-11-08T15:53:49Z"
+      },
+      {
+        "name": "Run pnpm run deps",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-11-08T15:53:49Z",
+        "completed_at": "2026-11-08T15:53:55Z"
+      },
+      {
+        "name": "Install and probe Chromium before system dependencies",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-11-08T15:53:55Z",
+        "completed_at": "2026-11-08T15:53:56Z"
+      },
+      {
+        "name": "Restore the verified production build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-11-08T15:53:56Z",
+        "completed_at": "2026-11-08T15:53:58Z"
+      },
+      {
+        "name": "Run this shard",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 14,
+        "started_at": "2026-11-08T15:53:58Z",
+        "completed_at": "2026-11-08T16:00:27Z"
+      },
+      {
+        "name": "Keep this shard's timings and diagnostics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-11-08T16:00:27Z",
+        "completed_at": "2026-11-08T16:00:29Z"
+      },
+      {
+        "name": "Post Cache frozen dependencies and Chromium",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 28,
+        "started_at": "2026-11-08T16:00:29Z",
+        "completed_at": "2026-11-08T16:00:29Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 29,
+        "started_at": "2026-11-08T16:00:29Z",
+        "completed_at": "2026-11-08T16:00:29Z"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-11-08T16:00:29Z",
+        "completed_at": "2026-11-08T16:00:29Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-11-08T16:00:29Z",
+        "completed_at": "2026-11-08T16:00:29Z"
+      }
+    ]
+  },
+  {
+    "id": 128781588010,
+    "name": "shards (connections)",
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42496937599/job/128781588010",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-08T15:53:24Z",
+        "completed_at": "2026-11-08T15:53:26Z"
+      },
+      {
+        "name": "Set runner-owned browser cache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-08T15:53:26Z",
+        "completed_at": "2026-11-08T15:53:26Z"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-08T15:53:26Z",
+        "completed_at": "2026-11-08T15:53:27Z"
+      },
+      {
+        "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-08T15:53:27Z",
+        "completed_at": "2026-11-08T15:53:32Z"
+      },
+      {
+        "name": "Check edition source lock freshness",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 5,
+        "started_at": "2026-11-08T15:53:32Z",
+        "completed_at": "2026-11-08T15:53:32Z"
+      },
+      {
+        "name": "Run npm install --global pnpm@10.12.4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-08T15:53:32Z",
+        "completed_at": "2026-11-08T15:53:33Z"
+      },
+      {
+        "name": "Set runner-owned pnpm store",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-08T15:53:33Z",
+        "completed_at": "2026-11-08T15:53:33Z"
+      },
+      {
+        "name": "Prepare runner-owned browser and apt caches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-08T15:53:33Z",
+        "completed_at": "2026-11-08T15:53:33Z"
+      },
+      {
+        "name": "Cache frozen dependencies and Chromium",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-08T15:53:33Z",
+        "completed_at": "2026-11-08T15:53:37Z"
+      },
+      {
+        "name": "Install frozen dependencies and reserve native runtime disk",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-08T15:53:37Z",
+        "completed_at": "2026-11-08T15:53:42Z"
+      },
+      {
+        "name": "Run pnpm run deps",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-11-08T15:53:42Z",
+        "completed_at": "2026-11-08T15:53:45Z"
+      },
+      {
+        "name": "Install and probe Chromium before system dependencies",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-11-08T15:53:45Z",
+        "completed_at": "2026-11-08T15:53:46Z"
+      },
+      {
+        "name": "Restore the verified production build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-11-08T15:53:46Z",
+        "completed_at": "2026-11-08T15:53:47Z"
+      },
+      {
+        "name": "Run this shard",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 14,
+        "started_at": "2026-11-08T15:53:47Z",
+        "completed_at": "2026-11-08T15:57:39Z"
+      },
+      {
+        "name": "Keep this shard's timings and diagnostics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-11-08T15:57:39Z",
+        "completed_at": "2026-11-08T15:57:40Z"
+      },
+      {
+        "name": "Post Cache frozen dependencies and Chromium",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 28,
+        "started_at": "2026-11-08T15:57:40Z",
+        "completed_at": "2026-11-08T15:57:40Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 29,
+        "started_at": "2026-11-08T15:57:40Z",
+        "completed_at": "2026-11-08T15:57:40Z"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-11-08T15:57:40Z",
+        "completed_at": "2026-11-08T15:57:40Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-11-08T15:57:40Z",
+        "completed_at": "2026-11-08T15:57:40Z"
+      }
+    ]
+  },
+  {
+    "id": 128784785120,
+    "name": "verify",
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42496937599/job/128784785120",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-08T16:05:52Z",
+        "completed_at": "2026-11-08T16:05:52Z"
+      },
+      {
+        "name": "Require the selected coverage and its proof",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 2,
+        "started_at": "2026-11-08T16:05:52Z",
+        "completed_at": "2026-11-08T16:05:52Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-08T16:05:52Z",
+        "completed_at": "2026-11-08T16:05:52Z"
+      }
+    ]
+  }
+]

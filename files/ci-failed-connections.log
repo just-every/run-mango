@@ -1,0 +1,122 @@
+shards (connections)	Run this shard	﻿2026-11-08T15:53:47.7378448Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (connections)	Run this shard	2026-11-08T15:53:47.7378709Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394254Z shell: /usr/bin/bash -e {0}
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394404Z env:
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394511Z   CI: true
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394627Z   WRANGLER_SEND_METRICS: false
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394778Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (connections)	Run this shard	2026-11-08T15:53:47.7394972Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (connections)	Run this shard	2026-11-08T15:53:47.7395169Z   SHARD: connections
+shards (connections)	Run this shard	2026-11-08T15:53:47.7395529Z   MANGO_VERIFY_MEMBERS: [
+shards (connections)	Run this shard	  {
+shards (connections)	Run this shard	    "name": "go-live",
+shards (connections)	Run this shard	    "stage": "go-live",
+shards (connections)	Run this shard	    "files": [
+shards (connections)	Run this shard	      "source-freshness.journeys.ts",
+shards (connections)	Run this shard	      "roles.journeys.ts",
+shards (connections)	Run this shard	      "sync-integrations.journeys.ts"
+shards (connections)	Run this shard	    ]
+shards (connections)	Run this shard	  }
+shards (connections)	Run this shard	]
+shards (connections)	Run this shard	2026-11-08T15:53:47.7395978Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/connections
+shards (connections)	Run this shard	2026-11-08T15:53:47.7396208Z ##[endgroup]
+shards (connections)	Run this shard	2026-11-08T15:53:47.8758775Z VERIFY_MEMBER go-live
+shards (connections)	Run this shard	2026-11-08T15:53:47.9117542Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (connections)	Run this shard	2026-11-08T15:53:47.9119321Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/verify/go-live-0YnRHN
+shards (connections)	Run this shard	2026-11-08T15:53:47.9231669Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T15:53:47.911Z"}
+shards (connections)	Run this shard	2026-11-08T15:53:47.9273177Z go-live
+shards (connections)	Run this shard	2026-11-08T15:53:53.0473477Z 
+shards (connections)	Run this shard	2026-11-08T15:53:53.0474123Z Running 3 tests using 2 workers
+shards (connections)	Run this shard	2026-11-08T15:53:53.0485661Z 
+shards (connections)	Run this shard	2026-11-08T15:53:53.7738969Z Operator access: start native HTTP installation
+shards (connections)	Run this shard	2026-11-08T15:53:56.4622061Z Operator access: claim owner
+shards (connections)	Run this shard	2026-11-08T15:53:56.5478561Z Operator access: confirm teammate
+shards (connections)	Run this shard	2026-11-08T15:53:56.6971560Z Operator access: cancel pending invitation
+shards (connections)	Run this shard	2026-11-08T15:53:56.8265008Z Operator access: confirm while removal is pending
+shards (connections)	Run this shard	2026-11-08T15:53:57.0420554Z Operator access: revoke active sessions
+shards (connections)	Run this shard	2026-11-08T15:54:16.0641288Z Flow proof 1440: open
+shards (connections)	Run this shard	2026-11-08T15:54:20.1088398Z Flow proof 1440: build
+shards (connections)	Run this shard	2026-11-08T15:54:20.5771607Z Flow proof 1440: connect
+shards (connections)	Run this shard	2026-11-08T15:54:24.2923689Z Flow proof 1440: saved, inspect reload
+shards (connections)	Run this shard	2026-11-08T15:54:28.3572129Z   ✘  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (34.6s)
+shards (connections)	Run this shard	2026-11-08T15:55:22.6490966Z   ✓  2 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (1.5m)
+shards (connections)	Run this shard	2026-11-08T15:57:38.9584114Z   ✓  3 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (3.2m)
+shards (connections)	Run this shard	2026-11-08T15:57:39.0096055Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0097218Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0118914Z   1) tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0119813Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0120075Z     Error: expect(locator).toContainText(expected) failed
+shards (connections)	Run this shard	2026-11-08T15:57:39.0120514Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0122600Z     Locator: locator('#stripe')
+shards (connections)	Run this shard	2026-11-08T15:57:39.0122895Z     Expected substring: "Test mode"
+shards (connections)	Run this shard	2026-11-08T15:57:39.0123176Z     Error: strict mode violation: locator('#stripe') resolved to 2 elements:
+shards (connections)	Run this shard	2026-11-08T15:57:39.0124093Z         1) <section id="stripe" class="panel" aria-labelledby="stripe-title">…</section> aka getByRole('region', { name: 'Stripe connection' })
+shards (connections)	Run this shard	2026-11-08T15:57:39.0124987Z         2) <section id="stripe" class="panel" aria-labelledby="stripe-title">…</section> aka getByLabel('Stripe connection').nth(1)
+shards (connections)	Run this shard	2026-11-08T15:57:39.0125282Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0125334Z     Call log:
+shards (connections)	Run this shard	2026-11-08T15:57:39.0125526Z       - Expect "toContainText" locator('#stripe') with timeout 5000ms
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126056Z       - waiting for locator('#stripe')
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126158Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126162Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126235Z        at stripe-journey.ts:78
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126325Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126434Z       76 |     await page.setViewportSize({width, height: 1000});
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126687Z       77 |     await openPage(page, site.runtime.url + '/app/settings');
+shards (connections)	Run this shard	2026-11-08T15:57:39.0126951Z     > 78 |     await expect(page.locator('#stripe')).toContainText('Test mode');
+shards (connections)	Run this shard	2026-11-08T15:57:39.0127181Z          |                                           ^
+shards (connections)	Run this shard	2026-11-08T15:57:39.0127501Z       79 |     await page.locator('#stripe').screenshot({path: info.outputPath(`stripe-settings-${width}.png`)});
+shards (connections)	Run this shard	2026-11-08T15:57:39.0127849Z       80 |     await openPage(page, site.runtime.url + '/app/audience/' + rows[0].id);
+shards (connections)	Run this shard	2026-11-08T15:57:39.0128158Z       81 |     await expect(page.locator('.timeline')).toContainText('subscription.started');
+shards (connections)	Run this shard	2026-11-08T15:57:39.0128463Z         at stripeJourney ([REDACTED]/tests/go-live/stripe-journey.ts:78:43)
+shards (connections)	Run this shard	2026-11-08T15:57:39.0128708Z         at [REDACTED]/tests/go-live/roles.journeys.ts:31:5
+shards (connections)	Run this shard	2026-11-08T15:57:39.0128834Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0129203Z     Error Context: ../../_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/go-live/roles.journeys.ts--BASE-AC-13077-thors-approvers-and-history/error-context.md
+shards (connections)	Run this shard	2026-11-08T15:57:39.0129558Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0129606Z   1 failed
+shards (connections)	Run this shard	2026-11-08T15:57:39.0130152Z     tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 
+shards (connections)	Run this shard	2026-11-08T15:57:39.0130796Z   2 passed (3.8m)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1834433Z Verification failed: go-live: exit 1, signal none.
+shards (connections)	Run this shard	2026-11-08T15:57:39.1834834Z Command: pnpm
+shards (connections)	Run this shard	2026-11-08T15:57:39.1835006Z Last output (up to 40 lines):
+shards (connections)	Run this shard	2026-11-08T15:57:39.1835200Z Flow proof 1440: build
+shards (connections)	Run this shard	2026-11-08T15:57:39.1835343Z Flow proof 1440: connect
+shards (connections)	Run this shard	2026-11-08T15:57:39.1835505Z Flow proof 1440: saved, inspect reload
+shards (connections)	Run this shard	2026-11-08T15:57:39.1836365Z   ✘  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (34.6s)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1837292Z   ✓  2 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (1.5m)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1838251Z   ✓  3 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (3.2m)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1838895Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1838902Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1839398Z   1) tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1839820Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1839924Z     Error: expect(locator).toContainText(expected) failed
+shards (connections)	Run this shard	2026-11-08T15:57:39.1840072Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1840143Z     Locator: locator('#stripe')
+shards (connections)	Run this shard	2026-11-08T15:57:39.1840512Z     Expected substring: "Test mode"
+shards (connections)	Run this shard	2026-11-08T15:57:39.1840763Z     Error: strict mode violation: locator('#stripe') resolved to 2 elements:
+shards (connections)	Run this shard	2026-11-08T15:57:39.1841287Z         1) <section id="stripe" class="panel" aria-labelledby="stripe-title">…</section> aka getByRole('region', { name: 'Stripe connection' })
+shards (connections)	Run this shard	2026-11-08T15:57:39.1841878Z         2) <section id="stripe" class="panel" aria-labelledby="stripe-title">…</section> aka getByLabel('Stripe connection').nth(1)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842136Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842184Z     Call log:
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842390Z       - Expect "toContainText" locator('#stripe') with timeout 5000ms
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842754Z       - waiting for locator('#stripe')
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842871Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842874Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1842946Z        at stripe-journey.ts:78
+shards (connections)	Run this shard	2026-11-08T15:57:39.1843054Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1843161Z       76 |     await page.setViewportSize({width, height: 1000});
+shards (connections)	Run this shard	2026-11-08T15:57:39.1843424Z       77 |     await openPage(page, site.runtime.url + '/app/settings');
+shards (connections)	Run this shard	2026-11-08T15:57:39.1843718Z     > 78 |     await expect(page.locator('#stripe')).toContainText('Test mode');
+shards (connections)	Run this shard	2026-11-08T15:57:39.1843961Z          |                                           ^
+shards (connections)	Run this shard	2026-11-08T15:57:39.1844272Z       79 |     await page.locator('#stripe').screenshot({path: info.outputPath(`stripe-settings-${width}.png`)});
+shards (connections)	Run this shard	2026-11-08T15:57:39.1844635Z       80 |     await openPage(page, site.runtime.url + '/app/audience/' + rows[0].id);
+shards (connections)	Run this shard	2026-11-08T15:57:39.1844963Z       81 |     await expect(page.locator('.timeline')).toContainText('subscription.started');
+shards (connections)	Run this shard	2026-11-08T15:57:39.1845303Z         at stripeJourney ([REDACTED]/tests/go-live/stripe-journey.ts:78:43)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1845562Z         at [REDACTED]/tests/go-live/roles.journeys.ts:31:5
+shards (connections)	Run this shard	2026-11-08T15:57:39.1845700Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1846079Z     Error Context: ../../_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/go-live/roles.journeys.ts--BASE-AC-13077-thors-approvers-and-history/error-context.md
+shards (connections)	Run this shard	2026-11-08T15:57:39.1846464Z 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1846515Z   1 failed
+shards (connections)	Run this shard	2026-11-08T15:57:39.1847071Z     tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history 
+shards (connections)	Run this shard	2026-11-08T15:57:39.1847510Z   2 passed (3.8m)
+shards (connections)	Run this shard	2026-11-08T15:57:39.1847883Z Log: /home/runner/work/_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/verify/go-live-0YnRHN/go-live/install.log
+shards (connections)	Run this shard	2026-11-08T15:57:39.1909252Z ##[error]Process completed with exit code 1.

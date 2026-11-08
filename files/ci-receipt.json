@@ -1,0 +1,74 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+  "calls": [
+    {
+      "at": "2026-11-08T15:51:51.992658+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c&per_page=100",
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T15:56:52.471636+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs/42496937599",
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:01:52.869590+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs/42496937599",
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:06:53.247657+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs/42496937599",
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:08:16.175237+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs/42496937599/jobs?per_page=100",
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:08:39.205505+00:00",
+      "command": "gh run view 42496937599 --repo just-every/run-mango --job 128781587847 --log-failed",
+      "archiveReads": 1,
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:08:39.205519+00:00",
+      "command": "gh run view 42496937599 --repo just-every/run-mango --job 128781588010 --log-failed",
+      "archiveReads": 1,
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:08:39.205522+00:00",
+      "command": "gh run view 42496937599 --repo just-every/run-mango --job 128784785120 --log-failed",
+      "archiveReads": 1,
+      "exit": 0
+    },
+    {
+      "at": "2026-11-08T16:38:28.294990+00:00",
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=f2bd3456f173b70d9bd67394b687caf7b1ba4bcf&per_page=100 --jq exact-head push Verify metadata",
+      "exit": 0
+    }
+  ],
+  "status": "failed",
+  "run": {
+    "id": 42496937599,
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42496937599"
+  },
+  "diagnosis": "Native SPF rows and Settings Stripe sections still duplicate. Initial explicit-boundary candidate is rejected; replacing ancestor context publication with a document-published external store.",
+  "finalHead": "f2bd3456f173b70d9bd67394b687caf7b1ba4bcf",
+  "finalRuns": [
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "f2bd3456f173b70d9bd67394b687caf7b1ba4bcf",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42499646308",
+      "id": 42499646308,
+      "status": "completed"
+    }
+  ]
+}

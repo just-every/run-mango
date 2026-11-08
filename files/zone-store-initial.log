@@ -1,0 +1,18 @@
+
+Running 1 test using 1 worker
+
+(node:28808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 .task-hydration/insights.spec.ts:47:1 › zone choices publish in this tab and another tab and survive reload (5.0m)
+
+
+  1) .task-hydration/insights.spec.ts:47:1 › zone choices publish in this tab and another tab and survive reload 
+
+    Test timeout of 300000ms exceeded.
+
+    Error Context: ../diagnostic-output/insights-zone-choices-publ-6eb22-ther-tab-and-survive-reload/error-context.md
+
+  Slow test file: .task-hydration/insights.spec.ts (5.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    .task-hydration/insights.spec.ts:47:1 › zone choices publish in this tab and another tab and survive reload 

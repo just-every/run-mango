@@ -1,0 +1,29 @@
+{
+  "before": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "main": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98,
+    "total": 316
+  },
+  "inheritedStatusChanges": [
+    {
+      "id": "PROP-005",
+      "before": "done",
+      "after": "partial",
+      "source": "newer origin/main judgment retained"
+    }
+  ],
+  "taskStatusChanges": []
+}

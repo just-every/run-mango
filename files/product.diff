@@ -1,0 +1,143 @@
+diff --git a/src/core/app/client/lib/time-zone.ts b/src/core/app/client/lib/time-zone.ts
+index d967854..17fcb72 100644
+--- a/src/core/app/client/lib/time-zone.ts
++++ b/src/core/app/client/lib/time-zone.ts
+@@ -1,4 +1,4 @@
+-import { useSyncExternalStore } from 'react';
++import { useEffect, useSyncExternalStore, type ReactNode } from 'react';
+ 
+ const key = 'mango-time-zone';
+ const listeners = new Set<() => void>();
+@@ -24,25 +24,48 @@ function chosenZone() {
+ 
+ export function setTimeZone(zone: string) {
+   try { localStorage.setItem(key, zone); } catch { /* the choice then lasts until reload */ }
+-  listeners.forEach(listener => listener());
++  publish();
+ }
+ 
++const serverSnapshot = { hydrated: false, timeZone: 'UTC' };
++let snapshot = serverSnapshot;
++const getSnapshot = () => snapshot;
++const getServerSnapshot = () => serverSnapshot;
+ const subscribe = (listener: () => void) => {
+   listeners.add(listener);
+-  window.addEventListener('storage', listener);
+-  return () => { listeners.delete(listener); window.removeEventListener('storage', listener); };
++  return () => { listeners.delete(listener); };
+ };
+ 
+-/** The zone times are shown in. A Worker cannot know it, so the server and the first client render read UTC. */
+-export function useTimeZone() {
+-  return useSyncExternalStore(subscribe, chosenZone, () => 'UTC');
++function publish() {
++  const timeZone = chosenZone();
++  if (snapshot.hydrated && snapshot.timeZone === timeZone) return;
++  snapshot = { hydrated: true, timeZone };
++  listeners.forEach(listener => listener());
+ }
+ 
+-const never = () => () => {};
++/**
++ * Publish above streamed routes, without updating their ancestor context. A
++ * context update can render a second copy while a route is still hydrating.
++ * Only committed store subscribers update; a later boundary hydrates against
++ * the stable server snapshot before reading the current browser snapshot.
++ */
++export function TimeZoneProvider({ children }: { children: ReactNode }) {
++  useEffect(() => {
++    window.addEventListener('storage', publish);
++    publish();
++    return () => { window.removeEventListener('storage', publish); };
++  }, []);
++  return children;
++}
++
++/** A Worker cannot know the zone: server and first client render read UTC. */
++export function useTimeZone() {
++  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).timeZone;
++}
+ 
+-/** True once the page has hydrated: server and first client render agree, then the browser's own knowledge applies. */
++/** Server and first client render agree, then the document publishes hydration. */
+ export function useHydrated() {
+-  return useSyncExternalStore(never, () => true, () => false);
++  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).hydrated;
+ }
+ 
+ /**
+diff --git a/src/core/app/client/ui/layout.tsx b/src/core/app/client/ui/layout.tsx
+index ace53d7..af47691 100644
+--- a/src/core/app/client/ui/layout.tsx
++++ b/src/core/app/client/ui/layout.tsx
+@@ -1,6 +1,6 @@
+ import {hasPermission,type Capability} from '@/core/features/auth/permissions';
+ import { Await, Link, Outlet, useRouterState, useLoaderData } from '@tanstack/react-router';
+-import {useEffect, useRef, useState, type ReactNode} from 'react';
++import {Suspense, useEffect, useRef, useState, type ReactNode} from 'react';
+ 
+ import { productConfig } from '@/ext/config';
+ import { MangoMark } from '@/core/features/site/brand/MangoMark';
+@@ -8,6 +8,13 @@ import { SkipLink } from '@/core/features/site/SkipLink';
+ import './materials';
+ import { ResourceSnapshot } from '../lib/resource-snapshot';
+ import { TimeZonePicker } from './time-zone-picker';
++import { useHydrated } from '../lib/time-zone';
++
++function AppHydration() {
++  const hydrated = useHydrated();
++  useEffect(() => {if (hydrated) document.documentElement.dataset.mangoHydrated = 'true';}, [hydrated]);
++  return null;
++}
+ 
+ /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
+ export function Brand() {
+@@ -40,7 +47,10 @@ export function OperatorLayout() {
+   const close = () => {setOpen(false); trigger.current?.focus();};
+   useEffect(() => {setOpen(false);}, [pathname]);
+   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
+-  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
++  // Await only creates a Suspense boundary for a truthy fallback. Own the
++  // streamed resources here: null must not let them suspend the app shell while
++  // the document publishes its hydrated time zone.
++  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /><AppHydration /></ResourceSnapshot.Provider>;
+   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
+     <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label="Mango"><Brand /></Link>
+     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
+@@ -48,7 +58,7 @@ export function OperatorLayout() {
+       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
+       <form method="post" action="/auth/signout" className="operator-signout"><input type="hidden" name="returnTo" value="/signin" /><span>{operator.displayName}</span><button type="submit" className="operator-nav__link">Sign out</button></form>
+     </nav>
+-  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Await key={locationKey} promise={operator.resources} fallback={null}>{content}</Await> : content(operator.snapshot) : null}</main><footer className="operator-footer"><TimeZonePicker /></footer></div>;
++  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Suspense key={locationKey} fallback={null}><Await promise={operator.resources}>{content}</Await></Suspense> : content(operator.snapshot) : null}</main><footer className="operator-footer"><TimeZonePicker /></footer></div>;
+ }
+ 
+ export function LoadState({ error, children }: { error?: string; children?: ReactNode }) {
+diff --git a/src/routes/__root.tsx b/src/routes/__root.tsx
+index e7bbd59..927028a 100644
+--- a/src/routes/__root.tsx
++++ b/src/routes/__root.tsx
+@@ -1,12 +1,20 @@
+ import { lazy, useEffect } from 'react';
+-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
++import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from '@tanstack/react-router';
+ import stylesheet from '../core/app/client/styles.css?url';
+ import {MangoEditor, editorLeaf} from '@/core/features/editor/client';
+ import { fontLinks } from '../core/features/site/font-head';
+ import { trackPointerFocus } from '../core/app/client/lib/pointer-focus';
++import { TimeZoneProvider, useHydrated } from '../core/app/client/lib/time-zone';
++function DocumentHydration() {
++ const hydrated = useHydrated();
++ const app = useRouterState({select: state => state.location.pathname === '/app' || state.location.pathname.startsWith('/app/')});
++ // App documents publish readiness inside their streamed content, after its commit.
++ useEffect(() => {if (hydrated && !app) document.documentElement.dataset.mangoHydrated = 'true';}, [hydrated, app]);
++ return null;
++}
+ function Document() {
+- useEffect(() => {document.documentElement.dataset.mangoHydrated = 'true'; return trackPointerFocus();}, []);
+- return <html lang="en"><head><HeadContent /></head><body><Outlet /><MangoEditor /><Scripts /></body></html>;
++ useEffect(() => trackPointerFocus(), []);
++ return <html lang="en"><head><HeadContent /></head><body><TimeZoneProvider><Outlet /><MangoEditor /><DocumentHydration /></TimeZoneProvider><Scripts /></body></html>;
+ }
+ export const Route = createRootRoute({
+  head: () => ({

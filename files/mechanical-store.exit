@@ -1,0 +1,4 @@
+views write exit=0
+views check exit=0
+lock exit=0
+lock check exit=0

@@ -1,0 +1,44 @@
+{
+  "startedAt": "2026-11-08T16:21:14.932Z",
+  "finishedAt": "2026-11-08T16:25:12.527Z",
+  "durationMs": 237595,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "go-live",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "go-live",
+      "status": "PASS",
+      "startedAt": "2026-11-08T16:21:14.961Z",
+      "durationMs": 237564,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/go-live/mailbox-provider.journeys.ts",
+            "attempts": 1,
+            "durationMs": 234880,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/embed-origin.journeys.ts",
+            "attempts": 1,
+            "durationMs": 50342,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

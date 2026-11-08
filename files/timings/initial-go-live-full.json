@@ -1,0 +1,196 @@
+{
+  "startedAt": "2026-11-08T15:43:30.014Z",
+  "finishedAt": "2026-11-08T16:13:52.465Z",
+  "durationMs": 1822452,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "go-live",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "go-live",
+      "status": "PASS",
+      "startedAt": "2026-11-08T15:43:30.030Z",
+      "durationMs": 1822431,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/go-live/delivery.journeys.ts",
+            "attempts": 3,
+            "durationMs": 586904,
+            "statuses": {
+              "passed": 3
+            }
+          },
+          {
+            "file": "tests/go-live/go-live.journeys.ts",
+            "attempts": 1,
+            "durationMs": 392562,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/sync-integrations.journeys.ts",
+            "attempts": 1,
+            "durationMs": 290341,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/scheduler.journeys.ts",
+            "attempts": 1,
+            "durationMs": 229834,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/presend-checks.journeys.ts",
+            "attempts": 1,
+            "durationMs": 213379,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/resend-delivery.journeys.ts",
+            "attempts": 1,
+            "durationMs": 199927,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/managed-mail.journeys.ts",
+            "attempts": 1,
+            "durationMs": 182788,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/mailbox-provider.journeys.ts",
+            "attempts": 1,
+            "durationMs": 177541,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/delivery-recovery.journeys.ts",
+            "attempts": 1,
+            "durationMs": 162221,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/roles.journeys.ts",
+            "attempts": 1,
+            "durationMs": 139083,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/multistep.journeys.ts",
+            "attempts": 1,
+            "durationMs": 138617,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/open-estimates.journeys.ts",
+            "attempts": 1,
+            "durationMs": 124796,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/contact-links.journeys.ts",
+            "attempts": 1,
+            "durationMs": 123014,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/source-freshness.journeys.ts",
+            "attempts": 1,
+            "durationMs": 120537,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/content-checks.journeys.ts",
+            "attempts": 1,
+            "durationMs": 119211,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/shared-kiosk.journeys.ts",
+            "attempts": 1,
+            "durationMs": 88478,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/opt-out-reasons.journeys.ts",
+            "attempts": 1,
+            "durationMs": 55517,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/woocommerce.journeys.ts",
+            "attempts": 1,
+            "durationMs": 51419,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/typed-tests.journeys.ts",
+            "attempts": 1,
+            "durationMs": 49450,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/embed-origin.journeys.ts",
+            "attempts": 1,
+            "durationMs": 46752,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/go-live/personalisation.journeys.ts",
+            "attempts": 1,
+            "durationMs": 43087,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

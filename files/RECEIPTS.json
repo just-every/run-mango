@@ -1,0 +1,144 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-hydration-date-4",
+  "head": "f2bd3456f173b70d9bd67394b687caf7b1ba4bcf",
+  "startingHead": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2",
+  "firstSave": "207aa26311de00893906667fff4a9b90442c1175",
+  "integratedMain": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "rejectedCandidate": {
+    "head": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+    "verifyRun": 42496937599,
+    "conclusion": "failure",
+    "duplicateLocations": [
+      "compliance-journey.ts:78 (SPF)",
+      "stripe-journey.ts:78 (#stripe)"
+    ],
+    "localGoLivePassed": 23
+  },
+  "finalLocalResults": [
+    {
+      "name": "Insights repeated hydration",
+      "loads": 50,
+      "maxRows": 1,
+      "exit": 0,
+      "log": "diagnostic-store.log",
+      "data": "diagnostic-store.json"
+    },
+    {
+      "name": "pre-send alone",
+      "passed": 1,
+      "exit": 0,
+      "duration": "6.1m",
+      "log": "presend-final.log"
+    },
+    {
+      "name": "mailbox-provider alone",
+      "passed": 1,
+      "exit": 0,
+      "duration": "5.6m",
+      "log": "mailbox-final.log"
+    },
+    {
+      "name": "typecheck after latest main merge",
+      "exit": 0,
+      "log": "typecheck-merged.log"
+    },
+    {
+      "name": "first-party after latest main merge",
+      "exit": 0,
+      "log": "first-party-merged.log"
+    },
+    {
+      "name": "source checks",
+      "exit": 0,
+      "log": "source-store.log"
+    },
+    {
+      "name": "integration checks",
+      "exit": 0,
+      "log": "integration-store.log"
+    },
+    {
+      "name": "production build",
+      "exit": 0,
+      "log": "build-store.log"
+    },
+    {
+      "name": "native shard complete go-live member",
+      "passed": 2,
+      "exit": 0,
+      "duration": "3.9m",
+      "log": "native-store.log"
+    },
+    {
+      "name": "time-zone UI same-tab, cross-tab and reload",
+      "passed": 1,
+      "exit": 0,
+      "duration": "47.1s",
+      "log": "zone-store.log"
+    },
+    {
+      "name": "complete corrected-store go-live stage",
+      "passed": 23,
+      "exit": 0,
+      "duration": "31.3m",
+      "log": "go-live-final.log",
+      "timingReceipt": "timings/go-live-final.json"
+    }
+  ],
+  "pending": [],
+  "mechanical": {
+    "viewsWriteExit": 0,
+    "viewsCheckExit": 0,
+    "viewsRestoredFrom": "origin/main",
+    "lockExit": 0,
+    "lockCheckExit": 0,
+    "receipt": "mechanical-merged.exit"
+  },
+  "counts": {
+    "before": {
+      "done": 21,
+      "partial": 197,
+      "missing": 98,
+      "total": 316
+    },
+    "after": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "main": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98,
+      "total": 316
+    },
+    "inheritedStatusChanges": [
+      {
+        "id": "PROP-005",
+        "before": "done",
+        "after": "partial",
+        "source": "newer origin/main judgment retained"
+      }
+    ],
+    "taskStatusChanges": []
+  },
+  "productCustody": "pushed",
+  "pr": null,
+  "landingClaim": false,
+  "probeAutomationCorrection": "The preliminary extra zone probe timed out selecting an option from its stale initial option list. The corrected probe re-reads the current UI options, keeps the same assertions, and passes. Its test-only cleanup was hardened and its owned orphan Vite server (PID 29010) was stopped with SIGTERM; no other server was stopped.",
+  "finalVerify": {
+    "conclusion": "success",
+    "event": "push",
+    "head_sha": "f2bd3456f173b70d9bd67394b687caf7b1ba4bcf",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42499646308",
+    "id": 42499646308,
+    "status": "completed"
+  },
+  "githubCallsUsed": 9,
+  "status": "READY",
+  "blockers": [],
+  "checkoutClean": true,
+  "contractAndViewsEqualIntegratedMain": true
+}

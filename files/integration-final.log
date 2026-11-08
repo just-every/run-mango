@@ -1,0 +1,7 @@
+
+> mango@0.4.0 integration:check /home/agent/rer-consolidation/work/sd-mango-hydration-date-4/run-mango
+> node scripts/sync-integration.mjs --check
+
+(node:10924) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Integration deployment specification and setup identity match the Base build reader.

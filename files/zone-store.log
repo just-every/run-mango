@@ -1,0 +1,9 @@
+
+Running 1 test using 1 worker
+
+(node:32013) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"sameTab":true,"crossTab":true,"reload":true}
+  ✓  1 .task-hydration/insights.spec.ts:47:1 › zone choices publish in this tab and another tab and survive reload (45.8s)
+
+  1 passed (47.1s)

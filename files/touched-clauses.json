@@ -1,0 +1,83 @@
+[
+  {
+    "id": "RESULT-001",
+    "title": "Campaign history",
+    "kind": "published",
+    "before": "partial",
+    "after": "partial",
+    "evidence": [
+      "tests/campaign-results/results.journeys.ts"
+    ],
+    "gap": "Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable. Missing public-door journey: “Campaign history — complete acceptance”, covering the unasserted outcomes above.",
+    "text": "**Requirement.** Operators inspect campaign history by state and channel, including the exact approved work and its delivery results. **Acceptance.** 1. The campaign list filters by state and channel. 2. An operator can open the approved revision and its audience snapshot. 3. The campaign exposes its delivery timeline and cancellation. 4. Per-channel outcome totals remain individually inspectable."
+  },
+  {
+    "id": "BUILD-008",
+    "title": "Previews and pre-send checks",
+    "kind": "target",
+    "before": "done",
+    "after": "done",
+    "evidence": [
+      "tests/go-live/presend-checks.journeys.ts",
+      "tests/go-live/presend-checks.flow.ts",
+      "tests/go-live/email-size.flow.ts"
+    ],
+    "gap": "",
+    "text": "*Tier:* Core · *Rules:* D-1 **Requirement.** Previews show desktop, mobile, dark-mode approximation and plain text as a chosen contact under CAMP-003. Review locates advisory findings for missing image alt text, heading order, link text, likely spam triggers and sent size at or above 90 percent of BUILD-012’s limit, alongside MSG-006 to MSG-012’s blocking checks. A size advisory identifies measured size, limit and the three largest blocks. **Acceptance.** 1. Desktop, mobile, dark approximation and plain-text previews render the chosen contact and its fallback safely. 2. Missing image alt text, heading order, link text and likely spam wording each produce a located advisory. 3. A 95 KB draft shows a located size advisory with measured size, limit and the three largest blocks. 4. Acknowledging advisories does not bypass a contrast blocker; correcting the blocker and acknowledging the current revision permits approval. 5. A 110 KB body is refused at save under BUILD-012."
+  },
+  {
+    "id": "BUILD-012",
+    "title": "Email size the builder and imported templates fit in",
+    "kind": "target",
+    "before": "partial",
+    "after": "partial",
+    "evidence": [
+      "tests/go-live/presend-checks.journeys.ts",
+      "tests/go-live/email-size-imports.ts",
+      "tests/go-live/email-size-reuse.ts",
+      "tests/campaign-authoring/browser.spec.ts",
+      "tests/campaign-authoring/browser.spec.ts",
+      "tests/campaign-authoring/email-size-adoption.ts",
+      "tests/campaign-authoring/design-import.spec.ts",
+      "tests/campaign-authoring/canonical-save.spec.ts",
+      "tests/campaign-authoring/mobile-presentation-journey.ts",
+      "tests/proposals-decision/decision-routes.spec.ts",
+      "tests/campaign-authoring/browser.spec.ts",
+      "tests/campaign-authoring/browser.spec.ts",
+      "tests/campaign-authoring/audience-size-journey.ts",
+      "tests/campaign-authoring/full-promotional-email-journey.ts",
+      "tests/local-start/editor.journey.ts",
+      "tests/campaign-authoring/chosen-size-journey.ts",
+      "tests/go-live/chosen-catalog-edge.ts",
+      "tests/campaign-authoring/catalog-riders-journey.ts"
+    ],
+    "gap": "Today's draft/create, store-signal starter, template save/replace/start, duplication, replacement-schedule copy, follow-up, imported-history copy and proposal-adoption doors use measured sent-size refusals with the limit and largest available HTML sections, comparing fallback and expanded saved-name renderings. Browser edits, selected design files and saved source snapshots survive refusal at 1440 and 390. Oversized archive template conversions are held with their measured diagnostic and original archive custody; the import continues, reconciliation distinguishes held conversions from created library templates, and undo removes unchanged held copies. In-limit content saves, reopens, approves and reaches the provider edge within its bound; a later oversized hand-off skips with email-too-large. Saved rule and exclusion membership now bounds displayName through the shared audience evaluator; approval measures its frozen email candidates. Separate raw and escaped maxima stay in D1. Only displayName currently supplies recipient values; other valid keys render their authored fallback. An unresolved new follow-up cohort retains the conservative deployment-wide bound until its membership authority exists. Size advisories retain saved audience and analytics context and recheck the eligible email identities used by approval. Gap: configured dynamic product maxima (BUILD-006), flow messages (FLOW-008), and the Mailchimp base_boxed_3column_query.html blueprint acceptance through MOVE-011 remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision. Existing LayerDoc application shares the design-import compiler; no real design or proposal generation/provider acceptance is claimed.",
+    "text": "*Tier:* Core · *Rules:* D-1 **Requirement.** A full promotional email built in Mango or moved from an incumbent saves, approves and sends within one transmitted-byte limit shared by authoring, imports, generation, templates, duplication, follow-ups and flow messages. The bound includes personalization, tracking, compliance content, responsive styles and each configured product maximum; plain text has its own equal byte limit. The builder and HTML view show the bound while editing. Oversize refusal names measured size, limit and three largest blocks and retains unsaved content. Approval, test send and hand-off remeasure; oversize rendered recipients skip with a counted cause rather than clipped content. [The size mechanism](docs/contract/mechanism.md) specifies measurement. **Acceptance.** 1. The full BUILD-001 promotional email with a six-item Shopify picker grid and mobile controls saves, reopens unchanged and approves above the former character cap while within the byte limit; shown and provider-edge sizes agree. 2. The named Mailchimp three-column blueprint, filled with fixture content and converted through MOVE-011, becomes a template whose draft saves and reaches approval. 3. An oversize save names measured HTML and text bytes, the shared limit and three largest blocks, preserves the saved revision and keeps unsaved editor content. 4. A 95 KB body shows BUILD-008’s advisory. 5. Every listed reuse and generation door applies the same bound, including the configured maximum dynamic or selected products and audience-derived personalization. 6. Approval, test send and hand-off remeasure; a later expansion over the limit sends nothing for that recipient and is counted on campaign or flow detail."
+  },
+  {
+    "id": "DELIV-005",
+    "title": "Mailbox-provider breakdown",
+    "kind": "target",
+    "before": "done",
+    "after": "done",
+    "evidence": [
+      "tests/go-live/mailbox-provider.journeys.ts"
+    ],
+    "gap": "",
+    "text": "*Tier:* Core **Requirement.** Reports split delivered, bounced, complained and clicked by recipient mailbox provider (Gmail, Outlook and Hotmail, Yahoo and AOL, Apple iCloud, other) and bounce reasons into a stated taxonomy (invalid address, mailbox full, policy block, reputation, content, other). **Acceptance.** 1. Signed recipient outcomes report delivered, bounced, complained and clicked separately for Gmail, Outlook/Hotmail, Yahoo/AOL, Apple iCloud and other mailboxes. 2. Bounce reasons classify invalid address, mailbox full, policy block, reputation, content and other; seeded Gmail and Outlook bounce facts appear under the right provider and reason."
+  },
+  {
+    "id": "REPORT-005",
+    "title": "List growth and consent sources",
+    "kind": "target",
+    "before": "partial",
+    "after": "partial",
+    "evidence": [
+      "tests/go-live/mailbox-provider.journeys.ts",
+      "src/core/features/insights/list-growth.ts",
+      "migrations/core/0074_list_growth_retained_history.sql"
+    ],
+    "gap": "Insights reconciles opening/net/closing subscribed membership by UTC day and separates captures/confirmations, opt-outs, suppression and removal, retaining source/version disclosures and anonymous counts after erasure. Real hosted and embedded form capture/confirmation journeys reconcile. Upgrade recovers retained pre-baseline consent captures/confirmations, explicitly labeled with zero inferred membership change; imported dates do not invent earlier local growth. Unavailable pre-baseline membership history is outside the amended history requirement; kiosk capture and confirmation are exercised by tests/go-live/shared-kiosk.journeys.ts. Hosted/kiosk public resubscribe confirmation and separate growth counts are exercised by tests/go-live/shared-kiosk.journeys.ts. Remaining: dedicated popup/landing-page attribution (FORM-002/004) and the full CONT-027 incentive/topic/flow and erasure-expiry acceptance.",
+    "text": "*Tier:* Core **Requirement.** List growth reconciles subscriptions and removals with their consent sources. Earlier membership history that cannot be reconstructed is outside the history boundary. **Acceptance.** 1. By day and by form, landing page, kiosk, import and integration, the report separates subscriptions, confirmations, resubscriptions and unsubscriptions and links each source to its consent wording version. 2. For a seeded period from the recorded membership-history baseline onward, opening subscribed membership plus captures, confirmations, resubscriptions, opt-outs, suppression and removal equals closing membership. 3. Retained evidence from before the baseline is labelled as evidence and implies no earlier membership change; deleted, erased or merged earlier membership history is not reconstructed. 4. Anonymous counts survive erasure while links to erased evidence do not. 5. The source reconciliation includes the dedicated forms, landing pages and kiosks of FORM-002, FORM-004 and FORM-009 and the full CONT-027 resubscription journey."
+  }
+]

@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:21038) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports (5.5m)
+
+  Slow test file: tests/go-live/mailbox-provider.journeys.ts (5.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 passed (5.6m)

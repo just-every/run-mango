@@ -1,0 +1,18 @@
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-hydration-date-4/native-store/members/go-live/evidence/87d5d9802f35/verify/go-live-UQcCqL
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T16:21:14.961Z"}
+go-live
+
+Running 2 tests using 2 workers
+
+(node:26361) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26362) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (50.3s)
+  ✓  2 tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports (3.9m)
+
+  2 passed (3.9m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-08T16:21:14.961Z","durationMs":237564,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":237596,"boundary":"coordinator"}

@@ -1,0 +1,131 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-hydration-date-4",
+  "startingHead": "0e8e3f6c911cea8ec4dc35be223455dedfe8f7c2",
+  "saveHead": "207aa26311de00893906667fff4a9b90442c1175",
+  "mainIntegrated": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+  "results": [
+    {
+      "command": "rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "mailbox-provider journey unchanged at starting head",
+      "exit": 0,
+      "testsPassed": 1,
+      "duration": "2.7m",
+      "node": "24.19.0",
+      "log": "repro-mailbox.log"
+    },
+    {
+      "command": "Insights-only no-duplicate diagnostic before fix",
+      "exit": 1,
+      "loadsObserved": 6,
+      "maxMatchingRows": 2,
+      "log": "repro-insights-node22.log",
+      "data": "repro-insights-node22.json"
+    },
+    {
+      "command": "Insights-only no-duplicate diagnostic after fix",
+      "exit": 0,
+      "testsPassed": 1,
+      "loadsObserved": 30,
+      "maxMatchingRows": 1,
+      "log": "diagnostic-fix.log",
+      "data": "diagnostic-fix.json"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck-initial.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party-initial.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "presend-checks journey alone after fix",
+      "exit": 0,
+      "testsPassed": 1,
+      "duration": "4.7m",
+      "log": "presend-alone.log"
+    },
+    {
+      "command": "mailbox-provider journey alone after fix",
+      "exit": 0,
+      "testsPassed": 1,
+      "duration": "4.2m",
+      "log": "mailbox-alone.log"
+    },
+    {
+      "command": "pnpm run typecheck (merged candidate)",
+      "exit": 0,
+      "log": "typecheck-final.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party (merged candidate)",
+      "exit": 0,
+      "log": "first-party-final.log"
+    },
+    {
+      "command": "pnpm run source:check",
+      "exit": 0,
+      "log": "source-final.log"
+    },
+    {
+      "command": "pnpm run integration:check",
+      "exit": 0,
+      "log": "integration-final.log"
+    },
+    {
+      "command": "native shard go-live member (mailbox-provider + embed-origin)",
+      "exit": 0,
+      "testsPassed": 2,
+      "duration": "4.0m",
+      "log": "native-member.log"
+    },
+    {
+      "command": "complete go-live stage (initial boundary-only candidate 7dc67ff)",
+      "exit": 0,
+      "testsPassed": 23,
+      "duration": "30.4m",
+      "log": "go-live-full.log"
+    }
+  ],
+  "mechanicalSave": {
+    "viewsWriteExit": 0,
+    "viewsCheckExit": 0,
+    "viewsRestoredFrom": "origin/main",
+    "sourceLockExit": 0,
+    "sourceLockCheckExit": 0
+  },
+  "clauseCountsBefore": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "clauseCountsAfter": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "statusChanges": [],
+  "candidateHead": "7dc67ff711dd148dc18e18b3c2d0d7f8d31b1a1c",
+  "mechanicalFinal": {
+    "viewsWriteExit": 0,
+    "viewsCheckExit": 0,
+    "viewsRestoredFrom": "origin/main",
+    "sourceLockExit": 0,
+    "sourceLockCheckExit": 0,
+    "postRestoreViewsCheckExit": 0
+  },
+  "candidateOutcome": "Rejected by exact-head Verify 42496937599: duplicate SPF rows and Stripe sections"
+}

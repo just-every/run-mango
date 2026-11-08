@@ -1,0 +1,896 @@
+[
+  {
+    "navigation": 0,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 4601.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": false,
+            "parent": "MAIN"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 1,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 147.5,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 271.0999999999767,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 2,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 131.20000000006985,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 225.80000000004657,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 3,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 135.59999999997672,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 223.80000000004657,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 4,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 78.09999999997672,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 159.40000000002328,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 5,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 94.90000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 216.90000000002328,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 6,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 92.5,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 151.79999999993015,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 7,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 89,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 162.40000000002328,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 8,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 68.79999999993015,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 138.09999999997672,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 9,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 82.40000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 162.20000000006985,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 10,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 83,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 169.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 11,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 91.59999999997672,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 215.29999999993015,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 12,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 81.59999999997672,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 140.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 13,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 75,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 134.30000000004657,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 14,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 87.30000000004657,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 136.70000000006985,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 15,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 81.90000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 142.09999999997672,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 16,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 62.39999999990687,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 105.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 17,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 61.40000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 110.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 18,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 68.79999999993015,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 117.69999999995343,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 19,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 65.80000000004657,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 108,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 20,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 71.90000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 119,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 21,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 72.5,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 122.19999999995343,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 22,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 75.69999999995343,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 133.5,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 23,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 70.09999999997672,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 137.59999999997672,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 24,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 53.5,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 122.09999999997672,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 25,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 76.30000000004657,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 132.40000000002328,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 26,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 65.40000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 120.69999999995343,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 27,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 62.40000000002328,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 117.80000000004657,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 28,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 76.80000000004657,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 138.30000000004657,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "navigation": 29,
+    "rows": 1,
+    "insights": 1,
+    "mutations": [
+      {
+        "at": 71.79999999993015,
+        "count": 0,
+        "insights": 0,
+        "copies": []
+      },
+      {
+        "at": 131.59999999997672,
+        "count": 1,
+        "insights": 1,
+        "copies": [
+          {
+            "hidden": true,
+            "parent": "DIV"
+          }
+        ]
+      }
+    ],
+    "dom": [
+      {
+        "parent": "<main id=\"main\" tabindex=\"-1\" class=\"operator-main\"><!--$--><div class=\"page-flow insights-page\"><header class=\"page-head\"><div class=\"page-head__text\"><h1>Insights</h1></div></header><section class=\"panel page-flow\" aria-labelledby=\"overview-title\" style=\"min-width:0;overflow-wrap:anywhere\"><header",
+        "hidden": false
+      }
+    ]
+  }
+]
