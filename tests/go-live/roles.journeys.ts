@@ -6,7 +6,7 @@ import {test,expect} from '@playwright/test';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,availableTransport} from './harness';
-import {openPage} from '../support/navigation';
+import {openPage,hydrated} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
 test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
@@ -106,6 +106,36 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
         await expect.poll(async()=>(await json(await site.call(`/api/contacts/${contact}`,{cookie:cookies.analyst}),200)).contact.email).toBe('riley@example.test');
         await grant.uncheck();
         await expect.poll(async()=>(await json(await site.call(`/api/contacts/${contact}`,{cookie:cookies.analyst}),200)).contact.email).toBe('••••');
+        // Settings invites and removes through the browser; the setup session has no fresh email proof yet.
+        const settings=page.locator('.settings-operators'),invitee=page.getByRole('textbox',{name:'Operator email'});
+        await invitee.fill('invitee@example.test');
+        await page.getByRole('button',{name:'Add operator',exact:true}).click();
+        await expect(settings.getByRole('alert')).toContainText('Confirm your email again');
+        await expect(settings).not.toContainText('invitee@example.test (');
+        expect(await site.rows("SELECT id FROM oa_operators WHERE email='invitee@example.test'")).toHaveLength(0);
+        await page.getByRole('button',{name:'Email a confirmation link',exact:true}).click();
+        await expect(settings.getByRole('status')).toContainText('press Confirm');
+        const ownerSession=(await site.rows("SELECT id FROM oa_sessions WHERE operator_id='go-live-owner'")).map(row=>row.id);
+        const challenges=await site.rows("SELECT session_id FROM oa_step_up_challenges WHERE consumed_at IS NULL");
+        expect(challenges).toHaveLength(1);expect(ownerSession).toContain(challenges[0].session_id);
+        const proofLink=`${site.runtime.url}/auth/confirm?token=${(await site.control('/_golive/step-up-link')).token}`;
+        // Opening the link only shows a Confirm page; the invitation is still refused until it is submitted.
+        const look=await fetch(proofLink,{headers:{Cookie:owner}});
+        expect(look.status).toBe(200);
+        await invitee.fill('invitee@example.test');
+        await page.getByRole('button',{name:'Add operator',exact:true}).click();
+        await expect(settings.getByRole('alert')).toContainText('Confirm your email again');
+        await page.goto(proofLink);
+        await page.getByRole('button',{name:'Confirm',exact:true}).click();
+        await page.waitForURL('**/app/settings');await hydrated(page);
+        await invitee.fill('invitee@example.test');
+        await page.getByRole('button',{name:'Add operator',exact:true}).click();
+        await expect(settings.getByRole('status')).toContainText('Access added for invitee@example.test');
+        await expect(settings).toContainText('Invitation pending');
+        await page.getByRole('button',{name:'Remove invitee@example.test'}).click();
+        await page.getByRole('button',{name:'Confirm removal',exact:true}).click();
+        await expect(settings.getByRole('status')).toContainText('Invitation cancelled for invitee@example.test');
+        await expect(settings.getByRole('button',{name:'Remove invitee@example.test'})).toHaveCount(0);
         uiChanges=true;
       }
       await page.locator('.settings-operators').screenshot({path:info.outputPath(`roles-settings-${width}.png`)});

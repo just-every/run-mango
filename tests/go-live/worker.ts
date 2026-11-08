@@ -2,6 +2,7 @@ import {loadSendingConnection} from '../../src/core/features/sending/load-connec
 import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
 import {advanceClock} from './clock';
+import {hashToken,opaqueToken} from '../../src/vendor/base/operator-auth/crypto.mjs';
 import {pacedAdapter} from '../../src/core/features/lifecycle/transport-pacing';
 import {controlledDatabase,controlledQueue,arm,release,status,capturedEmissions,replay} from './delivery-controls';
 import {createProductionPlatform} from '../../src/core/platform/runtime';
@@ -138,6 +139,15 @@ async function control(request: Request, bindings: Bindings) {
     const { email, id } = await request.json() as { email: string; id: string };
     await testIdentity(platform).importLocalDemoOperator({ id, email, displayName: 'Owner' }, new Date());
     return Response.json({ token: (await testIdentity(platform).createTestSession(id)).token });
+  }
+  // Local installations suppress authentication mail. This hands back the secret that mail would carry
+  // for the confirmation the Settings button really requested; the challenge row stays session-bound.
+  if (path === '/_golive/step-up-link') {
+    const token = opaqueToken();
+    const updated = await bindings.DB.prepare("UPDATE oa_step_up_challenges SET token_hash=? WHERE id=(SELECT id FROM oa_step_up_challenges WHERE consumed_at IS NULL ORDER BY created_at DESC LIMIT 1) RETURNING id")
+      .bind(await hashToken(platform.config.sessionSigningKey, 'link', token)).first();
+    if (!updated) return new Response('No pending confirmation', { status: 404 });
+    return Response.json({ token });
   }
   // The protected deployment runner's prepare, send and observe steps.
   if (path === '/_golive/sender-evidence') {
