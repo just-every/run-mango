@@ -83,3 +83,5 @@ Verify run 42499768908, event push, head 87b2c9dad5825c1840c0b3b03c830826c350e1e
 ## Final exact-SHA custody
 
 Verify 42499768908 completed SUCCESS on push for 87b2c9dad5825c1840c0b3b03c830826c350e1ec. Observations used ten GitHub calls total and respected the minimum five-minute interval. No dispatch or rerun was requested. The final first-party check also passed on this exact head. All local commands have finished; browsers and test servers closed normally. Product custody is READY for the guarded fleet lander. No product blocker remains within this slice; the named full-clause remainders keep CONT-042 PARTIAL. Main, Run site and the complete publication scan remain landing-side conditions.
+
+Main advanced after the candidate push: the final custody read observed 1d8f22780bb0a3d3caebfc5f5b8d255fe4837536. The candidate remains the exact green, pushed head above; per the cloud handoff contract, the guarded lander owns integration with later main and rechecks its final head. No published history was rewritten.

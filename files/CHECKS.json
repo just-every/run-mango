@@ -125,5 +125,7 @@
     "exit": 0
   },
   "ci_conclusion": "success",
-  "product_custody": "READY after exact-SHA green Verify and local checks; main and publication scan remain fleet-owned"
+  "product_custody": "READY after exact-SHA green Verify and local checks; main and publication scan remain fleet-owned",
+  "main_remote_at_final_custody_read": "1d8f22780bb0a3d3caebfc5f5b8d255fe4837536",
+  "main_drift_after_candidate_push": true
 }
