@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "19d6b517c4e6040986cde20e319426a6e607ba48be512a4077ab09b2b45f4cb4",
+      "sha256": "ace5c75903c67a84f34104013723ae229cf2ba2964f8dbcd4d4919d88ea9ea9a",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -9122,7 +9122,7 @@
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {
-      "sha256": "348c92d2e71e6b47be920d8e0b30fe69dd6f93a59e8d6c9eaa4cdd9d7b22f41f",
+      "sha256": "3611b4b0771daa942deac3a8447b0294c69d1a27274c4da722e6936d3fcc3c9b",
       "executable": false
     },
     "tests/go-live/signup-refusal-screens.ts": {
