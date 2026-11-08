@@ -9041,16 +9041,20 @@
       "sha256": "2dc6dbb10585f0c0ea7734ea14d5f813983ebd5b57397ac652c4c917c14d0abe",
       "executable": false
     },
+    "tests/go-live/resend-completion-proof.ts": {
+      "sha256": "7348ba379f270f0d187df74b6982c9f659469f6e45a252ef22724140a113b02c",
+      "executable": false
+    },
     "tests/go-live/resend-connection-journey.ts": {
       "sha256": "edf85c26aa6519723efce29f5b1eed401aa68ae5244f5752ea0c0f83b3ea7b72",
       "executable": false
     },
     "tests/go-live/resend-delivery.flow.ts": {
-      "sha256": "04fe8bfc2dbc76942c9bcc4230fd5173357a9517cff67dd8acf739b2654561b3",
+      "sha256": "bcddf197b286346de19d46bf2f684c540b4e35307b1a6121c800cd2e1335354b",
       "executable": false
     },
     "tests/go-live/resend-delivery.journeys.ts": {
-      "sha256": "1c851ada9201bb5d41605e49a3dbda8914531a39fd3a0aceb0b687b95549a6a9",
+      "sha256": "b5df21fc8d43572422f7da8f0cbe72dc2105216f24d6cc62d93b0d4d80c55528",
       "executable": false
     },
     "tests/go-live/resend-provider-edge.ts": {
