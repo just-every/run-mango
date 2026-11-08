@@ -638,6 +638,12 @@
       "name": "core-0104_sending_event_silence.sql",
       "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1",
       "sql": "-- Connection generations separate current signed marketing traffic from old keys,\n-- sender diagnostics and provider lookup facts. No destination is copied here.\nALTER TABLE recipient_steps ADD COLUMN sending_generation TEXT;\nALTER TABLE recipient_steps ADD COLUMN sending_accepted_at INTEGER;\nALTER TABLE recipient_steps ADD COLUMN sending_signed_event_at INTEGER;\nCREATE INDEX recipient_steps_sending_watch_idx ON recipient_steps(sending_generation, sending_accepted_at);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0105_incumbent_restrictions.sql",
+      "sha256": "41ded470a9d45f18bacc7ec3119f512ac4e1b523cddf6452f61bdaddd4d5f1c8",
+      "sql": "CREATE TABLE incumbent_restriction_connections (\n  id TEXT PRIMARY KEY,\n  data_center TEXT NOT NULL,\n  audience_id TEXT NOT NULL,\n  credentials TEXT NOT NULL,\n  connected_by TEXT NOT NULL,\n  connected_at INTEGER NOT NULL,\n  last_success_at INTEGER,\n  last_error TEXT,\n  UNIQUE(data_center,audience_id)\n);\nCREATE TABLE incumbent_restriction_receipts (\n  id TEXT PRIMARY KEY,\n  connection_id TEXT NOT NULL,\n  occurred_at INTEGER NOT NULL\n);\nCREATE INDEX incumbent_restriction_receipts_connection ON incumbent_restriction_receipts(connection_id);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
