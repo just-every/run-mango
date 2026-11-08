@@ -32,7 +32,7 @@
     "after": 1,
     "removedOrWeakenedAssertions": false
   },
-  "githubCallsUsed": 2,
+  "githubCallsUsed": 5,
   "mainAtStart": {
     "head": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
     "verifyRun": 42480504208,
@@ -41,7 +41,11 @@
     "siteConclusion": "success"
   },
   "publicationScan": {
-    "status": "fleet-owned; not run in cloud"
+    "status": "fleet-owned; not run in cloud",
+    "commit": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null
   },
   "landing": {
     "status": "not performed; named branch only"
@@ -112,15 +116,55 @@
   ],
   "candidateCI": [
     {
-      "conclusion": null,
+      "id": 42484424595,
       "event": "push",
+      "conclusion": "success",
       "head_sha": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
       "html_url": "https://github.com/just-every/run-mango/actions/runs/42484424595",
-      "id": 42484424595,
-      "name": "Verify",
-      "status": "in_progress"
+      "status": "completed"
     }
   ],
   "pullRequest": null,
-  "mainEqualsCandidate": false
+  "mainEqualsCandidate": false,
+  "initialEvidenceTransfer": {
+    "head": "52dbfd90a17d875931c039bc363b09a1195418fc",
+    "ref": "refs/heads/evidence/sd-mango-c-f133",
+    "files": 26,
+    "fetchAndHashVerificationExit": 0,
+    "receipt": "EVIDENCE-INITIAL-VERIFICATION.json"
+  },
+  "candidateCIStatusAtFiveMinutes": {
+    "conclusion": null,
+    "head_sha": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42484424595",
+    "status": "in_progress"
+  },
+  "candidateCIStatusAtTenMinutes": {
+    "conclusion": null,
+    "head_sha": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42484424595",
+    "status": "in_progress"
+  },
+  "remoteProduct": {
+    "head": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "ref": "refs/heads/cloud/sd-mango-c-f133",
+    "verified": true
+  },
+  "fullHistory": true,
+  "runtime": {
+    "node": "v24.19.0",
+    "pnpm": "10.12.4",
+    "chromium": "/usr/bin/chromium",
+    "noSandbox": true
+  },
+  "ready": true,
+  "claim": {
+    "clause": "SEND-007",
+    "status": "PARTIAL",
+    "points": [
+      1
+    ],
+    "scope": "Resend uncertainty fence only; broader acceptance remainder held"
+  },
+  "blockers": []
 }

@@ -39,7 +39,7 @@ This is a PARTIAL claim, not a DONE request.
 | --- | --- |
 | 1 | PARTIAL: selected Resend uncertainty outcome is exercised through native approval, provider boundary, Cron, authenticated detail and browser doors; the clause's remaining outcomes remain held. |
 | 2 | PASS locally: independent known destinations and counts, actual native data, unsafe completion refused while uncertain, and positive expiry completion control; no expected value is derived from the output under assertion. |
-| 3 | Registered in existing push Verify; candidate CI result is recorded in RECEIPT.json. A local pass is not represented as exact-SHA CI success. |
+| 3 | PASS for the selected proof: push Verify 42484424595 completed successfully on exact candidate ad1a605639c006c0e002a53f8cebed6a104aeceb; the journey is registered in its existing authoring pack. The whole clause stays PARTIAL. |
 | 4 | Candidate source and test bytes match the local proof; source lock is regenerated last. Exact revision and any subsequent rerun are recorded in RECEIPT.json. |
 | 5 | INSPECTED: SEND-007 already cites BASE-MAIL-001; no inheritance text changed. |
 | 6 | Mechanical generation write and check pass, then generated views are restored; historical status provenance and gap cells are untouched and no DONE count is requested. |
@@ -56,3 +56,9 @@ Broader SEND-008 lookup, eviction, redeployment and real-provider qualification 
 Product head: ad1a605639c006c0e002a53f8cebed6a104aeceb on cloud/sd-mango-c-f133. Current origin main at integration: eceb55d9eca66cf4a2702f69e23109d2266b1560. Fetch and rebase reported up to date. CONTRACT.md has no candidate diff. Full-history publication scanning remains fleet-owned.
 
 The guarded product push succeeded on its first attempt. Candidate push Verify run 42484424595 was discovered in progress on exact head ad1a605639c006c0e002a53f8cebed6a104aeceb; final status will be recorded in RECEIPT.json. No pull request was needed because this repository starts Verify on branch push. At the initial main, Verify 42480504208 and Run site 42480504239 were completed successfully on eceb55d9eca66cf4a2702f69e23109d2266b1560. These main runs are context, not candidate proof.
+
+CLAIM SEND-007 PARTIAL points=1 tests=tests/go-live/resend-delivery.journeys.ts#[SEND-001][SEND-005][SEND-006][SEND-007][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery
+
+GAP SEND-007: Only acceptance 1's selected Resend uncertainty fence is proven here. Other terminal outcomes, adapters and SMS; acceptance 2's full overlapping totals; and acceptance 3's late suppression and completed-ledger proof remain held. No policy default is adopted.
+
+Final CI: push Verify 42484424595 completed with success on ad1a605639c006c0e002a53f8cebed6a104aeceb, verified by REST at the time in ci-final-time.txt. Five GitHub API calls were used in total, with at least 300 seconds between reads of this run. No workflow was dispatched or retried, and no logs were requested because no candidate failure was observed. The product ref was read back and matches the candidate. There is no PR. Local journey, typecheck, first-party command checks, generation checks and source freshness checks pass; no product blocker remains. The published candidate is eligible for the fleet's independent scan and landing gates; this does not promote SEND-007 or assert landing.
