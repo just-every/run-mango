@@ -9262,7 +9262,7 @@
       "executable": false
     },
     "tests/go-live/sync-integrations.journeys.ts": {
-      "sha256": "426f0c3c159b5f2e3f9aec44d205f0e6d96ef4a83271c6ad921173e900a5edd2",
+      "sha256": "28ea94ea5861917d58a3648b12f22d52f0f87a01dd7c34d521a82cee2b3c2324",
       "executable": false
     },
     "tests/go-live/template-conversion.ts": {
