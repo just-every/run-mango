@@ -1,0 +1,9 @@
+1	1	CONTRACT.md
+9	1	RELEASE.json
+6	0	management/integration/deployment-spec.json
+21	0	migrations/core/0105_native_audience_authority.sql
+1	1	scripts/verification/plan.mjs
+14	6	sources.lock.json
+263	0	tests/proposals-decision/missing-sender.spec.ts
+9	3	tests/proposals-decision/runtime.ts
+8	7	tests/support/sender-verification.ts

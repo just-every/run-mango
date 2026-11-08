@@ -1,0 +1,7 @@
+{
+  "door": "native Miniflare D1 + production platformLedger",
+  "main_migrations": 104,
+  "candidate_migrations": 105,
+  "before": "migration_ledger:unapplied:0105_native_audience_authority.sql",
+  "after": "platformLedger true; all SHA-256 identities accepted; retained contact unchanged; native update advances generation once"
+}

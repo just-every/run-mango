@@ -1,0 +1,24 @@
+{
+  "original_f86_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "main_counts": {
+    "partial": 197,
+    "done": 21,
+    "missing": 98
+  },
+  "candidate_counts": {
+    "partial": 197,
+    "done": 21,
+    "missing": 98
+  },
+  "CAMP-004": {
+    "before": "partial",
+    "after": "partial"
+  },
+  "all_main_status_rows_retained": true,
+  "main_non_CAMP004_rows_unchanged": true,
+  "only_contract_change": "CAMP-004 Evidence and retained f86 proof description; migration now 0105"
+}

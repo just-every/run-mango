@@ -1,0 +1,58 @@
+SyntaxError: /home/agent/rer-consolidation/work/sd-mango-c-f86-fix1/run-mango/tests/proposals-decision/runtime.ts: Missing semicolon. (91:3)
+
+  89 |     const agent=(secret:string)=>(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(`/api/integrations/v1${path}`,body,false,method,undefined,{Authorization:`Bearer ${secret}`});
+  90 |     return {db,platform,services,controls,jobs,marketingHandoffs,publicPost,senderEdge,senderEvidence:verification,call,agent,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+> 91 |   }catch(error){await native.dispose();throw error;}
+     |    ^
+  92 | }
+  93 |
+  94 | export type DecisionRuntime=Awaited<ReturnType<typeof decisionRuntime>>;
+
+   at proposals-decision/grounding-citations.spec.ts:91
+
+  89 |     runtime.controls.alter=undefined;
+  90 |     const recoveryStarted=Date.now();
+> 91 |     const recovered=await generated(runtime);
+     |   ^
+  92 |     const recoveryCompleted=Date.now();
+  93 |     const recoveredDetail=await runtime.call(`/api/proposals/${recovered.proposalId}`);
+  94 |     expect(Date.parse(recoveredDetail.body.forecast.asOf)).toBeGreaterThanOrEqual(recoveryStarted);
+    at eval (<anonymous>:1:1)
+SyntaxError: /home/agent/rer-consolidation/work/sd-mango-c-f86-fix1/run-mango/tests/proposals-decision/runtime.ts: Missing semicolon. (91:3)
+
+  89 |     const agent=(secret:string)=>(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(`/api/integrations/v1${path}`,body,false,method,undefined,{Authorization:`Bearer ${secret}`});
+  90 |     return {db,platform,services,controls,jobs,marketingHandoffs,publicPost,senderEdge,senderEvidence:verification,call,agent,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+> 91 |   }catch(error){await native.dispose();throw error;}
+     |    ^
+  92 | }
+  93 |
+  94 | export type DecisionRuntime=Awaited<ReturnType<typeof decisionRuntime>>;
+
+   at proposals-decision/missing-sender.spec.ts:91
+
+  89 |     for(const [field,label] of [['fromEmail','from email'],['replyToEmail','reply-to email'],['physicalAddress','postal address']] as const) {
+  90 |       const original=read.body.revision[field];
+> 91 |       const empty=await runtime.call(revisionDoor,{[field]:''},true,'PATCH');
+     |   ^
+  92 |       expect(empty.status).toBe(200);
+  93 |       expect(empty.body.revision[field]).toBe('');
+  94 |       const unchanged=await persisted();
+    at eval (<anonymous>:1:1)
+SyntaxError: /home/agent/rer-consolidation/work/sd-mango-c-f86-fix1/run-mango/tests/proposals-decision/runtime.ts: Missing semicolon. (91:3)
+
+  89 |     const agent=(secret:string)=>(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(`/api/integrations/v1${path}`,body,false,method,undefined,{Authorization:`Bearer ${secret}`});
+  90 |     return {db,platform,services,controls,jobs,marketingHandoffs,publicPost,senderEdge,senderEvidence:verification,call,agent,confirmOwner,colleague:{...colleague,call:(path:string,body?:unknown,method=body===undefined?'GET':'POST')=>call(path,body,true,method,colleagueSession.token)},analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
+> 91 |   }catch(error){await native.dispose();throw error;}
+     |    ^
+  92 | }
+  93 |
+  94 | export type DecisionRuntime=Awaited<ReturnType<typeof decisionRuntime>>;
+
+   at proposals-decision/owner-control.spec.ts:91
+
+
+    at eval (<anonymous>:1:1)
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
+

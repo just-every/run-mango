@@ -1,0 +1,238 @@
+{
+  "files": [
+    {
+      "blob": "b94135fb860ecc544a15341bd0bc132daec88e52",
+      "bytes": 1648,
+      "path": "PLAN.md",
+      "sha256": "aca40f7a864e68f4ce282070f996d15e40f179e0482c08f2d7cec69576514ae2"
+    },
+    {
+      "blob": "16aea103bb59d965d69b487a92aa185da82418e8",
+      "bytes": 7380,
+      "path": "RECEIPT.json",
+      "sha256": "007cee2223583da507af59cef75e04de8f0ad8f62d87a78edf4afcb04c9d7c43"
+    },
+    {
+      "blob": "a20323403e49dc3ca4e418262f5158b6761ace25",
+      "bytes": 10672,
+      "path": "REPORT.md",
+      "sha256": "d534493bd7205207dbbd53016e45c2290fc4f75b1b666583b4f6f753f28893c0"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "candidate-test-preservation.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "b06b164e47ca67898dfd7baa37cb83726d7b1afa",
+      "bytes": 723,
+      "path": "ci-build-failed.txt",
+      "sha256": "550fe81df5ed9e759762ac7e41fff35d96cc3e3399b0874690bb2edb8bd8ac28"
+    },
+    {
+      "blob": "21fc4a5cd326c76f84605c00ba681d4c374149fe",
+      "bytes": 243,
+      "path": "ci-discovery.json",
+      "sha256": "40dceb8f2a28466e48cd6e49c93bfd1ad831f423e09274d0b19bf6e3fc905c8a"
+    },
+    {
+      "blob": "6967f0cc2c39888833c4ec6fb8d838cceb056dc1",
+      "bytes": 3691,
+      "path": "ci-jobs.json",
+      "sha256": "72d87a1190a0bd062eb97e692976835052d5ffaf5f84f23a111497828bce2dba"
+    },
+    {
+      "blob": "c33fdbb5766a9dbd91c182ac699a097f387c7b6f",
+      "bytes": 178,
+      "path": "ci-status.json",
+      "sha256": "144e848db16fa965f80189391e056dcdaa0439d168672c18b0f0d836cc90c53d"
+    },
+    {
+      "blob": "bf6f653524c9d547cee023f7d4cb411e2d33ce7e",
+      "bytes": 1874,
+      "path": "ci-verify-failed.txt",
+      "sha256": "fde382d1e61cd3acb94a7c127f029ced57082ca7699805593a034eb3869fa839"
+    },
+    {
+      "blob": "c46c5284a7ba663429aadfdcfa821936f2c6cfaf",
+      "bytes": 975,
+      "path": "commit-audit.txt",
+      "sha256": "b8e65fdcec7e826a451b214c43d4d3c0ecfb77c51abb385080bf76d9c8f99430"
+    },
+    {
+      "blob": "28ba2c3458a48958612d31328162001b260f0ff6",
+      "bytes": 505,
+      "path": "contract-preservation.json",
+      "sha256": "97892ec54142a045ab29ebcccbff8bc9cd0a47b470b5b39bd781954f3924e64b"
+    },
+    {
+      "blob": "f3fc59d233260fdcdf4671cd8dacaa5052effee5",
+      "bytes": 1767,
+      "path": "contract-preservation.py",
+      "sha256": "b62e47f4ea6e06bf2fad66a79ed759775fe2daadfcfb7dfa6d831f67d465a264"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "diff-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "8a12ac885fb3bf8b16cf1306dc91ac8ab2d7bbba",
+      "bytes": 1482,
+      "path": "github-usage.json",
+      "sha256": "cd164df975869638a4d120cbf2c21dc0759eb1d8a242955cf237b383dae699f3"
+    },
+    {
+      "blob": "8c94ad7ef7b56a964b826b06dab3c322684986f3",
+      "bytes": 85,
+      "path": "integration-check.txt",
+      "sha256": "a62ce8174243906a3cd366ddd1d7490c1a169fe25f5e2ae720de0b8c87bfce28"
+    },
+    {
+      "blob": "8c94ad7ef7b56a964b826b06dab3c322684986f3",
+      "bytes": 85,
+      "path": "integration-write.txt",
+      "sha256": "a62ce8174243906a3cd366ddd1d7490c1a169fe25f5e2ae720de0b8c87bfce28"
+    },
+    {
+      "blob": "4b81ce8567e5f9b20160dbe5f4e6e6c6899a4655",
+      "bytes": 414895,
+      "path": "lock-check.txt",
+      "sha256": "34a5c6393af4f9f2a15eed24668a5f0ffe37887f4a999f659ece8a17374fd829"
+    },
+    {
+      "blob": "ca713f084fe7b4c86fbfc7868664b0c124aa96b7",
+      "bytes": 414881,
+      "path": "lock-write.txt",
+      "sha256": "270e66cf8570e67424ae4899031b0423d1757f9e3f1c45376f08d41f21e7f863"
+    },
+    {
+      "blob": "e24c71be5cd7b09f44af646d39b99ae6454029a7",
+      "bytes": 79,
+      "path": "mechanical-exits.json",
+      "sha256": "bd03eb8f78f28dbe3882b388d4a353f7dc8e5cbe95a2dbd8cae29049e796e9e2"
+    },
+    {
+      "blob": "7cf21fec78b3e641ee08dbe959d4d5954bfe1436",
+      "bytes": 1038,
+      "path": "migration-ledger.json",
+      "sha256": "46a8571dd4fa6b83831baba29cfc4f944e3b800c7ca4a2a622c896873ee1bfcb"
+    },
+    {
+      "blob": "16f4ec9ceec533b6e33b88c09a1a4077d4a1b1e1",
+      "bytes": 4303,
+      "path": "migration-ledger.py",
+      "sha256": "a9c01fa9457b429322a7cba5df2d36fe6bc7e68331dadb7c997fcebb4e56e0fe"
+    },
+    {
+      "blob": "dbd8de2e9dfe6e1ccee5c966176fdab55ee7a20e",
+      "bytes": 333,
+      "path": "native-migration-probe.json",
+      "sha256": "c680c8323d298eef904967d156fa42d645442fd9878206725725466901a57544"
+    },
+    {
+      "blob": "2a90112d69a663d274230e0938d3ae05c7a82d36",
+      "bytes": 3259,
+      "path": "native-migration-probe.mjs",
+      "sha256": "850596f0eb4877e3330742102c943bea6c0ccf910182a45b48295bd153ca4494"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "native-migration-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "cfdca4f7af84b0b01e559c37f8fd1e8bda3c2a60",
+      "bytes": 171,
+      "path": "packet-scan.json",
+      "sha256": "2fc481e41835cb89995c04f228ad1573b642820a91227a1d66654ed4ddab979c"
+    },
+    {
+      "blob": "e4c0768285306239a61e9fb7a4b6207e7d615940",
+      "bytes": 781,
+      "path": "parent-commit-audit.txt",
+      "sha256": "d4a6c22a4001f16f148d417293936cca7d5c46527d55491ff8d9ea334f9f5088"
+    },
+    {
+      "blob": "50dc81559b1232e9966bbca3830e1dfdaeeb1857",
+      "bytes": 3996,
+      "path": "probe-tests-attempt1.txt",
+      "sha256": "b5458466d1ee1392e71b9cf393c988a00df727bfd1ea8db80d15f24c5a7823dc"
+    },
+    {
+      "blob": "016be594832d05a3f05168cae5644f63a40ae353",
+      "bytes": 11832,
+      "path": "probe-tests.txt",
+      "sha256": "99fac10d9751e0466759938adac25e9e866daef62bc60d68c1c5b28476941b59"
+    },
+    {
+      "blob": "9ae693a5a068acce5e2e6cd3215b77ebd990ae8f",
+      "bytes": 329,
+      "path": "product-diff-stat.txt",
+      "sha256": "803cb0c8f2cdb3d970bc9300b51482a5151b04d04a28876a82ad9e9ec1c4d1c8"
+    },
+    {
+      "blob": "7ce6dbec921b6592414de4cae67b3352ef0500e3",
+      "bytes": 289,
+      "path": "product-files.txt",
+      "sha256": "92804a99f73000d9b78ab1eb3b8e31224421cf6a5205272b3c3d9a4f130f85be"
+    },
+    {
+      "blob": "49ff7b516029328006a96fa4a3864a45cf96bb51",
+      "bytes": 41,
+      "path": "product-head.txt",
+      "sha256": "f00d9f455ffafa3ca837441cd57ec88a7c436f3782b5d92f63fb7e44d4921b81"
+    },
+    {
+      "blob": "2998ad88cb5adb41de6cd7e721c04c07bac81bc6",
+      "bytes": 276,
+      "path": "product-provenance.txt",
+      "sha256": "aca8c6364778c699e08c21e59e8ea5f03ea83c8b30732c19e37dfad74974ad3f"
+    },
+    {
+      "blob": "28ad6165da7c2e974fafdc5333f4e4ca8a581ba7",
+      "bytes": 916,
+      "path": "product-push.txt",
+      "sha256": "80eac52a4796fc11338786afa97bc562ce4572e2614e14951b40d1a621df4a36"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "product-status.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "52bba25d5dded3bcf3ba3dd4b1183da4f7d51c7d",
+      "bytes": 212,
+      "path": "typecheck.txt",
+      "sha256": "85cd87549b6a0185545383bc4cfcbb87d12b07734c4ca191ab951a59a5882051"
+    },
+    {
+      "blob": "fba560db7c48416c914446f2a1e319a79104d105",
+      "bytes": 67,
+      "path": "views-after-restore.txt",
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "views-check.txt",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "d4d1e60ea7fdc565c576421664992b40e47a816e",
+      "bytes": 28,
+      "path": "views-write.txt",
+      "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f86-fix1",
+  "product_head": "bb36ce7f27837f0c7aab61541c97d02918e67ab0",
+  "ref": "refs/heads/evidence/sd-mango-c-f86-fix1",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f86-fix1"
+}

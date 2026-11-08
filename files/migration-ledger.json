@@ -1,0 +1,45 @@
+{
+  "main_head": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+  "main_migrations": 104,
+  "candidate_migrations": 105,
+  "preserved_main_files": 104,
+  "added": [
+    "migrations/core/0105_native_audience_authority.sql"
+  ],
+  "old_prefix": 104,
+  "new_prefix": 105,
+  "legacy_duplicate_prefixes": {
+    "0058": [
+      "migrations/core/0058_base_provider_control.sql",
+      "migrations/core/0058_owner_signin.sql"
+    ],
+    "0059": [
+      "migrations/core/0059_base_provider_pins.sql",
+      "migrations/core/0059_link_host_settings.sql"
+    ]
+  },
+  "paths": [
+    {
+      "door": "empty",
+      "applied_migrations": 105,
+      "native_audience_triggers": 18,
+      "contact_insert_update_delete_deltas": [
+        1,
+        1,
+        1
+      ],
+      "retained_main_contact": false
+    },
+    {
+      "door": "main-state",
+      "applied_migrations": 105,
+      "native_audience_triggers": 18,
+      "contact_insert_update_delete_deltas": [
+        1,
+        1,
+        1
+      ],
+      "retained_main_contact": true
+    }
+  ]
+}

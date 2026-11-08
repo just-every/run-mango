@@ -1,0 +1,20 @@
+e5ddac0129a005f30daa5749ab5f5308196ee7f8
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+Merge main and retain campaign approval safety proof
+
+653a6ffa98f6dc087b07e50b5855f786e2f2acf9
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+Fence approval against native consent changes and prove sending prerequisites [skip ci]
+
+81e6fd085c0d56b5c082ed6a178d12a8fe5f829e
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+Prove missing sender identity fields preserve draft authority [skip ci]
+
+4cbffaf96ace56c151a5bad2d3acf73d261c3fe2
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+Prove missing sender blocks campaign approval without authority
+

@@ -1,0 +1,68 @@
+{
+  "calls": 5,
+  "history": [
+    {
+      "call": 1,
+      "at": 1794149306.0022075,
+      "command": [
+        "gh",
+        "api",
+        "repos/just-every/run-mango/actions/runs?head_sha=bb36ce7f27837f0c7aab61541c97d02918e67ab0&per_page=100",
+        "--jq",
+        "{workflow_runs:[.workflow_runs[] | {id,name,event,status,conclusion,head_sha,html_url}]}"
+      ]
+    },
+    {
+      "call": 2,
+      "at": 1794149606.0424013,
+      "command": [
+        "gh",
+        "api",
+        "repos/just-every/run-mango/actions/runs/42491595519",
+        "--jq",
+        "{status,conclusion,head_sha,html_url}"
+      ]
+    },
+    {
+      "call": 3,
+      "at": 1794149616.8307264,
+      "command": [
+        "gh",
+        "api",
+        "repos/just-every/run-mango/actions/runs/42491595519/jobs",
+        "--jq",
+        "{jobs:[.jobs[] | {id,name,status,conclusion,head_sha,steps:[.steps[] | {name,status,conclusion}]}]}"
+      ]
+    },
+    {
+      "call": 4,
+      "at": 1794149626.9067647,
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42491595519",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "128765005254",
+        "--log-failed"
+      ]
+    },
+    {
+      "call": 5,
+      "at": 1794149628.9087417,
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "42491595519",
+        "--repo",
+        "just-every/run-mango",
+        "--job",
+        "128765054085",
+        "--log-failed"
+      ]
+    }
+  ]
+}

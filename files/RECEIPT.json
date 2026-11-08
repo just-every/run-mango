@@ -1,0 +1,234 @@
+{
+  "tag": "sd-mango-c-f86-fix1",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f86-fix1",
+  "head": "bb36ce7f27837f0c7aab61541c97d02918e67ab0",
+  "candidate_parent": "e5ddac0129a005f30daa5749ab5f5308196ee7f8",
+  "merged_main": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+  "clone": {
+    "full_history": true,
+    "filter": "blob:none",
+    "depth": null,
+    "candidate_head_verified": true
+  },
+  "toolchain": {
+    "node": "v24.19.0",
+    "pnpm": "10.12.4",
+    "headless_browser": "not needed: migration and fixture integration repair; no UI changes"
+  },
+  "checks": [
+    {
+      "command": "cloud_run timeout 600 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run timeout 600 npx -y @runeditrun/rer build",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/sync-integration.mjs --write",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/sync-integration.mjs --check",
+      "exit": 0
+    },
+    {
+      "command": "python3 ../packet/migration-ledger.py",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run timeout 180 node ../packet/native-migration-probe.mjs",
+      "exit": 0
+    },
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 600 pnpm exec playwright test tests/proposals-decision/ --workers=1 --reporter=list",
+      "exit": 0,
+      "passed": 6
+    },
+    {
+      "command": "cloud_run timeout 300 pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "when": "generated views present"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "when": "main views restored as required; expected stale ACCEPTANCE.md"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "when": "last generated source change"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "python3 ../packet/contract-preservation.py",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check origin/main HEAD",
+      "exit": 0
+    }
+  ],
+  "publication": {
+    "product_push": "success",
+    "attempt": 1,
+    "force": false,
+    "default_branch_written": false,
+    "candidate_commits_audited_including_side_parents": 5,
+    "all_fleet_author_and_committer": true,
+    "trailers": []
+  },
+  "clause_changes": {
+    "CAMP-004": "partial -> partial; evidence updated only",
+    "all_main_status_rows": "preserved",
+    "new_judgment_changes": 0
+  },
+  "iterations": [
+    "Before final testing, initial merge-fixture syntax was rejected by Playwright and corrected. No test assertions changed.",
+    "The evidence-only SQLite probe was corrected to supply required synthetic contact fields and count the exact 18 introduced triggers instead of legacy triggers."
+  ],
+  "product_ready": "READY: generated-view-only exemption; no landing or private gate claim",
+  "pr_url": null,
+  "limits": [
+    "No hosted deployment, live provider qualification, private gate or landing claimed.",
+    "The Mac lander regenerates contract view files; this product branch retains main view bytes."
+  ],
+  "mechanical_exits": {
+    "views_write": 0,
+    "views_check_before_restore": 0,
+    "lock_write": 0,
+    "lock_check": 0
+  },
+  "migration_ledger": {
+    "main_head": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "main_migrations": 104,
+    "candidate_migrations": 105,
+    "preserved_main_files": 104,
+    "added": [
+      "migrations/core/0105_native_audience_authority.sql"
+    ],
+    "old_prefix": 104,
+    "new_prefix": 105,
+    "legacy_duplicate_prefixes": {
+      "0058": [
+        "migrations/core/0058_base_provider_control.sql",
+        "migrations/core/0058_owner_signin.sql"
+      ],
+      "0059": [
+        "migrations/core/0059_base_provider_pins.sql",
+        "migrations/core/0059_link_host_settings.sql"
+      ]
+    },
+    "paths": [
+      {
+        "door": "empty",
+        "applied_migrations": 105,
+        "native_audience_triggers": 18,
+        "contact_insert_update_delete_deltas": [
+          1,
+          1,
+          1
+        ],
+        "retained_main_contact": false
+      },
+      {
+        "door": "main-state",
+        "applied_migrations": 105,
+        "native_audience_triggers": 18,
+        "contact_insert_update_delete_deltas": [
+          1,
+          1,
+          1
+        ],
+        "retained_main_contact": true
+      }
+    ]
+  },
+  "native_migration_ledger": {
+    "door": "native Miniflare D1 + production platformLedger",
+    "main_migrations": 104,
+    "candidate_migrations": 105,
+    "before": "migration_ledger:unapplied:0105_native_audience_authority.sql",
+    "after": "platformLedger true; all SHA-256 identities accepted; retained contact unchanged; native update advances generation once"
+  },
+  "contract_preservation": {
+    "original_f86_counts": {
+      "partial": 198,
+      "done": 20,
+      "missing": 98
+    },
+    "main_counts": {
+      "partial": 197,
+      "done": 21,
+      "missing": 98
+    },
+    "candidate_counts": {
+      "partial": 197,
+      "done": 21,
+      "missing": 98
+    },
+    "CAMP-004": {
+      "before": "partial",
+      "after": "partial"
+    },
+    "all_main_status_rows_retained": true,
+    "main_non_CAMP004_rows_unchanged": true,
+    "only_contract_change": "CAMP-004 Evidence and retained f86 proof description; migration now 0105"
+  },
+  "candidate_missing_sender_test_and_sender_verification_helper_unchanged": true,
+  "ci": {
+    "run_id": 42491595519,
+    "head_sha": "bb36ce7f27837f0c7aab61541c97d02918e67ab0",
+    "raw_conclusion": "failure",
+    "status": "completed",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42491595519",
+    "classification": "READY under explicit generated-view-only exception",
+    "root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "failed_jobs": [
+      {
+        "id": 128765005254,
+        "name": "Build and public command checks",
+        "cause": "Check generated contract documents: stale ACCEPTANCE.md"
+      },
+      {
+        "id": 128765054085,
+        "name": "verify",
+        "cause": "downstream coverage assertion because BUILD=failure"
+      }
+    ],
+    "shards": "skipped after generated-view build failure",
+    "known_Saved_journey_defect": "not reached; retained unchanged",
+    "failed_log_archive_commands": [
+      {
+        "command": "gh run view 42491595519 --repo just-every/run-mango --job 128765005254 --log-failed",
+        "exit": 0
+      },
+      {
+        "command": "gh run view 42491595519 --repo just-every/run-mango --job 128765054085 --log-failed",
+        "exit": 0
+      }
+    ],
+    "github_calls": 5,
+    "watcher_discovery_to_poll_seconds": 300.04019379615784,
+    "log_publication": "actual archive output, with environment blocks omitted to meet public-evidence policy"
+  },
+  "blockers": [],
+  "cleanup": "Disposable clone and node_modules scheduled for deletion after evidence publication; actual packet stays outside the clone."
+}
