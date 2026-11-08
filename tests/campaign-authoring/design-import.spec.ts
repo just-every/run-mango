@@ -74,6 +74,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     await dialog.getByRole('button',{name:'Import design',exact:true}).click();
     await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+    // The browser compiler rejects oversized content after cropping and hosting.
+    await expect(dialog.getByRole('form',{name:'Import a 12ui design',exact:true})).toHaveAttribute('aria-busy','false',{timeout:30000});
     const sizeError=dialog.getByRole('alert');
     await expect(sizeError).toContainText('Email is too large.');
     await expect(sizeError).toContainText('Largest blocks:');
