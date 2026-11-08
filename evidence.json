@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "blob": "fb368c36ef6bd624ee2cecabc3c6b687db75e99e",
+      "bytes": 630,
+      "path": "IDENTITY-AUDIT.txt",
+      "sha256": "d3c18e3bf4b8ff121152a19b92f66a4d16d4878deb710cae059608ff3541bc8d"
+    },
+    {
+      "blob": "40c23f877e7da277547fcd535d1e4ef8ae146017",
+      "bytes": 6630,
+      "path": "REPORT.md",
+      "sha256": "1bbece97fbccd27b4ca74df84f7ae06345f76e22ea606407f400c74c0d2e56c5"
+    },
+    {
+      "blob": "6aec2bf8798389ee7591695c9caf28ca5d302393",
+      "bytes": 4857,
+      "path": "SOURCE-DIFF.txt",
+      "sha256": "d0f871d2f8f59ad751889169c563c7fd070672b1be9c297de8cf5f799d7ecf6e"
+    },
+    {
+      "blob": "161da5f152c1493ba68b9bda2828eae5d64f554e",
+      "bytes": 6293,
+      "path": "SOURCE-RECEIPT.json",
+      "sha256": "43044a4a6403b9e95c0e2bdb2e154d6b0adf5158fec5e11ad21eb6bf6445b6b5"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f144-fix1",
+  "product_head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "ref": "refs/heads/evidence/sd-mango-c-f144-fix1",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f144-fix1"
+}

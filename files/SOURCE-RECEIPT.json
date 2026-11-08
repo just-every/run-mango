@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f144-fix1",
+  "repository": "just-every/run-mango",
+  "recorded_at": "2026-11-08T15:50:01.138457+00:00",
+  "status": "BLOCKED",
+  "blocker": "required source branch head differs from pinned brief head; current branch already includes the requested declaration",
+  "source_branch": "cloud/sd-mango-c-f144",
+  "required_source_head": "2a365f79540f0f2007dbaf5abcf2a14bcf90dc29",
+  "observed_source_head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "fresh_main_head": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+  "local_branch": "cloud/sd-mango-c-f144-fix1",
+  "local_head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "full_history": true,
+  "product_worktree_clean": true,
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "pr_url": null,
+  "ci_run_ids": [],
+  "github_api_calls": 0,
+  "counts_required_candidate": {
+    "counts": {
+      "partial": 197,
+      "done": 21,
+      "missing": 98
+    },
+    "total": 316,
+    "CONT-042": [
+      "`CONT-042`",
+      "Shared destination confirmation allowance",
+      "target",
+      "partial",
+      "`tests/go-live/shared-kiosk.journeys.ts` \u00b7 `src/core/features/audience/public-capture-writer.ts` \u00b7 `src/core/features/audience/confirmation-handoff.ts`",
+      "Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked."
+    ]
+  },
+  "counts_current_source": {
+    "counts": {
+      "partial": 197,
+      "done": 21,
+      "missing": 98
+    },
+    "total": 316,
+    "CONT-042": [
+      "`CONT-042`",
+      "Shared destination confirmation allowance",
+      "target",
+      "partial",
+      "`tests/go-live/shared-kiosk.journeys.ts` \u00b7 `src/core/features/audience/public-capture-writer.ts` \u00b7 `src/core/features/audience/confirmation-handoff.ts`",
+      "Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked."
+    ]
+  },
+  "counts_main": {
+    "counts": {
+      "partial": 197,
+      "done": 21,
+      "missing": 98
+    },
+    "total": 316,
+    "CONT-042": [
+      "`CONT-042`",
+      "Shared destination confirmation allowance",
+      "target",
+      "partial",
+      "`tests/go-live/shared-kiosk.journeys.ts` \u00b7 `src/core/features/audience/public-capture-writer.ts` \u00b7 `src/core/features/audience/confirmation-handoff.ts`",
+      "Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked."
+    ]
+  },
+  "clause_status_changes": [],
+  "checks": [
+    {
+      "command": "git clone --filter=blob:none https://github.com/just-every/run-mango.git <task>/run-mango",
+      "exit": 0
+    },
+    {
+      "command": "git fetch origin main cloud/sd-mango-c-f144",
+      "exit": 0
+    },
+    {
+      "command": "test \"$(git rev-parse origin/cloud/sd-mango-c-f144)\" = 2a365f79540f0f2007dbaf5abcf2a14bcf90dc29",
+      "exit": 1
+    },
+    {
+      "command": "git rev-parse HEAD",
+      "exit": 0,
+      "output": "80bc36a87109a3da22509aa422b30415de462dc6"
+    },
+    {
+      "command": "git rev-parse --is-shallow-repository",
+      "exit": 0,
+      "output": "false"
+    },
+    {
+      "command": "git grep -n beforeOutbox -- tests/go-live",
+      "exit": 0,
+      "output": "tests/go-live/confirmation-allowance-journey.ts:90:        const beforeOutbox=await site.control('/_kiosk/messages');\ntests/go-live/confirmation-allowance-journey.ts:148:          expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);\ntests/go-live/confirmation-allowance-journey.ts:166:          requestIds:after.requests.map(row=>row.id),outboxBefore:beforeOutbox.length,"
+    },
+    {
+      "command": "git status --porcelain",
+      "exit": 0,
+      "output": ""
+    }
+  ],
+  "runtime_repro": {
+    "status": "not run",
+    "reason": "source head prerequisite failed before dependency setup"
+  },
+  "runtime_probe": {
+    "status": "not run"
+  },
+  "shard_reports": {
+    "status": "not run"
+  },
+  "shard_campaigns": {
+    "status": "not run"
+  },
+  "typecheck": {
+    "status": "not run"
+  },
+  "mechanical": {
+    "views_command": "node src/base/contract-docs.mjs write && node src/base/contract-docs.mjs check",
+    "views_exit": null,
+    "lock_command": "node scripts/edition-authoring/cli.mjs lock && node scripts/edition-authoring/cli.mjs check",
+    "lock_exit": null,
+    "reason": "no product changes; source head prerequisite failed"
+  },
+  "cleanup": "delete clone after evidence publication; no dependencies installed"
+}
