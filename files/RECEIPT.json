@@ -1,0 +1,126 @@
+{
+  "tag": "sd-mango-c-f133",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f133",
+  "scope": "SEND-007 acceptance 1 Resend uncertainty completion fence only",
+  "beforeCounts": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "afterCounts": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log"
+  },
+  "views": {
+    "write": "node src/base/contract-docs.mjs write",
+    "writeExit": 0,
+    "check": "node src/base/contract-docs.mjs check",
+    "checkExit": 0,
+    "generatedViewsRestored": true
+  },
+  "testRegistrations": {
+    "before": 1,
+    "after": 1,
+    "removedOrWeakenedAssertions": false
+  },
+  "githubCallsUsed": 2,
+  "mainAtStart": {
+    "head": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+    "verifyRun": 42480504208,
+    "verifyConclusion": "success",
+    "siteRun": 42480504239,
+    "siteConclusion": "success"
+  },
+  "publicationScan": {
+    "status": "fleet-owned; not run in cloud"
+  },
+  "landing": {
+    "status": "not performed; named branch only"
+  },
+  "commandCheck": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "log": "command-check.log"
+  },
+  "sourceCheck": {
+    "command": "pnpm run source:check",
+    "exit": 0,
+    "log": "source-check.log"
+  },
+  "lock": {
+    "write": "node scripts/edition-authoring/cli.mjs lock",
+    "writeExit": 0,
+    "check": "node scripts/edition-authoring/cli.mjs check",
+    "checkExit": 0,
+    "log": "lock-check.log"
+  },
+  "initialJourney": {
+    "exit": 1,
+    "log": "journey-initial.log",
+    "failure": "Step remains dispatching until next native Cron tick after recipient expiry; final positive control now executes that next tick."
+  },
+  "head": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+  "mainBeforeCandidate": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "candidateDiff": {
+    "contractChanged": false,
+    "productionChanged": false,
+    "generatedViewsCommitted": false,
+    "files": [
+      "sources.lock.json",
+      "tests/go-live/resend-completion-proof.ts",
+      "tests/go-live/resend-delivery.flow.ts",
+      "tests/go-live/resend-delivery.journeys.ts"
+    ]
+  },
+  "finalLockCheck": {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0,
+    "log": "final-lock-check.log"
+  },
+  "journey": {
+    "command": "timeout 1200 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config tests/go-live/playwright.config.js resend-delivery.journeys.ts",
+    "exit": 0,
+    "passed": 1,
+    "duration": "3.1m",
+    "log": "journey.log",
+    "revisionBinding": "Run used the exact final source and test bytes; commit occurred while it was running; no relevant bytes changed."
+  },
+  "productPush": {
+    "entrypoint": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f133",
+    "log": "product-push.log",
+    "exit": 0
+  },
+  "screenshots": [
+    "resend-completion-two-uncertain-1440.png",
+    "resend-completion-two-uncertain-390.png",
+    "resend-completion-restart-cron-1440.png",
+    "resend-completion-restart-cron-390.png",
+    "resend-completion-delivered-and-uncertain-1440.png",
+    "resend-completion-delivered-and-uncertain-390.png",
+    "resend-completion-lookup-expired-1440.png",
+    "resend-completion-lookup-expired-390.png",
+    "domain-rates-combined-providers.png"
+  ],
+  "candidateCI": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42484424595",
+      "id": 42484424595,
+      "name": "Verify",
+      "status": "in_progress"
+    }
+  ],
+  "pullRequest": null,
+  "mainEqualsCandidate": false
+}

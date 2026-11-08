@@ -1,0 +1,39 @@
+
+Running 1 test using 1 worker
+
+(node:1942) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery (3.1m)
+
+
+  1) tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "state": "completed",
+    +   "state": "dispatching",
+        "step_id": "e133c455-535f-4003-b8d4-87318a61e172",
+      }
+
+       at resend-completion-proof.ts:19
+
+      17 |     const dispatches=await site.rows(`SELECT step_id,state,started_at,completed_at FROM step_dispatches WHERE revision_id='${campaign.revisionId}'`);
+      18 |     expect(dispatches).toHaveLength(1);
+    > 19 |     expect(dispatches[0]).toMatchObject({step_id:stepId,state:completed?'completed':'dispatching'});
+         |                           ^
+      20 |     expect(dispatches[0].started_at).toBeGreaterThan(0);
+      21 |     if(completed)expect(dispatches[0].completed_at).toBeGreaterThanOrEqual(dispatches[0].started_at);
+      22 |     else expect(dispatches[0].completed_at).toBeNull();
+        at read (/home/agent/rer-consolidation/work/sd-mango-c-f133/run-mango/tests/go-live/resend-completion-proof.ts:19:27)
+        at proveResendCompletion (/home/agent/rer-consolidation/work/sd-mango-c-f133/run-mango/tests/go-live/resend-completion-proof.ts:37:25)
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f133/run-mango/tests/go-live/resend-delivery.flow.ts:123:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f133/run-mango/tests/go-live/resend-delivery.journeys.ts:3:187
+
+    Error Context: ../evidence/5459f745e348/go-live/resend-delivery.journeys.t-2104d-ends-or-fabricated-delivery/error-context.md
+
+  1 failed
+    tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery 
