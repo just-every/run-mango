@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "19d6b517c4e6040986cde20e319426a6e607ba48be512a4077ab09b2b45f4cb4",
+      "sha256": "94338d7c2744afc6ff17f2df18bdef604c6edf691c1e3274fe0426cbe2c580c4",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b913decd231537b1fffd8e3b54b837c51f020700b849eb9b010f7a5e860aeb02",
+      "sha256": "c572c181a98db9d3b17e4a268d27c0f73c7d78cb3c54a36f7079b93f9b7ecbfb",
       "executable": false
     },
     "DEMO.md": {
@@ -8462,7 +8462,7 @@
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
-      "sha256": "2a01b14bf8a5aeff561c035a1228f91745fee19b0d32381b673a413e8b7d75a2",
+      "sha256": "7e7d80ae30657ef92e62334d5cd1898986ab508f16754b8469078728069ffc69",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {
@@ -9577,6 +9577,22 @@
       "sha256": "40734a134d20542e23a933adb9bbb42732147d2aa32802ada68140625bf9cfc1",
       "executable": false
     },
+    "tests/support/campaign-asset-images/synthetic-mango-1.jpg": {
+      "sha256": "c69277f7cf89d3c16ef8f419159ced9154ed070224101e52e2a38c1eead8368d",
+      "executable": false
+    },
+    "tests/support/campaign-asset-images/synthetic-mango-2.gif": {
+      "sha256": "f641ccb9ea9da33deae7b92c882bc34aad8215d43ede2b3a202b1849f0bced03",
+      "executable": false
+    },
+    "tests/support/campaign-asset-images/synthetic-mango-3.webp": {
+      "sha256": "ceedbc883fa4bc5cf7437e688d7b4ac838c574ac7624e3d13b1849820f651c04",
+      "executable": false
+    },
+    "tests/support/campaign-asset-lifecycle.ts": {
+      "sha256": "1e038bc3d0983cb6e6ef4870fa8af844c919a045a920ca3f4e6231fb6a69d53b",
+      "executable": false
+    },
     "tests/support/designed-email.html": {
       "sha256": "52e5c9a8045d19e1a8b1accba388eed53cde37c04cd6c6b83ed1b2c8dfd53b25",
       "executable": false
@@ -9598,7 +9614,7 @@
       "executable": false
     },
     "tests/support/images.ts": {
-      "sha256": "e64393e6b5c34dc6448929acb74d9ef0423ee8bab12255579dae84ba80541c04",
+      "sha256": "0dc52ea2877acd658832aeee63d918d75cec0d94667e0e96c8c64aa26091dd82",
       "executable": false
     },
     "tests/support/local-platform.ts": {
