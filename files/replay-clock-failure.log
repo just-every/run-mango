@@ -1,0 +1,25 @@
+
+Running 1 test using 1 worker
+
+(node:4174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.1m)
+
+
+  1) tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation 
+
+    Error: clock.pauseAt: Error: Cannot fast-forward to the past
+        at ClockController._innerFastForwardTo (<anonymous>:202:13)
+        at ClockController.pauseAt (<anonymous>:133:16)
+        at async <anonymous>:396:30
+        at ClockController._innerFastForwardTo (<anonymous>:202:13)
+        at ClockController.pauseAt (<anonymous>:133:16)
+        at async <anonymous>:396:30
+        at confirmationAllowanceJourney (/home/agent/rer-consolidation/work/sd-mango-c-f136/run-mango/tests/go-live/confirmation-allowance-journey.ts:84:26)
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f136/run-mango/tests/go-live/resubscribe.flow.ts:154:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f136/run-mango/tests/go-live/shared-kiosk.journeys.ts:8:3
+
+    Error Context: ../evidence/e79593d85088/go-live/shared-kiosk.journeys.ts---3c3ce-ir-affirmative-confirmation/error-context.md
+
+  1 failed
+    tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation 

@@ -1,0 +1,59 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f136",
+  "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+  "tree": "bc1a4c39dcd460990f5a27fac5275b95001e64d6",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium PLAYWRIGHT_JSON_OUTPUT_NAME=<external report> cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --reporter=list,json",
+  "exit": 0,
+  "status": "passed",
+  "test": "[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation",
+  "file": "shared-kiosk.journeys.ts",
+  "durationMs": 86187,
+  "startedAt": "2026-11-08T13:26:02.050Z",
+  "stats": {
+    "startTime": "2026-11-08T13:26:02.050Z",
+    "duration": 87114.563,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "proofFileSha256": "4454af07be9035e1d0bf9a86ff0d6d9a629a708d07773fa8209380aa97f654dc",
+  "reconciliation": "confirmation-allowance-reconciliation.json",
+  "browser": "/usr/bin/chromium",
+  "providerBoundary": "Existing synthetic challenge verification and mail HTTP edges only",
+  "screenshots": [
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-1440.png",
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-390.png",
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "sha256": "48006d6dd3e707423b1cbbf1cbc39b5a35d572498bcd95f189c9a66d8fe75787"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-390.png",
+      "sha256": "cb44150a8e09c7a005c84311fc379350410a2bc10573ada330b82c1a6ec2d0b0"
+    }
+  ]
+}

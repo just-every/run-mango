@@ -1,0 +1,110 @@
+{
+  "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+  "checks": [
+    {
+      "name": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:01.220405+00:00",
+      "exit": 0,
+      "outputBytes": 28,
+      "outputSha256": "14cee29b7bd19487e15f4013d4fb85016e022ef21d230676971a6490c88436d2",
+      "output": "Wrote 0 contract documents.\n"
+    },
+    {
+      "name": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:01.456881+00:00",
+      "exit": 0,
+      "outputBytes": 32,
+      "outputSha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab",
+      "output": "Contract documents are current.\n"
+    },
+    {
+      "name": "restore-views",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:01.635766+00:00",
+      "exit": 0,
+      "outputBytes": 0,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": ""
+    },
+    {
+      "name": "lock-write",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:01.640177+00:00",
+      "exit": 0,
+      "outputBytes": 414537,
+      "outputSha256": "e14f2396399372852b6231cfeb57198d870489ad22a6347d6c7e57b3b410166a",
+      "output": "Full source-lock JSON output omitted from this receipt; digest retained."
+    },
+    {
+      "name": "lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:02.036201+00:00",
+      "exit": 0,
+      "outputBytes": 414551,
+      "outputSha256": "720406a9fd0bd3ca5059c28deef58164f0f132704a82c2540aa31ac20efac35b",
+      "output": "Full source-lock JSON output omitted from this receipt; digest retained."
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:02.391341+00:00",
+      "exit": 0,
+      "outputBytes": 208,
+      "outputSha256": "bfe773fd2a84dc68620381344563e4f590c5f4970dcc667e5899ef59be2ccbf1",
+      "output": "\u2009WARN\u2009 Unsupported engine: wanted: {\"node\":\"22.20.0\"} (current: {\"node\":\"v24.19.0\",\"pnpm\":\"10.12.4\"})\n\n> mango@0.4.0 typecheck /home/agent/rer-consolidation/work/sd-mango-c-f136/run-mango\n> tsc --noEmit\n\n"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "node",
+        "node_modules/@runeditrun/rer/bin/rer.mjs",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+      "startedAt": "2026-11-08T13:26:21.218692+00:00",
+      "exit": 0,
+      "outputBytes": 0,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": ""
+    }
+  ],
+  "migrationLedger": "not applicable: no migrations changed",
+  "cleanWorktree": true
+}

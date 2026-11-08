@@ -1,0 +1,120 @@
+{
+  "requests": [
+    {
+      "order": "hosted-first",
+      "request": 1,
+      "carrier": "hosted",
+      "status": 202,
+      "mail": 1,
+      "counter": [
+        {
+          "key": "signup-email:9b8063f838710ae75fa3483fc9b7f22b5b19527a7ca0aec10b1ea6a9ccbb9a25",
+          "window": 20765,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "order": "hosted-first",
+      "request": 2,
+      "carrier": "kiosk",
+      "status": 202,
+      "mail": 2,
+      "counter": [
+        {
+          "key": "signup-email:9b8063f838710ae75fa3483fc9b7f22b5b19527a7ca0aec10b1ea6a9ccbb9a25",
+          "window": 20765,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "order": "hosted-first",
+      "request": 3,
+      "carrier": "hosted",
+      "status": 202,
+      "mail": 3,
+      "counter": [
+        {
+          "key": "signup-email:9b8063f838710ae75fa3483fc9b7f22b5b19527a7ca0aec10b1ea6a9ccbb9a25",
+          "window": 20765,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "order": "hosted-first",
+      "request": 4,
+      "carrier": "kiosk",
+      "status": 202,
+      "mail": 3,
+      "counter": [
+        {
+          "key": "signup-email:9b8063f838710ae75fa3483fc9b7f22b5b19527a7ca0aec10b1ea6a9ccbb9a25",
+          "window": 20765,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "order": "kiosk-first",
+      "request": 1,
+      "carrier": "kiosk",
+      "status": 202,
+      "mail": 1,
+      "counter": [
+        {
+          "key": "signup-email:70fa5903c642636545132e714f2a883cd87075a9f5959eddbf9d4098a535dd16",
+          "window": 20765,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "order": "kiosk-first",
+      "request": 2,
+      "carrier": "hosted",
+      "status": 202,
+      "mail": 2,
+      "counter": [
+        {
+          "key": "signup-email:70fa5903c642636545132e714f2a883cd87075a9f5959eddbf9d4098a535dd16",
+          "window": 20765,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "order": "kiosk-first",
+      "request": 3,
+      "carrier": "kiosk",
+      "status": 202,
+      "mail": 3,
+      "counter": [
+        {
+          "key": "signup-email:70fa5903c642636545132e714f2a883cd87075a9f5959eddbf9d4098a535dd16",
+          "window": 20765,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "order": "kiosk-first",
+      "request": 4,
+      "carrier": "hosted",
+      "status": 202,
+      "mail": 3,
+      "counter": [
+        {
+          "key": "signup-email:70fa5903c642636545132e714f2a883cd87075a9f5959eddbf9d4098a535dd16",
+          "window": 20765,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "freshControl": {
+    "mail": 1,
+    "status": "subscribed"
+  }
+}
