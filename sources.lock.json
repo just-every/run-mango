@@ -2990,7 +2990,7 @@
       "executable": false
     },
     "src/core/app/client/ui/layout.tsx": {
-      "sha256": "1faae83338f70af1341e6fec4044fed24f4e2a4b54e1715b59b782656afd35d7",
+      "sha256": "f592f2b838a518edd1a054f52b240640a415a7c80e53cda0f9e17193778b5a20",
       "executable": false
     },
     "src/core/app/client/ui/materials.ts": {
@@ -6214,7 +6214,7 @@
       "executable": false
     },
     "src/routes/__root.tsx": {
-      "sha256": "c25c5b8143f39cb84d940b138d1ad8a4e85209258e5667689f36b47222ecf944",
+      "sha256": "cb5927f7cc4274e77117e38fd801bfeefc3c776575d23a215613380851d2c6f4",
       "executable": false
     },
     "src/routes/app.audience_.$id.tsx": {

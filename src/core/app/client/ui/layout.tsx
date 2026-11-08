@@ -8,6 +8,13 @@ import { SkipLink } from '@/core/features/site/SkipLink';
 import './materials';
 import { ResourceSnapshot } from '../lib/resource-snapshot';
 import { TimeZonePicker } from './time-zone-picker';
+import { useHydrated } from '../lib/time-zone';
+
+function AppHydration() {
+  const hydrated = useHydrated();
+  useEffect(() => {if (hydrated) document.documentElement.dataset.mangoHydrated = 'true';}, [hydrated]);
+  return null;
+}
 
 /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
 export function Brand() {
@@ -40,7 +47,7 @@ export function OperatorLayout() {
   const close = () => {setOpen(false); trigger.current?.focus();};
   useEffect(() => {setOpen(false);}, [pathname]);
   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
-  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
+  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /><AppHydration /></ResourceSnapshot.Provider>;
   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
     <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label="Mango"><Brand /></Link>
     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
