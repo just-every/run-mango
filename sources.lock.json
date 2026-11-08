@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "00fa1127cb6006186d743cdf43b02aabc51c4395cfac40001f1a5078179c80e7",
+      "sha256": "b94415c4b9e5dc7a5011b974a4b30cbeca6f76842a9d65ee86e2e4668ce6758c",
       "executable": false
     },
     "DEMO.md": {
@@ -1642,7 +1642,7 @@
       "executable": false
     },
     "operations/fixtures/invitation-runtime.mjs": {
-      "sha256": "86578fedce2758d1b980a8fd30637ffc3423575d4a5cbf576cbb2358b76087d3",
+      "sha256": "a3e6335b073c0994de67ba65cae8a8e82c40d20348c9e1b7a6eee328310cb6a5",
       "executable": false
     },
     "operations/fixtures/invitation-worker.ts": {
@@ -8986,7 +8986,15 @@
       "executable": false
     },
     "tests/go-live/operator-access-journey.ts": {
-      "sha256": "bb7840f60f6fc2e2a4941fac188f2468b7956f92a757866695caea6bde878541",
+      "sha256": "370514bb41dd972922f29680977a18b677a967f216928fb6305acdef095b661d",
+      "executable": false
+    },
+    "tests/go-live/operator-proof-journey.ts": {
+      "sha256": "d7b80a975bdf0c53be4f4d3d9590c097c55a0568c55bcaa71dc902917220ade8",
+      "executable": false
+    },
+    "tests/go-live/operator-settings-journey.ts": {
+      "sha256": "2742d73da88bb1d4e9132c130cc786425a61f5634f51bcce50a8587ee7b8c70c",
       "executable": false
     },
     "tests/go-live/opt-in-journey.ts": {
@@ -9070,7 +9078,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "8ec153e8ba392705971928418364a19babae96d6380e8b0df7afab4dcc96fdd0",
+      "sha256": "1a0b2625ec9c500d1c7d1ff14235b9918b086015f5fbad5dafd36581c7023759",
       "executable": false
     },
     "tests/go-live/saved-report-journey.ts": {
