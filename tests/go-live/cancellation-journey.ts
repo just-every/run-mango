@@ -13,7 +13,7 @@ async function detail(site:Installation,cookie:string,campaign:Campaign) {
   return json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
 }
 const recipients=(site:Installation,campaign:Campaign)=>site.rows(`SELECT id,contact_id,revision_id,step_id,destination,
-  transport_disposition,skip_reason,attempt_count,handoff_started_at,provider_message_id,idempotency_key,lease_token
+  transport_disposition,skip_reason,attempt_count,handoff_started_at,provider_message_id,idempotency_key
   FROM recipient_steps WHERE revision_id='${campaign.revisionId}' ORDER BY created_at,rowid`);
 const report=(site:Installation,cookie:string,campaign:Campaign)=>site.call(
   `/api/campaigns/${campaign.campaignId}/recipients?revisionId=${campaign.revisionId}`,{cookie}).then(response=>json(response,200));
@@ -67,11 +67,14 @@ export async function cancellationJourney(page:Page,info:TestInfo) {
   try {
     let cookie=await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
-    const emails=[801,802,803].map(id=>[`synthetic-mango-${id}`,'example.test'].join('@'));
-    for(const [index,email] of emails.entries())await confirmedContact(site,edge,cookie,email,['Iris Market','Leo Garden','Maya Orchard'][index]);
+    const addresses=Array.from({length:9},(_,index)=>[`synthetic-mango-${801+index}`,'example.test'].join('@'));
+    for(const [index,email] of addresses.entries())await confirmedContact(site,edge,cookie,email,['Iris Market','Leo Garden','Maya Orchard'][index%3]);
     await site.control('/_golive/clock',{hold:true});
-    for(const state of ['scheduled','dispatching','paused'] as const) {
+    for(const [scenario,state] of (['scheduled','dispatching','paused'] as const).entries()) {
+      const emails=addresses.slice(scenario*3,scenario*3+3);
       cookie=await site.open();
+      const [senderBudget]=await site.rows('SELECT MAX(next_at) AS due FROM provider_pacing');
+      await advanceTo(site,senderBudget.due+1);
       await site.control('/_golive/sender-evidence');
       const clock=await site.control('/_golive/clock');
       const times=[1,26,51].map(hours=>clock.now+hours*3600000);
@@ -103,7 +106,7 @@ export async function cancellationJourney(page:Page,info:TestInfo) {
         const [budget]=await site.rows('SELECT MAX(next_at) AS due FROM provider_pacing');
         await advanceTo(site,budget.due+1);
         await site.control('/_golive/cron');
-        await expect.poll(async()=>(await recipients(site,campaign)).filter(row=>row.transport_disposition==='handoff-unknown'&&row.lease_token===null).length,{timeout:60000}).toBe(1);
+        await expect.poll(async()=>(await site.rows(`SELECT id FROM recipient_steps WHERE revision_id='${campaign.revisionId}' AND transport_disposition='handoff-unknown' AND lease_token IS NULL`)).length,{timeout:60000}).toBe(1);
         await settled(site,campaign);
         // The third real consumer has already claimed its recipient, but has
         // not crossed the atomic handoff boundary when the owner cancels.
@@ -143,20 +146,29 @@ export async function cancellationJourney(page:Page,info:TestInfo) {
         ?{...row,disposition:'skipped',skipReason:'campaign-cancelled',reason:'campaign-cancelled'}:row);
       expect(afterReport.rows).toEqual(expected);
       const after=await recipients(site,campaign);
-      for(const row of unsent)expect(after.find(item=>item.id===row.id)).toMatchObject({...row,
+      for(const row of unsent)expect(after.find(item=>item.id===row.id)).toEqual({...row,
         transport_disposition:'skipped',skip_reason:'campaign-cancelled'});
       expect(after.filter(row=>retained.some(item=>item.id===row.id))).toEqual(retained);
       console.log(`PROBE CAMP-009 1: ${state} native cancel and API readback -> ${unsent.length} identified unsent recipients across three approved steps skipped as campaign-cancelled in ${Math.round(elapsed)} ms; ${retained.length} handoffs retained`);
       await site.control('/_golive/barrier',{action:'release'});
-      await screens(page,info,site,campaign,name,expected);
       // Restart the actual installation with its D1 and native Queue state.
       const emissions=await site.control('/_golive/emissions');
       const dispatches=emissions.flatMap((item:any,index:number)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId?[index]:[]);
       expect(dispatches.length).toBeGreaterThan(0);
-      // Replay every captured command before restart, then require its native
-      // consumer to return. Restart must also fence persisted delayed commands.
-      for(const index of dispatches)await site.control('/_golive/replay',{index});
-      await settled(site,campaign);
+      // Exercise every later due time and replay actual captured dispatches,
+      // waiting for each native consumer to return rather than sleeping.
+      for(const at of [...times,times[2]+3*3600000]) {
+        await advanceTo(site,at+1);
+        await site.control('/_golive/cron');
+        for(const index of dispatches) {
+          const beforeReplay=await site.control('/_golive/emissions');
+          const completions=beforeReplay[index].completedQueues.length;
+          await site.control('/_golive/replay',{index});
+          await expect.poll(async()=>(await site.control('/_golive/emissions'))[index].completedQueues.length,{timeout:60000}).toBeGreaterThan(completions);
+        }
+        expect((await report(site,cookie,campaign)).rows).toEqual(expected);
+        expect(marketing()).toEqual(handoffs);
+      }
       const held=await site.control('/_golive/clock');
       await site.runtime.close();
       site=await installation(edge,signer,options);

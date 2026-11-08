@@ -8801,6 +8801,10 @@
       "sha256": "b0326161c3b06ee3e2ed3305a912ed05789cb2a23d21552758240354b44f162a",
       "executable": false
     },
+    "tests/go-live/cancellation-journey.ts": {
+      "sha256": "fbdca44b5f7179c388ff3a3a6c6768e5035aeae4369082bca73ff2a68e3edcf3",
+      "executable": false
+    },
     "tests/go-live/chosen-catalog-edge.ts": {
       "sha256": "89f55f2389ac2f42ccfd72cf22ece649c30c8d1bc41bc055f9185a0ec94869bb",
       "executable": false
