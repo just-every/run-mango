@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 21 | 197 | 89 | 307 |
+| Core | 22 | 196 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 21 | 197 | 98 | 316 |
+| Full target | 22 | 196 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. DESIGN-004 was exercised through its registered native import journey with the refusal helper at commit `22c60b5c54b06c83a4120c511950f69dc2a84d4a` (6 November 2026); this status candidate retains those source and test bytes. Its real email-client field proof remains in R-201. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -1620,7 +1620,7 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE
 
 #### RESULT-010 — Ordinary campaign images are untracked
 
-Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
+Core · published · **done** · From RESULT-005 · Cites BASE-DATA-005
 
 **Requirement.** An ordinary campaign image is shared content and never an open tracker.
 
@@ -1629,8 +1629,8 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
 2. A fetch retains no address, user agent, cookie, recipient or request time, only the current-minute per-image rate counter.
 3. An ordinary image fetch is never counted or shown as an open.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. Missing public-door journey: “Ordinary campaign images are untracked — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/ordinary-images.journeys.ts` — “[RESULT-010] delivered ordinary images share one URL, retain only a minute counter and never credit opens”: acceptance 1 compares both actual email handoffs with the native upload URL; acceptance 2 compares every application table after GET and HEAD with distinct requester inputs, allowing only the current-minute image counter; acceptance 3 reconciles unchanged native results and operator counts after reload, with a distinct pixel as the positive control and 1440 and 390 browser proof.
+**Gap.** None.
 
 #### RESULT-006 — Deliverability reporting
 
