@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "00fa1127cb6006186d743cdf43b02aabc51c4395cfac40001f1a5078179c80e7",
+      "sha256": "b913decd231537b1fffd8e3b54b837c51f020700b849eb9b010f7a5e860aeb02",
       "executable": false
     },
     "DEMO.md": {
@@ -8462,7 +8462,7 @@
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
-      "sha256": "519251f5a407cc61090b2b9bd417873bd6449d0de85c45e5dce2046c0fc330d6",
+      "sha256": "2a01b14bf8a5aeff561c035a1228f91745fee19b0d32381b673a413e8b7d75a2",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {
@@ -8890,7 +8890,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "0b8c8779d397da950d00dd65888357369af3a974ac5a94a194b634db8a281290",
+      "sha256": "8b517e066c85f76bed58c303d4882c01e4010760ad0cb29911a176cfd7172690",
       "executable": false
     },
     "tests/go-live/email-size-imports.ts": {
@@ -8907,6 +8907,10 @@
     },
     "tests/go-live/embed-origin.journeys.ts": {
       "sha256": "f6b843289b32f75c285d936871bec5e923773d6af0276ee7cd5729af9cbc6f1a",
+      "executable": false
+    },
+    "tests/go-live/fixture-links.ts": {
+      "sha256": "09eb78c760af26ac6c7777009aa3617c385eccfa424d6d087d5072d899188045",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
@@ -9210,7 +9214,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "4e54e9adbd6035a7807bcf3b4eec23fb0a7b7b6aeb74324b6b00a6444c68b150",
+      "sha256": "5be0444a3c4e9fe91c5a7b12f5f317c01258a89253cffca894288c44662a8777",
       "executable": false
     },
     "tests/health-lifetime.ts": {
