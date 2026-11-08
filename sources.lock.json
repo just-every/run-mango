@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "d5a726fbd2bca20b3f1f061c3d702bcfbaf49305a2201acd5073a66c3f97b0de",
+      "sha256": "1889c94edd73c1a29bfc1eb4d25ee4890786e2571fab034cfb081e63cf4a567f",
       "executable": false
     },
     "DEMO.md": {
@@ -1206,7 +1206,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "44472c564974dfcf514d2308d1438af8d3a2e653b51afa2bda7e6b4b8a5fd457",
+      "sha256": "3ce1c6a883182f36714a067234448d628739b116e0bdc4095133eb4da271552b",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -9143,6 +9143,10 @@
     },
     "tests/go-live/restriction-private-journey.ts": {
       "sha256": "6caa9fa41b1350d3540d97943f934040f2a8fd4b44d8a4a45046b254c9332af8",
+      "executable": false
+    },
+    "tests/go-live/restriction-screens.ts": {
+      "sha256": "b94f2876a48d692937b718dcee5582a9401db79182ae6a8f722fee93f7d84524",
       "executable": false
     },
     "tests/go-live/resubscribe-support.ts": {
