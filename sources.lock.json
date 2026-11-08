@@ -8349,6 +8349,14 @@
       "sha256": "67945c5f2425696e57f42eba760534620b3aad775ee31e18c0e26dd2d9894303",
       "executable": false
     },
+    "tests/audience-controls/channel-state-commerce.ts": {
+      "sha256": "72f7bd4496c7c5b5a0d9070ce34eb8267f49e4bbecd8999b4b7bc7703d937e97",
+      "executable": false
+    },
+    "tests/audience-controls/channel-status-journey.ts": {
+      "sha256": "fb17ca31c738bc42da98a511be02415c6714a7e02e45c5d6f4c8bc255ca32bab",
+      "executable": false
+    },
     "tests/audience-controls/contact-profile-flow.ts": {
       "sha256": "9baf5540d9fc5fff8da762c4fcca1db0495fa345a55719379fc48c877cc7b58e",
       "executable": false
@@ -8382,7 +8390,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "62ba976bad49c99cf7750ce4e2714a5b16e9d4ee7f9b5b223b9e3313edbdd616",
+      "sha256": "551e79322a342c5a092e94c525a47bc9d6f7cc13f850c27ce43ae162345fe2c3",
       "executable": false
     },
     "tests/audience-import/config.js": {
