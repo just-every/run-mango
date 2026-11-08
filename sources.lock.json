@@ -9002,7 +9002,7 @@
       "executable": false
     },
     "tests/go-live/operator-access-journey.ts": {
-      "sha256": "bb7840f60f6fc2e2a4941fac188f2468b7956f92a757866695caea6bde878541",
+      "sha256": "680531c1914b1378bd40a834bd456d90633f7cc0052064ab348ca0e0acb48dca",
       "executable": false
     },
     "tests/go-live/opt-in-journey.ts": {
@@ -9094,7 +9094,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "8ec153e8ba392705971928418364a19babae96d6380e8b0df7afab4dcc96fdd0",
+      "sha256": "a3aeed71775bad30e1f96ec9f89d16e82acd10e9e6b898b03bd03aa0f078ca86",
       "executable": false
     },
     "tests/go-live/saved-report-journey.ts": {
@@ -9230,7 +9230,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "5be0444a3c4e9fe91c5a7b12f5f317c01258a89253cffca894288c44662a8777",
+      "sha256": "71ae70086a3f5e02049dfb1e72feb0a00aed785ae1231e1a4dad2535d567073e",
       "executable": false
     },
     "tests/health-lifetime.ts": {
