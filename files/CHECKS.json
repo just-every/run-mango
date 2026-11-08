@@ -1,0 +1,121 @@
+{
+  "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+  "main_merged": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "starting_head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+  "branch": "cloud/sd-mango-c-f136-pc1",
+  "commands": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check origin/main...HEAD",
+      "exit": 0
+    }
+  ],
+  "migrations": "none changed; ledger check not applicable",
+  "candidate_contract_and_generated_view_diff_from_main": "empty",
+  "status_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "new_test_registrations": 0,
+  "deleted_existing_assertions": 0,
+  "screenshots": [
+    {
+      "file": "confirmation-allowance-hosted-first-admitted-1440.png",
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8",
+      "bytes": 169070
+    },
+    {
+      "file": "confirmation-allowance-hosted-first-admitted-390.png",
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636",
+      "bytes": 106158
+    },
+    {
+      "file": "confirmation-allowance-hosted-first-exhausted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078",
+      "bytes": 120811
+    },
+    {
+      "file": "confirmation-allowance-hosted-first-exhausted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc",
+      "bytes": 83440
+    },
+    {
+      "file": "confirmation-allowance-kiosk-first-admitted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078",
+      "bytes": 120811
+    },
+    {
+      "file": "confirmation-allowance-kiosk-first-admitted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc",
+      "bytes": 83440
+    },
+    {
+      "file": "confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "sha256": "99ae7c80807c5b2926a7cdc3ca71a27e38e045eb1ac35b14e9a5831cc6ad995e",
+      "bytes": 169464
+    },
+    {
+      "file": "confirmation-allowance-kiosk-first-exhausted-390.png",
+      "sha256": "cb44150a8e09c7a005c84311fc379350410a2bc10573ada330b82c1a6ec2d0b0",
+      "bytes": 106288
+    }
+  ],
+  "publication_scan": {
+    "commit": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "reason": "Not run in cloud; exact-tree full-history scan belongs to guarded Mac lander."
+  },
+  "main_equality": false,
+  "run_site": "not run on this branch; fleet checks after landing",
+  "github_calls_used": 8,
+  "ci_status": "in_progress",
+  "main_remote_at_pre_ready": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "product_remote_at_pre_ready": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+  "added_test_text_email_literals": 0,
+  "contract_cells_changed_by_builder": 0,
+  "product_push": {
+    "status": "success",
+    "branch": "cloud/sd-mango-c-f136-pc1",
+    "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec"
+  },
+  "first_save": {
+    "head": "01b4a3d333a36c348e93a0bd44ed8c374d7cfb17",
+    "status": "pushed",
+    "skip_ci": true
+  },
+  "verify_run_id": 42499768908
+}

@@ -1,0 +1,210 @@
+VERIFY_MEMBER main
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f136-pc1/reproduce/authoring/members/main/evidence/d79a42e46efd/verify/main-GolnKr
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-08T16:02:20.231Z"}
+main
+
+Running 4 tests using 2 workers
+
+(node:2209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2210) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=1 eligible=1 excluded=0 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=1 excluded=3 emailSteps=2
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=3 excluded=1 emailSteps=6
+PROBE CAMP-020 counts: candidates=4 eligible=2 excluded=2 emailSteps=4
+Full promotion proof: start; elapsed=0ms
+Full promotion proof: runtime ready; elapsed=32120ms
+Full promotion proof: build six products; elapsed=58667ms
+Full promotion proof: build social links; elapsed=66550ms
+Full promotion proof: save draft; elapsed=70733ms
+Full promotion proof: reload saved draft; elapsed=72116ms
+Full promotion proof: round trip complete; elapsed=76061ms
+Full promotion proof: screen proofs; elapsed=76213ms
+Full promotion proof: render complete email; elapsed=81939ms
+Full promotion proof: approve and dispatch; elapsed=83216ms
+Full promotional email: storedCharacters=32117; sentBytes=33768; shownBytes=33768; limit=102400
+Chosen size: runtime ready; elapsed=24020ms
+Chosen size: catalog synced; elapsed=27318ms
+Chosen size: builder ready; elapsed=36881ms
+Chosen size: columns built; elapsed=38979ms
+Chosen size: six products picked; elapsed=41254ms
+Chosen size: saved six products; elapsed=42820ms
+Chosen size: visible bound; elapsed=47580ms
+Chosen size: hidden bound; elapsed=69942ms
+Chosen six-item promotion: storedCharacters=27799; bound=31814; edgeBytes=31814
+Chosen size journey elapsed=77532ms
+Catalog guard: six roles and anonymous pass exact denials without edge reads
+Catalog guard: malformed payloads preserve the exact stored revision
+Catalog guard: escaped opaque values and unsafe destinations pass
+Catalog guard journey elapsed=14425ms; native imported history and MOVE-011 conversion do not create catalog choices; imported and flow authoring remain gaps
+Combined catalog journey elapsed=91997ms
+  ✓  1 tests/campaign-authoring/browser.spec.ts:6:1 › [CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft (4.1m)
+PROBE DESIGN-011 acceptance-4: native retained artifact URLs before and after reload -> signed-out 401, Author 200 with exact PNG and LayerDoc bytes; records, spend, provider traffic and campaign authority unchanged
+PROBE DESIGN-004 acceptance-4 reserved-personalization: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 compiled-grammar: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 4 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 empty-crop: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.
+  ✘  3 tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px (42.1s)
+(node:6789) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Native deadline matrix passed: local
+PROBE DESIGN-007 acceptance-6-start: native start during provider 429 wait -> 409 design_job_active; no new job, command, creation request or purchase
+PROBE DESIGN-007 acceptance-6-choice: earlier design B control during latest wait -> earlier layout ready, one matching purchase and cost; latest wait and draft authority unchanged after reload
+  ✓  2 tests/campaign-authoring/design-generation.spec.ts:5:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010][DESIGN-011] generate and select a design without saving or spending twice, expose provider refusal and keep retained artifacts private and byte-exact (6.2m)
+Native deadline matrix passed: instant
+PROBE CAMP-010 acceptance-1 additional doors: complete-create and PATCH, email and SMS, local and UTC-only inputs -> independently specified ordinary and DST local-day-end deadlines; no approval, recipients or dispatch jobs.
+PROBE CAMP-010 acceptance-1: authenticated native PATCH with local times and IANA zone, both send-by fields omitted -> ordinary and both DST day-end instants persisted; reopened controls; draft with no approval, recipients or dispatch jobs.
+Deadline email: starting installation; elapsed=0ms
+Deadline email: installation ready; elapsed=29433ms
+Deadline email: contacts confirmed; elapsed=31143ms
+Deadline email: campaigns approved; elapsed=33574ms
+Deadline email: partial handoff barrier reached; elapsed=39030ms
+PROBE CAMP-010 acceptance-2 email: approved native work reaches expiry at equality -> queued and prepared recipients skipped with send-window-expired, zero attempts; prior handoffs retained.
+PROBE CAMP-010 acceptance-3 email: missed first and later steps, delayed native queue command, paused window and replay after expiry -> no late marketing handoff.
+Deadline sms: starting installation; elapsed=0ms
+Deadline sms: installation ready; elapsed=21781ms
+Deadline sms: contacts confirmed; elapsed=23050ms
+Deadline sms: campaigns approved; elapsed=24833ms
+Deadline sms: partial handoff barrier reached; elapsed=25602ms
+PROBE CAMP-010 acceptance-2 sms: approved native work reaches expiry at equality -> queued and prepared recipients skipped with send-window-expired, zero attempts; prior handoffs retained.
+PROBE CAMP-010 acceptance-3 sms: missed first and later steps, delayed native queue command, paused window and replay after expiry -> no late marketing handoff.
+  ✓  4 tests/campaign-authoring/step-deadline.spec.ts:16:1 › [CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue (3.2m)
+
+
+  1) tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert')
+    Expected substring: "Email is too large."
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert')
+
+
+      76 |     await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+      77 |     const sizeError=dialog.getByRole('alert');
+    > 78 |     await expect(sizeError).toContainText('Email is too large.');
+         |                             ^
+      79 |     await expect(sizeError).toContainText('Largest blocks:');
+      80 |     await expect(sizeError).toContainText('bytes');
+      81 |     expect(await dialog.getByLabel('LayerDoc',{exact:true}).evaluate(async element=>(element as HTMLInputElement).files![0].text())).toBe(oversizedDoc);
+        at [REDACTED]/tests/campaign-authoring/design-import.spec.ts:78:29
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f136-pc1/reproduce/authoring/members/main/evidence/d79a42e46efd/main/campaign-authoring-design--f0f17-ry-approval-check-at-1440px/error-context.md
+
+  Slow test file: tests/campaign-authoring/design-generation.spec.ts (6.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px 
+  3 passed (8.1m)
+Verification failed: main: exit 1, signal none.
+Command: pnpm
+Last output (up to 40 lines):
+Deadline sms: starting installation; elapsed=0ms
+Deadline sms: installation ready; elapsed=21781ms
+Deadline sms: contacts confirmed; elapsed=23050ms
+Deadline sms: campaigns approved; elapsed=24833ms
+Deadline sms: partial handoff barrier reached; elapsed=25602ms
+PROBE CAMP-010 acceptance-2 sms: approved native work reaches expiry at equality -> queued and prepared recipients skipped with send-window-expired, zero attempts; prior handoffs retained.
+PROBE CAMP-010 acceptance-3 sms: missed first and later steps, delayed native queue command, paused window and replay after expiry -> no late marketing handoff.
+  ✓  4 tests/campaign-authoring/step-deadline.spec.ts:16:1 › [CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue (3.2m)
+
+
+  1) tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert')
+    Expected substring: "Email is too large."
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Import a 12ui design' }).getByRole('alert')
+
+
+      76 |     await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+      77 |     const sizeError=dialog.getByRole('alert');
+    > 78 |     await expect(sizeError).toContainText('Email is too large.');
+         |                             ^
+      79 |     await expect(sizeError).toContainText('Largest blocks:');
+      80 |     await expect(sizeError).toContainText('bytes');
+      81 |     expect(await dialog.getByLabel('LayerDoc',{exact:true}).evaluate(async element=>(element as HTMLInputElement).files![0].text())).toBe(oversizedDoc);
+        at [REDACTED]/tests/campaign-authoring/design-import.spec.ts:78:29
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f136-pc1/reproduce/authoring/members/main/evidence/d79a42e46efd/main/campaign-authoring-design--f0f17-ry-approval-check-at-1440px/error-context.md
+
+  Slow test file: tests/campaign-authoring/design-generation.spec.ts (6.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px 
+  3 passed (8.1m)
+Log: /home/agent/rer-consolidation/work/sd-mango-c-f136-pc1/reproduce/authoring/members/main/evidence/d79a42e46efd/verify/main-GolnKr/main/install.log
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f136-pc1/reproduce/authoring/members/go-live/evidence/d79a42e46efd/verify/go-live-EGmAmb
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T16:10:25.317Z"}
+go-live
+
+Running 4 tests using 2 workers
+
+(node:10832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Conversion proof: apply archive
+Conversion proof: read archive
+Conversion proof: start template 151
+Conversion proof: inspect mapped body
+Conversion proof: run mapped checks
+Conversion proof: open mapped preview
+Conversion proof: mapped preview 1440
+Conversion proof: corrected footer
+Conversion proof: start template 152
+  ✓  2 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (1.3m)
+  ✓  1 tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery (3.2m)
+(node:10833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built source phase runtime ready elapsed=3256ms
+Built source phase owner ready elapsed=3279ms
+Built source phase WooCommerce connected elapsed=3361ms
+Built source phase customer queued elapsed=3402ms
+Built source phase customer synced elapsed=3545ms
+Built source phase product queued elapsed=3570ms
+Built source phase product synced elapsed=3719ms
+Built source phase order queued elapsed=3740ms
+Built source phase order synced elapsed=3887ms
+Built source phase refund queued elapsed=3908ms
+Built source phase refund synced elapsed=4051ms
+Built source phase cart queued elapsed=4081ms
+Built source phase cart synced elapsed=4222ms
+Store facts phase browsing synced elapsed=159ms
+Store facts phase Stripe connected elapsed=174ms
+Store facts phase customer received elapsed=213ms
+Store facts phase payment received elapsed=229ms
+Store facts phase checkout-session received elapsed=249ms
+Store facts phase subscription received elapsed=273ms
+Store facts phase refund received elapsed=294ms
+Source export read elapsed=2763ms
+Store facts phase export read elapsed=3058ms
+Built store source proof: WooCommerce=6 Stripe=5; one shared contact; all identifiers, connections and edge occurrence times read through the owner export
+  ✓  4 tests/go-live/woocommerce.journeys.ts:11:1 › [INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery (47.1s)
+NATIVE_CRON_PUNCTUALITY {"driver":"Configured wall-clock driver; Vite does not initiate Cron Triggers; not hosted acceptance","ticks":[{"scheduledAt":"2026-11-08T16:13:00.000Z","enteredAt":"2026-11-08T16:13:00.001Z","finishedAt":"2026-11-08T16:13:00.046Z"},{"scheduledAt":"2026-11-08T16:14:00.000Z","enteredAt":"2026-11-08T16:14:00.000Z","finishedAt":"2026-11-08T16:14:00.040Z"},{"scheduledAt":"2026-11-08T16:15:00.000Z","enteredAt":"2026-11-08T16:15:00.001Z","finishedAt":"2026-11-08T16:15:00.047Z"}],"scheduledAt":"2026-11-08T16:15:02.000Z","startedAt":"2026-11-08T16:15:02.049Z","latenessMs":49}
+  ✓  3 tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth (4.1m)
+
+  4 passed (5.4m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-08T16:10:25.317Z","durationMs":324074,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":324106,"boundary":"coordinator"}

@@ -1,0 +1,4 @@
+
+> mango@0.4.0 typecheck /workspace/mango
+> tsc --noEmit
+

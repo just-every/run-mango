@@ -1,0 +1,22 @@
+{
+  "tag": "sd-mango-c-f136-pc1",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f136-pc1",
+  "starting_head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+  "main_at_clone": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+  "contract_status_counts": {
+    "partial": 197,
+    "done": 21,
+    "missing": 98
+  },
+  "failed_verify": {
+    "run": 42484916479,
+    "campaigns_job": 128744971773,
+    "authoring_job": 128744971783
+  },
+  "github_calls_used": 6,
+  "transport": {
+    "failed_job_logs": "Both --log-failed invocations exited zero with empty output",
+    "artifact_downloads": "Both artifact redirects were refused: Forbidden (HTTP 403). No retry."
+  }
+}

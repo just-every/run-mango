@@ -1,0 +1,48 @@
+{
+  "head": "cc2d1f618b695ddc1e28306e8f9774f732a66a69",
+  "job": 128744971783,
+  "command": "SHARD=authoring CI=true WRANGLER_SEND_METRICS=false PLAYWRIGHT_SKIP_BROWSER_GC=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium node scripts/verification/ci.mjs \"$SHARD\"",
+  "test": "tests/campaign-authoring/design-import.spec.ts# [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px",
+  "exit": 1,
+  "failure": "Expected substring: \"Email is too large.\"; Timeout: 5000ms; Error: element(s) not found",
+  "observed_state": "Uploading images: 3 of 4; Importing button disabled",
+  "main_comparison": {
+    "head": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+    "exit": 0,
+    "tests_passed": 1,
+    "elapsed": "1.1 minutes"
+  },
+  "stage_result": {
+    "status": "FAIL",
+    "durationMs": 484926
+  },
+  "campaigns": {
+    "exit": 0,
+    "tests_passed": 4,
+    "elapsed": "8.5 minutes"
+  },
+  "node": "22.20.0",
+  "browser": "/usr/bin/chromium with --no-sandbox",
+  "repair": "Await the real oversized import email-size response before checking the refusal; retain the original assertions.",
+  "full_authoring_exit": 1,
+  "authoring_go_live": {
+    "exit": 0,
+    "tests_passed": 4,
+    "elapsed": "5.4 minutes"
+  },
+  "repair_attempts": [
+    {
+      "head": "d7b806a22be83833e1fa3d894842ce9d28dd8458",
+      "exit": 1,
+      "failure": "Test timeout of 180000ms exceeded; oversized compilation refuses locally before the expected HTTP request exists.",
+      "resolution": "Replace the nonexistent HTTP-response wait with the real form busy-state completion."
+    },
+    {
+      "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+      "exit": 0,
+      "test": "tests/campaign-authoring/design-import.spec.ts",
+      "durationMs": 36147,
+      "resolution": "Await aria-busy=false; all original assertions retained."
+    }
+  ]
+}

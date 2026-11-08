@@ -1,0 +1,10 @@
+{
+  "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+  "test": "[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px",
+  "file": "tests/campaign-authoring/design-import.spec.ts",
+  "status": "passed",
+  "expectedStatus": "passed",
+  "durationMs": 36147,
+  "retry": 0,
+  "errors": []
+}

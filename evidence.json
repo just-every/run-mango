@@ -1,0 +1,184 @@
+{
+  "files": [
+    {
+      "blob": "8927a99d0e1ee4f369716ae70b16933af8481285",
+      "bytes": 2657,
+      "path": "ALLOWANCE-RECONCILIATION.json",
+      "sha256": "40d837082c12405b7dba20c713cc31e5dbaa4ae89316fda6c858894d969d58f1"
+    },
+    {
+      "blob": "fe01a2c1c22492388259c6dffafe864901305923",
+      "bytes": 682,
+      "path": "BASELINE.json",
+      "sha256": "67ef47ec528c6b3a5d511a89ba070ff9832bc27e342ac432eaaa9d150a9f1ffa"
+    },
+    {
+      "blob": "06a4a14a1e9f95c735a7159fa6d47db5c0ba1f41",
+      "bytes": 3822,
+      "path": "CHECKS.json",
+      "sha256": "9f9175f5f1ab00dabd027068c04f39c5a7a5bf302fa70dfe904ba5eb1d915916"
+    },
+    {
+      "blob": "a8539805d6be8fe45b089bbf7101327230923774",
+      "bytes": 225,
+      "path": "CI-DISCOVERY-2.json",
+      "sha256": "ee482734144e3a3d8a9b784c1ef4df660c48fdfc96cce309736e331710dcc422"
+    },
+    {
+      "blob": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+      "bytes": 3,
+      "path": "CI-DISCOVERY.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "blob": "f275cfaa211735eb1fd59ee29ba69190e4779b42",
+      "bytes": 451,
+      "path": "CI.json",
+      "sha256": "421b9b581c8f2e1562e9cb183e331b48592c636be8d5148949ecdec831b06e83"
+    },
+    {
+      "blob": "fde05d8f9e9625e927433a41a6937b78ed0b8dfa",
+      "bytes": 1019,
+      "path": "IDENTITY.log",
+      "sha256": "d40c7fe89a7f3bcc95a6722fed1d9edc5273743088f4a11967738244646a3d44"
+    },
+    {
+      "blob": "b9f5ec75b7311c9d80f29490999e25be3e8a29e8",
+      "bytes": 373,
+      "path": "IMPORT-RUN.json",
+      "sha256": "8fb21bf64ece2c552c18741ba3f3ac19ebef12d339973bc75d1517d9e3d081bd"
+    },
+    {
+      "blob": "c3b524d3068f8d9c1f7db3d01838820f3e112fe6",
+      "bytes": 361,
+      "path": "KIOSK-RUN.json",
+      "sha256": "4142f7b2e58debb659d73901ea2fbb8613da3c064c2f489f8738cc60218cc10d"
+    },
+    {
+      "blob": "e28e733e4926d9cff13f1faedb4a286c083e005f",
+      "bytes": 1129,
+      "path": "MAIN-IMPORT.log",
+      "sha256": "043b7077a91a6b4b092b5bd06438817a882cefe6195e96c0772cd7d908a393d6"
+    },
+    {
+      "blob": "49c8c6063899e51944d63cf781b684642bf9f78f",
+      "bytes": 1776,
+      "path": "PLAN.md",
+      "sha256": "8d9214b691fb5a935ff8e0dda02e2e1960a85f9e405b9b145e200e994b1e8797"
+    },
+    {
+      "blob": "b706c5eee5d89435248d31ff5b677db98498fbff",
+      "bytes": 723,
+      "path": "PUSH.log",
+      "sha256": "643983c7d52f996914df239ad8b0b7bc4b26b10aa76a87b962379c27a09dc0a3"
+    },
+    {
+      "blob": "04b8b1e5d55ebd53a3d05ddcbdd6eb4d499bd21f",
+      "bytes": 1761,
+      "path": "REPAIR-1.log",
+      "sha256": "2d9d68ef74f37f392ebee7e97028006562c8abc150c656251d707663913a3964"
+    },
+    {
+      "blob": "8c07d8d9ae99eac283579bc7d4babdfb7272397e",
+      "bytes": 10804,
+      "path": "REPORT.md",
+      "sha256": "60ab50566bfe4ee4e9dc0f4a3268f4e7fb75dcc72913e62e22ffb6527cf885a5"
+    },
+    {
+      "blob": "afa8bb1bb3942f767191ad672782083358764f7f",
+      "bytes": 16312,
+      "path": "REPRO-AUTHORING.log",
+      "sha256": "0afaf3bae8287fb492b87bd5cd00d1cb3c03745d8788d550ed3e05469421367e"
+    },
+    {
+      "blob": "8e729daba943a828df2ff84551b1c79e18f021c9",
+      "bytes": 2709,
+      "path": "REPRO-CAMPAIGNS.log",
+      "sha256": "ca98a37cb78a4e19fe44df605500a5bb66cb1d31b504fc39c08d147d2ef2ab04"
+    },
+    {
+      "blob": "b86d40438603168f723842dd00c0a3d5ecd1f45f",
+      "bytes": 1132,
+      "path": "TEST-IMPORT.log",
+      "sha256": "4d5367d3b5fe33d750842533e6427c8bacedb9419fe6a48a9f668576c16573b7"
+    },
+    {
+      "blob": "cd6a7d4a4753a12896bf9296418494bfe0da82e1",
+      "bytes": 412,
+      "path": "TEST-KIOSK.log",
+      "sha256": "c8609624e919d8a60f57cf600ee4fdb03ba05ee71aff21ae8eeb2c1676b1dd35"
+    },
+    {
+      "blob": "f21bb15e2a3571b3c5137dea4924020de0324c35",
+      "bytes": 1451,
+      "path": "TRANSPORT.md",
+      "sha256": "f341049e8abd1425c0785a0a2cc661a9d38118647fdeea1695b1518b001dff80"
+    },
+    {
+      "blob": "127b4ed8a77b953fbe8c1ec148ee03947cee4642",
+      "bytes": 58,
+      "path": "TYPECHECK.log",
+      "sha256": "e55a769bc8b1c16966aefaf3f47adfa9999002f0a85d8aede9016f87935263bd"
+    },
+    {
+      "blob": "5d74a14e20dd2c6a77e0d099615907277192981d",
+      "bytes": 1910,
+      "path": "VERIFY_REPRODUCED.json",
+      "sha256": "a2d22d48f11ed8a064b04c0c03b13d779776f69082c13688221a6c943e5f1c59"
+    },
+    {
+      "blob": "020d1e970372dba2b833593fdd146c20f1e4538a",
+      "bytes": 169070,
+      "path": "confirmation-allowance-hosted-first-admitted-1440.png",
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8"
+    },
+    {
+      "blob": "9ec439a693b774505138544b37778196b0bc3249",
+      "bytes": 106158,
+      "path": "confirmation-allowance-hosted-first-admitted-390.png",
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636"
+    },
+    {
+      "blob": "ba3aa7e2656496e62aadfcdd165d4a3ce6b17e0e",
+      "bytes": 120811,
+      "path": "confirmation-allowance-hosted-first-exhausted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "blob": "1f9d230f8a23342ebf3171d995742465d7923038",
+      "bytes": 83440,
+      "path": "confirmation-allowance-hosted-first-exhausted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "blob": "ba3aa7e2656496e62aadfcdd165d4a3ce6b17e0e",
+      "bytes": 120811,
+      "path": "confirmation-allowance-kiosk-first-admitted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "blob": "1f9d230f8a23342ebf3171d995742465d7923038",
+      "bytes": 83440,
+      "path": "confirmation-allowance-kiosk-first-admitted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "blob": "5d30e9b9f409c13a311eff6239979c996f2102da",
+      "bytes": 169464,
+      "path": "confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "sha256": "99ae7c80807c5b2926a7cdc3ca71a27e38e045eb1ac35b14e9a5831cc6ad995e"
+    },
+    {
+      "blob": "584a3d06dfa879dddeb4852d1eb7ed9ff443ac56",
+      "bytes": 106288,
+      "path": "confirmation-allowance-kiosk-first-exhausted-390.png",
+      "sha256": "cb44150a8e09c7a005c84311fc379350410a2bc10573ada330b82c1a6ec2d0b0"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f136-pc1",
+  "product_head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+  "ref": "refs/heads/evidence/sd-mango-c-f136-pc1",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f136-pc1"
+}

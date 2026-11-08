@@ -1,0 +1,10 @@
+{
+  "head": "87b2c9dad5825c1840c0b3b03c830826c350e1ec",
+  "test": "[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation",
+  "file": "tests/go-live/shared-kiosk.journeys.ts",
+  "status": "passed",
+  "expectedStatus": "passed",
+  "durationMs": 93626,
+  "retry": 0,
+  "errors": []
+}

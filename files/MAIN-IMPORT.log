@@ -1,0 +1,11 @@
+
+Running 1 test using 1 worker
+
+(node:8796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE DESIGN-004 acceptance-4 reserved-personalization: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 compiled-grammar: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 4 permitted public crop uploads.
+PROBE DESIGN-004 acceptance-4 empty-crop: selected LayerDoc and PNG through Import design -> named refusal; editor and authenticated saved revision unchanged; no draft PATCH or authority change; 0 permitted public crop uploads.
+  ✓  1 tests/campaign-authoring/design-import.spec.ts:23:29 › [DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px (1.1m)
+
+  1 passed (1.1m)
