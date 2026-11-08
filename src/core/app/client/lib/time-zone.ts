@@ -1,4 +1,4 @@
-import { createContext, createElement, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, createElement, startTransition, useContext, useEffect, useState, type ReactNode } from 'react';
 
 const key = 'mango-time-zone';
 const listeners = new Set<() => void>();
@@ -43,7 +43,8 @@ const TimeZoneContext = createContext({ hydrated: false, timeZone: 'UTC' });
 export function TimeZoneProvider({ children }: { children: ReactNode }) {
   const [value, setValue] = useState({ hydrated: false, timeZone: 'UTC' });
   useEffect(() => {
-    const publish = () => setValue({ hydrated: true, timeZone: chosenZone() });
+    // Let streamed boundaries finish hydration before applying browser state.
+    const publish = () => startTransition(() => setValue({ hydrated: true, timeZone: chosenZone() }));
     const unsubscribe = subscribe(publish);
     publish();
     return unsubscribe;
