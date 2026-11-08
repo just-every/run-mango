@@ -9,3 +9,9 @@ CREATE TABLE incumbent_restriction_connections (
   last_error TEXT,
   UNIQUE(data_center,audience_id)
 );
+CREATE TABLE incumbent_restriction_receipts (
+  id TEXT PRIMARY KEY,
+  connection_id TEXT NOT NULL,
+  occurred_at INTEGER NOT NULL
+);
+CREATE INDEX incumbent_restriction_receipts_connection ON incumbent_restriction_receipts(connection_id);
