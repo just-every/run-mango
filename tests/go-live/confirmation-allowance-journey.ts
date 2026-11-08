@@ -18,7 +18,7 @@ async function captureState(site:ResubscribeSite, id:string, email:string) {
     handoffs:await site.rows(`SELECT * FROM consent_handoff_claims WHERE contact_id='${id}' ORDER BY id`),
     requests:await site.rows(`SELECT r.* FROM audience_signup_requests r WHERE r.destination_hash IN
       (SELECT r.destination_hash FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id WHERE e.destination='${email}') ORDER BY r.id`),
-    history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' AND kind<>'resubscribe-refused' ORDER BY id`),
+    history:await site.rows(`SELECT * FROM contact_history WHERE contact_id='${id}' ORDER BY id`),
   };
 }
 
@@ -71,6 +71,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
       expect(await messagesFor(site,email)).toEqual([]);
       expect(await destinationCounter(site,email)).toEqual([]);
       const original=await contactDetail(site,id);
+      const disclosures=new Set<string>();
       // Reserve a real database hour for the short burst, including its UTC-day bucket.
       // This does not advance application time or manufacture a next-day reset.
       await signupCounterWindow(site,'signup-challenged-global');
@@ -80,9 +81,12 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect((await site.settings({frequencyDisclosure,embedOrigins:[],kioskEnabled:kiosk,kioskDeviceLabel:'Market tablet'})).status).toBe(200);
         const description=await responseJson(await site.call('/subscribe/info'));
         expect(description.kioskEnabled).toBe(kiosk);
+        expect(disclosures.has(description.disclosure)).toBe(false);
+        disclosures.add(description.disclosure);
         const before=await captureState(site,id,email),beforeCounter=await destinationCounter(site,email),beforeRefusals=await refusals(site);
         const beforeAccounting=await refusalAccounting(site);
         const beforeMail=await messagesFor(site,email);
+        const beforeOutbox=await site.control('/_kiosk/messages');
         expect(beforeMail).toHaveLength(Math.min(index,3));
         const ip=`198.51.${(order?110:100)+index}.1`;
         await page.setExtraHTTPHeaders({'CF-Connecting-IP':ip});
@@ -102,6 +106,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect(body).toEqual({status:'confirmation-required'});
         if(index===0)acknowledgment=body;
         expect(body).toEqual(acknowledgment);
+        expect(response.headers()['retry-after']).toBeUndefined();
         expect(submitted.disclosure).toBe(description.disclosure);
         expect(tokens.has(submitted['cf-turnstile-response'])).toBe(false);
         tokens.add(submitted['cf-turnstile-response']);
@@ -115,6 +120,7 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
         expect(counter[0].count).toBe(Math.min(index+1,3));
         expect(after.requests).toHaveLength(Math.min(index+1,3));
         expect(after.requests.every(row=>row.status==='sent')).toBe(true);
+        expect(after.confirmations.map(row=>row.consent_evidence_id).sort()).toEqual(after.requests.map(row=>row.id).sort());
         expect(after.handoffs.map(row=>row.id)).toEqual(after.confirmations.map(row=>row.id));
         expect(after.handoffs).toHaveLength(Math.min(index+1,3));
         for(const row of after.requests)expect(Math.floor(row.created_at/86400000)).toBe(counter[0].window);
@@ -131,9 +137,14 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
           expect(await refusals(site)).toEqual(beforeRefusals);
           expect(await refusalAccounting(site)).toEqual(beforeAccounting);
         } else {
-          expect(after).toEqual(before);
+          const addedHistory=after.history.filter(row=>!before.history.some(old=>old.id===row.id));
+          expect(addedHistory).toEqual([expect.objectContaining({
+            contact_id:id,kind:'resubscribe-refused',detail:'Daily confirmation allowance exhausted.',
+          })]);
+          expect({...after,history:after.history.filter(row=>before.history.some(old=>old.id===row.id))}).toEqual(before);
           expect(counter).toEqual(beforeCounter);
           expect(mail).toEqual(beforeMail);
+          expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);
           const expected={...beforeRefusals};expected[kiosk?'kiosk':'hosted']++;
           expect(await refusals(site)).toEqual(expected);
           const key=`${kiosk?'kiosk':'hosted'}:daily-allowance`;
