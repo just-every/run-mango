@@ -24,40 +24,33 @@ export const walk0 = async ({page}, info) => {
       {channel:'email',timezone:'Australia/Brisbane',scheduledAt:later.toISOString(),sendByAt:new Date(later.getTime()+2*3600000).toISOString(),whyThisTime:'Next day reminder'},
     ]}}),200);
     await approve(site,cookie,campaign);
-    // Each operation gets its own held installation instant, chosen before the
-    // public request. A response timestamp cannot supply its own expectation.
-    const transitions:Array<{action:string;at:number}>=[];
+    const control = (action:string) => site.call(`/api/campaigns/${campaign.campaignId}/${action}`,{method:'POST',cookie});
     const refusals:Array<{action:string;body:unknown}>=[];
-    const observe = async (action:'paused'|'resumed', operation:()=>Promise<unknown>) => {
-      const before=await site.control('/_golive/clock',{advanceMs:1700});
-      await operation();
-      const after=await site.control('/_golive/clock');
-      expect(after.now).toBe(before.now);
-      transitions.push({action,at:before.now});
-      const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
-      expect(detail.campaign.state).toBe(action==='paused'?'paused':transitions.length===2?'scheduled':'dispatching');
+    const refuse = async (action:'pause'|'resume') => {
+      const body=await json(await control(action),409);
+      expect(body).toEqual({error:action==='pause'?'campaign_not_pausable':'campaign_not_operator_paused'});
+      refusals.push({action,body});
+      return body;
     };
+    const operations:Array<{action:string;before:number;after:number}>=[];
+    const history = async () => (await json(await site.call(`/api/activity?object=${campaign.campaignId}`,{cookie}),200)).entries;
+    const audit = () => site.rows(`SELECT id,operation_key,actor_type,actor_id,action,detail_json,occurred_at,created_at
+      FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`);
+    const pauses = () => site.rows(`SELECT * FROM campaign_channel_pauses WHERE campaign_id='${campaign.campaignId}' AND reason='operator-pause' ORDER BY channel`);
     const authority = async () => ({
+      campaign:await site.rows(`SELECT state,active_revision_id,updated_at FROM campaigns WHERE id='${campaign.campaignId}'`),
+      approval:await site.rows(`SELECT revision_id,revision_digest,operator_id,approved_at,created_at FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`),
+      revision:await site.rows(`SELECT state,content_digest,approved_at,approved_by_operator_id FROM campaign_revisions WHERE id='${campaign.revisionId}'`),
+      recipients:await site.rows(`SELECT id,revision_id,step_id,contact_id,contact_identity_key,channel,destination,idempotency_key,transport_disposition,attempt_count,provider_message_id,handoff_started_at
+        FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
+      commands:(await site.control('/_golive/emissions')).map(({command,delaySeconds})=>({command,delaySeconds})),handoffs:marketing().length,
+    });
+    const immutableAuthority = async () => ({
       campaign:await site.rows(`SELECT active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`),
       approval:await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`),
       recipients:await site.rows(`SELECT id,revision_id,step_id,contact_id,channel,destination,created_at FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
     });
-    const approvedAuthority=await authority();
-    const audit = () => site.rows(`SELECT id,operation_key,actor_type,actor_id,action,detail_json,occurred_at,created_at FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`);
-    const pauses = () => site.rows(`SELECT * FROM campaign_channel_pauses WHERE campaign_id='${campaign.campaignId}' AND reason='operator-pause' ORDER BY channel`);
-    const history = async () => (await json(await site.call(`/api/activity?object=${campaign.campaignId}`,{cookie}),200)).entries.filter((entry:any)=>['paused','resumed'].includes(entry.action));
-    const reconcile = async () => {
-      expect((await audit()).map(row=>({action:row.action,actor:row.actor_id,type:row.actor_type,revision:JSON.parse(row.detail_json).revisionId,at:row.occurred_at,created:row.created_at}))).toEqual(
-        transitions.map(event=>({action:event.action,actor:'go-live-owner',type:'operator',revision:campaign.revisionId,at:event.at,created:event.at})));
-      expect((await history()).map((entry:any)=>({action:entry.action,actor:entry.operatorId,type:entry.actorType,revision:entry.detail.revisionId,at:entry.occurredAt}))).toEqual(
-        [...transitions].reverse().map(event=>({action:event.action,actor:'go-live-owner',type:'operator',revision:campaign.revisionId,at:event.at})));
-      const latestPause=transitions.filter(event=>event.action==='paused').at(-1)!;
-      const latestResume=transitions.at(-1)!.action==='resumed'?transitions.at(-1)!.at:null;
-      expect((await pauses()).map(row=>({revision:row.revision_id,channel:row.channel,paused:row.paused_at,resumed:row.resumed_at,created:row.created_at,updated:row.updated_at}))).toEqual([
-        {revision:campaign.revisionId,channel:'email',paused:latestPause.at,resumed:latestResume,created:transitions[0].at,updated:transitions.at(-1)!.at},
-      ]);
-      expect(await authority()).toEqual(approvedAuthority);
-    };
+    const approvedAuthority=await immutableAuthority();
     const custody = async () => ({
       campaign:await site.rows(`SELECT * FROM campaigns WHERE id='${campaign.campaignId}'`),
       revisions:await site.rows(`SELECT * FROM campaign_revisions WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
@@ -66,46 +59,74 @@ export const walk0 = async ({page}, info) => {
       events:await site.rows(`SELECT * FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' ORDER BY id`),
       transitions:await site.rows(`SELECT * FROM campaign_state_transitions WHERE campaign_id='${campaign.campaignId}' ORDER BY id`),
     });
-    const unchanged = async (operation:()=>Promise<unknown>) => {
-      const before={custody:await custody(),pauses:await pauses(),history:await history(),authority:await authority(),handoffs:marketing().length};
-      await site.control('/_golive/clock',{advanceMs:4300});
-      await operation();
-      expect({custody:await custody(),pauses:await pauses(),history:await history(),authority:await authority(),handoffs:marketing().length}).toEqual(before);
-      await reconcile();
+    const retained = async () => ({audit:await audit(),pauses:await pauses(),history:await history(),authority:await authority(),custody:await custody()});
+    const checkHistory = async () => {
+      const records=await audit();
+      expect(records).toHaveLength(operations.length);
+      expect(new Set(records.map(row=>row.operation_key)).size).toBe(operations.length);
+      expect(new Set(records.map(row=>row.occurred_at)).size).toBe(operations.length);
+      for(const [index,operation] of operations.entries()) {
+        expect(records[index]).toMatchObject({action:operation.action,actor_type:'operator',actor_id:'go-live-owner'});
+        expect(JSON.parse(records[index].detail_json)).toEqual({revisionId:campaign.revisionId});
+        expect(records[index].occurred_at).toBeGreaterThanOrEqual(operation.before);
+        expect(records[index].occurred_at).toBeLessThanOrEqual(operation.after);
+        expect(records[index].created_at).toBe(records[index].occurred_at);
+        expect(records[index].occurred_at).toBe(operation.before);
+      }
+      const visible=(await history()).filter(entry=>['paused','resumed'].includes(entry.action)).reverse();
+      expect(visible).toEqual(records.map(row=>({id:row.id,operatorId:'go-live-owner',operatorName:'Owner',actorType:'operator',
+        action:row.action,objectType:'campaign',objectId:campaign.campaignId,detail:{revisionId:campaign.revisionId},occurredAt:row.occurred_at})));
+      const latestPause=records.findLast(row=>row.action==='paused'), latestResume=records.findLast(row=>row.action==='resumed');
+      expect(await pauses()).toEqual([expect.objectContaining({campaign_id:campaign.campaignId,revision_id:campaign.revisionId,channel:'email',
+        paused_at:latestPause!.occurred_at,created_at:records[0].occurred_at,
+        resumed_at:latestResume && latestResume.occurred_at>latestPause!.occurred_at?latestResume.occurred_at:null,
+        updated_at:operations.at(-1)!.before})]);
+      expect(await immutableAuthority()).toEqual(approvedAuthority);
+    };
+    const operate = async (action:'paused'|'resumed', run:()=>Promise<unknown>) => {
+      // Bracket the real operator request, independently of its returned or stored time.
+      const before=(await site.control('/_golive/clock',{advanceMs:7000})).now;
+      await run();
+      const after=(await site.control('/_golive/clock')).now;
+      expect(after).toBe(before);
+      operations.push({action,before,after});
+      const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+      expect(detail.campaign.state).toBe(action==='paused'?'paused':operations.length===2?'scheduled':'dispatching');
+      await checkHistory();
     };
     const capture = async (name:string) => {
-      for(const captureWidth of [1440,390]) {
-        await page.setViewportSize({width:captureWidth,height:1000});
-        await page.screenshot({path:info.outputPath(`${name}-${captureWidth}.png`),fullPage:true});
-      }
+      await page.screenshot({path:info.outputPath(`${name}-1440.png`),fullPage:true});
+      await page.setViewportSize({width:390,height:844});
+      await page.screenshot({path:info.outputPath(`${name}-390.png`),fullPage:true});
       await page.setViewportSize({width,height:1000});
-    };
-    const control = (action:string) => site.call(`/api/campaigns/${campaign.campaignId}/${action}`,{method:'POST',cookie});
-    const refuse = async (action:'pause'|'resume') => {
-      const body=await json(await control(action),409);
-      expect(body).toEqual({error:action==='pause'?'campaign_not_pausable':'campaign_not_operator_paused'});
-      refusals.push({action,body});
     };
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/pause`,{method:'POST'})).status).toBe(401);
     await page.setViewportSize({width,height:1000});
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
-    await observe('paused',async()=>{
+    await operate('paused',async()=>{
       await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
       await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toBeVisible();
     });
-    await reconcile();
+    await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toBeVisible();
     await capture('scheduled-pause');
-    await observe('resumed',async()=>{
+    const scheduledPause=await retained();
+    await site.control('/_golive/clock',{advanceMs:11000});
+    await json(await control('pause'),200);
+    await reloadPage(page);
+    expect(await retained()).toEqual(scheduledPause);
+    await checkHistory();
+    await operate('resumed',async()=>{
       await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
       await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
     });
-    await reconcile();
-    await unchanged(async()=>{
-      await refuse('resume');
-      await reloadPage(page);
-      await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
-    });
+    await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
+    const scheduledResume=await retained();
+    await site.control('/_golive/clock',{advanceMs:13000});
+    expect(await refuse('resume')).toEqual({error:'campaign_not_operator_paused'});
+    await reloadPage(page);
+    expect(await retained()).toEqual(scheduledResume);
+    await checkHistory();
     const recipients = await site.rows(`SELECT r.id,r.destination FROM recipient_steps r JOIN campaign_steps s ON s.id=r.step_id WHERE r.revision_id='${campaign.revisionId}' AND s.sequence=1 ORDER BY r.created_at,r.rowid`);
     await site.control('/_golive/barrier',{action:'arm',point:'handoff',identity:recipients[1].id});
     await site.control('/_golive/clock',{advanceMs:3600001});
@@ -113,16 +134,17 @@ export const walk0 = async ({page}, info) => {
     await expect.poll(async () => (await site.control('/_golive/barrier',{action:'status'}))?.waiting,{timeout:60000}).toBe(true);
     expect(marketing()).toHaveLength(1);
     await reloadPage(page);
-    await observe('paused',async()=>{
+    await operate('paused',async()=>{
       await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
       await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
     });
-    await reconcile();
-    await unchanged(async()=>{
-      await json(await control('pause'),200); // Replay retains the original transition.
-      await reloadPage(page);
-      await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
-    });
+    const dispatchPause=await retained();
+    await site.control('/_golive/clock',{advanceMs:17000});
+    await json(await control('pause'),200); // Repeat keeps the original event and pause time.
+    await reloadPage(page);
+    await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
+    expect(await retained()).toEqual(dispatchPause);
+    await checkHistory();
     const before = marketing().length;
     await site.control('/_golive/barrier',{action:'release'});
     await expect.poll(async () => (await site.rows(`SELECT lease_token FROM recipient_steps WHERE id='${recipients[1].id}'`))[0].lease_token,{timeout:60000}).toBeNull();
@@ -136,11 +158,12 @@ export const walk0 = async ({page}, info) => {
     await reloadPage(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await capture('dispatch-paused');
-    await observe('resumed',async()=>{
+    await checkHistory();
+    await operate('resumed',async()=>{
       await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
       await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
     });
-    await reconcile();
+    await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
     await site.control('/_golive/clock',{advanceMs:10*60000});
     await site.control('/_golive/cron');
     await expect.poll(() => Promise.resolve(marketing().length),{timeout:60000}).toBe(2);
@@ -168,23 +191,28 @@ export const walk0 = async ({page}, info) => {
     await expect(page.locator('[data-step-id] [data-disposition=accepted] dd')).toHaveText(['2','2']);
     await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toHaveCount(0);
     await capture('pause-completed');
-    await unchanged(async()=>{
-      await refuse('pause');
-      await refuse('resume');
-      await reloadPage(page);
-      expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state).toBe('completed');
-    });
+    const completed=await retained();
+    await site.control('/_golive/clock',{advanceMs:19000});
+    expect(await refuse('pause')).toEqual({error:'campaign_not_pausable'});
+    expect(await refuse('resume')).toEqual({error:'campaign_not_operator_paused'});
+    await reloadPage(page);
+    expect(await retained()).toEqual(completed);
+    expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state).toBe('completed');
+    await checkHistory();
     await openPage(page,`${site.runtime.url}/app/settings/activity`);
-    await page.getByRole('textbox',{name:'Object',exact:true}).fill(campaign.campaignId);
+    await page.getByLabel('Object',{exact:true}).fill(campaign.campaignId);
     await page.getByRole('button',{name:'Apply filters',exact:true}).click();
-    const activity=page.getByRole('region',{name:'Activity log table'});
-    for(const event of transitions) {
-      const row=activity.locator('tbody tr').filter({has:page.locator(`time[datetime="${new Date(event.at).toISOString()}"]`)});
-      await expect(row.locator('[data-label="Who"]')).toHaveText('Owner');
-      await expect(row.locator('[data-label="What"]')).toHaveText(event.action==='paused'?'Paused':'Resumed');
+    const historyRows=page.getByRole('region',{name:'Activity log table'}).locator('tbody tr').filter({has:page.getByRole('cell',{name:/^(Paused|Resumed)$/})});
+    await expect(historyRows).toHaveCount(4);
+    for(const [index,operation] of [...operations].reverse().entries()) {
+      await expect(historyRows.nth(index).locator('time')).toHaveAttribute('datetime',new Date(operation.before).toISOString());
+      await expect(historyRows.nth(index).getByRole('cell',{name:'Owner',exact:true})).toBeVisible();
+      await expect(historyRows.nth(index).locator('[data-label="What"]')).toHaveText(operation.action==='paused'?'Paused':'Resumed');
     }
-    await capture('pause-activity');
-    await reconcile();
+    await capture('pause-history');
+    expect(await retained()).toEqual(completed);
+    await info.attach('pause-occurrence-proof',{body:JSON.stringify({operations,audit:completed.audit,pauses:completed.pauses,
+      history:completed.history.filter(entry=>['paused','resumed'].includes(entry.action)),handoffs:completed.authority.handoffs},null,2),contentType:'application/json'});
     const now = (await site.control('/_golive/clock')).now;
     const expired = await draftCampaign(site,cookie,'Window closes during pause',['expiry@example.test'],new Date(now+3600000));
     await approve(site,cookie,expired);
@@ -195,11 +223,13 @@ export const walk0 = async ({page}, info) => {
     expect(await site.rows(`SELECT transport_disposition,skip_reason FROM recipient_steps WHERE campaign_id='${expired.campaignId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired'}]);
     expect(marketing()).toHaveLength(4);
     expect(edge.unexpected).toEqual([]);
+    await checkHistory();
     const receipt=info.outputPath('pause-transition-retention.json');
     await writeFile(receipt,JSON.stringify({
       clause:'CAMP-001',point:'acceptance 2 operator pause and resume occurrence-time retention',
       campaignId:campaign.campaignId,revisionId:campaign.revisionId,
-      independentlyBracketed:transitions,retainedAudit:await audit(),retainedHistory:await history(),
+      independentlyBracketed:operations.map(event=>({action:event.action,at:event.before})),retainedAudit:await audit(),
+      retainedHistory:(await history()).filter(entry=>['paused','resumed'].includes(entry.action)),
       retainedChannelPauses:await pauses(),refusals,
       observedLaterAt:(await site.control('/_golive/clock')).now,
       retainedApprovalAndFrozenRecipients:true,marketingHandoffs:marketing().length,
