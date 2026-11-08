@@ -1,4 +1,4 @@
-import { createContext, createElement, startTransition, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useSyncExternalStore, type ReactNode } from 'react';
 
 const key = 'mango-time-zone';
 const listeners = new Set<() => void>();
@@ -24,42 +24,48 @@ function chosenZone() {
 
 export function setTimeZone(zone: string) {
   try { localStorage.setItem(key, zone); } catch { /* the choice then lasts until reload */ }
+  publish();
+}
+
+const serverSnapshot = { hydrated: false, timeZone: 'UTC' };
+let snapshot = serverSnapshot;
+const getSnapshot = () => snapshot;
+const getServerSnapshot = () => serverSnapshot;
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+};
+
+function publish() {
+  const timeZone = chosenZone();
+  if (snapshot.hydrated && snapshot.timeZone === timeZone) return;
+  snapshot = { hydrated: true, timeZone };
   listeners.forEach(listener => listener());
 }
 
-const subscribe = (listener: () => void) => {
-  listeners.add(listener);
-  window.addEventListener('storage', listener);
-  return () => { listeners.delete(listener); window.removeEventListener('storage', listener); };
-};
-
-const TimeZoneContext = createContext({ hydrated: false, timeZone: 'UTC' });
-
 /**
- * Mount in the document, above streamed routes. Those routes can paint server
- * HTML before their effects run; the document publishes browser knowledge once
- * it hydrates so dates do not wait for an interaction to hydrate their boundary.
+ * Publish above streamed routes, without updating their ancestor context. A
+ * context update can render a second copy while a route is still hydrating.
+ * Only committed store subscribers update; a later boundary hydrates against
+ * the stable server snapshot before reading the current browser snapshot.
  */
 export function TimeZoneProvider({ children }: { children: ReactNode }) {
-  const [value, setValue] = useState({ hydrated: false, timeZone: 'UTC' });
   useEffect(() => {
-    // Let streamed boundaries finish hydration before applying browser state.
-    const publish = () => startTransition(() => setValue({ hydrated: true, timeZone: chosenZone() }));
-    const unsubscribe = subscribe(publish);
+    window.addEventListener('storage', publish);
     publish();
-    return unsubscribe;
+    return () => { window.removeEventListener('storage', publish); };
   }, []);
-  return createElement(TimeZoneContext.Provider, { value }, children);
+  return children;
 }
 
 /** A Worker cannot know the zone: server and first client render read UTC. */
 export function useTimeZone() {
-  return useContext(TimeZoneContext).timeZone;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).timeZone;
 }
 
 /** Server and first client render agree, then the document publishes hydration. */
 export function useHydrated() {
-  return useContext(TimeZoneContext).hydrated;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).hydrated;
 }
 
 /**
