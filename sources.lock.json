@@ -1625,6 +1625,10 @@
       "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1",
       "executable": false
     },
+    "migrations/core/0105_incumbent_restrictions.sql": {
+      "sha256": "f1eee50f34515cdaca9a6518a93631e25388ebce2b4479d54527946d0c232c1c",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -2822,7 +2826,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "ad113441a5e6e3e0580cc6588e978bbd347bba851ac8ad432cb728536c1ad915",
+      "sha256": "88fb00640db0abad242b883be263e5e0142e1d1e74dd14fede2e470c964e84ab",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3046,7 +3050,7 @@
       "executable": false
     },
     "src/core/app/scheduled.ts": {
-      "sha256": "846de48aabbfb0fd2aa2a80d325bbc392d15ce1361818456625a110ac8e0723a",
+      "sha256": "5fd113c6f3f27d56c6595c8f93f1462c069496d607ee0ccad17f75723ad0df3f",
       "executable": false
     },
     "src/core/app/worker.dev.ts": {
@@ -3138,7 +3142,7 @@
       "executable": false
     },
     "src/core/features/audience/eligibility.ts": {
-      "sha256": "50b7b0473924facba254a23174eec74497c751d09706e447045dadad43f813d2",
+      "sha256": "5e6f5968a4c61a5e5b1adea199ad352487124d0ff19d23a25ad227a03a53b596",
       "executable": false
     },
     "src/core/features/audience/erasure/batched-preparation.ts": {
@@ -3373,6 +3377,10 @@
       "sha256": "ecd102258a193ba0277ba69ec924d2210cb8b364aa3bc1e33535a54bcd932b17",
       "executable": false
     },
+    "src/core/features/audience/merge-status.ts": {
+      "sha256": "d4beb06bf1dcbd47104de897246c08d31deeb28efeb8c6570d7c9a3b18979180",
+      "executable": false
+    },
     "src/core/features/audience/message-response.ts": {
       "sha256": "23d708b3943e9ca4244641953bac8431aa6418c96d031a1035f2c0d0b7199a93",
       "executable": false
@@ -3438,7 +3446,7 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "bc8040635dfb4baa8339913fa43220509d3391e7e268571ef05a9e0aeafcd79a",
+      "sha256": "4ec4538dc4a4936d5ff62c8d05cca89eeeafee8764380ebf13d2cc66d38547f2",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
@@ -3470,7 +3478,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "552efeb7f532f06e7ff03e4ba636d1de20acdb54a899b3ca5d24c471b1892186",
+      "sha256": "8239c02af6b7325a6337fd335c0a41c274603eb9bb4a18be6c603f5ba3989005",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -5214,7 +5222,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/recipient-handoff-guard.ts": {
-      "sha256": "5558e304627de75cf3148c550924b6003fb70e975efccab14badc53039dc8225",
+      "sha256": "42af8d56fb69ba6f6daa52d1de4364109c417540d3f42e606cdebd55ca23114d",
       "executable": false
     },
     "src/core/features/lifecycle/recipient-repository.ts": {
@@ -5286,7 +5294,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/types.ts": {
-      "sha256": "dc0672fb9508adb1759ec0fe3347a8385b90d800355b4e2c2c600687a1623e76",
+      "sha256": "7d9bc0ccb0bcae94fb7b1f87cdea7d99cc6137b4bcbcf6b33d1667460ec6bfb7",
       "executable": false
     },
     "src/core/features/lifecycle/webhook-facts.ts": {
@@ -5357,6 +5365,22 @@
       "sha256": "eee46325579546845eeb74b54b8aa7f1408f5e95b66bd23f2eede18fca59f6e6",
       "executable": false
     },
+    "src/core/features/move-in/mailchimp-transport.ts": {
+      "sha256": "a7e480a67fb9a6bc9b6e02f23031bff898e46b35e6ff6cda3a2105cb55fddaf1",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-connections.ts": {
+      "sha256": "eb9d333b6d3ca9dce7c325d46357bf71ae53ad6d1f2825c17b7ddf6a4799e44a",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-routes.ts": {
+      "sha256": "0fcdca9f92a7b8f9137a5b3d9e68f664e146e07182a71f0c9230d67c8a38fe40",
+      "executable": false
+    },
+    "src/core/features/move-in/restriction-sync.ts": {
+      "sha256": "4985074a6d9cfda23b6a6dbf44f0e3deb882eea32ebda4786988856c154bd1f1",
+      "executable": false
+    },
     "src/core/features/move-in/routes.ts": {
       "sha256": "2df69b608ef6737a9d520416daed97a5f334a1b6bc25d08f2991008555053370",
       "executable": false
@@ -5386,7 +5410,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "1f0ea37092a16e5dc12efd4d7bd0a28b36ed15c68e00bd9a7e5ab79cd51348a7",
+      "sha256": "085b612c99961560de3d1fb0d424ae8b02f55adbf4799e5743adf9ebe56715d3",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -5897,6 +5921,10 @@
       "sha256": "0c105441f9077495b5c92a01048e97c1b13b457fd50f1b702e6109d142301846",
       "executable": false
     },
+    "src/core/features/store/ui/settings-incumbent-restrictions.tsx": {
+      "sha256": "f5e2b61d4c3054abc242ab00a56d05567d3504d49069fbde15768cbf993eda48",
+      "executable": false
+    },
     "src/core/features/store/ui/settings-integration-audit.tsx": {
       "sha256": "9c9226cb1f3265f2190a3e3df63e3f597005c696b843cc3b35247332303721f6",
       "executable": false
@@ -5918,7 +5946,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-page.tsx": {
-      "sha256": "de0925603cc6a836ce9651a3d4e83c8f8bdf6a715b8fc2430c72daaa8df02bd1",
+      "sha256": "98f5c63e808d78f11aaafbca0f0ed4823488abfe61f31c7200b5b94eac5591ed",
       "executable": false
     },
     "src/core/features/store/ui/settings-paid-tier.tsx": {
@@ -8975,6 +9003,10 @@
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
       "sha256": "ffcbcab4ef58cf548768b74df44c5834c01d1a17012d0d4c83b69ff6f8e73161",
+      "executable": false
+    },
+    "tests/go-live/mailchimp-edge.ts": {
+      "sha256": "5c71da899375349b00b02d7443f2d3e9556e0b3adee377681be953c395528855",
       "executable": false
     },
     "tests/go-live/managed-mail.flow.ts": {

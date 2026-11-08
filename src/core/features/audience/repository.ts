@@ -1,4 +1,5 @@
 import {preparePropertyMerge} from './properties/merge';
+import {settleMergeStatus} from './merge-status';
 import {recordManualSmsCapture} from './manual-sms-capture';
 import {manualEmailEligibility} from './manual-email-policy';
 import {createSegmentFacts} from './segment-facts';
@@ -545,7 +546,8 @@ export function createAudienceRepository(database: Database) {
         createdAt: occurredAt,
         updatedAt: occurredAt,
       });
-      await database.delete(contacts).where(eq(contacts.id, mergedContactId));
+      await database.$client.batch([...settleMergeStatus(database.$client,survivorContactId,mergedContactId,occurredAt.getTime()),
+        database.$client.prepare('DELETE FROM contacts WHERE id=?').bind(mergedContactId)]);
     },
 
     async discardUnlinkedContact(contactId: string) {

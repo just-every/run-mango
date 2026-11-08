@@ -30,7 +30,7 @@ export async function selectedChannel(
   isSuppressed: (channel: Channel, destination: string) => Promise<boolean>,
 ): Promise<FrozenCandidate['channels'][Channel] | undefined> {
   const contact = await repository.getContact(contactId);
-  if (!contact || (channel === 'email' ? contact.emailStatus : contact.smsStatus) !== 'subscribed') return undefined;
+  if (!contact || contact.mergeLock || (channel === 'email' ? contact.emailStatus : contact.smsStatus) !== 'subscribed') return undefined;
   const [emails, phones, evidence] = await Promise.all([
     repository.listEmails(contactId),
     repository.listPhones(contactId),
