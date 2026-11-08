@@ -1,0 +1,18 @@
+{
+  "setup": "cloud_run timeout 900 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+  "build": "cloud_run timeout 600 npx -y @runeditrun/rer build",
+  "baseline_presend": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/presend-checks.journeys.ts",
+  "presend_alone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/presend-checks.journeys.ts",
+  "go_live": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 2700 pnpm exec playwright test --config tests/go-live/playwright.config.js --workers=2",
+  "typecheck": "cloud_run timeout 300 pnpm run typecheck",
+  "first_party": "cloud_run timeout 300 npx -y @runeditrun/rer check --profile first-party",
+  "rendering": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 600 pnpm exec playwright test tests/rendering.spec.ts --workers=1",
+  "source_check": "cloud_run timeout 300 pnpm run source:check",
+  "integration_check": "cloud_run timeout 300 pnpm run integration:check",
+  "date_and_zone_propagation": "cloud_run timeout 220 pnpm exec playwright test --config <packet>/date-proof.config.ts",
+  "transition_date_and_zone": "cloud_run timeout 220 pnpm exec playwright test --config <packet>/transition-proof.config.ts",
+  "transition_mailbox_alone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/mailbox-provider.journeys.ts",
+  "transition_presend_alone": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js tests/go-live/presend-checks.journeys.ts",
+  "transition_full_go_live": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 2700 pnpm exec playwright test --config tests/go-live/playwright.config.js --workers=2",
+  "superseded_ci_log": "gh run view 42485646853 --repo just-every/run-mango --job 128747202834 --log-failed"
+}

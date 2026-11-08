@@ -1,0 +1,14 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-hydration-date-3",
+  "origin_main": "eceb55d9eca66cf4a2702f69e23109d2266b1560",
+  "shallow": "false",
+  "clone": "git clone --filter=blob:none https://github.com/just-every/run-mango.git /workspace/run-mango",
+  "counts": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98,
+    "total": 316
+  },
+  "clause_changes": []
+}

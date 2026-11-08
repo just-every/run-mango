@@ -1,0 +1,94 @@
+{
+  "setup": {
+    "exit": 0
+  },
+  "baseline_build": {
+    "exit": 0
+  },
+  "baseline_presend": {
+    "exit": 0,
+    "passed": 1,
+    "reproduced": false
+  },
+  "baseline_no_input_date": {
+    "exit": 0,
+    "passed": 1
+  },
+  "baseline_20_reloads": {
+    "exit": 0,
+    "passed": 1
+  },
+  "date_20_reloads": {
+    "exit": 0,
+    "passed": 1
+  },
+  "date_and_zone_propagation": {
+    "exit": 0,
+    "passed": 1
+  },
+  "typecheck": {
+    "exit": 0
+  },
+  "first_party": {
+    "exit": 0
+  },
+  "build": {
+    "exit": 0
+  },
+  "rendering": {
+    "exit": 0,
+    "passed": 1
+  },
+  "source_check": {
+    "exit": 0
+  },
+  "integration_check": {
+    "exit": 0
+  },
+  "presend_alone": {
+    "exit": 0,
+    "passed": 1,
+    "duration": "5.1m",
+    "later_save_notice": "passed"
+  },
+  "superseded_full_go_live": {
+    "exit": 130,
+    "passed": 17,
+    "interrupted": 2,
+    "not_run": 4,
+    "reason": "Cancelled obsolete candidate after CI failure; all 23 unchanged tests rerun on final source."
+  },
+  "transition_date_and_zone": {
+    "exit": 0,
+    "passed": 1
+  },
+  "transition_mailbox_alone": {
+    "exit": 0,
+    "passed": 1
+  },
+  "transition_rendering": {
+    "exit": 0,
+    "passed": 1
+  },
+  "transition_typecheck": {
+    "exit": 0
+  },
+  "transition_build": {
+    "exit": 0
+  },
+  "transition_first_party": {
+    "exit": 0
+  },
+  "transition_source_check": {
+    "exit": 0
+  },
+  "transition_integration_check": {
+    "exit": 0
+  },
+  "transition_presend_alone": {
+    "exit": 0,
+    "passed": 1,
+    "duration": "4.2m",
+    "later_save_notice": "passed"
+  }
+}

@@ -1,0 +1,128 @@
+
+Running 23 tests using 2 workers
+
+(node:6416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Source CSV beehiiv: upload
+Source CSV beehiiv: attest
+Source CSV beehiiv: review
+Source CSV beehiiv: applied
+Source CSV omnisend: upload
+Source CSV omnisend: attest
+Source CSV omnisend: review
+Source CSV omnisend: applied
+Source CSV customerio: upload
+Source CSV customerio: attest
+Source CSV customerio: review
+Source CSV customerio: applied
+Source API activecampaign: read
+Source API activecampaign: review
+activecampaign: membership consent
+activecampaign: topic-only campaign
+activecampaign: topic-only checks
+activecampaign: draft API
+activecampaign: draft UI
+activecampaign: draft hydrated
+Source API klaviyo: read
+Source API klaviyo: review
+klaviyo: membership consent
+klaviyo: topic-only campaign
+klaviyo: topic-only checks
+klaviyo: draft API
+klaviyo: draft UI
+klaviyo: draft hydrated
+Conversion proof: apply archive
+Conversion proof: read archive
+Conversion proof: start template 151
+Conversion proof: inspect mapped body
+Conversion proof: run mapped checks
+Conversion proof: open mapped preview
+Conversion proof: mapped preview 1440
+Conversion proof: corrected footer
+Conversion proof: start template 152
+  ✓   1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (2.1m)
+  ✓   2 tests/go-live/contact-links.journeys.ts:11:1 › [DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking (2.1m)
+Shared pacing step: before-restart-receipts-settled marketing= 1
+SEND005 initial installation phase=60257ms total=60257ms
+SEND005 outage probe started phase=186ms total=60443ms
+SEND005 barrier wait phase=158ms total=60601ms
+SEND005 before restart 1 phase=285ms total=60886ms
+SEND005 close 1 phase=207ms total=61093ms
+SEND005 installation 2 phase=25293ms total=86386ms
+SEND005 before restart 2 phase=497ms total=86883ms
+SEND005 close 2 phase=186ms total=87069ms
+Shared pacing step: screen-open-with-shared-backlog marketing= 1
+Shared pacing step: b-acceptance-recorded marketing= 3
+Shared pacing step: b-acceptance-visible-without-navigation marketing= 3
+Shared pacing step: terminal marketing= 10
+  ✓   4 tests/go-live/delivery.journeys.ts:8:1 › [SEND-003][SEND-004] shared provider pacing survives a native restart and the open screen follows durable receipts (2.2m)
+SEND005 installation 3 phase=22681ms total=109750ms
+SEND005 dispatch queued phase=1300ms total=111052ms
+SEND005 dispatch wait phase=68ms total=111120ms
+SEND005 browser clock installed phase=48ms total=111169ms
+SEND005 deadline campaign and browser ready phase=6590ms total=117759ms
+SEND005 late replay queued phase=194ms total=117953ms
+SEND005 late replay wait phase=31ms total=117984ms
+SEND005 expired browser clock advanced phase=8ms total=117992ms
+SEND005 expired browser settled phase=119ms total=118111ms
+SEND005 recovery probe complete phase=89ms total=118201ms
+SEND005 recovery wait phase=19ms total=118220ms
+SEND005 recovery browser clock advanced phase=8ms total=118228ms
+SEND005 recovered browser settled phase=83ms total=118311ms
+SEND005 all assertions complete phase=213ms total=118524ms
+  ✓   3 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (2.5m)
+PROBE CAMP-007 acceptance-1: edit-schedule POST and draft PATCH -> original active revision, immutable approval and queued recipient unchanged; replacement has no authority
+PROBE CAMP-007 acceptance-2: forced replacement-first and dispatch-first approval orderings -> replacement alone sends or approval conflicts; stale dispatch replay sends nothing
+PROBE CAMP-007 acceptance-3: edit after first handoff -> independent unauthorised draft; original second step sends once; explicit cancellation skips third as campaign-cancelled, preserves two accepted outcomes and fences replay
+  ✓   6 tests/go-live/delivery.journeys.ts:14:1 › [CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch (1.6m)
+  ✓   7 tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (25.2s)
+  ✓   5 tests/go-live/delivery.journeys.ts:11:1 › [MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation (4.2m)
+  ✓   9 tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports (2.8m)
+  ✓   8 tests/go-live/go-live.journeys.ts:7:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (5.9m)
+PROBE AUD-006 conversion: signed paid order after first marketing handoff -> buyer skipped at steps 2 and 3 with recent-product-purchase and zero attempts; control accepted once at each step
+PROBE AUD-006 current eligibility and frozen audience: changed inclusion, custom exclusion and opt-out -> named skips at both later steps; newly matching contact has no recipient-step or handoff
+Chosen catalog proof: setup
+Chosen catalog proof: search and product picker
+Chosen catalog proof: HTML round trip
+Chosen catalog proof: current previews
+Chosen catalog proof: fresh hand-off
+Chosen catalog proof: approved identifiers
+Chosen catalog proof: identifiers locked
+Chosen catalog proof: dispatch new price
+Chosen catalog proof: dispatched
+Chosen catalog proof: read outcomes
+Chosen catalog proof: open outcomes
+Chosen catalog proof: terminal availability cases
+  ✓  10 tests/go-live/managed-mail.journeys.ts:4:1 › [SEND-001][SEND-008][OPER-001] managed access mail and owner marketing mail preserve handoff and reconciliation authority (2.8m)
+  ✓  11 tests/go-live/multistep.journeys.ts:5:1 › [AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume (2.2m)
+  ✓  13 tests/go-live/opt-out-reasons.journeys.ts:14:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery (47.6s)
+  ✓  14 tests/go-live/personalisation.journeys.ts:9:1 › [MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation (39.9s)
+  ✓  12 tests/go-live/open-estimates.journeys.ts:9:1 › [RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased (2.1m)
+  ✓  16 tests/go-live/resend-delivery.journeys.ts:3:1 › [SEND-001][SEND-005][SEND-006][SEND-008] reconcile uncertain Resend handoffs without duplicate sends or fabricated delivery (2.6m)
+Operator access: start native HTTP installation
+(node:6415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Operator access: claim owner
+Operator access: confirm teammate
+Operator access: cancel pending invitation
+Operator access: confirm while removal is pending
+Operator access: revoke active sessions
+Flow proof 1440: open
+Flow proof 1440: build
+Flow proof 1440: connect
+Flow proof 1440: saved, inspect reload
+  ✓  15 tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion (3.8m)
+  ✓  17 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (2.7m)
+NATIVE_CRON_PUNCTUALITY {"driver":"Configured wall-clock driver; Vite does not initiate Cron Triggers; not hosted acceptance","ticks":[{"scheduledAt":"2026-11-08T13:54:00.000Z","enteredAt":"2026-11-08T13:54:00.002Z","finishedAt":"2026-11-08T13:54:00.319Z"},{"scheduledAt":"2026-11-08T13:55:00.000Z","enteredAt":"2026-11-08T13:55:00.001Z","finishedAt":"2026-11-08T13:55:00.251Z"}],"scheduledAt":"2026-11-08T13:55:02.000Z","startedAt":"2026-11-08T13:55:02.161Z","latenessMs":161}
+  ✘  18 tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth (3.4m)
+  ✘  19 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.8m)
+
+  Slow test file: tests/go-live/go-live.journeys.ts (5.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 interrupted
+    tests/go-live/scheduler.journeys.ts:12:1 › [CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth 
+    tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation 
+  4 did not run
+  17 passed (23.4m)

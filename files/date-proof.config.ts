@@ -1,0 +1,2 @@
+import {defineConfig} from '/workspace/run-mango/node_modules/@playwright/test/index.mjs';
+export default defineConfig({testDir:'.',testMatch:'date-proof.ts',workers:1,retries:0,timeout:180000,reporter:'list',outputDir:'/home/agent/rer-consolidation/work/sd-mango-hydration-date-3/date-proof-output',use:{viewport:{width:1440,height:1000},timezoneId:'Australia/Brisbane',launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox']}}});

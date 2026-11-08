@@ -1,0 +1,143 @@
+shards (native)	Run this shard	﻿2026-11-08T13:37:03.3152283Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (native)	Run this shard	2026-11-08T13:37:03.3152529Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (native)	Run this shard	2026-11-08T13:37:03.3170270Z shell: /usr/bin/bash -e {0}
+shards (native)	Run this shard	2026-11-08T13:37:03.3170409Z env:
+shards (native)	Run this shard	2026-11-08T13:37:03.3170520Z   CI: true
+shards (native)	Run this shard	2026-11-08T13:37:03.3170635Z   WRANGLER_SEND_METRICS: false
+shards (native)	Run this shard	2026-11-08T13:37:03.3170786Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (native)	Run this shard	2026-11-08T13:37:03.3170975Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (native)	Run this shard	2026-11-08T13:37:03.3171171Z   SHARD: native
+shards (native)	Run this shard	2026-11-08T13:37:03.3171657Z   MANGO_VERIFY_MEMBERS: [
+shards (native)	Run this shard	  {
+shards (native)	Run this shard	    "name": "local-start",
+shards (native)	Run this shard	    "stage": "local-start",
+shards (native)	Run this shard	    "files": [
+shards (native)	Run this shard	      "authority.journey.ts",
+shards (native)	Run this shard	      "command-data.journey.ts"
+shards (native)	Run this shard	    ]
+shards (native)	Run this shard	  },
+shards (native)	Run this shard	  {
+shards (native)	Run this shard	    "name": "go-live",
+shards (native)	Run this shard	    "stage": "go-live",
+shards (native)	Run this shard	    "files": [
+shards (native)	Run this shard	      "mailbox-provider.journeys.ts",
+shards (native)	Run this shard	      "embed-origin.journeys.ts"
+shards (native)	Run this shard	    ]
+shards (native)	Run this shard	  }
+shards (native)	Run this shard	]
+shards (native)	Run this shard	2026-11-08T13:37:03.3172234Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/native
+shards (native)	Run this shard	2026-11-08T13:37:03.3172436Z ##[endgroup]
+shards (native)	Run this shard	2026-11-08T13:37:03.3380095Z VERIFY_MEMBER local-start
+shards (native)	Run this shard	2026-11-08T13:37:03.3738121Z VERIFY_SCHEDULE {"selection":"local-start","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (native)	Run this shard	2026-11-08T13:37:03.3740339Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/native/members/local-start/evidence/4b3746152534/verify/local-start-FDDkSZ
+shards (native)	Run this shard	2026-11-08T13:37:03.3848521Z VERIFY_STAGE {"name":"local-start","event":"start","at":"2026-11-08T13:37:03.374Z"}
+shards (native)	Run this shard	2026-11-08T13:37:03.3887730Z local-start
+shards (native)	Run this shard	2026-11-08T13:37:04.1590423Z (node:2540) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+shards (native)	Run this shard	2026-11-08T13:37:04.1591267Z (Use `node --trace-warnings ...` to show where the warning was created)
+shards (native)	Run this shard	2026-11-08T13:37:04.2052916Z 
+shards (native)	Run this shard	2026-11-08T13:37:04.2053599Z Running 2 tests using 2 workers
+shards (native)	Run this shard	2026-11-08T13:37:04.2053778Z 
+shards (native)	Run this shard	2026-11-08T13:37:04.6537932Z (node:2559) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+shards (native)	Run this shard	2026-11-08T13:37:04.6538621Z (Use `node --trace-warnings ...` to show where the warning was created)
+shards (native)	Run this shard	2026-11-08T13:37:04.6635435Z (node:2558) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+shards (native)	Run this shard	2026-11-08T13:37:04.6636060Z (Use `node --trace-warnings ...` to show where the warning was created)
+shards (native)	Run this shard	2026-11-08T13:38:02.7768104Z Using secrets defined in ../../_temp/mango-verification/native/members/local-start/tmp/mango-tests/4b3746152534/local-contact-authority/native-HheXXj/mango/.dev.vars
+shards (native)	Run this shard	2026-11-08T13:38:19.6404813Z Using secrets defined in ../../_temp/mango-verification/native/members/local-start/tmp/mango-tests/4b3746152534/local-contact-authority/native-HheXXj/mango/.dev.vars
+shards (native)	Run this shard	2026-11-08T13:38:52.7431720Z   ✓  2 tests/local-start/authority.journey.ts:7:1 › [CONT-006] forced setup retains suppression and opt-out authority while invalidating prior native sessions (1.8m)
+shards (native)	Run this shard	2026-11-08T13:39:48.5894564Z Using secrets defined in ../../_temp/mango-verification/native/members/local-start/tmp/mango-tests/4b3746152534/local-contact-authority/native-HheXXj/mango/.dev.vars
+shards (native)	Run this shard	2026-11-08T13:39:48.9570282Z   ✓  1 tests/local-start/command-data.journey.ts:9:1 › [DATA-001] rer upgrades a retained backup, exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset (2.7m)
+shards (native)	Run this shard	2026-11-08T13:39:48.9873684Z 
+shards (native)	Run this shard	2026-11-08T13:39:48.9875768Z   2 passed (2.7m)
+shards (native)	Run this shard	2026-11-08T13:39:49.0516221Z VERIFY_STAGE {"name":"local-start","status":"PASS","startedAt":"2026-11-08T13:37:03.374Z","durationMs":165675,"exitCode":0,"signal":null,"event":"end"}
+shards (native)	Run this shard	2026-11-08T13:39:49.0528554Z VERIFY_TOTAL {"status":"PASS","durationMs":165686,"boundary":"coordinator"}
+shards (native)	Run this shard	2026-11-08T13:39:49.0566871Z VERIFY_MEMBER go-live
+shards (native)	Run this shard	2026-11-08T13:39:49.0939776Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (native)	Run this shard	2026-11-08T13:39:49.0943136Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/native/members/go-live/evidence/4b3746152534/verify/go-live-KYfmT9
+shards (native)	Run this shard	2026-11-08T13:39:49.1058472Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-08T13:39:49.094Z"}
+shards (native)	Run this shard	2026-11-08T13:39:49.1100501Z go-live
+shards (native)	Run this shard	2026-11-08T13:39:51.0050858Z 
+shards (native)	Run this shard	2026-11-08T13:39:51.0051570Z Running 2 tests using 2 workers
+shards (native)	Run this shard	2026-11-08T13:39:51.0063172Z 
+shards (native)	Run this shard	2026-11-08T13:40:16.0813365Z   ✓  1 tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (24.6s)
+shards (native)	Run this shard	2026-11-08T13:41:16.9037942Z   ✘  2 tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports (1.4m)
+shards (native)	Run this shard	2026-11-08T13:41:16.9265106Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9293289Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9296091Z   1) tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports 
+shards (native)	Run this shard	2026-11-08T13:41:16.9296935Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9297482Z     Error: expect(locator).toHaveAttribute(expected) failed
+shards (native)	Run this shard	2026-11-08T13:41:16.9297855Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9298338Z     Locator: locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]')
+shards (native)	Run this shard	2026-11-08T13:41:16.9298946Z     Expected: "warn"
+shards (native)	Run this shard	2026-11-08T13:41:16.9299667Z     Error: strict mode violation: locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]') resolved to 2 elements:
+shards (native)	Run this shard	2026-11-08T13:41:16.9300948Z         1) <tr data-state="warn" data-requirement="complaints">…</tr> aka getByText('Spam complaintsBelow 0.30%').first()
+shards (native)	Run this shard	2026-11-08T13:41:16.9302085Z         2) <tr data-state="warn" data-requirement="complaints">…</tr> aka getByRole('row', { name: 'Spam complaints Below 0.30%' })
+shards (native)	Run this shard	2026-11-08T13:41:16.9302730Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9302887Z     Call log:
+shards (native)	Run this shard	2026-11-08T13:41:16.9303571Z       - Expect "toHaveAttribute" locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]') with timeout 5000ms
+shards (native)	Run this shard	2026-11-08T13:41:16.9304467Z       - waiting for locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]')
+shards (native)	Run this shard	2026-11-08T13:41:16.9304794Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9304799Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9304902Z        at compliance-journey.ts:40
+shards (native)	Run this shard	2026-11-08T13:41:16.9305118Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9305261Z       38 |   const show=async(state:string)=>{
+shards (native)	Run this shard	2026-11-08T13:41:16.9305689Z       39 |     await page.setViewportSize({width:1440,height:1000});await openPage(page,site.runtime.url+'/app/insights');
+shards (native)	Run this shard	2026-11-08T13:41:16.9306203Z     > 40 |     await expect(complaint).toHaveAttribute('data-state',state);
+shards (native)	Run this shard	2026-11-08T13:41:16.9306542Z          |                             ^
+shards (native)	Run this shard	2026-11-08T13:41:16.9306935Z       41 |     // Browser proof at both widths; the permanent state assertion is desktop.
+shards (native)	Run this shard	2026-11-08T13:41:16.9308290Z       42 |     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const capture=info.outputPath(`bulk-compliance-${state}-${width}.png`);await section.scrollIntoViewIfNeeded();await complaint.scrollIntoViewIfNeeded();await page.waitForLoadState('networkidle');await page.screenshot({path:capture});}
+shards (native)	Run this shard	2026-11-08T13:41:16.9309394Z       43 |     await page.setViewportSize({width:1440,height:1000});
+shards (native)	Run this shard	2026-11-08T13:41:16.9309890Z         at show ([REDACTED]/tests/go-live/compliance-journey.ts:40:29)
+shards (native)	Run this shard	2026-11-08T13:41:16.9310253Z         at complianceJourney ([REDACTED]/tests/go-live/compliance-journey.ts:45:3)
+shards (native)	Run this shard	2026-11-08T13:41:16.9310711Z         at walk0 ([REDACTED]/tests/go-live/mailbox-provider.flow.ts:84:5)
+shards (native)	Run this shard	2026-11-08T13:41:16.9311066Z         at [REDACTED]/tests/go-live/mailbox-provider.journeys.ts:7:3
+shards (native)	Run this shard	2026-11-08T13:41:16.9311288Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9311734Z     Error Context: ../../_temp/mango-verification/native/members/go-live/evidence/4b3746152534/go-live/mailbox-provider.journeys.-0c5c7-concile-in-operator-reports/error-context.md
+shards (native)	Run this shard	2026-11-08T13:41:16.9312183Z 
+shards (native)	Run this shard	2026-11-08T13:41:16.9312292Z   1 failed
+shards (native)	Run this shard	2026-11-08T13:41:16.9313023Z     tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports 
+shards (native)	Run this shard	2026-11-08T13:41:16.9313637Z   1 passed (1.5m)
+shards (native)	Run this shard	2026-11-08T13:41:17.0055821Z Verification failed: go-live: exit 1, signal none.
+shards (native)	Run this shard	2026-11-08T13:41:17.0056534Z Command: pnpm
+shards (native)	Run this shard	2026-11-08T13:41:17.0056960Z Last output (up to 40 lines):
+shards (native)	Run this shard	2026-11-08T13:41:17.0057347Z Running 2 tests using 2 workers
+shards (native)	Run this shard	2026-11-08T13:41:17.0057570Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0058649Z   ✓  1 tests/go-live/embed-origin.journeys.ts:22:1 › [FORM-001] configured origins admit signup while unlisted ancestors and removed permission refuse the real frame (24.6s)
+shards (native)	Run this shard	2026-11-08T13:41:17.0060039Z   ✘  2 tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports (1.4m)
+shards (native)	Run this shard	2026-11-08T13:41:17.0060694Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0060702Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0061302Z   1) tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports 
+shards (native)	Run this shard	2026-11-08T13:41:17.0061944Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0062207Z     Error: expect(locator).toHaveAttribute(expected) failed
+shards (native)	Run this shard	2026-11-08T13:41:17.0062490Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0063062Z     Locator: locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]')
+shards (native)	Run this shard	2026-11-08T13:41:17.0063692Z     Expected: "warn"
+shards (native)	Run this shard	2026-11-08T13:41:17.0064475Z     Error: strict mode violation: locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]') resolved to 2 elements:
+shards (native)	Run this shard	2026-11-08T13:41:17.0065595Z         1) <tr data-state="warn" data-requirement="complaints">…</tr> aka getByText('Spam complaintsBelow 0.30%').first()
+shards (native)	Run this shard	2026-11-08T13:41:17.0066654Z         2) <tr data-state="warn" data-requirement="complaints">…</tr> aka getByRole('row', { name: 'Spam complaints Below 0.30%' })
+shards (native)	Run this shard	2026-11-08T13:41:17.0067130Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0067281Z     Call log:
+shards (native)	Run this shard	2026-11-08T13:41:17.0068032Z       - Expect "toHaveAttribute" locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]') with timeout 5000ms
+shards (native)	Run this shard	2026-11-08T13:41:17.0068972Z       - waiting for locator('[data-compliance-domain="example.test"]').locator('[data-requirement=complaints]')
+shards (native)	Run this shard	2026-11-08T13:41:17.0069470Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0069475Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0069685Z        at compliance-journey.ts:40
+shards (native)	Run this shard	2026-11-08T13:41:17.0069979Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0070180Z       38 |   const show=async(state:string)=>{
+shards (native)	Run this shard	2026-11-08T13:41:17.0070905Z       39 |     await page.setViewportSize({width:1440,height:1000});await openPage(page,site.runtime.url+'/app/insights');
+shards (native)	Run this shard	2026-11-08T13:41:17.0071920Z     > 40 |     await expect(complaint).toHaveAttribute('data-state',state);
+shards (native)	Run this shard	2026-11-08T13:41:17.0072423Z          |                             ^
+shards (native)	Run this shard	2026-11-08T13:41:17.0073069Z       41 |     // Browser proof at both widths; the permanent state assertion is desktop.
+shards (native)	Run this shard	2026-11-08T13:41:17.0074930Z       42 |     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const capture=info.outputPath(`bulk-compliance-${state}-${width}.png`);await section.scrollIntoViewIfNeeded();await complaint.scrollIntoViewIfNeeded();await page.waitForLoadState('networkidle');await page.screenshot({path:capture});}
+shards (native)	Run this shard	2026-11-08T13:41:17.0076601Z       43 |     await page.setViewportSize({width:1440,height:1000});
+shards (native)	Run this shard	2026-11-08T13:41:17.0077148Z         at show ([REDACTED]/tests/go-live/compliance-journey.ts:40:29)
+shards (native)	Run this shard	2026-11-08T13:41:17.0077820Z         at complianceJourney ([REDACTED]/tests/go-live/compliance-journey.ts:45:3)
+shards (native)	Run this shard	2026-11-08T13:41:17.0078368Z         at walk0 ([REDACTED]/tests/go-live/mailbox-provider.flow.ts:84:5)
+shards (native)	Run this shard	2026-11-08T13:41:17.0078850Z         at [REDACTED]/tests/go-live/mailbox-provider.journeys.ts:7:3
+shards (native)	Run this shard	2026-11-08T13:41:17.0079052Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0079443Z     Error Context: ../../_temp/mango-verification/native/members/go-live/evidence/4b3746152534/go-live/mailbox-provider.journeys.-0c5c7-concile-in-operator-reports/error-context.md
+shards (native)	Run this shard	2026-11-08T13:41:17.0079977Z 
+shards (native)	Run this shard	2026-11-08T13:41:17.0080134Z   1 failed
+shards (native)	Run this shard	2026-11-08T13:41:17.0080704Z     tests/go-live/mailbox-provider.journeys.ts:5:1 › [DELIV-005][REPORT-005] signed mailbox facts and membership changes reconcile in operator reports 
+shards (native)	Run this shard	2026-11-08T13:41:17.0081154Z   1 passed (1.5m)
+shards (native)	Run this shard	2026-11-08T13:41:17.0081683Z Log: /home/runner/work/_temp/mango-verification/native/members/go-live/evidence/4b3746152534/verify/go-live-KYfmT9/go-live/install.log
+shards (native)	Run this shard	2026-11-08T13:41:17.0141198Z ##[error]Process completed with exit code 1.
