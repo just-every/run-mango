@@ -1,3 +1,4 @@
+import {sendingSilenceJourney} from './sending-silence-journey';
 import {readArchive} from '../../src/vendor/base/portability/index.mjs';
 import {createHmac} from 'node:crypto';
 import {expect,type Page,type TestInfo} from '@playwright/test';
@@ -63,4 +64,5 @@ export async function resendConnectionJourney(site:Installation,edge:Awaited<Ret
       state.readStatus=0;
     }
     expect(site.runtime.logs()).not.toContain(key);expect(edge.unexpected).toEqual([]);
+    await sendingSilenceJourney(page,info);
 }
