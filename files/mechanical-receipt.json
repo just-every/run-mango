@@ -1,0 +1,30 @@
+{
+  "head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "commands": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "output": "Wrote 0 contract documents.",
+      "error": ""
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "output": "Contract documents are current.",
+      "error": ""
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "output": "",
+      "error": ""
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "output": "{\"ok\": true, \"edition\": \"just-every/mango\", \"manifest\": \"c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1\"}",
+      "error": ""
+    }
+  ],
+  "migrationLedger": "not applicable: no migration changed"
+}

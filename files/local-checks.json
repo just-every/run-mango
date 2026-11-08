@@ -1,0 +1,28 @@
+{
+  "head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0
+  },
+  "firstParty": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0
+  },
+  "testRegistrationsAdded": 0,
+  "contractCountsBefore": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "contractCountsAfter": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "pinnedRuntime": {
+    "node": "22.20.0",
+    "pnpm": "10.12.4",
+    "journeyExit": 0,
+    "typecheckExit": 0
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "files": [
+    {
+      "blob": "9149eb3026a71c6289f2bd0c31ea0655c2356c08",
+      "bytes": 2133,
+      "path": "PLAN.md",
+      "sha256": "b8e7ce133d0ae679f688811dfddd8a368de5de53df79c5417a68901ae83c04a0"
+    },
+    {
+      "blob": "f288a3d2fb98a9818b3207f35646b352f8e32469",
+      "bytes": 14420,
+      "path": "REPORT.md",
+      "sha256": "b3ddc6d7586765814f443948cd4e1085a4bf6b2f9e6b9dc507123ddea19a7df0"
+    },
+    {
+      "blob": "8ba9f05daf3edee1e08e87b1c4c1ec5c1bb69ee1",
+      "bytes": 2038,
+      "path": "browser-inspection.json",
+      "sha256": "a520e9b32221b038ea45b7d99b4829aa5c4fcebc15deb341aee658de200cac7a"
+    },
+    {
+      "blob": "41040aa268b4cdfd06bf687dcb44915779e21c63",
+      "bytes": 234,
+      "path": "ci-discovery.json",
+      "sha256": "c69152039796135d5a088887e75c97eca7a51024bfee4c3ba1a0cd262f3716ab"
+    },
+    {
+      "blob": "8cd95464edbf25ae36b3c8d29e33f43ba128fdf4",
+      "bytes": 175,
+      "path": "ci-status.json",
+      "sha256": "eeb9f46536264f086acf89b7e2a1c162a40d34d312322b27c7733c58fd45d617"
+    },
+    {
+      "blob": "020d1e970372dba2b833593fdd146c20f1e4538a",
+      "bytes": 169070,
+      "path": "confirmation-allowance-hosted-first-admitted-1440.png",
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8"
+    },
+    {
+      "blob": "9ec439a693b774505138544b37778196b0bc3249",
+      "bytes": 106158,
+      "path": "confirmation-allowance-hosted-first-admitted-390.png",
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636"
+    },
+    {
+      "blob": "5703de8b70a8b794ccf1d59b626c701e10edddfa",
+      "bytes": 121215,
+      "path": "confirmation-allowance-hosted-first-exhausted-1440.png",
+      "sha256": "514cb25ac4efaa079d5acaf3a4cff318a20ccb83b5c5698458326acff020e554"
+    },
+    {
+      "blob": "57e5c61d9b375180bfd149f6263fe4e4a520ccb6",
+      "bytes": 83875,
+      "path": "confirmation-allowance-hosted-first-exhausted-390.png",
+      "sha256": "8daac90b263fca2056fcdf50eecb760890a63ea5175fc8762d6c7aa524eea506"
+    },
+    {
+      "blob": "ba3aa7e2656496e62aadfcdd165d4a3ce6b17e0e",
+      "bytes": 120811,
+      "path": "confirmation-allowance-kiosk-first-admitted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "blob": "1f9d230f8a23342ebf3171d995742465d7923038",
+      "bytes": 83440,
+      "path": "confirmation-allowance-kiosk-first-admitted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "blob": "38b972f08e713bd5812efd314e56026318580c18",
+      "bytes": 169781,
+      "path": "confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "sha256": "b45d046faa3c93b5d669f2f8122ac298eae8b9d0ea7ecf64ea606754e45f0ef0"
+    },
+    {
+      "blob": "321167ba5d1d229542a76b074ee781766a309ddf",
+      "bytes": 106725,
+      "path": "confirmation-allowance-kiosk-first-exhausted-390.png",
+      "sha256": "36dbd4010a7e2446aa54bc06d91a6ea39cc2ab2f30d5edd89f7ae1e7efab1176"
+    },
+    {
+      "blob": "ec434bae8ca446ee6fdd766798bbd35a56cb776b",
+      "bytes": 8743,
+      "path": "confirmation-allowance-receipt.json",
+      "sha256": "85f45242248c4f5e95447401aa2af8dba3ad0b13f42a8259c3a365776ef07a7e"
+    },
+    {
+      "blob": "8269e033fa36666c6ebc066043c7289dd9c34801",
+      "bytes": 411,
+      "path": "focused-journey.log",
+      "sha256": "8ec0f2206bcb628a6fe1d01c00af98006ac19341d276eec895b85f4dc9c739a3"
+    },
+    {
+      "blob": "4703cf34937569cf047d2784a76304263c57d1ed",
+      "bytes": 557,
+      "path": "local-checks.json",
+      "sha256": "a5e32e4818e7d4b57b7449314dc0c9d88de8b5128417c90df563eefb1fbf0e45"
+    },
+    {
+      "blob": "46512b62f6765fb1d1c6e191fb7b8b732bfa53a0",
+      "bytes": 404,
+      "path": "main-comparison.log",
+      "sha256": "6cc806ab92bca908e858c5fc12d2b610047397373deeb66a9ee8a2225e9412b0"
+    },
+    {
+      "blob": "cb06601b25c442f8ca64fe430f368738b3f2a390",
+      "bytes": 859,
+      "path": "mechanical-receipt.json",
+      "sha256": "cc7259dac1cd4a09ce519cde2a1d3bc34a11038057b310ac91d7ddee23672993"
+    },
+    {
+      "blob": "d1d36fe51924eecc0d94a1dde0ee7aeb4f94c6e9",
+      "bytes": 8789,
+      "path": "pinned-confirmation-allowance-receipt.json",
+      "sha256": "553947b398bc737433c5b49e77805e6517301c1401669c724f4d1c655d0daa9d"
+    },
+    {
+      "blob": "8a7fd0fda1346a528d3554a7ef124a7e2e48e17f",
+      "bytes": 411,
+      "path": "pinned-focused-journey.log",
+      "sha256": "89b219a98f7f391b93504315191ec72cb18ea9b90a23431a231617641dbd5d7f"
+    },
+    {
+      "blob": "a696ab125e9c939971815790dd5d27d7c72b5567",
+      "bytes": 62,
+      "path": "pinned-typecheck.log",
+      "sha256": "14ace599ff908b7c6244e5d4a298a5d029038e06fa7170807e71ecdcbeb10edd"
+    },
+    {
+      "blob": "814abe09f2d0040cdecee20e9dc91eb959982973",
+      "bytes": 2794,
+      "path": "prior-ci-failure.txt",
+      "sha256": "9828b551786b0748787438fb76f8eece8e52f265a7e1cfa5726ec0c0ba9eae1d"
+    },
+    {
+      "blob": "9113f050e24f70b0dba817975ac33a0fdedfa36d",
+      "bytes": 855,
+      "path": "prior-reproduction.json",
+      "sha256": "91310328c434bf321b338ac05becc3a74c6aba9136ce2694c7ec145fd5f9ea87"
+    },
+    {
+      "blob": "0f63bad8908160565b58020cf941146787fb7768",
+      "bytes": 2698,
+      "path": "prior-shard-reproduction.log",
+      "sha256": "2d2beef5fa1d12dea277627c426b777cae7ecd02545775e32bd014f32abd39c6"
+    },
+    {
+      "blob": "3834ccfdfe736a3835eeb759ac29b5bb7be1c229",
+      "bytes": 1096,
+      "path": "product-custody.json",
+      "sha256": "7ffb068ada02a7a41da8f0131883e71a9a121484688940280ba828bde631bb74"
+    },
+    {
+      "blob": "8da9a93e4e1bba0e1ee146bdb6ee9ce2f60fb8f2",
+      "bytes": 710,
+      "path": "product-push.log",
+      "sha256": "971ab17c847a3d9dcd5ce50b6f2fc436860278546dc772758d6d89795efc57d8"
+    },
+    {
+      "blob": "58ac9280e7644c8c3a0aa49e797e2dcc960fb33c",
+      "bytes": 168,
+      "path": "typecheck.log",
+      "sha256": "37dc7bb443a34dda15cf70e5286200eadcb931b3cc5b73bd3ff57f91cb0a98ca"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f144",
+  "product_head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "ref": "refs/heads/evidence/sd-mango-c-f144",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f144"
+}

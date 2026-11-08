@@ -1,0 +1,14 @@
+{
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "job": 128753337741,
+  "command": "CI=true WRANGLER_SEND_METRICS=false MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium SHARD=campaigns node scripts/verification/ci.mjs \"$SHARD\"",
+  "exit": 0,
+  "result": "4 passed; prior CI failure was not reproduced; no repair made",
+  "runner": "same dedicated cloud VM for prior and main comparisons; Node 24.19.0 and pnpm 10.12.4; original hosted CI uses Node 22.20.0",
+  "mainComparison": {
+    "head": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+    "command": "CI=true WRANGLER_SEND_METRICS=false MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config tests/go-live/playwright.config.js presend-checks.journeys.ts",
+    "exit": 0,
+    "result": "1 passed; failed approval outcome also succeeds on main on the same cloud runner"
+  }
+}

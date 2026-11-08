@@ -1,0 +1,319 @@
+{
+  "requests": [
+    {
+      "order": "hosted-first",
+      "request": 1,
+      "carrier": "hosted",
+      "network": "198.51.100.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 0,
+      "mailAfter": 1,
+      "capturesAdded": 1,
+      "handoffs": 1,
+      "confirmationEvidenceIds": [
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007"
+      ],
+      "requestIds": [
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007"
+      ],
+      "outboxBefore": 4,
+      "outboxAfter": 5,
+      "counter": [
+        {
+          "key": "signup-email:0dd5f68f3cca6512a26d1006d0f26237877b78243da675001d40e0c000802928",
+          "window": 20765,
+          "count": 1
+        }
+      ],
+      "refusals": {
+        "counts": {},
+        "refusedLastHour": 0
+      }
+    },
+    {
+      "order": "hosted-first",
+      "request": 2,
+      "carrier": "kiosk",
+      "network": "198.51.101.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 1,
+      "mailAfter": 2,
+      "capturesAdded": 1,
+      "handoffs": 2,
+      "confirmationEvidenceIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007"
+      ],
+      "requestIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007"
+      ],
+      "outboxBefore": 5,
+      "outboxAfter": 6,
+      "counter": [
+        {
+          "key": "signup-email:0dd5f68f3cca6512a26d1006d0f26237877b78243da675001d40e0c000802928",
+          "window": 20765,
+          "count": 2
+        }
+      ],
+      "refusals": {
+        "counts": {},
+        "refusedLastHour": 0
+      }
+    },
+    {
+      "order": "hosted-first",
+      "request": 3,
+      "carrier": "hosted",
+      "network": "198.51.102.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 2,
+      "mailAfter": 3,
+      "capturesAdded": 1,
+      "handoffs": 3,
+      "confirmationEvidenceIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007",
+        "resubscribe_ce756d98-4e12-4c30-8442-10341d069926"
+      ],
+      "requestIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007",
+        "resubscribe_ce756d98-4e12-4c30-8442-10341d069926"
+      ],
+      "outboxBefore": 6,
+      "outboxAfter": 7,
+      "counter": [
+        {
+          "key": "signup-email:0dd5f68f3cca6512a26d1006d0f26237877b78243da675001d40e0c000802928",
+          "window": 20765,
+          "count": 3
+        }
+      ],
+      "refusals": {
+        "counts": {},
+        "refusedLastHour": 0
+      }
+    },
+    {
+      "order": "hosted-first",
+      "request": 4,
+      "carrier": "kiosk",
+      "network": "198.51.103.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 3,
+      "mailAfter": 3,
+      "capturesAdded": 0,
+      "handoffs": 3,
+      "confirmationEvidenceIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007",
+        "resubscribe_ce756d98-4e12-4c30-8442-10341d069926"
+      ],
+      "requestIds": [
+        "resubscribe_34230ae3-78e1-42b2-b907-6f36842491cf",
+        "resubscribe_95cb340a-ae0b-49ca-bef9-5fb39c511007",
+        "resubscribe_ce756d98-4e12-4c30-8442-10341d069926"
+      ],
+      "outboxBefore": 7,
+      "outboxAfter": 7,
+      "counter": [
+        {
+          "key": "signup-email:0dd5f68f3cca6512a26d1006d0f26237877b78243da675001d40e0c000802928",
+          "window": 20765,
+          "count": 3
+        }
+      ],
+      "refusals": {
+        "counts": {
+          "kiosk:daily-allowance": 1
+        },
+        "refusedLastHour": 1
+      }
+    },
+    {
+      "order": "kiosk-first",
+      "request": 1,
+      "carrier": "kiosk",
+      "network": "198.51.110.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 0,
+      "mailAfter": 1,
+      "capturesAdded": 1,
+      "handoffs": 1,
+      "confirmationEvidenceIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529"
+      ],
+      "requestIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529"
+      ],
+      "outboxBefore": 7,
+      "outboxAfter": 8,
+      "counter": [
+        {
+          "key": "signup-email:0d917e96447e89d431c3bd9cf2eb960aec06a010a8b12f1fc90483e28197b293",
+          "window": 20765,
+          "count": 1
+        }
+      ],
+      "refusals": {
+        "counts": {
+          "kiosk:daily-allowance": 1
+        },
+        "refusedLastHour": 1
+      }
+    },
+    {
+      "order": "kiosk-first",
+      "request": 2,
+      "carrier": "hosted",
+      "network": "198.51.111.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 1,
+      "mailAfter": 2,
+      "capturesAdded": 1,
+      "handoffs": 2,
+      "confirmationEvidenceIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "requestIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "outboxBefore": 8,
+      "outboxAfter": 9,
+      "counter": [
+        {
+          "key": "signup-email:0d917e96447e89d431c3bd9cf2eb960aec06a010a8b12f1fc90483e28197b293",
+          "window": 20765,
+          "count": 2
+        }
+      ],
+      "refusals": {
+        "counts": {
+          "kiosk:daily-allowance": 1
+        },
+        "refusedLastHour": 1
+      }
+    },
+    {
+      "order": "kiosk-first",
+      "request": 3,
+      "carrier": "kiosk",
+      "network": "198.51.112.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 2,
+      "mailAfter": 3,
+      "capturesAdded": 1,
+      "handoffs": 3,
+      "confirmationEvidenceIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_1afc3d53-eaae-42ba-809c-69cd9bfe2c6f",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "requestIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_1afc3d53-eaae-42ba-809c-69cd9bfe2c6f",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "outboxBefore": 9,
+      "outboxAfter": 10,
+      "counter": [
+        {
+          "key": "signup-email:0d917e96447e89d431c3bd9cf2eb960aec06a010a8b12f1fc90483e28197b293",
+          "window": 20765,
+          "count": 3
+        }
+      ],
+      "refusals": {
+        "counts": {
+          "kiosk:daily-allowance": 1
+        },
+        "refusedLastHour": 1
+      }
+    },
+    {
+      "order": "kiosk-first",
+      "request": 4,
+      "carrier": "hosted",
+      "network": "198.51.113.1",
+      "status": 202,
+      "acknowledgment": {
+        "status": "confirmation-required"
+      },
+      "mailBefore": 3,
+      "mailAfter": 3,
+      "capturesAdded": 0,
+      "handoffs": 3,
+      "confirmationEvidenceIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_1afc3d53-eaae-42ba-809c-69cd9bfe2c6f",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "requestIds": [
+        "resubscribe_0cd8c253-9255-44a4-afe2-486357f49529",
+        "resubscribe_1afc3d53-eaae-42ba-809c-69cd9bfe2c6f",
+        "resubscribe_5b546102-b538-444c-a796-86c148999ca0"
+      ],
+      "outboxBefore": 10,
+      "outboxAfter": 10,
+      "counter": [
+        {
+          "key": "signup-email:0d917e96447e89d431c3bd9cf2eb960aec06a010a8b12f1fc90483e28197b293",
+          "window": 20765,
+          "count": 3
+        }
+      ],
+      "refusals": {
+        "counts": {
+          "hosted:daily-allowance": 1,
+          "kiosk:daily-allowance": 1
+        },
+        "refusedLastHour": 2
+      }
+    }
+  ],
+  "freshControl": {
+    "mail": 1,
+    "status": "subscribed",
+    "counter": [
+      {
+        "key": "signup-email:e50c2be52d5858d135a368de9176a1b26e03606cc0f6ac741354b97b04874490",
+        "window": 20765,
+        "count": 1
+      }
+    ]
+  },
+  "provenance": {
+    "head": "80bc36a87109a3da22509aa422b30415de462dc6",
+    "file": "shared-kiosk.journeys.ts",
+    "test": "[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation",
+    "status": "passed",
+    "durationMs": 130581,
+    "startedAt": "2026-11-08T14:36:28.444Z",
+    "exit": 0
+  }
+}

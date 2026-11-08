@@ -1,0 +1,19 @@
+{
+  "head": "80bc36a87109a3da22509aa422b30415de462dc6",
+  "branch": "cloud/sd-mango-c-f144",
+  "remoteProductRef": "80bc36a87109a3da22509aa422b30415de462dc6\trefs/heads/cloud/sd-mango-c-f144",
+  "originMain": "ad1a605639c006c0e002a53f8cebed6a104aeceb",
+  "shallow": "false",
+  "worktreeClean": true,
+  "contractDiff": "",
+  "generatedViewDiff": "",
+  "identityCheck": "all candidate author and committer entries use fleet identity; trailers absent",
+  "candidateCommits": [
+    "80bc36a87109a3da22509aa422b30415de462dc6 Prove fresh confirmation admission preserves exhausted destination budgets",
+    "165cf8d41b2b51027e65dce524ea7473206ab4a6 Reconcile continuation with main and preserve complete refusal evidence [skip ci]",
+    "3ea2fb5227abbf479c7a190507b4199fba600993 Reconcile shared confirmation authority and refusal accounting",
+    "cc2d1f618b695ddc1e28306e8f9774f732a66a69 Keep confirmation response proof on the browser clock",
+    "ebbb4827222d4278835fd1ca95a5ef03dd62d9a6 Prove shared destination confirmation allowance across hosted and kiosk forms"
+  ],
+  "mainAncestryExit": 0
+}
