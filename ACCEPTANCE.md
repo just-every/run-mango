@@ -85,8 +85,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
 3. Valid identity already configured for the installation also completes setup.
 4. Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness.
 
-**Evidence.** `tests/local-start/local.journey.ts` — “[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 and 390” · `tests/production-entry.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Before role assignment, an operator can see and act on proposals, campaigns, flows, contacts and settings as Admin.; Valid identity already configured for the installation also completes setup.; Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness.. Missing public-door journey: “Operators and the default role — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/local-start/sender-setup.journey.ts` — “[OPER-001] native sender setup preserves configuration access without provider readiness”, registered in push Verify; shared `tests/local-start/sender-setup.flow.ts` also invoked by `tests/local-start/local.journey.ts` — “[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440”: server and hydrated client setup gates, invalid-input refusal, authenticated sender and provider configuration reads before setup, persisted identity after reopening and reload, all four saved identity fields in a fresh native owner session and reloaded Settings, unavailable sender validation and four unavailable readiness checks with no passing provider evidence after setup; setup, configured app and reopened Settings captures at 1440 and 390. · `tests/production-entry.spec.ts`
+**Gap.** Unasserted: acceptance 1’s complete unassigned-operator Admin surface for proposals, campaigns, flows, contacts and settings; acceptance 3’s independently preconfigured valid installation identity. Acceptance 2’s carried setup gates remain exercised. Acceptance 4’s native configuration access and non-readiness outcomes are exercised; hosted and live-provider readiness qualification is not established.
 
 #### OPER-002 — Management
 
@@ -706,8 +706,8 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 1. The states are draft with nothing scheduled, scheduled with an approved revision and future step, dispatching once hand-off begins, paused under SEND-009, completed under SEND-007, canceled under CAMP-009, or failed when the first step misses its deadline because its required provider or sender registration is unavailable.
 2. Each transition records its actor or acting feature and its time, and an invalid transition is rejected.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
-**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected. Missing public-door journey: “States — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”, invoking `tests/go-live/pause.flow.ts`: distinct scheduled and mid-dispatch operator pause and resume requests independently bracketed by the installation clock; authenticated Activity reconciled with persisted actor, revision and original audit and channel-pause times; later replay, reload and named invalid transitions retain events, times, approval and recipient authority and handoff counts.
+**Gap.** Remaining acceptance 1 proof: the complete campaign-state, deadline and provider matrix, including Draft state, SEND-009 provider-pause semantics and Failed after a first-step deadline missed for an unavailable provider or sender registration. Remaining acceptance 2 proof: actor or acting feature, occurrence time, retention and invalid-transition refusal across every other transition and acting feature; the native operator pause and resume slice is now asserted. Existing Scheduled, Dispatching, Completed and Canceled evidence is retained.
 
 #### CAMP-002 — Draft editing
 
@@ -736,8 +736,8 @@ Core · published · **partial** · From AUD-001 · Rules D-2
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. Missing public-door journey: “Derived audience rule summaries — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts`: acceptance 1 campaign collection and actual row derive from saved inclusion and exclusion rules; acceptance 2 one independently specified nested all and any fixture retains every condition, editor field label, comparison, value, property scope and order lookback. Predicate and exclusion edits survive save and reload, swap the independently known eligible identity, and create no approval, recipients or dispatch. Editor and campaign-row captures at 1440 and 390. Existing builder and review evidence remains in the original segments journey.
+**Gap.** Acceptance 1: complete review, approval-check, scheduled-page and audience-snapshot derivation matrix still needs public-door proof. Acceptance 2: other condition, comparison, value, lookback and editor-label cases remain unproved; the nested fixture is one case, not the complete matrix.
 
 ### Campaigns — Live audience authoring counts
 
@@ -899,8 +899,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. A recipient-step not handed off by that instant is skipped with a deadline-passed reason.
 3. A step whose deadline passed before dispatch begins sends nothing.
 
-**Evidence.** `tests/go-live/scheduler.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch. Missing public-door journey: “Step deadline — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/scheduler.journeys.ts`; `tests/campaign-authoring/step-deadline.spec.ts` — “[CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving”: authenticated native draft save with both send-by fields omitted; independently specified ordinary, spring-forward and fall-back UTC values reconciled with persisted steps and repeated detail and review reads; reopened and reloaded deadline controls; no approval, recipients or dispatch jobs.
+**Gap.** Acceptance 1 is proved for native email draft PATCH with a local scheduled time and IANA zone, defaulting to 23:59 of its local day across ordinary and daylight-saving days. Unasserted: the other channel and scheduling doors for step send-by instants and their local-day-end defaults; acceptance 2’s complete recipient deadline skip and named-reason matrix; acceptance 3’s complete no-late-dispatch matrix. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration. Carried expiry evidence and reason terminology remain unchanged.
 
 #### CAMP-011 — Dispatch punctuality
 

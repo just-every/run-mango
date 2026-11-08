@@ -1,7 +1,7 @@
 import {z} from 'zod';
 const text=z.string().trim().min(1).max(2000);
 export const manualEntrySchema=z.object({
- contact:z.object({email:z.string().email().optional(),phone:z.string().max(30).optional(),displayName:z.string().max(200).optional()}),
+ contact:z.object({email:z.string().trim().toLowerCase().email().optional(),phone:z.string().max(30).optional(),displayName:z.string().max(200).optional()}),
  channel:z.enum(['email','sms']),brandOrLegalSender:text,smsProgram:text.optional(),
  timeZone:z.string().max(100).optional(),locationSource:text.optional(),locationRecordedAt:z.string().datetime().transform(value=>new Date(value)).optional(),
  messageCategory:text,frequencyDisclosure:text,destinationJurisdiction:text,captureMethod:text,captureSource:text,consentText:text,consentVersion:text,
