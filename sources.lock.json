@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "b9333f55bbc6d849c70cfa6a5b262b8b84dcf4ec3a526770e0c9b0ed13cfff47",
+      "sha256": "31f6f8cadc6ba3439bdd2ee9766c53b245006ad473e241e02e242490cc425428",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "6509716a196c10d5b77009ce9dcfa04eaa361755b3f34758f23de334a68aba55",
+      "sha256": "eb4faf829caeface8efa83f22ef969f10c55f6aebd7396d6c00f2a5ad7682f5d",
       "executable": false
     },
     "DEMO.md": {
@@ -8517,8 +8517,12 @@
       "sha256": "0cb3b1c4be5907a03fcc4e24b36c984a3c7156abf120a916dfd885aa34144d3b",
       "executable": false
     },
+    "tests/campaign-authoring/design-import-refusals.ts": {
+      "sha256": "bfa7f7f98c32ee04e2c51d45b9cfe93638d74b0041d3a67bd791f042aa3efcba",
+      "executable": false
+    },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+      "sha256": "28ffba7db4a813cd43c1a82b091687da594d5f51ad10726e10e41ef52e15abdc",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
