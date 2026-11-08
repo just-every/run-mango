@@ -8886,11 +8886,11 @@
       "executable": false
     },
     "tests/go-live/delivery-recovery.flow.ts": {
-      "sha256": "63ba9c18ae5198f93deef25a677ed2f083e1624ee4c1f17651916196da7e55bc",
+      "sha256": "43276e37578292af0abba860d5b6434066e9a624f2eda3f874505d894e547a7c",
       "executable": false
     },
     "tests/go-live/delivery-recovery.journeys.ts": {
-      "sha256": "0e983929cd7a8c05def203121b08b09e75d7356d0b92066f4146d95eb0595710",
+      "sha256": "c047a63ffbf5386c80c25f6e7532bd5e2dbc1db4332bba64cf8746cf2478f84a",
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
@@ -9035,6 +9035,10 @@
     },
     "tests/go-live/pause.flow.ts": {
       "sha256": "19c2914321de23ee231843061d5267065b98ff588057af8b2445d6dffd70d5da",
+      "executable": false
+    },
+    "tests/go-live/permanent-rejection-journey.ts": {
+      "sha256": "2f88b7a6fe8e28e0ebd3af15822707311dae0ad6ab06cc7d16e2ec37c4beac17",
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {
