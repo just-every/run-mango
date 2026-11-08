@@ -1,0 +1,78 @@
+{
+  "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+  "checks": [
+    {
+      "name": "views-write",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "views-check",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "restore-views",
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "source-lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "source-lock-check",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "source-lock-committed",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "HEAD",
+        "--",
+        "sources.lock.json"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "contract-unchanged",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "origin/main...HEAD",
+        "--",
+        "CONTRACT.md"
+      ],
+      "exit": 0
+    }
+  ],
+  "ledger": "none; no migration changes"
+}

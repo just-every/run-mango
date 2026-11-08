@@ -1,0 +1,28 @@
+{
+  "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+  "status": "passed",
+  "startTime": "2026-11-08T15:20:04.900Z",
+  "durationMs": 95418.093,
+  "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts --reporter=list,/tmp/rer-receipt-reporter.mjs",
+  "chromium": "/usr/bin/chromium",
+  "viewport": {
+    "assertions": 1440,
+    "screenshots": [
+      1440,
+      390
+    ]
+  },
+  "tests": [
+    {
+      "title": "[FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation",
+      "location": {
+        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f145/run-mango/tests/go-live/shared-kiosk.journeys.ts",
+        "line": 5,
+        "column": 1
+      },
+      "status": "passed",
+      "durationMs": 94467,
+      "errors": []
+    }
+  ]
+}

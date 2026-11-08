@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:4140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027][CONT-042] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.5m)
+
+  1 passed (1.6m)

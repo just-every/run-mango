@@ -1,0 +1,59 @@
+{
+  "head": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+  "base": "7b95de610793d2dad6e17495da3e8f2e67e27418",
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log"
+  },
+  "firstParty": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "log": "first-party.log"
+  },
+  "initialRun": {
+    "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts",
+    "exit": 1,
+    "failure": "ReferenceError: beforeOutbox is not defined",
+    "resolution": "Restored the continuation merge corrections omitted by rebase; retained and strengthened all refusal assertions."
+  },
+  "correctedRun": {
+    "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts",
+    "exit": 0,
+    "result": "1 passed (1.5m)",
+    "relevantBytesUnchangedAt": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7"
+  },
+  "migrations": "none",
+  "registrationsAdded": 0,
+  "registrationsRemoved": 0,
+  "countsBefore": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "contractChanged": false,
+  "publicationScan": {
+    "commit": "0b62989e1eed326d17f14a71f9e7a8a60da9a1a7",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "state": "NOT RUN in cloud; independent fleet lander owns the exact-tree publication scan"
+  },
+  "githubCalls": 4,
+  "exactCandidateRun": {
+    "commandReceipt": "COMMAND-RECEIPT.json",
+    "browserReceipt": "BROWSER-RECEIPT.json",
+    "exit": 0,
+    "outerSubreaperExit": 0
+  },
+  "earlierReceiptRun": {
+    "browserStatus": "passed",
+    "outerShellObservedExit": 1,
+    "resolution": "Instrumented repeat recorded underlying command exit 0 and outer subreaper exit 0. No product or test edit was made."
+  }
+}

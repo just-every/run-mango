@@ -1,0 +1,35 @@
+{
+  "mode": "kiosk",
+  "capturedAt": 1794151279676,
+  "confirmationStartedAt": 1794151280451,
+  "confirmationFinishedAt": 1794151280514,
+  "confirmedAt": 1794151280482,
+  "recordedConfirmation": [
+    {
+      "captured_at": 1794151279676,
+      "consent_at": 1794151280482,
+      "confirmation_at": 1794151280482,
+      "kind": "consent-confirmed",
+      "history_at": 1794151280482
+    },
+    {
+      "captured_at": 1794151279676,
+      "consent_at": 1794151280482,
+      "confirmation_at": 1794151280482,
+      "kind": "resubscribed",
+      "history_at": 1794151280482
+    }
+  ],
+  "replays": [
+    {
+      "startedAt": 1794151280757,
+      "getStatus": 410,
+      "postStatus": 410
+    },
+    {
+      "startedAt": 1794151280820,
+      "getStatus": 410,
+      "postStatus": 410
+    }
+  ]
+}
