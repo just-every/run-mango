@@ -373,6 +373,7 @@ export const walk2 = async ({ page, request }, testInfo) => {
           const allowed = await api.get(url);
           expect(allowed.status()).toBe(200);
           expect(allowed.headers()['content-type'].split(';')[0]).toBe(artifact.type);
+          expect(allowed.headers()['cache-control']).toBe('no-store');
           const observed = await allowed.body();
           expect(observed.equals(artifact.bytes), `Retained ${artifact.type} must preserve the supplied provider bytes`).toBe(true);
           artifactReads.push({ phase, url: artifact.url, deniedStatus: denied.status(), allowedStatus: allowed.status(),
@@ -403,6 +404,41 @@ export const walk2 = async ({ page, request }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: testInfo.outputPath('design-provider-custody-390.png'), fullPage: true });
     await page.setViewportSize({ width: 1440, height: 1000 });
+
+    // Only this journey's synthetic native session is replayed. Native sign-out
+    // must revoke its credential as well as clearing the browser cookie.
+    const cookie = (await page.context().cookies(runtime.url)).find(item => item.name === localSessionCookieName(runtime.url));
+    expect(cookie).toBeDefined();
+    const replay = await requestClient.newContext({ extraHTTPHeaders: { Cookie: `${cookie!.name}=${cookie!.value}` } });
+    try {
+      const signedOut = await api.post(`${runtime.url}/api/auth/signout`, { headers: { Origin: runtime.url } });
+      expect(signedOut.status()).toBe(204);
+      for (const artifact of artifacts) {
+        const denied = await replay.get(new URL(artifact.url, runtime.url).href);
+        expect(denied.status()).toBe(401);
+        expect(await denied.json()).toEqual({ error: 'unauthenticated' });
+      }
+      // Default browser caching must not reveal an image fetched before sign-out.
+      const browserReads = await page.evaluate(async urls => Promise.all(urls.map(async url => {
+        const response = await fetch(url);
+        return { status: response.status, body: await response.json() };
+      })), artifacts.map(artifact => artifact.url));
+      expect(browserReads).toEqual(artifacts.map(() => ({ status: 401, body: { error: 'unauthenticated' } })));
+    } finally { await replay.dispose(); }
+    // A new native session for the same permitted Author still reads the same
+    // retained bytes; revoking a session must not remove the purchased artifacts.
+    const reopened = await request.post(runtime.url + '/_authoring/session', { headers: { 'X-Test-Token': runtime.token } });
+    expect(reopened.status(), await reopened.text()).toBe(200);
+    await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await reopened.json()).token, url: runtime.url }]);
+    expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator).toMatchObject({ id: operator.id, role: 'author' });
+    await readArtifacts('fresh-session');
+    expect(await custody()).toEqual(beforeArtifactReads);
+    await test.info().attach('design-provider-revoked-session', { contentType: 'application/json', body: JSON.stringify({
+      clause: 'DESIGN-011', point: 'acceptance-4 retained artifact session revocation',
+      signoutStatus: 204, revokedReads: artifacts.length, browserDeniedReads: artifacts.length,
+      freshSessionReads: artifactReads.filter(item => item.phase === 'fresh-session'), domainStateUnchanged: true,
+    }, null, 2) });
+    console.log('PROBE DESIGN-011 acceptance-4 session-revocation: native sign-out -> revoked credential and ordinary browser reads 401 without artifacts; fresh Author session -> exact retained bytes and unchanged domain state');
 
     await runtime.sql("DELETE FROM operator_product_roles WHERE operator_id = 'authoring-operator'");
     expect((await (await api.get(`${runtime.url}/api/operator`)).json()).operator.role).toBe(operator.role);
