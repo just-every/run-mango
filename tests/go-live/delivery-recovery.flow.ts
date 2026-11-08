@@ -6,12 +6,13 @@ import {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
 import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,availableTransport,consent} from './harness';
+import {permanentRejectionJourney} from './permanent-rejection-journey';
 
 
 
 
 
-export const walk0 = async()=>{
+export const walk0 = async({page})=>{
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {
     const cookie=await site.open();await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
@@ -43,6 +44,7 @@ export const walk0 = async()=>{
     await site.control('/_golive/cron');expect(attempts()).toHaveLength(6);
     const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
     expect(detail.results.steps[0].failures.some((f:any)=>f.count===1&&f.code)).toBe(true);
+    await permanentRejectionJourney(site,edge,cookie,page);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close();await edge.close();}
 };
