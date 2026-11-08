@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f141-pc1",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f141-pc1",
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "productChangesThisContinuation": false,
+  "newProductCommits": [],
+  "workingTreeClean": true,
+  "localChecks": [
+    {
+      "command": "node scripts/verification/ci.mjs campaigns",
+      "exit": 0,
+      "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "tests": 4,
+      "durationMs": 411313,
+      "node": "22.20.0",
+      "chromium": "/usr/bin/chromium",
+      "note": "Same selected files, two workers and CI settings as the failed job; native cloud VM rather than GitHub runner."
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js shared-kiosk.journeys.ts",
+      "exit": 0,
+      "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "tests": 1
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "3ea2fb5227abbf479c7a190507b4199fba600993"
+    },
+    {
+      "command": "pnpm exec rer check --profile first-party",
+      "exit": 0,
+      "head": "3ea2fb5227abbf479c7a190507b4199fba600993"
+    }
+  ],
+  "ci": [
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f141-pc1",
+      "head_sha": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42497332545",
+      "id": 42497332545,
+      "name": "Verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f141",
+      "head_sha": "3ea2fb5227abbf479c7a190507b4199fba600993",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42487666893",
+      "id": 42487666893,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "mechanical": {
+    "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+    "viewsWrite": {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    "viewsCheck": {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0
+    },
+    "lockRegenerate": {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    "lockCheck": {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    "ledger": {
+      "command": null,
+      "exit": 0,
+      "reason": "No migration change"
+    }
+  },
+  "publicationScan": {
+    "commit": "3ea2fb5227abbf479c7a190507b4199fba600993",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null,
+    "status": "NOT RUN: guarded Mac lander owns the exact-tree full-history scan"
+  },
+  "runSite": {
+    "status": "NOT RUN: main-only workflow owned by landing fleet"
+  },
+  "mainEquality": false,
+  "observedMain": "f936cb5351ca3432e53e7ed5592f2aa720f3eab2",
+  "countsBefore": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "clauseStatus": {
+    "CONT-042": {
+      "before": "partial",
+      "after": "partial"
+    }
+  },
+  "screens": [
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-1440.png",
+      "sha256": "ff9ca0e5eb436cf893e1f590faa65c68d0ffe2924c0a509acdb0372e8586eab8"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-admitted-390.png",
+      "sha256": "640ce12ead5ceb39fa4cf921d180c670643acd5c4c6350f4ed0e368a2b6f8636"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-1440.png",
+      "sha256": "514cb25ac4efaa079d5acaf3a4cff318a20ccb83b5c5698458326acff020e554"
+    },
+    {
+      "path": "screens/confirmation-allowance-hosted-first-exhausted-390.png",
+      "sha256": "8daac90b263fca2056fcdf50eecb760890a63ea5175fc8762d6c7aa524eea506"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-1440.png",
+      "sha256": "7f731c49f32f656cebdcf6f2002819b13e003fb893b469a563ab530ade379078"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-admitted-390.png",
+      "sha256": "2d9ed26a518a035ad5452bbf8cba3cf9009ca58771fcf59710aaf4d38d23fcbc"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-1440.png",
+      "sha256": "b45d046faa3c93b5d669f2f8122ac298eae8b9d0ea7ecf64ea606754e45f0ef0"
+    },
+    {
+      "path": "screens/confirmation-allowance-kiosk-first-exhausted-390.png",
+      "sha256": "36dbd4010a7e2446aa54bc06d91a6ea39cc2ab2f30d5edd89f7ae1e7efab1176"
+    }
+  ]
+}

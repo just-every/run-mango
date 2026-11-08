@@ -1,0 +1,35 @@
+{
+  "calls": [
+    {
+      "n": 1,
+      "command": "gh api repos/just-every/run-mango/actions/runs/42487666893/jobs",
+      "result": "campaigns job 128753337741 and aggregate verify failed"
+    },
+    {
+      "n": 2,
+      "command": "gh run view 42487666893 --repo just-every/run-mango --job 128753337741 --log-failed",
+      "exit": 0,
+      "result": "empty output: zero bytes; no HTTP error was supplied"
+    },
+    {
+      "n": 3,
+      "command": "gh api repos/just-every/run-mango/actions/jobs/128753337741",
+      "result": "completed failure; check run identity equals job identity"
+    },
+    {
+      "n": 4,
+      "command": "gh api repos/just-every/run-mango/check-runs/128753337741/annotations",
+      "result": "Process completed with exit code 1; no assertion diagnostic"
+    },
+    {
+      "n": 5,
+      "command": "gh api repos/just-every/run-mango/actions/runs?head_sha=3ea2fb5227abbf479c7a190507b4199fba600993&per_page=100",
+      "result": "Verify 42497332545 completed success on cloud/sd-mango-c-f141-pc1; earlier branch Verify 42487666893 failure"
+    }
+  ],
+  "budget": 10,
+  "notes": [
+    "The gh log command cached a complete log archive under /tmp/gh-cli-cache. Reading that local archive recovered the exact failed assertion without another GitHub call.",
+    "No repair, workflow dispatch or rerun was performed."
+  ]
+}

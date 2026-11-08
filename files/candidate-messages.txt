@@ -1,0 +1,9 @@
+3ea2fb5227abbf479c7a190507b4199fba600993
+Reconcile shared confirmation authority and refusal accounting
+
+cc2d1f618b695ddc1e28306e8f9774f732a66a69
+Keep confirmation response proof on the browser clock
+
+ebbb4827222d4278835fd1ca95a5ef03dd62d9a6
+Prove shared destination confirmation allowance across hosted and kiosk forms
+

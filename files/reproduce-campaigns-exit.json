@@ -1,0 +1,6 @@
+{
+  "head": "3ea2fb5227abbf479c7a190507b4199fba600993",
+  "job": 128753337741,
+  "command": "node scripts/verification/ci.mjs campaigns",
+  "exit": 0
+}

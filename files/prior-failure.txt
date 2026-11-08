@@ -1,0 +1,26 @@
+Run 42487666893, campaigns job 128753337741, saved head 3ea2fb5227abbf479c7a190507b4199fba600993.
+Extracted locally from the archive cached by the one authorized gh log invocation.
+
+2026-11-08T14:09:53.3032278Z   1) tests/go-live/presend-checks.journeys.ts:5:1 › [BUILD-008][BUILD-012][RESULT-001] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion 
+2026-11-08T14:09:53.3033377Z 
+2026-11-08T14:09:53.3035094Z     Error: {"status":"blocked","blockers":[{"kind":"message.links.resolved","status":"blocked","detail":"Blocked transmitted links: https://shop.example.test/market (Link host shop.example.test could not be resolved and checked.)","blocking":true,"blockedHosts":[]}]}
+2026-11-08T14:09:53.3036767Z 
+2026-11-08T14:09:53.3037114Z     expect(received).toBe(expected) // Object.is equality
+2026-11-08T14:09:53.3037547Z 
+2026-11-08T14:09:53.3037707Z     Expected: 200
+2026-11-08T14:09:53.3038096Z     Received: 409
+2026-11-08T14:09:53.3038311Z 
+2026-11-08T14:09:53.3038471Z        at harness.ts:44
+2026-11-08T14:09:53.3038720Z 
+2026-11-08T14:09:53.3039151Z       42 | export async function json(response: Response, status: number) {
+2026-11-08T14:09:53.3039924Z       43 |   const text = await response.text();
+2026-11-08T14:09:53.3040541Z     > 44 |   expect(response.status, text).toBe(status);
+2026-11-08T14:09:53.3041129Z          |                                 ^
+2026-11-08T14:09:53.3041953Z       45 |   return text ? JSON.parse(text) : null;
+2026-11-08T14:09:53.3042453Z       46 | }
+2026-11-08T14:09:53.3042770Z       47 |
+2026-11-08T14:09:53.3043217Z         at json ([REDACTED]/tests/go-live/harness.ts:44:33)
+2026-11-08T14:09:53.3043927Z         at walk0 ([REDACTED]/tests/go-live/email-size.flow.ts:79:5)
+2026-11-08T14:09:53.3044692Z         at [REDACTED]/tests/go-live/presend-checks.journeys.ts:8:3
+2026-11-08T14:09:53.3045133Z 
+2026-11-08T14:09:53.3046374Z     Error Context: ../../_temp/mango-verification/campaigns/members/go-live/evidence/4b3746152534/go-live/presend-checks.journeys.ts-5f6c8-se-unsafe-handoff-expansion/error-context.md
