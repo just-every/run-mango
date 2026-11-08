@@ -33,7 +33,7 @@ async function request(url:string, apiKey:string, method:'GET'|'PATCH', remainin
     const cancelled = new Promise<never>((_,reject) => controller.signal.addEventListener('abort',() => reject(failed()),{once:true}));
     return await Promise.race([cancelled,(async () => {
       if (Date.now() >= deadline) throw failed();
-      const response = await fetch(url,{method,redirect:'error',signal:controller.signal,
+      const response = await fetch(url,{method,redirect:'manual',signal:controller.signal,
         headers:{Authorization:`Bearer ${apiKey}`,Accept:'application/json',...(method === 'PATCH' ? {'Content-Type':'application/json'} : {})},
         ...(method === 'PATCH' ? {body:JSON.stringify({status:'unsubscribed'})} : {})});
       if (method === 'PATCH' && response.status === 404) { void response.body?.cancel().catch(() => {}); return {value:null,size:0,notFound:true}; }

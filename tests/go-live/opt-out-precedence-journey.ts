@@ -3,6 +3,7 @@ import {openPage} from '../support/navigation';
 import {confirmedContact,json,draftCampaign,approve,dispatch,rule,type Installation} from './harness';
 import type {providerEdge} from './edge';
 import {mailchimpMember,type mailchimpEdge} from './mailchimp-edge';
+import {restrictionPrivateJourney} from './restriction-private-journey';
 
 /** One populated parallel run: allowed delivery, incoming restrictions and outgoing refusal. */
 export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,incumbent:ReturnType<typeof mailchimpEdge>,cookie:string,page:Page,info:TestInfo) {
@@ -33,7 +34,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   await panel.getByRole('checkbox').check();
   const connectResponse=page.waitForResponse(response=>response.url().endsWith('/api/settings/incumbent-restrictions')&&response.request().method()==='POST');
   await panel.getByRole('button',{name:'Connect parallel audience',exact:true}).click();
-  const connected=await connectResponse;expect(connected.status(),await connected.text()).toBe(201);
+  const connected=await connectResponse;expect(connected.status(),JSON.stringify({response:await connected.text(),requests:incumbent.requests})).toBe(201);
   await expect(panel.getByText('Audience '+incumbent.audienceId+' · '+incumbent.dataCenter,{exact:true})).toBeVisible();
   await expect(panel.getByLabel('Mailchimp API key',{exact:true})).toHaveValue('');
   const status=await json(await site.call('/api/settings/incumbent-restrictions',{cookie}),200);
@@ -93,6 +94,7 @@ export async function optOutPrecedenceJourney(site:Installation,edge:Awaited<Ret
   expect(skipped.map(row=>row.skip_reason)).toEqual(Array(4).fill('channel-not-subscribed'));
   expect(edge.sends.filter(send=>addresses.includes(send.to)&&send.body.headers?.['List-Unsubscribe'])).toEqual([]);
   console.log('PROBE CONT-004 3: parallel Mailchimp snapshots and failed writeback retry -> restrictions persist both ways, queued four skipped, independent allowed recipient accepted');
+  await restrictionPrivateJourney(site,cookie,connection.apiKey);
   let erasure=await site.call('/api/contacts/'+contacts[0].id,{method:'DELETE',cookie}),receipt=await erasure.json();
   for(let turn=0;erasure.status===202&&turn<400;turn++) {
     erasure=await site.call('/api/audience/erasures/'+receipt.receipt.reference+'/resume',{method:'POST',cookie,body:{}});receipt=await erasure.json();
