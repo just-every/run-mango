@@ -25,5 +25,24 @@
   "productBranch": "cloud/sd-mango-c-f144-rb2",
   "finalDelta": "sources.lock.json                               |  2 +-\n tests/go-live/confirmation-allowance-journey.ts | 64 +++++++++++++++++++++----\n 2 files changed, 57 insertions(+), 9 deletions(-)",
   "finalContractMatchesMain": true,
-  "cleanCheckout": true
+  "cleanCheckout": true,
+  "sourceCandidateCounts": {
+    "done": 22,
+    "partial": 196,
+    "missing": 98,
+    "total": 316
+  },
+  "baselineMainCounts": {
+    "done": 23,
+    "partial": 195,
+    "missing": 98,
+    "total": 316
+  },
+  "inheritedMainJudgments": {
+    "OPER-002": {
+      "sourceCandidate": "partial",
+      "inheritedMain": "done"
+    }
+  },
+  "taskJudgmentChanges": []
 }

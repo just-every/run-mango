@@ -14,8 +14,8 @@
   "files": [
     {
       "path": "REPORT.md",
-      "bytes": 8110,
-      "sha256": "21cb692d14a8c761f3cd7306f1cff1fd25576124966889c1a79730d6355e7d69"
+      "bytes": 10485,
+      "sha256": "a4f89c015c1f7bfb2c8c34665cc79f56921a5d54b39eeda321a96d035a58de55"
     },
     {
       "path": "PLAN.md",
@@ -24,13 +24,13 @@
     },
     {
       "path": "product-receipt.json",
-      "bytes": 1712,
-      "sha256": "4d8c00490aa9a3cc725e27cea1b90eb1806a2308d3e3af603107a72474230f96"
+      "bytes": 2796,
+      "sha256": "fb8b237dfd9efe608c999540b12524f672b9f49c36626e2f00597cb4a3b1f748"
     },
     {
       "path": "merge-receipt.json",
-      "bytes": 2261,
-      "sha256": "7cb0284080691fe63bc6798e709dbb1660fb672833ebf69da58161a3b5532cf9"
+      "bytes": 2624,
+      "sha256": "2836f5e9f994c5cbc4f861e7be09b3c4e24043f77779a3246c7aed957d835666"
     },
     {
       "path": "local-checks.json",
@@ -44,8 +44,8 @@
     },
     {
       "path": "setup-receipt.json",
-      "bytes": 492,
-      "sha256": "7ddd92a0152a652df6827e7ef7f44a471b6c6c8893695467577c733c8cbd34de"
+      "bytes": 531,
+      "sha256": "170a062f955edc9dd35433db5623930d62f6f7156f5d5a4433183693cfaa869c"
     },
     {
       "path": "confirmation-allowance-reconciliation.json",
@@ -103,19 +103,24 @@
       "sha256": "269e2509fc89b4f7c863f7b92256d7dd3fd2fa069b653a72e7a6922b9fa63e75"
     },
     {
+      "path": "evidence-roundtrip.json",
+      "bytes": 6216,
+      "sha256": "966d8ac9bd1d4869391c6dc0b767cf0d78de9e95d4364186284603bef96ad82b"
+    },
+    {
       "path": "teardown-receipt.json",
       "bytes": 397,
       "sha256": "6ad49953bce3d71e4a2715bf5a639973a0f58903af82e624751a16f158faefb4"
     },
     {
       "path": "github-calls.json",
-      "bytes": 9754,
-      "sha256": "0772ec4074fc949d11363f92c6437bd16e6be76540c030adb53415474abc0160"
+      "bytes": 10675,
+      "sha256": "8440abf55d6d1ef4b7aa01f8f995ce53bcde21a22ffaceeb39e2b6ddf529f548"
     },
     {
       "path": "ci-receipt.json",
-      "bytes": 510,
-      "sha256": "0edd7bf0f871ce3a2c8f6777d308787b92c054e57b65854f6a668e5a15b391ce"
+      "bytes": 1138,
+      "sha256": "560935d20ddf7df7ff06dc811bd4c3abbc333c7b0438253b7ae96cf1e393e3a1"
     },
     {
       "path": "screenshots/confirmation-allowance-hosted-first-admitted-1440.png",

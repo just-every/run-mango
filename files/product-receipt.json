@@ -43,14 +43,58 @@
     "id": 42665666822,
     "head_sha": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
     "html_url": "https://github.com/just-every/run-mango/actions/runs/42665666822",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "discoveryHTTP": 200,
-    "githubCallsUsed": 2,
+    "githubCallsUsed": 4,
     "minimumWatcherIntervalSeconds": 300,
     "firstDiscoveryError": "invalid character 'u' looking for beginning of value",
-    "greenClaimed": false,
-    "generatedViewExemptionUsed": false
+    "greenClaimed": true,
+    "generatedViewExemptionUsed": false,
+    "polls": [
+      {
+        "call": 3,
+        "time": 1794246221.9014702,
+        "conclusion": null,
+        "head_sha": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42665666822",
+        "status": "in_progress"
+      },
+      {
+        "call": 4,
+        "time": 1794246522.1518888,
+        "conclusion": "success",
+        "head_sha": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42665666822",
+        "status": "completed"
+      }
+    ],
+    "pollIntervalsSeconds": [
+      300.379,
+      300.323,
+      300.25
+    ]
   },
-  "landingClaimed": false
+  "landingClaimed": false,
+  "sourceCandidateCounts": {
+    "done": 22,
+    "partial": 196,
+    "missing": 98,
+    "total": 316
+  },
+  "baselineMainCounts": {
+    "done": 23,
+    "partial": 195,
+    "missing": 98,
+    "total": 316
+  },
+  "inheritedMainJudgments": {
+    "OPER-002": {
+      "sourceCandidate": "partial",
+      "inheritedMain": "done"
+    }
+  },
+  "taskJudgmentChanges": [],
+  "terminalStatus": "READY",
+  "blockers": []
 }
