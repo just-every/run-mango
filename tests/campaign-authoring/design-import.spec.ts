@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
 import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
+import { designImportRefusals, importScreens } from './design-import-refusals';
 
 test.describe.configure({ mode: 'serial', timeout: 180000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -64,6 +65,7 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
 
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
+    await designImportRefusals({ page, request, info: testInfo, url: runtime.url, token: runtime.token, layerdoc, destination, body, files, read, uploads, saves });
 
     // A legal LayerDoc can compile beyond the delivery limit without any one
     // text layer exceeding the input grammar's bound. Keep both selected files.
@@ -76,6 +78,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     await dialog.getByRole('button',{name:'Import design',exact:true}).click();
     await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+    // The browser compiler rejects oversized content after cropping and hosting.
+    await expect(dialog.getByRole('form',{name:'Import a 12ui design',exact:true})).toHaveAttribute('aria-busy','false',{timeout:30000});
     const sizeError=dialog.getByRole('alert');
     await expect(sizeError).toContainText('Email is too large.');
     await expect(sizeError).toContainText('Largest blocks:');
@@ -177,7 +181,7 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await expect(preview.getByRole('alert')).toHaveCount(0);
     await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('h1')).toContainText('Good Things');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.screenshot({ path: testInfo.outputPath(`design-import-${width}.png`), fullPage: true });
+    await importScreens(page, testInfo, 'design-import');
 
     await page.getByRole('button', { name: 'Approve & schedule', exact: true }).click();
     await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
