@@ -1,4 +1,5 @@
 import {operatorAccessJourney} from './operator-access-journey';
+import {operatorSettingsJourney} from './operator-settings-journey';
 import {flowJourney} from '../campaign-authoring/flow-journey';
 import {stripeJourney} from './stripe-journey';
 import {createHmac} from 'node:crypto';
@@ -9,8 +10,9 @@ import {installation,json,sender,confirmedContact,draftCampaign,availableTranspo
 import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
-test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
+test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page,browser},info)=>{
   await operatorAccessJourney();
+  await operatorSettingsJourney(browser,info);
   const edge=await providerEdge(),site=await installation(edge,eventSigner());
   try {
     const owner=await site.open();

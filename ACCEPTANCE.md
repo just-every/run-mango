@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 22 | 196 | 89 | 307 |
+| Core | 23 | 195 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 22 | 196 | 98 | 316 |
+| Full target | 23 | 195 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -90,7 +90,7 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
 
 #### OPER-002 — Management
 
-Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
+Core · published · **done** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 
 **Requirement.** Operators manage invitations and removals in Settings, with fresh, session-bound email proof before an invitation grants access. The [management policy](docs/contract/mechanism.md) records its extension and default.
 
@@ -101,8 +101,8 @@ Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 4. Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.
 5. Only the operator established at setup may remove that operator.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `src/core/features/auth/service.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Settings can invite an operator and remove an operator.; A session without fresh email proof cannot grant another operator access.; Settings can request a confirmation link bound to the current session; completing it permits an invitation retry.; Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.; Only the operator established at setup may remove that operator.. Missing public-door journey: “Management — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”, which runs the Settings screen journey in `tests/go-live/operator-settings-journey.ts` (points 1, 3 and 4 at 1440, with a 390 layout check) and the native HTTP journey in `tests/go-live/operator-access-journey.ts` with `tests/go-live/operator-proof-journey.ts` (points 1 to 5) · `src/core/features/auth/service.ts`; `tests/go-live/roles.journeys.ts` ([BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history)
+**Gap.** None.
 
 #### OPER-003 — Removal does not rewrite history
 
