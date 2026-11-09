@@ -249,7 +249,7 @@ Core · published · **done** · Rules D-2
 2. Only subscribed channels are eligible for a marketing send.
 3. Store activity or consent on one channel never changes the other channel’s state.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-002] Channel status — complete acceptance”: independent contact and destination states for both channels; capture and confirmation preserve opposite restrictions; customer sync and signed paid orders preserve state and consent; campaign checks, approval and Queue handoff admit only subscribed channels.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-002] Channel status — complete acceptance”: independent contact and destination states for both channels; capture and confirmation preserve opposite restrictions; customer sync and signed paid orders preserve state and consent; campaign checks, approval and Queue handoff admit only subscribed channels.; `tests/audience-controls/segments.spec.ts` ([CONT-002] Channel status — complete acceptance)
 **Gap.** None.
 
 #### CONT-003 — Consent evidence
