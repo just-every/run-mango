@@ -47,9 +47,9 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
         method: 'POST', body: JSON.stringify({ email }),
       });
       const existing = operators.data?.operators.some((item) => item.id === operator.id);
-      setNotice(existing ? `${operator.email} already has access.` : `Access added for ${operator.email}. An invitation email has been sent; they must confirm it before signing in.`);
       setEmail('');
       await operators.reload();
+      setNotice(existing ? `${operator.email} already has access.` : `Access added for ${operator.email}. An invitation email has been sent; they must confirm it before signing in.`);
     } catch (cause) {
       setProofRequired(cause instanceof OperatorProofRequired);
       setError(cause instanceof Error ? cause.message : 'Unable to add access. Try again.');
@@ -70,11 +70,11 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
         window.location.assign('/signin?reason=session-ended');
         return;
       }
+      setRemoving(undefined);
+      await operators.reload();
       setNotice(removing.status === 'invited'
         ? `Invitation cancelled for ${removing.email}. Their confirmation links no longer work.`
         : `Access removed for ${removing.email}. Their sessions have been revoked.`);
-      setRemoving(undefined);
-      await operators.reload();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to remove access. Try again.');
       setRemoving(undefined);

@@ -5914,7 +5914,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-operators.tsx": {
-      "sha256": "92cd685d3eb7c25f674024b2453399db1b00b4c3b4bfb8324b59f2afb5b698fd",
+      "sha256": "f2ac749a408d95a9ab951bb59ffed3d46390fa238cc54b60eb6040299051b048",
       "executable": false
     },
     "src/core/features/store/ui/settings-page.tsx": {
