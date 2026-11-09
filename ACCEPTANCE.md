@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 21 | 197 | 89 | 307 |
+| Core | 21 | 198 | 88 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 21 | 197 | 98 | 316 |
+| Full target | 21 | 198 | 97 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. BUILD-005 was exercised through its registered native authoring journey from the code and tests at commit `c5e82df75c3269b0a75b10c16c69eb87f795f311` (6 November 2026); this status candidate retains those relevant source and test bytes, with branch Verify enforced by the trial gate. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -728,7 +728,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### AUD-010 — Derived audience rule summaries
 
-Core · published · **done** · From AUD-001 · Rules D-2
+Core · published · **partial** · From AUD-001 · Rules D-2
 
 **Requirement.** Every displayed audience explanation derives from the rules that actually select recipients.
 
@@ -736,8 +736,8 @@ Core · published · **done** · From AUD-001 · Rules D-2
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts` and `tests/audience-controls/audience-summary-cases.ts`: acceptance 1 reconciles saved inclusion and custom exclusions with the authenticated collection, actual campaign row, review, approval checks, scheduled page and saved audience snapshots; repeated reads preserve the exact approval and recipient rows. Acceptance 2 independently specifies nested all and any membership, every editor field and comparison, typed values, property, channel, topic, ZIP and currency scopes, zero, one and longer lookbacks, same-event order filters, retained imported conditions and a native saved follow-up cohort. Predicate and exclusion edits persist after reload without authority; 39 condition cases and a follow-up retain their complete meaning. Restricted roles cannot read private rule details or run checks, and a signed-out session cannot read them. Browser proof covers the clause screens at 1440 and 390.
-**Gap.** None.
+**Evidence.** `tests/audience-controls/segments.spec.ts`
+**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. Missing public-door journey: “Derived audience rule summaries — complete acceptance”, covering the unasserted outcomes above.
 
 ### Campaigns — Live audience authoring counts
 
@@ -2851,15 +2851,15 @@ Core · target · **partial** · Cites BASE-AGENT-007 · Rules D-1
 
 #### BUILD-005 — Conditional content
 
-Core · target · **missing** · Rules D-1
+Core · target · **done** · Rules D-1
 
 **Requirement.** A block can be shown or hidden by segment, property, topic, predicted stage or the trigger event's properties, with an "otherwise" alternative; the plain-text part follows the same choice. Preview can render as any chosen contact or as each branch.
 
 **Acceptance.**
 1. a VIP-only block appears in the preview as a VIP contact and not as another, and both recipients' plain-text parts match their HTML.
 
-**Evidence.** None.
-**Gap.** not implemented
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[BUILD-005] conditional blocks follow the chosen contact in preview and delivered HTML and plain text”: VIP and ordinary contact previews; each branch and empty otherwise; segment, typed property, confirmed topic, recorded prediction property and contact-bound trigger event choices; matching delivered HTML and plain text; mobile presentation at 1440 and 390; denied and revoked sessions, archive privacy and erased-event replay.
+**Gap.** None.
 
 #### BUILD-006 — Dynamic product content
 
