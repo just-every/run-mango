@@ -30,8 +30,8 @@ export function incumbentWebhookRoutes(platform: Platform, audience: ReturnType<
     if (type !== 'unsubscribe' && type !== 'cleaned') return context.json({applied: false}, 200);
     const now = Date.now(), occurredAt = new Date(Number.isFinite(at) && at <= now ? at : now);
     const contactId = (await db.prepare('SELECT contact_id AS id FROM contact_email_addresses WHERE email=?').bind(email).first<{id: string}>())?.id;
-    // The incumbent echoing Mango's own writeback is recognized once and applies nothing twice.
-    if (contactId && type === 'unsubscribe' && await db.prepare("UPDATE parallel_run_writebacks SET echoed_at=? WHERE contact_id=? AND state='done' AND echoed_at IS NULL AND written_at>=? RETURNING contact_id")
+    // The incumbent echoing Mango's own writeback is recognized once and applies nothing twice; an abuse complaint is never an echo.
+    if (contactId && type === 'unsubscribe' && form.get('data[action]') !== 'abuse' && await db.prepare("UPDATE parallel_run_writebacks SET echoed_at=? WHERE contact_id=? AND state='done' AND echoed_at IS NULL AND written_at>=? RETURNING contact_id")
       .bind(now, contactId, now - echoWindowMs).first()) return context.json({applied: false, echo: true}, 200);
     const eventId = `mailchimp:${await sha256([link.list_id, type, form.get('fired_at'), email].join('|'))}`;
     if (type === 'cleaned') await audience.recordProviderSuppression({destination: email, channel: 'email', cause: 'provider-suppression', occurredAt, providerEventId: eventId});

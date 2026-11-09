@@ -107,7 +107,7 @@ export const contactErasureTables:ErasureTable[]=[
   // Inbound connection secrets and address-free replay digests hold no contact records.
   ...['review_loyalty_connections','review_loyalty_receipts'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
   // Sending account authority has no contact records; retain it through contact erasure.
-  ...['sending_connection','sending_proposals'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
+  ...['sending_connection','sending_proposals','parallel_run_links'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
   {table:'contact_property_definitions',literal:true,mode:'redact'},

@@ -28,7 +28,8 @@ export async function runWriteback(platform: Platform, now = Date.now()) {
   const api = mailchimp((await openSendingSecret(link.secret_cipher, platform.config.sessionSigningKey)).apiKey, link.server_prefix);
   let written = 0, failed = 0;
   for (const item of due) {
-    const addresses = (await db.prepare(`SELECT email FROM contact_email_addresses WHERE contact_id=? AND channel_status IN ('unsubscribed','suppressed')`)
+    // The restriction is the contact's: every address it holds (a merge brings more than one) goes back to the incumbent.
+    const addresses = (await db.prepare(`SELECT email FROM contact_email_addresses WHERE contact_id=?`)
       .bind(item.contact_id).all<{email: string}>()).results;
     try {
       for (const {email} of addresses) {

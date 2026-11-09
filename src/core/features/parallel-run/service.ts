@@ -28,18 +28,23 @@ export function parallelRunService(platform: Platform) {
       if (audience?.id !== input.listId) throw new IncumbentError('Mailchimp did not confirm that audience.');
       const secret = Array.from(crypto.getRandomValues(new Uint8Array(24)), byte => byte.toString(16).padStart(2, '0')).join('');
       const url = new URL(`/webhooks/incumbent/mailchimp/${secret}`, origin).href;
-      const hook = await api.createWebhook(input.listId, url);
-      if (typeof hook?.id !== 'string' || !hook.id) throw new IncumbentError('Mailchimp did not identify the webhook it created.');
-      const now = Date.now();
+      const now = Date.now(), digest = await sha256(secret);
+      // Mailchimp calls the address before it registers the webhook, so the link that recognizes the secret exists first.
+      await db.prepare('INSERT INTO parallel_run_links(id,provider,server_prefix,list_id,secret_cipher,last_four,webhook_secret_digest,webhook_id,connected_by,connected_at) VALUES(1,?,?,?,?,?,?,NULL,?,?)')
+        .bind('mailchimp', prefix, input.listId, await sealSendingSecret({apiKey: input.apiKey}, key), input.apiKey.slice(-4), digest, operator.email, now).run();
+      let webhookId: string | null = null;
       try {
+        const hook = await api.createWebhook(input.listId, url);
+        if (typeof hook?.id !== 'string' || !hook.id) throw new IncumbentError('Mailchimp did not identify the webhook it created.');
+        webhookId = hook.id;
         await db.batch([
-          db.prepare('INSERT INTO parallel_run_links(id,provider,server_prefix,list_id,secret_cipher,last_four,webhook_secret_digest,webhook_id,connected_by,connected_at) VALUES(1,?,?,?,?,?,?,?,?,?)')
-            .bind('mailchimp', prefix, input.listId, await sealSendingSecret({apiKey: input.apiKey}, key), input.apiKey.slice(-4), await sha256(secret), hook.id, operator.email, now),
-          activityStatement(db, {key: `parallel-run-connected:${hook.id}`, action: 'parallel-run-connected', entityType: 'integration', entityId: 'mailchimp', actorId: operator.id,
-            detail: {provider: 'mailchimp', audience: audience.name ?? input.listId, lastFour: input.apiKey.slice(-4), webhookId: hook.id}, at: now}),
+          db.prepare('UPDATE parallel_run_links SET webhook_id=? WHERE id=1').bind(webhookId),
+          activityStatement(db, {key: `parallel-run-connected:${webhookId}`, action: 'parallel-run-connected', entityType: 'integration', entityId: 'mailchimp', actorId: operator.id,
+            detail: {provider: 'mailchimp', audience: audience.name ?? input.listId, lastFour: input.apiKey.slice(-4), webhookId}, at: now}),
         ]);
       } catch (error) {
-        await api.deleteWebhook(input.listId, hook.id).catch(() => undefined);
+        if (webhookId) await api.deleteWebhook(input.listId, webhookId).catch(() => undefined);
+        await db.prepare('DELETE FROM parallel_run_links WHERE id=1').run();
         throw error;
       }
       return this.status();

@@ -7,7 +7,8 @@ export const mailchimpList = 'a1b2c3d4';
 export function mailchimpEdge(members: string[]) {
   const status = new Map(members.map(email => [email, 'subscribed'])), webhooks = new Map<string, string>();
   const writes: Array<{email: string; status: string; ok: boolean}> = [], unauthorized: string[] = [];
-  const state = {failWrites: 0, down: false};
+  // Mailchimp calls the webhook address before it registers it; a refusal there fails the registration.
+  const state = {failWrites: 0, down: false, validate: undefined as undefined | ((url: string) => Promise<number>)};
   const send = (response: ServerResponse, code: number, value?: unknown) => {
     response.writeHead(code, {'Content-Type': 'application/json'}); response.end(value === undefined ? undefined : JSON.stringify(value));
   };
@@ -18,7 +19,9 @@ export function mailchimpEdge(members: string[]) {
     let body = ''; for await (const chunk of request) body += chunk;
     if (url.pathname === base && request.method === 'GET') { send(response, 200, {id: mailchimpList, name: 'Garden audience'}); return true; }
     if (url.pathname === base + '/webhooks' && request.method === 'POST') {
-      const id = 'hook' + (webhooks.size + 1); webhooks.set(id, JSON.parse(body).url); send(response, 200, {id}); return true;
+      const callback = JSON.parse(body).url;
+      if (state.validate && await state.validate(callback) !== 200) { send(response, 400, {status: 400, detail: 'The URL could not be validated.'}); return true; }
+      const id = 'hook' + (webhooks.size + 1); webhooks.set(id, callback); send(response, 200, {id}); return true;
     }
     const hook = new RegExp(`^${base}/webhooks/([^/]+)$`).exec(url.pathname);
     if (hook && request.method === 'DELETE') { send(response, webhooks.delete(hook[1]) ? 204 : 404); return true; }
