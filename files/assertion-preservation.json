@@ -1,0 +1,13 @@
+{
+  "candidateBlobByteForBytePreserved": true,
+  "mainJourneyUnchangedSinceMergeBase": true,
+  "mainBrowserClockPreserved": true,
+  "mainExpectOccurrences": 39,
+  "candidateExpectOccurrences": 52,
+  "review": "Every main assertion retained directly or strengthened: evidence matching adds frequencyDisclosure; the previous capture-state equality excludes resubscribe-refused history, and the candidate retains that exact subscription-state equality while additionally asserting the single refusal row and full unchanged prior history. All other changes add assertions or receipt fields. No test registration, skip, limit, request count or product rule changed.",
+  "productChanges": [
+    "tests/go-live/confirmation-allowance-journey.ts",
+    "sources.lock.json"
+  ],
+  "noClauseJudgmentChange": true
+}

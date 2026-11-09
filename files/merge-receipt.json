@@ -1,0 +1,29 @@
+{
+  "source": "597e6a869f556d4a86194220126c09b1fa666c47",
+  "expectedSource": "597e6a869f556d4a86194220126c09b1fa666c47",
+  "sourceVerified": true,
+  "main": "8d2570706eb369d56973e20a6da84e0220389775",
+  "mergeBase": "5694d4b34c3142d7a1ad7a79bb359887ef4dcc66",
+  "fullHistory": true,
+  "initialMerge": "clean automatic merge; no unmerged hunks",
+  "contractMatchesMain": true,
+  "mainJourneyChangesSinceBase": "",
+  "candidateJourneyStat": "tests/go-live/confirmation-allowance-journey.ts | 64 +++++++++++++++++++++----\n 1 file changed, 56 insertions(+), 8 deletions(-)",
+  "clauseRow": "| `CONT-042` | Shared destination confirmation allowance | target | partial | `tests/go-live/shared-kiosk.journeys.ts` \u00b7 `src/core/features/audience/public-capture-writer.ts` \u00b7 `src/core/features/audience/confirmation-handoff.ts` | Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked. |",
+  "counts": {
+    "done": 23,
+    "partial": 195,
+    "missing": 98,
+    "total": 316
+  },
+  "browserClockMainCommit": "1d8f22780bb0a3d3caebfc5f5b8d255fe4837536",
+  "candidateJourneyByteForBytePreserved": true,
+  "mainBaselineIncluded": true,
+  "finalMainFetch": "8d2570706eb369d56973e20a6da84e0220389775",
+  "mainMovedAtFinalFetch": false,
+  "productHead": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+  "productBranch": "cloud/sd-mango-c-f144-rb2",
+  "finalDelta": "sources.lock.json                               |  2 +-\n tests/go-live/confirmation-allowance-journey.ts | 64 +++++++++++++++++++++----\n 2 files changed, 57 insertions(+), 9 deletions(-)",
+  "finalContractMatchesMain": true,
+  "cleanCheckout": true
+}

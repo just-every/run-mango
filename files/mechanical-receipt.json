@@ -1,0 +1,48 @@
+[
+  {
+    "command": "git diff --exit-code origin/main -- CONTRACT.md",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "node src/base/contract-docs.mjs write",
+    "exit": 0,
+    "stdout": "Wrote 0 contract documents.\n",
+    "stderr": ""
+  },
+  {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 0,
+    "stdout": "Contract documents are current.\n",
+    "stderr": ""
+  },
+  {
+    "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0,
+    "stdout": {
+      "ok": true,
+      "edition": "just-every/mango",
+      "trackedFileCount": 2203,
+      "sourceLockSha256": "ceacf1339c54dde7c85b914bdade606c72389099c845ea343f62f175369783e6"
+    },
+    "stderr": ""
+  },
+  {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0,
+    "stdout": {
+      "ok": true,
+      "edition": "just-every/mango",
+      "trackedFileCount": 2203,
+      "sourceLockSha256": "ceacf1339c54dde7c85b914bdade606c72389099c845ea343f62f175369783e6"
+    },
+    "stderr": ""
+  }
+]

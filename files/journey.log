@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:1832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/confirmation-allowance-cloud.journeys.ts:5:1 › [CONT-042] focused shared destination confirmation allowance replay (7.4m)
+
+  Slow test file: tests/go-live/confirmation-allowance-cloud.journeys.ts (7.4m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 passed (7.5m)

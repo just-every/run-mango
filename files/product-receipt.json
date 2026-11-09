@@ -1,0 +1,56 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f144-rb2",
+  "head": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+  "sourceCandidate": "597e6a869f556d4a86194220126c09b1fa666c47",
+  "mergedMain": "8d2570706eb369d56973e20a6da84e0220389775",
+  "pushGuard": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f144-rb2",
+  "productPush": "success first attempt",
+  "identityAudit": {
+    "commitsIncludingSideParents": 7,
+    "passed": true,
+    "prohibitedTrailers": 0,
+    "survivingCodexOpenAiCoauthors": 0
+  },
+  "sourceLockSha256": "ceacf1339c54dde7c85b914bdade606c72389099c845ea343f62f175369783e6",
+  "productDelta": [
+    "sources.lock.json",
+    "tests/go-live/confirmation-allowance-journey.ts"
+  ],
+  "clausesChanged": [],
+  "CONT-042": {
+    "before": "partial",
+    "after": "partial"
+  },
+  "countsBefore": {
+    "done": 23,
+    "partial": 195,
+    "missing": 98,
+    "total": 316
+  },
+  "countsAfter": {
+    "done": 23,
+    "partial": 195,
+    "missing": 98,
+    "total": 316
+  },
+  "generatedViewsMatchMain": true,
+  "candidateJourneyPreserved": true,
+  "cleanCheckout": true,
+  "ci": {
+    "repository": "just-every/run-mango",
+    "workflow": "Verify",
+    "id": 42665666822,
+    "head_sha": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42665666822",
+    "status": "in_progress",
+    "conclusion": null,
+    "discoveryHTTP": 200,
+    "githubCallsUsed": 2,
+    "minimumWatcherIntervalSeconds": 300,
+    "firstDiscoveryError": "invalid character 'u' looking for beginning of value",
+    "greenClaimed": false,
+    "generatedViewExemptionUsed": false
+  },
+  "landingClaimed": false
+}

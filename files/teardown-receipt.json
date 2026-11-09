@@ -1,0 +1,13 @@
+{
+  "cloudRunSetupReturned": true,
+  "cloudRunJourneyReturned": true,
+  "knownStartedProcessesExited": {
+    "journeyChromium": true,
+    "journeyVite": true,
+    "setupFirstVite": true,
+    "setupSecondVite": true
+  },
+  "nodeModulesRemoved": true,
+  "broadProcessKillUsed": false,
+  "cloneRemoval": "after evidence publication, to preserve its Git transport checkout until transfer completes"
+}

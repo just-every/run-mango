@@ -1,0 +1,6 @@
+{
+  "command": "cloud_run timeout 900 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+  "exit": 1,
+  "observed": "Dependencies installed; production and installer preview builds emitted; local migrations completed. Setup subsequently ended with setup: failed (exit 1), without a specific assertion or transport error in its terminal output. No product source modified. Focused native fixture is independently running.",
+  "privateRawLogPublished": false
+}

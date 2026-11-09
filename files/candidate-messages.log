@@ -1,0 +1,21 @@
+dd6334266cd5a22b30d82c59a57a16d828dcd420
+Merge current Mango main into CONT-042 confirmation allowance proof
+
+597e6a869f556d4a86194220126c09b1fa666c47
+Merge current main into confirmation allowance evidence candidate
+
+80bc36a87109a3da22509aa422b30415de462dc6
+Prove fresh confirmation admission preserves exhausted destination budgets
+
+165cf8d41b2b51027e65dce524ea7473206ab4a6
+Reconcile continuation with main and preserve complete refusal evidence [skip ci]
+
+3ea2fb5227abbf479c7a190507b4199fba600993
+Reconcile shared confirmation authority and refusal accounting
+
+cc2d1f618b695ddc1e28306e8f9774f732a66a69
+Keep confirmation response proof on the browser clock
+
+ebbb4827222d4278835fd1ca95a5ef03dd62d9a6
+Prove shared destination confirmation allowance across hosted and kiosk forms
+

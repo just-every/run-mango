@@ -1,0 +1,15 @@
+{
+  "repository": "just-every/run-mango",
+  "workflow": "Verify",
+  "id": 42665666822,
+  "head_sha": "dd6334266cd5a22b30d82c59a57a16d828dcd420",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42665666822",
+  "status": "in_progress",
+  "conclusion": null,
+  "discoveryHTTP": 200,
+  "githubCallsUsed": 2,
+  "minimumWatcherIntervalSeconds": 300,
+  "firstDiscoveryError": "invalid character 'u' looking for beginning of value",
+  "greenClaimed": false,
+  "generatedViewExemptionUsed": false
+}

@@ -1,0 +1,22 @@
+{
+  "typecheck": {
+    "command": "cloud_run timeout 180 pnpm run typecheck",
+    "exit": 0
+  },
+  "journey": {
+    "command": "cloud_run timeout 1000 pnpm exec playwright test --config tests/go-live/playwright.config.js confirmation-allowance-cloud.journeys.ts --reporter=list,json",
+    "exit": 0,
+    "expected": 1,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "durationMs": 450586.502
+  },
+  "temporaryRunnerRemoved": true,
+  "assertionWidth": 1440,
+  "screenshotWidths": [
+    1440,
+    390
+  ],
+  "screenshots": 8
+}
