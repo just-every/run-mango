@@ -1,0 +1,70 @@
+{
+  "head": "3c38deab6226ae76bccc46f4b44726a051db6170",
+  "branch": "cloud/strategy-trial-13-sol-fix1",
+  "checks": [
+    {
+      "command": "pnpm exec playwright test tests/audience-controls/segments.spec.ts --grep \\[CONT-022\\] --workers=1 --reporter=list,/tmp/rer-step-reporter.cjs",
+      "exit": 0,
+      "result": "1 passed (10.7m); full public route and browser journey",
+      "log": "touched-journey.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck-final.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party-check.log"
+    }
+  ],
+  "browser_proof": [
+    {
+      "path": "contact-topic-1440.png",
+      "sha256": "e87c823c3943af865d06b3aa956e83e92eb46fc35e674ca5b1d00e5f767ad963"
+    },
+    {
+      "path": "contact-topic-390.png",
+      "sha256": "66181983f59ad847da0a07fe7b351f1f54a472aebe460c60833c6fc49679ad54"
+    },
+    {
+      "path": "contact-export-1440.png",
+      "sha256": "4042cbe7e031717b17ed2df2dffd2acf7d52fe0cb447e9f99393bf4eec3f048d"
+    },
+    {
+      "path": "contact-export-390.png",
+      "sha256": "38633466e48caec10de2f1e5e8bd3fa89bde57a3d24295c9e29b5e1ecc4c9231"
+    },
+    {
+      "path": "contact-bulk-1440.png",
+      "sha256": "f5a9eeb9b3167e064f52d640303531dc4f7bdbd2f112fde2f97734e1148df52e"
+    },
+    {
+      "path": "contact-bulk-390.png",
+      "sha256": "7fd363d171a7dc55e776b0c80fe87cc17c5cce4474d24d32f5838a24c77df2b2"
+    },
+    {
+      "path": "contact-erased-1440.png",
+      "sha256": "e0b213c3b643a5c691cc3ecdeb638e2add5d4e0346fb58716804752cfab6a4db"
+    },
+    {
+      "path": "contact-erased-390.png",
+      "sha256": "3df117f8b07ea676851463f7b231f8387dc8c00483b1710c57a76264fe25c344"
+    }
+  ],
+  "initial_attempt": {
+    "log": "before-fix-test.log",
+    "exit": 1,
+    "result": "600-second timeout; targeted baseline reproduction is separately captured in authority-before.log"
+  },
+  "source_after_commit_changes": false,
+  "toolchain": {
+    "browser_executable": "/usr/bin/chromium",
+    "browser_args": [
+      "--no-sandbox"
+    ],
+    "node": "24.19.0",
+    "pnpm": "10.12.4"
+  }
+}

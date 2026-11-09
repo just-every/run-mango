@@ -1,0 +1,11 @@
+
+Running 1 test using 1 worker
+
+(node:3054) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3054) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+QUEUE_RESULT {"acknowledged":false,"retried":true,"job":{"id":"97085d2a-8f4f-4c89-bb5c-7796c6665731","action":"erase","value":null,"channel":"email","createdAt":1794237487462,"state":"failed","total":1,"processed":0,"succeeded":0,"refused":0,"error":"Initiating session or administrative authority was revoked.","refusals":[]}}
+  ✓  1 tests/audience-controls/authority-probe.spec.ts:4:1 › queued erasure loses effective Owner authority after Analyst reassignment (1.1m)
+
+  1 passed (1.4m)

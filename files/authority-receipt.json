@@ -1,0 +1,18 @@
+{
+  "probe": "authority-probe.ts",
+  "before": {
+    "authority_source": "builder original predicate on integrated worktree",
+    "exit": 1,
+    "test_result": "expected acknowledgement false, observed true; erasure job running",
+    "log": "authority-before.log",
+    "authority_sha256": "cc11ce5efb734f8c807672e579f1c77a4eb5a3220d9dd759741c27f45619bf19"
+  },
+  "after": {
+    "authority_sha256": "3803b7ad770a581567b9d2fb1d6662241b55f58b4efa429f8f3abe6c655b8d9e",
+    "exit": 0,
+    "test_result": "1 passed; failed zero-progress receipt and unchanged contact after delivery and replay",
+    "log": "authority-after.log"
+  },
+  "test_registration_delta": 0,
+  "head": "3c38deab6226ae76bccc46f4b44726a051db6170"
+}

@@ -1,0 +1,20 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/strategy-trial-13-sol-fix1",
+  "head": "3c38deab6226ae76bccc46f4b44726a051db6170",
+  "parents": [
+    "0abc479b711b24cdb695c937c06b58e16d26f82a",
+    "1fca3324a114f44d985b7f9d6f1596c612b687a1"
+  ],
+  "status_counts": {
+    "partial": 197,
+    "done": 21,
+    "missing": 98
+  },
+  "status_rows": 316,
+  "cont022": [
+    "partial"
+  ],
+  "authored_clause_status_changes": 0,
+  "pull_request": null
+}

@@ -1,0 +1,11 @@
+{
+  "conclusion": "success",
+  "head_sha": "3c38deab6226ae76bccc46f4b44726a051db6170",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42643732011",
+  "status": "completed",
+  "run_id": 42643732011,
+  "event": "push",
+  "workflow": "Verify",
+  "head": "3c38deab6226ae76bccc46f4b44726a051db6170",
+  "api_calls_used": 4
+}

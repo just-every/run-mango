@@ -1,0 +1,42 @@
+[
+  {
+    "at": 1794237668.782699,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=3c38deab6226ae76bccc46f4b44726a051db6170&per_page=100",
+      "--jq",
+      "{workflow_runs:[.workflow_runs[]|{id,name,event,status,conclusion,head_sha,html_url}]}"
+    ]
+  },
+  {
+    "at": 1794237972.346206,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42643732011",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "at": 1794238276.73187,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42643732011",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  },
+  {
+    "at": 1794238577.812397,
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42643732011",
+      "--jq",
+      "{status,conclusion,head_sha,html_url}"
+    ]
+  }
+]

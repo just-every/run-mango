@@ -1,0 +1,39 @@
+{
+  "head": "3c38deab6226ae76bccc46f4b44726a051db6170",
+  "checks": [
+    {
+      "name": "views",
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "integration",
+      "command": [
+        "node",
+        "scripts/sync-integration.mjs",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "migration-ledger",
+      "command": null,
+      "result": "No migration added or edited by this fix. Inherited migrations retained in regenerated deployment specification and exercised by the D1 fixture."
+    }
+  ],
+  "generated_views_same_as_main": true,
+  "status_rows_retained": 316
+}

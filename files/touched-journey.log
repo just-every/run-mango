@@ -1,0 +1,24 @@
+
+Running 1 test using 1 worker
+
+(node:3336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+2026-11-09T15:19:47.087Z STEP Bulk selection uses native identity, property, tag, segment and consent facts
+2026-11-09T15:20:26.880Z STEP Queued erasure refuses an initiating Owner reassigned to Analyst without deleting contact data
+PROBE CONT-022 authority: native Owner queues erasure, becomes Analyst through role route, Queue delivery and replay -> failed zero-progress receipt; contact profile unchanged
+2026-11-09T15:20:32.757Z STEP Topic membership requires the selected address, channel and covering confirmed category
+2026-11-09T15:20:41.760Z STEP Narrow export and suppression preserve channel boundaries; erasure scrubs old receipts
+2026-11-09T15:22:37.699Z STEP A 5,000-contact frozen job survives app recreation and replays without widening selection
+2026-11-09T15:27:08.097Z STEP Private bulk work rejects anonymous, analyst and revoked initiating authority
+PROBE CONT-022 1: authenticated search for email, formatted phone, name, latest typed property, imported tag, saved segment and consent states -> expected contact identities
+PROBE CONT-022 2: selected tag, untag, CSV export, email and SMS suppression, native erasure and topic additions -> saved changes; topic receipt names every refusal; erased identities absent from old receipts and exports
+PROBE CONT-022 3: create and resume a frozen 5000-contact job, recreate app mid-job and replay terminal command -> monotonic progress and durable 5000-success receipt
+PROBE CONT-022 4: property 42 selects one person; 5000-contact tag job completes; topic additions refuse mismatched, missing, unconfirmed and restricted evidence by name
+PROBE CONT-022 browser: property Vegetables -> Amelia and Bennett; topic receipt names Bennett refused; tag and untag persisted; selection CSV downloaded; suppression and erasure cancel unchanged and confirm applied; old export drops erased contact; receipts survive reload; screens 1440 and 390
+  ✓  1 tests/audience-controls/segments.spec.ts:21:1 › [CONT-022] find contacts and complete consent-safe durable bulk actions (10.0m)
+
+  Slow test file: tests/audience-controls/segments.spec.ts (10.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 passed (10.7m)

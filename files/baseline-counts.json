@@ -1,0 +1,12 @@
+{
+  "head": "0abc479b711b24cdb695c937c06b58e16d26f82a",
+  "status_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "status_rows": 316,
+  "cont022": [
+    "done"
+  ]
+}

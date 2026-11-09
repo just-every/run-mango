@@ -1,0 +1,20 @@
+
+Running 1 test using 1 worker
+
+(node:1472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/audience-controls/segments.spec.ts:21:1 › [CONT-022] find contacts and complete consent-safe durable bulk actions (10.0m)
+
+
+  1) tests/audience-controls/segments.spec.ts:21:1 › [CONT-022] find contacts and complete consent-safe durable bulk actions 
+
+    Test timeout of 600000ms exceeded.
+
+    Error Context: ../../home/agent/rer-consolidation/work/strategy-trial-13-sol-fix1/evidence/7f523b30a6bf/main/audience-controls-segments-c64fc-t-safe-durable-bulk-actions/error-context.md
+
+  Slow test file: tests/audience-controls/segments.spec.ts (10.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests/audience-controls/segments.spec.ts:21:1 › [CONT-022] find contacts and complete consent-safe durable bulk actions 

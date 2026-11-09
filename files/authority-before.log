@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:2934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+QUEUE_RESULT {"acknowledged":true,"retried":false,"job":{"id":"dccc014b-1b5a-4685-9b5e-f31959018350","action":"erase","value":null,"channel":"email","createdAt":1794237367725,"state":"running","total":1,"processed":0,"succeeded":0,"refused":0,"error":null,"refusals":[]}}
+  ✘  1 tests/audience-controls/authority-probe.spec.ts:4:1 › queued erasure loses effective Owner authority after Analyst reassignment (20.4s)
+
+
+  1) tests/audience-controls/authority-probe.spec.ts:4:1 › queued erasure loses effective Owner authority after Analyst reassignment 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      20 |     const receipt=await (await h.call(`/api/audience/bulk/${pending.id}`,undefined,'GET',custodian)).json() as any;
+      21 |     console.log('QUEUE_RESULT '+JSON.stringify({acknowledged,retried,job:receipt.job}));
+    > 22 |     expect(acknowledged).toBe(false);expect(retried).toBe(true);
+         |                          ^
+      23 |     expect(receipt.job).toMatchObject({state:'failed',total:1,processed:0,succeeded:0,refused:0});
+      24 |     const after=await h.call(`/api/contacts/${person.id}`,undefined,'GET',custodian);
+      25 |     expect(after.status).toBe(200);expect(await after.json()).toEqual(before);
+        at /workspace/run-mango/tests/audience-controls/authority-probe.spec.ts:22:26
+
+    Error Context: ../../home/agent/rer-consolidation/work/strategy-trial-13-sol-fix1/evidence/7f523b30a6bf/main/audience-controls-authorit-5ba97--after-Analyst-reassignment/error-context.md
+
+  1 failed
+    tests/audience-controls/authority-probe.spec.ts:4:1 › queued erasure loses effective Owner authority after Analyst reassignment 
