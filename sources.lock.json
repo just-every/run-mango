@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "887d3e3f05a75993ed97b78bfff76544c46d2821b58f2dbdc2886411069a9939",
+      "sha256": "1811c3d820032a65a9064e0a970f56e79236c3a81014c1d3d2c2f272b9ef653c",
       "executable": false
     },
     "DEMO.md": {
@@ -1130,7 +1130,7 @@
       "executable": false
     },
     "docs/moving-in.md": {
-      "sha256": "77aa696d5016030cbe711e34695008fd1e5a4e7adbfa95e156697e7baf9e02be",
+      "sha256": "6f3377e8e41a1cd190f267c59f69ee0ebdaac3bc3e58b898b5398caf256b8e62",
       "executable": false
     },
     "docs/signup-and-consent.md": {
@@ -1206,7 +1206,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "44472c564974dfcf514d2308d1438af8d3a2e653b51afa2bda7e6b4b8a5fd457",
+      "sha256": "4bfeb74641b9e7a7714101f123564a5f4cc4cd654d886a8023f87688ac8465c4",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1623,6 +1623,10 @@
     },
     "migrations/core/0104_sending_event_silence.sql": {
       "sha256": "58e10d48b63ed2780aad1e73f3ada57d4d4742c914107daeb7a8d323abd00aa1",
+      "executable": false
+    },
+    "migrations/core/0105_parallel_run.sql": {
+      "sha256": "223ca73c7f7062a84f59ef4e3ea829c612e27581664b7daee861928f103cb422",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2642,7 +2646,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "fcb903d6bdfad8b5c76b66eb26a53ce0dbbcd0b2a459fd7698d9368978d63d3d",
+      "sha256": "936ad6df2c4578b2750a2464d6c4dec3472c6b538b8315bc49628ce47bc8630f",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -2678,7 +2682,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "8c1d0de7f717daf68dffd990e69264f894c86c0267a228baac332bc17e3bfb4b",
+      "sha256": "8b2f99f07d67f70ecd74aa76d51c196371dfb3d764161836967d7b5a02ca678b",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2822,7 +2826,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "ad113441a5e6e3e0580cc6588e978bbd347bba851ac8ad432cb728536c1ad915",
+      "sha256": "4209634aeb96ca3e93a843e7de5bcfb761e9cd69c85e6fbe2d49ed0883fcb97b",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3058,7 +3062,7 @@
       "executable": false
     },
     "src/core/app/worker.ts": {
-      "sha256": "2afcba3a073e4c9623583ef9e4957796f6824b7fd5b4b3df68b0e6d45088a255",
+      "sha256": "dba950d36cb392b84567dc8e4acd51de47b8f2bdf7e1593a1a3d652ef76b02ce",
       "executable": false
     },
     "src/core/features/archive/archive-page.tsx": {
@@ -3150,7 +3154,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "97bc83fccb5acda5c1b61559ed44667ccc6b3f631cf4234e6f76430593f9f1c2",
+      "sha256": "33fbde076a28175affa82592e63cfbedd8fe007f00ec237daa74658d6157d7db",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3706,7 +3710,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "b6d71bdebb35875a258006b124e5cc771f8e935ff6f1207f18136c7faba74ff1",
+      "sha256": "b3ab3fa169c9881e7de7e8a194d7b7ba29a3e3dc82b5caa74889b1372a261c96",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -5385,8 +5389,32 @@
       "sha256": "9f7aac6cb7910a203b4125dc911245ce760f083f9b576d4fae19057b99beb9a6",
       "executable": false
     },
+    "src/core/features/parallel-run/inbound.ts": {
+      "sha256": "38c577bf52faac80c3d1f5a8bb8ff3e4283d8de6c05e62e046af1c8981c9e3ee",
+      "executable": false
+    },
+    "src/core/features/parallel-run/mailchimp.ts": {
+      "sha256": "e3e866f9179c21a5924ef18e5f8d4b33bb944e3c50b60ea5abc9f28ac4d7c372",
+      "executable": false
+    },
+    "src/core/features/parallel-run/routes.ts": {
+      "sha256": "a0b8e93255771d533cc1d1f4d2559fe9f825f73c2e2ad6a76887ed98dc8c51ce",
+      "executable": false
+    },
+    "src/core/features/parallel-run/scheduled.ts": {
+      "sha256": "ba96e1958232f193e25b46009039ddb3c4f4425cf0f4181571ca19f327d65b15",
+      "executable": false
+    },
+    "src/core/features/parallel-run/service.ts": {
+      "sha256": "c380275953d54e4c00b81f395ba7f077f6fc42abc0c08a814971f0c19b7c8380",
+      "executable": false
+    },
+    "src/core/features/parallel-run/writeback.ts": {
+      "sha256": "4b4077ee320c30aff9d530723f6f3fafcd0568e3fcea902f554b64f333331a98",
+      "executable": false
+    },
     "src/core/features/portability/policy.ts": {
-      "sha256": "1f0ea37092a16e5dc12efd4d7bd0a28b36ed15c68e00bd9a7e5ab79cd51348a7",
+      "sha256": "e72ce134dc94c171b19b212f867a22a5a26c99e7364667111c7c0e28fd1c9de4",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -8965,6 +8993,10 @@
       "sha256": "ffcbcab4ef58cf548768b74df44c5834c01d1a17012d0d4c83b69ff6f8e73161",
       "executable": false
     },
+    "tests/go-live/mailchimp-edge.ts": {
+      "sha256": "c819d466c2c52dc05c8aa4831aa6cf3c3b0cdd0e3d7300f441c40184a41af7ba",
+      "executable": false
+    },
     "tests/go-live/managed-mail.flow.ts": {
       "sha256": "cc38b4ff73505a6cff2d8db38b63025180aa0b019f3a3034bd01ca4095787091",
       "executable": false
@@ -9007,6 +9039,10 @@
     },
     "tests/go-live/opt-in-journey.ts": {
       "sha256": "f8116c5483f15dd0ef49bfc10c0827d096d3d16adb92149c269e95194796cd9b",
+      "executable": false
+    },
+    "tests/go-live/opt-out-precedence.journeys.ts": {
+      "sha256": "8b40c58e93bb9f29d306bbf7dfcbadbc81e4dd964d698e28300049f465251a65",
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
@@ -9442,7 +9478,7 @@
       "executable": false
     },
     "tests/portability.flow.ts": {
-      "sha256": "2ad739982514eb0f32ecddbe5bf1a7ba7d343789f0f160d998205ff40e4641c7",
+      "sha256": "7447587ede7e2c3d188799f83b7b40abe1ef8039e4c8c1019631d13c529bc157",
       "executable": false
     },
     "tests/portability.spec.ts": {

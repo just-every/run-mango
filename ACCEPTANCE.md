@@ -531,7 +531,7 @@ Core · published · **partial** · Rules D-1
 
 #### PROP-005 — Owner control
 
-Core · published · **done** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
+Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
 
 **Requirement.** A generated proposal preserves draft provenance and exact-revision control. An agent’s scheduling or sending call carries external, with money when it incurs provider spend; the company’s policy decides that call. A person’s campaign approval binds the particular saved revision they approved.
 
@@ -539,8 +539,8 @@ Core · published · **done** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGEN
 1. Creating or adopting a generated proposal creates an editable draft without itself scheduling or sending.
 2. Under a company policy that holds activation for approval, the particular saved revision runs only after the named person approves it.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes” · `tests/proposals-decision/owner-control.spec.ts` — “[PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs”; `tests/proposals-decision/decision-routes.spec.ts` ([PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes); `tests/proposals-decision/owner-control.spec.ts` ([PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs)
-**Gap.** None.
+**Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-006 — Grounded generation
 
