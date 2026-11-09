@@ -101,7 +101,7 @@ Core · published · **done** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 4. Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.
 5. Only the operator established at setup may remove that operator.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”, which runs the Settings screen journey in `tests/go-live/operator-settings-journey.ts` (points 1, 3 and 4 at 1440, with a 390 layout check) and the native HTTP journey in `tests/go-live/operator-access-journey.ts` with `tests/go-live/operator-proof-journey.ts` (points 1 to 5) · `src/core/features/auth/service.ts`
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”, which runs the Settings screen journey in `tests/go-live/operator-settings-journey.ts` (points 1, 3 and 4 at 1440, with a 390 layout check) and the native HTTP journey in `tests/go-live/operator-access-journey.ts` with `tests/go-live/operator-proof-journey.ts` (points 1 to 5) · `src/core/features/auth/service.ts`; `tests/go-live/roles.journeys.ts` ([BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history)
 **Gap.** None.
 
 #### OPER-003 — Removal does not rewrite history
