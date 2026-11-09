@@ -63,8 +63,7 @@ export async function bulkFixture() {
       const session=await testIdentity(h.f.platform).createTestSession(operatorId);
       return `__Host-operator_session=${session.token}`;
     }
-    async function analyst() {
-      const id='synthetic-mango-bulk-analyst';
+    async function analyst(id='synthetic-mango-bulk-analyst') {
       await testIdentity(h.f.platform).importLocalDemoOperator({id,email:[id,'example.test'].join('@'),displayName:'Market analyst'},new Date());
       await h.f.db.batch([
         h.f.db.prepare("UPDATE oa_operators SET role='member' WHERE id=?").bind(id),
@@ -73,7 +72,7 @@ export async function bulkFixture() {
       ]);
       return session(id);
     }
-    return {...h,call,json,analyst,
+    return {...h,call,json,analyst,ownerId:owner.id as string,
       restart(){app=createApp(h.f.bindings,h.f.originalProduction());},
       async renewOwner(){cookie=await session(owner.id);},
     };

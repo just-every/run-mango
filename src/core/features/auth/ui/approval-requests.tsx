@@ -7,7 +7,7 @@ import {usePermissions} from './permissions';
 export function ApprovalRequests({campaignId,revisionId,dirty}:{campaignId:string;revisionId:string;dirty:boolean}) {
   const formatDate=useDateFormatter();
   const {can}=usePermissions(),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
-  const resource=useResource<{requests:Array<{revisionId:string;operator:string;requestedAt:number}>}>(`/api/campaigns/${campaignId}/approval-requests`);
+  const resource=useResource<{requests:Array<{revisionId:string;operator:string;requestedAt:number;blockedHosts:Array<{host:string}>}>}>(`/api/campaigns/${campaignId}/approval-requests`);
   async function request() {
     setBusy(true);setNotice('');
     try {
@@ -21,6 +21,7 @@ export function ApprovalRequests({campaignId,revisionId,dirty}:{campaignId:strin
   if(!latest&&!(can('draft.write')&&!can('campaign.approve'))&&!notice)return null;
   return <div className="notice-note">
     {latest?<p>Approval requested by {latest.operator} on {formatDate(new Date(latest.requestedAt).toISOString())}.</p>:null}
+    {latest?.blockedHosts.length?<p>Blocked hosts in this request: {latest.blockedHosts.map(entry=>entry.host).join(', ')}.</p>:null}
     {can('draft.write')&&!can('campaign.approve')?<><p>Your role can draft and request approval. A Manager, Admin or Owner approves the saved revision.</p><button type="button" className="secondary-action" disabled={busy||dirty} onClick={()=>void request()}>Request approval</button>{dirty?<p>Save changes before requesting approval.</p>:null}</>:null}
     {notice?<p role="status">{notice}</p>:null}
   </div>;

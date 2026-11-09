@@ -342,14 +342,16 @@ export function createApp(
     if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
     if(!context.req.path.startsWith('/api/audience/bulk/')&&context.req.path!=='/api/audience/bulk'&&!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
-    if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
+    // Unmasked roles need no projection. Preserve their response bytes, including retained LayerDoc artifacts.
+    const privacyRole = contactPrivacyRole(operator);
+    if(!hasPermission(privacyRole,'contact.unmasked')&&['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
       const value=await context.res.json();
-      const projected=projectPrivateResponse(contactPrivacyRole(operator),context.req.url,value);
+      const projected=projectPrivateResponse(privacyRole,context.req.url,value);
       context.res=new Response(JSON.stringify(projected),{status:context.res.status,headers:context.res.headers});
     }
   });
   app.route('/api',contactSupportRoutes(environment.DB,audienceService));
-  app.route('/api',approvalRequestRoutes(environment.DB));
+  app.route('/api',approvalRequestRoutes(environment.DB,campaignService));
   app.route('/api',activityRoutes(environment.DB));
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
   app.route('/api', createIntegrationSettingsRoutes(integrations));

@@ -75,6 +75,32 @@ export async function bulkRouteJourney() {
       expect((await profile(people[1].id)).tags).not.toContain('market-import');
     });
 
+    await test.step('Queued erasure refuses an initiating Owner reassigned to Analyst without deleting contact data',async()=>{
+      const custodianId='synthetic-mango-bulk-custodian',custodian=await h.analyst(custodianId);
+      await h.json(`/api/operators/${custodianId}/role`,{role:'owner'},'PUT');
+      const before=await h.json(`/api/contacts/${people[4].id}`);
+      const pending=await start({contactIds:[people[4].id],action:'erase'});
+      const command=h.f.jobs.findLast((value:any)=>value.kind==='contact.bulk'&&value.payload.id===pending.id);
+      expect(command).toBeTruthy();
+      await h.json(`/api/operators/${h.ownerId}/role`,{role:'analyst'},'PUT');
+      expect((await h.json('/api/operator')).operator.role).toBe('analyst');
+      expect((await h.call(`/api/audience/bulk/${pending.id}/resume`,{})).status).toBe(403);
+      let acknowledged=false,retried=false;
+      await consumeLifecycleQueue({messages:[{body:command,ack(){acknowledged=true;},retry(){retried=true;}}]} as unknown as LifecycleQueueBatch,h.f.services.lifecycleRuntime);
+      expect(acknowledged).toBe(false);expect(retried).toBe(true);
+      const receiptResponse=await h.call(`/api/audience/bulk/${pending.id}`,undefined,'GET',custodian);
+      expect(receiptResponse.status).toBe(200);
+      const failed=(await receiptResponse.json() as any).job;
+      expect(failed).toMatchObject({state:'failed',total:1,processed:0,succeeded:0,refused:0});
+      const contactResponse=await h.call(`/api/contacts/${people[4].id}`,undefined,'GET',custodian);
+      expect(contactResponse.status).toBe(200);expect(await contactResponse.json()).toEqual(before);
+      // Replaying the queued command cannot revive the failed destructive work.
+      await consumeLifecycleQueue({messages:[{body:command,ack(){},retry(){}}]} as unknown as LifecycleQueueBatch,h.f.services.lifecycleRuntime);
+      expect(await (await h.call(`/api/contacts/${people[4].id}`,undefined,'GET',custodian)).json()).toEqual(before);
+      expect((await h.call(`/api/operators/${h.ownerId}/role`,{role:'owner'},'PUT',custodian)).status).toBe(200);
+      console.log('PROBE CONT-022 authority: native Owner queues erasure, becomes Analyst through role route, Queue delivery and replay -> failed zero-progress receipt; contact profile unchanged');
+    });
+
     await test.step('Topic membership requires the selected address, channel and covering confirmed category',async()=>{
       const ids=people.map(person=>person.id);
       for(const channel of ['email','sms']) {
