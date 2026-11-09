@@ -1,6 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {segmentFixture} from './segment-fixture';
-import {draftCampaign,json} from '../go-live/harness';
+import {audienceSummaryCases} from './audience-summary-cases';
+import {draftCampaign,json,approve,dispatch} from '../go-live/harness';
 import {openPage,reloadPage} from '../support/navigation';
 import type {ExclusionRule,InclusionRule} from '../../src/core/features/lifecycle/rules';
 
@@ -111,6 +112,71 @@ export async function audienceSummaryJourney(page:Page,info:TestInfo) {
       await page.setViewportSize({width,height:1000});
       await row.screenshot({path:info.outputPath(`audience-summary-list-${width}.png`)});
     }
-    await saved(changed,changedExclusions);await noAuthority();expect(f.edge.unexpected).toEqual([]);
+    await saved(changed,changedExclusions);await noAuthority();
+    await audienceSummaryCases(page,f,campaign);
+    await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{inclusionRuleJson:JSON.stringify(changed),exclusionRulesJson:JSON.stringify(changedExclusions)}}),200);
+    const checked=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
+    expect(checked).toMatchObject({candidateCount:2,eligibleCount:1,exclusions:[{reason:'synthetic-mango-local-exclusion',count:1}]});
+    const audienceCheck=checked.checks.find((check:any)=>check.kind==='audience.structured-rule');
+    expect(audienceCheck).toMatchObject({status:'passed',blocking:false});meaning(audienceCheck.detail,1,'94103');
+    const reviewed=await read();meaning(reviewed.revision.audienceRule,1,'94103');
+    expect(reviewed.audience).toMatchObject({candidateCount:2,eligibleCount:1,excludedCount:1});
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+    meaning(await page.locator('.saved-audience-summary').innerText(),1,'94103');
+    meaning(await page.getByLabel('Saved audience rule',{exact:true}).innerText(),1,'94103');
+    await page.getByText(/checks passed/,{exact:false}).first().click();
+    meaning(await page.locator('.approval-checks .check-list__item').filter({has:page.getByText('Audience conditions',{exact:true})}).innerText(),1,'94103');
+    await noAuthority();
+    const approval=await approve(site,cookie,campaign);
+    expect(approval.status).toBe('scheduled');expect(approval.revisionDigest).toEqual(expect.any(String));
+    const immutable=await site.rows(`SELECT * FROM campaign_approval_requests WHERE revision_id='${campaign.revisionId}'`);
+    expect(immutable).toHaveLength(1);
+    const recipients=await site.rows(`SELECT * FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`);
+    expect(recipients).toHaveLength(1);expect(recipients[0].contact_id).toBe(people[0].id);
+    for(const path of [`/api/campaigns/${campaign.campaignId}`,`/api/campaigns/${campaign.campaignId}/review`]) {
+      const detail=await json(await site.call(path,{cookie}),200);
+      expect(detail.campaign.state).toBe('scheduled');meaning(detail.revision.audienceRule,1,'94103');
+      expect(JSON.parse(detail.revision.inclusionRuleJson)).toEqual(changed);expect(JSON.parse(detail.revision.exclusionRulesJson)).toEqual(changedExclusions);
+      meaning(detail.checks.find((check:any)=>check.kind==='audience.structured-rule').detail,1,'94103');
+    }
+    const maskedCookie=await site.open(people[7].email,'synthetic-mango-summary-analyst');
+    await json(await site.call('/api/operators/synthetic-mango-summary-analyst/role',{method:'PUT',cookie,body:{role:'analyst'}}),200);
+    const masked=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie:maskedCookie}),200);
+    expect(masked.revision.audienceMasked).toBe(true);
+    expect(masked.checks.find((check:any)=>check.kind==='audience.structured-rule').detail).not.toContain('vegetables');
+    expect(JSON.stringify(masked)).not.toContain('interest');
+    expect((await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:maskedCookie,body:{revisionId:campaign.revisionId}})).status).toBe(403);
+    for(const suffix of ['', '/review','/scheduled']) {
+      await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}${suffix}`);
+      meaning(await page.getByLabel('Saved audience rule',{exact:true}).innerText(),1,'94103');
+      if(suffix==='/review')meaning(await page.locator('.saved-audience-summary').innerText(),1,'94103');
+      await reloadPage(page);meaning(await page.getByLabel('Saved audience rule',{exact:true}).innerText(),1,'94103');
+      for(const width of [1440,390]) {
+        await page.setViewportSize({width,height:1000});
+        await page.screenshot({path:info.outputPath(`audience-summary-${suffix===''?'detail':suffix.slice(1)}-${width}.png`),fullPage:true});
+      }
+      await page.setViewportSize({width:1440,height:1000});
+    }
+    await collection(1,'94103');
+    expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE revision_id='${campaign.revisionId}'`)).toEqual(immutable);
+    expect(await site.rows(`SELECT * FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual(recipients);
+    expect(f.edge.sends.filter(send=>send.body.subject===`${name}: what is growing this month`)).toEqual([]);
+    console.log('PROBE AUD-010 display-doors: checks, review, detail, scheduled page, campaign list and saved audience snapshots -> independently reconciled saved meaning, unchanged approval and exact recipient identity after repeated reads');
+    // A native follow-up is another supported condition: its saved cohort value
+    // must not disappear behind the same generic sentence for every source.
+    await site.control('/_golive/clock',{advanceMs:3600001,hold:true});
+    expect((await dispatch(site,campaign.campaignId,new Date(now+3600000)))[0].transport_disposition).toBe('accepted');
+    await site.control('/_golive/clock',{advanceMs:2*86400000,hold:true});
+    const followup=await json(await site.call(`/api/campaigns/${campaign.campaignId}/followup`,{method:'POST',cookie,body:{subject:'synthetic-mango-followup',delayHours:48,metric:'click'}}),201);
+    const followupDetail=await json(await site.call(`/api/campaigns/${followup.campaignId}/review`,{cookie}),200);
+    const cohort=JSON.parse(followupDetail.revision.inclusionRuleJson).predicates[0].value;
+    expect(await site.rows(`SELECT source_campaign_id,delay_hours,metric FROM campaign_followups WHERE id='${cohort}'`)).toEqual([{source_campaign_id:campaign.campaignId,delay_hours:48,metric:'click'}]);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${followup.campaignId}/review`);
+    await expect(page.getByLabel('Audience conditions summary',{exact:true})).toContainText(`Saved non-engagement audience is "${cohort}"`);
+    await expect(page.getByLabel('Follow-up source')).toContainText(name);
+    await expect(page.getByLabel('Follow-up source')).toContainText('48 hours');
+    expect(await site.rows(`SELECT revision_id FROM campaign_approval_requests WHERE revision_id='${followup.revisionId}'`)).toEqual([]);
+    console.log('PROBE AUD-010 followup-condition: completed native source and 48-hour follow-up -> summary retains saved cohort value alongside original source and cutoff; follow-up remains unapproved');
+    expect(f.edge.unexpected).toEqual([]);
   }finally{await f.close();}
 }

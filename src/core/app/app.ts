@@ -350,7 +350,7 @@ export function createApp(
     }
   });
   app.route('/api',contactSupportRoutes(environment.DB,audienceService));
-  app.route('/api',approvalRequestRoutes(environment.DB));
+  app.route('/api',approvalRequestRoutes(environment.DB,campaignService));
   app.route('/api',activityRoutes(environment.DB));
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
   app.route('/api', createIntegrationSettingsRoutes(integrations));

@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore, type ReactNode } from 'react';
 
 const key = 'mango-time-zone';
 const listeners = new Set<() => void>();
@@ -24,25 +24,48 @@ function chosenZone() {
 
 export function setTimeZone(zone: string) {
   try { localStorage.setItem(key, zone); } catch { /* the choice then lasts until reload */ }
+  publish();
+}
+
+const serverSnapshot = { hydrated: false, timeZone: 'UTC' };
+let snapshot = serverSnapshot;
+const getSnapshot = () => snapshot;
+const getServerSnapshot = () => serverSnapshot;
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+};
+
+function publish() {
+  const timeZone = chosenZone();
+  if (snapshot.hydrated && snapshot.timeZone === timeZone) return;
+  snapshot = { hydrated: true, timeZone };
   listeners.forEach(listener => listener());
 }
 
-const subscribe = (listener: () => void) => {
-  listeners.add(listener);
-  window.addEventListener('storage', listener);
-  return () => { listeners.delete(listener); window.removeEventListener('storage', listener); };
-};
-
-/** The zone times are shown in. A Worker cannot know it, so the server and the first client render read UTC. */
-export function useTimeZone() {
-  return useSyncExternalStore(subscribe, chosenZone, () => 'UTC');
+/**
+ * Publish above streamed routes, without updating their ancestor context. A
+ * context update can render a second copy while a route is still hydrating.
+ * Only committed store subscribers update; a later boundary hydrates against
+ * the stable server snapshot before reading the current browser snapshot.
+ */
+export function TimeZoneProvider({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    window.addEventListener('storage', publish);
+    publish();
+    return () => { window.removeEventListener('storage', publish); };
+  }, []);
+  return children;
 }
 
-const never = () => () => {};
+/** A Worker cannot know the zone: server and first client render read UTC. */
+export function useTimeZone() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).timeZone;
+}
 
-/** True once the page has hydrated: server and first client render agree, then the browser's own knowledge applies. */
+/** Server and first client render agree, then the document publishes hydration. */
 export function useHydrated() {
-  return useSyncExternalStore(never, () => true, () => false);
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).hydrated;
 }
 
 /**

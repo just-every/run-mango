@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 21 | 197 | 89 | 307 |
+| Core | 22 | 196 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 21 | 197 | 98 | 316 |
+| Full target | 22 | 196 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -240,7 +240,7 @@ Core · published · **partial** · Rules D-2
 
 #### CONT-002 — Channel status
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Consent and eligibility are independent for email and SMS on every contact.
 
@@ -249,8 +249,8 @@ Core · published · **partial** · Rules D-2
 2. Only subscribed channels are eligible for a marketing send.
 3. Store activity or consent on one channel never changes the other channel’s state.
 
-**Evidence.** `tests/move-in/held.journeys.ts` — “[CONT-002][CONT-004][CONT-010] an export's unsubscribe or cleaned status reaches a contact an earlier import holds, and keeps their own edits” · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Independent pending and SMS states; Cross-channel independence under store activity and consent. Missing public-door journey: “Channel status — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-002] Channel status — complete acceptance”: independent contact and destination states for both channels; capture and confirmation preserve opposite restrictions; customer sync and signed paid orders preserve state and consent; campaign checks, approval and Queue handoff admit only subscribed channels.; `tests/audience-controls/segments.spec.ts` ([CONT-002] Channel status — complete acceptance)
+**Gap.** None.
 
 #### CONT-003 — Consent evidence
 
@@ -531,7 +531,7 @@ Core · published · **partial** · Rules D-1
 
 #### PROP-005 — Owner control
 
-Core · published · **done** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
+Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
 
 **Requirement.** A generated proposal preserves draft provenance and exact-revision control. An agent’s scheduling or sending call carries external, with money when it incurs provider spend; the company’s policy decides that call. A person’s campaign approval binds the particular saved revision they approved.
 
@@ -539,8 +539,8 @@ Core · published · **done** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGEN
 1. Creating or adopting a generated proposal creates an editable draft without itself scheduling or sending.
 2. Under a company policy that holds activation for approval, the particular saved revision runs only after the named person approves it.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes” · `tests/proposals-decision/owner-control.spec.ts` — “[PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs”; `tests/proposals-decision/decision-routes.spec.ts` ([PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes); `tests/proposals-decision/owner-control.spec.ts` ([PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs)
-**Gap.** None.
+**Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-006 — Grounded generation
 
@@ -728,7 +728,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### AUD-010 — Derived audience rule summaries
 
-Core · published · **partial** · From AUD-001 · Rules D-2
+Core · published · **done** · From AUD-001 · Rules D-2
 
 **Requirement.** Every displayed audience explanation derives from the rules that actually select recipients.
 
@@ -736,8 +736,8 @@ Core · published · **partial** · From AUD-001 · Rules D-2
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts`: acceptance 1 campaign collection and actual row derive from saved inclusion and exclusion rules; acceptance 2 one independently specified nested all and any fixture retains every condition, editor field label, comparison, value, property scope and order lookback. Predicate and exclusion edits survive save and reload, swap the independently known eligible identity, and create no approval, recipients or dispatch. Editor and campaign-row captures at 1440 and 390. Existing builder and review evidence remains in the original segments journey.
-**Gap.** Acceptance 1: complete review, approval-check, scheduled-page and audience-snapshot derivation matrix still needs public-door proof. Acceptance 2: other condition, comparison, value, lookback and editor-label cases remain unproved; the nested fixture is one case, not the complete matrix.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion”, invoking `tests/audience-controls/audience-summary-journey.ts` and `tests/audience-controls/audience-summary-cases.ts`: acceptance 1 reconciles saved inclusion and custom exclusions with the authenticated collection, actual campaign row, review, approval checks, scheduled page and saved audience snapshots; repeated reads preserve the exact approval and recipient rows. Acceptance 2 independently specifies nested all and any membership, every editor field and comparison, typed values, property, channel, topic, ZIP and currency scopes, zero, one and longer lookbacks, same-event order filters, retained imported conditions and a native saved follow-up cohort. Predicate and exclusion edits persist after reload without authority; 39 condition cases and a follow-up retain their complete meaning. Restricted roles cannot read private rule details or run checks, and a signed-out session cannot read them. Browser proof covers the clause screens at 1440 and 390.
+**Gap.** None.
 
 ### Campaigns — Live audience authoring counts
 

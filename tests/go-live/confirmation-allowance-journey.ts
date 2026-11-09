@@ -143,6 +143,8 @@ export async function confirmationAllowanceJourney(site:ResubscribeSite,browser:
             contact_id:id,kind:'resubscribe-refused',detail:'Daily confirmation allowance exhausted.',
           })]);
           expect({...after,history:after.history.filter(row=>before.history.some(old=>old.id===row.id))}).toEqual(before);
+          const subscriptionState=(state:typeof after)=>({...state,history:state.history.filter(row=>row.kind!=='resubscribe-refused')});
+          expect(subscriptionState(after)).toEqual(subscriptionState(before));
           expect(counter).toEqual(beforeCounter);
           expect(mail).toEqual(beforeMail);
           expect(await site.control('/_kiosk/messages')).toEqual(beforeOutbox);
