@@ -129,6 +129,14 @@ await mango.track(event);
 
 Methods are `identify`, `profiles`, `memberships`, `segments`, `track`, `changes` and `suppress`. There is no automatic tracking, browser storage or automatic retry. A website must send through its own authenticated, consent-aware server proxy; omit `token` in its browser client and point `baseUrl` at that proxy. Never embed an installation key in public JavaScript. Mango does not grant cross-origin browser admission or collect anonymous visitors through this API. Host and server-proxy authorization are the website operator's responsibility.
 
+## Mailchimp restrictions during a parallel run
+
+The Owner opens **Settings → Mailchimp restrictions**, supplies the account data center, audience ID and API key, and explicitly authorizes audience reads and restrictive writes. Connect each moved audience that still sends. The key is encrypted on this installation, never returned and excluded from account exports; reconnect after a restore.
+
+Mango reads every member status before approval and delivery and on the minute scheduler. Unsubscribed members become locally unsubscribed; cleaned members are suppressed. A later subscribed snapshot never upgrades a Mango restriction. Mango unsubscribes and suppressions are written back as `unsubscribed`, including recipient one-click requests. Failed writes leave the local restriction in force and are retried from that ledger on synchronization. Settings shows the failure; approval and delivery wait for recovery. **Synchronize restrictions** retries immediately. **End parallel connection** first synchronizes, refuses while that fails, then deletes the key and stops subsequent reads and writes.
+
+This connection synchronizes email restrictions only. It does not import subscribers, grant new permission, activate a flow or synchronize subscribed state. Other incumbent providers and their synchronization mechanisms remain separate move-in work. Restriction behavior is exercised against a Mailchimp-shaped network fixture; no live provider account qualification is claimed.
+
 ## Reviews and loyalty
 
 Owner and Admin can open **Settings → Reviews and loyalty** to connect inbound Judge.me, Okendo and Smile.io observations. Each connection uses the existing `integration.manage` permission plus an Owner/Admin check. Managers cannot read or change it. Configure the displayed HTTPS webhook path in the provider; Mango makes no provider request and creates no provider subscription. Secrets use the installation's existing AES-GCM credential sealer, are never returned and are excluded from account exports. Reconnect after restoration. Replacing or disconnecting revokes the old adapter key.

@@ -1,4 +1,6 @@
 import {proveCustomProperties} from './custom-property-journey';
+import {mailchimpEdge} from './mailchimp-edge';
+import {optOutPrecedenceJourney} from './opt-out-precedence-journey';
 import AxeBuilder from '@axe-core/playwright';
 import {openPage} from '../support/navigation';
 import {manualEntryJourney} from './manual-entry-journey';
@@ -11,7 +13,8 @@ import { activityJourney } from './activity-log';
 import { installation, json, sender, availableTransport, draftCampaign, approve, dispatch, signedPost } from './harness';
 
 test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
-  const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
+  const incumbent=mailchimpEdge({pageSize:2});
+  const edge = await providerEdge({incumbent:incumbent.handle}), signer = eventSigner(), site = await installation(edge, signer,{sms:true,networkHosts:['us24.api.mailchimp.com']});
   try {
     const cookie = await site.open();
     await browserPage.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
@@ -146,6 +149,7 @@ test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-
     await manualEntryJourney(site,edge,cookie,browserPage,info);
     await proveReviewLoyalty(site,cookie,browserPage,info,edge);
     await proveCustomProperties(site,cookie,browserPage,info,edge);
+    await test.step('Opt-out precedence — complete acceptance',()=>optOutPrecedenceJourney(site,edge,incumbent,cookie,browserPage,info));
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
   const managedEdge = await providerEdge(), managed = await installation(managedEdge, eventSigner(), {managed: 'none'});

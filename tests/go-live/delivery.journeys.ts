@@ -1,5 +1,6 @@
 import {test} from '@playwright/test';
 import {walk1,walk2,walk3} from './delivery.flow';
+import {cancellationJourney} from './cancellation-journey';
 import {scheduledEditJourney} from './scheduled-edit-journey';
 
 // Each is a complete business flow with its own installation. Keep the longer
@@ -14,4 +15,8 @@ test('[MSG-011][RESULT-006] an owner connects delivery, account restrictions sto
 test('[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch',async({page},info)=>{
   await scheduledEditJourney(page,info);
   await walk1();
+});
+
+test('[CAMP-009] native email cancellation stops every unsent step within 30 seconds across scheduled, dispatching and paused work',async({page},info)=>{
+  await cancellationJourney(page,info);
 });

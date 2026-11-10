@@ -71,6 +71,8 @@ import { createCampaignService } from '@/core/features/campaigns/service';
 import { createHealthRepository } from '@/core/features/health/repository';
 import { createHealthRoutes } from '@/core/features/health/routes';
 import { createMoveInRoutes } from '@/core/features/move-in/routes';
+import {createRestrictionSync,writeRestriction} from '@/core/features/move-in/restriction-sync';
+import {restrictionRoutes} from '@/core/features/move-in/restriction-routes';
 import { createHealthService } from '@/core/features/health/service';
 import { createInsightsRepository } from '@/core/features/insights/repository';
 import { createInsightsRoutes } from '@/core/features/insights/routes';
@@ -113,6 +115,7 @@ function audienceDependencies(
   lifecycle: () => LifecycleRuntime,
 ) {
   return {
+    restrictionChanged:(destination:string,channel:'email'|'sms')=>writeRestriction(platform,destination,channel),
     validateConsent(input: import('@/core/features/audience/service').ConsentCapture){if(input.channel==='sms')validateSmsConsent(platform,input);},
     contactHashSalt: platform.config.contactHashSalt,
     publicTokens: {
@@ -217,9 +220,15 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
     if (!lifecycleRuntime) throw new Error('Lifecycle runtime has not been composed.');
     return lifecycleRuntime;
   }));
+  const synchronizeIncumbent=createRestrictionSync(platform,audienceService);
+  const audience=createLifecycleAudience(audienceService);
   lifecycleRuntime = {
     platform,
-    audience: createLifecycleAudience(audienceService),
+    synchronizeIncumbent,
+    audience: {...audience,
+      async resolveFrozenCandidates(input) {await synchronizeIncumbent();return audience.resolveFrozenCandidates(input);},
+      async recheckHandoffEligibility(input) {await synchronizeIncumbent();return audience.recheckHandoffEligibility(input);},
+    },
     synchronizeCommerce: platform.commerce
       ? createCommerceSynchronizer(platform.commerce, storeService, audienceService)
       : undefined,
@@ -393,6 +402,7 @@ export function createApp(
   app.route('/api', analyticsSettingsRoutes(platform));
   app.route('/api', signupCapacityRoutes(platform));
   app.route('/api', createMoveInRoutes(platform));
+  app.route('/api', restrictionRoutes(platform,lifecycleRuntime.synchronizeIncumbent!));
   app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
   app.route('/api',createCatalogRoutes(platform));

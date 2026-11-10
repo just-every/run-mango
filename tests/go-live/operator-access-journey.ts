@@ -1,4 +1,5 @@
 import {expect} from '@playwright/test';
+import {operatorProofJourney} from './operator-proof-journey';
 import {invitationRuntime,confirmedOwner,confirmedInvite,cookie} from '../../operations/fixtures/invitation-runtime.mjs';
 
 // Invite, confirm, cancel and revoke through the same HTTP doors an owner uses.
@@ -9,6 +10,8 @@ export async function operatorAccessJourney() {
   let held:Promise<Response>|undefined,barrier:string|undefined;
   try {
     const owner=await confirmedOwner(site);
+    console.log('Operator access: fresh email proof before an invitation');
+    await operatorProofJourney(site,site.setupSession,owner);
     console.log('Operator access: confirm teammate');
     const teammate=await confirmedInvite(site,owner,'teammate@example.test');
     const invite=async(email:string)=>{
@@ -48,6 +51,15 @@ export async function operatorAccessJourney() {
     const initial=operators.find((row:any)=>row.isInitial);
     expect((await site.call(`/api/operators/${initial.id}`,{method:'DELETE',cookie:owner})).status).toBe(409);
     expect((await site.call('/api/operator',{cookie:owner})).status).toBe(200);
+    console.log('Operator access: only the setup operator removes the setup operator');
+    const second=await confirmedInvite(site,owner,'second@example.test');
+    expect((await site.call(`/api/operators/${second.operator.id}/role`,{method:'PUT',cookie:owner,body:{role:'owner'}})).status).toBe(200);
+    const denied=await site.call(`/api/operators/${initial.id}`,{method:'DELETE',cookie:second.cookie});
+    expect(denied.status).toBe(400);
+    expect((await site.call('/api/operator',{cookie:owner})).status).toBe(200);
+    expect((await site.call(`/api/operators/${initial.id}`,{method:'DELETE',cookie:owner})).status).toBe(204);
+    expect((await site.call('/api/operator',{cookie:owner})).status).toBe(401);
+    expect((await site.call('/api/operator',{cookie:second.cookie})).status).toBe(200);
   } finally {
     if(barrier)await site.db.prepare('UPDATE test_barriers SET released=1 WHERE id=?').bind(barrier).run();
     if(held)await held;

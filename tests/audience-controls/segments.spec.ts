@@ -3,6 +3,7 @@ import {bulkBrowserJourney} from './bulk-browser';
 import {audienceSummaryJourney} from './audience-summary-journey';
 import {contactProfileJourney} from './contact-profile-flow';
 import {test} from '@playwright/test';
+import {channelStatusJourney} from './channel-status-journey';
 import {walk0 as section0} from "./segments.flow";
 import {walk0 as section1} from "./merge.flow";
 
@@ -27,4 +28,9 @@ test('[CONT-022] find contacts and complete consent-safe durable bulk actions',a
 test("[AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion", async ({page}, info) => {
   test.setTimeout(240000);
   await audienceSummaryJourney(page,info);
+});
+
+test('[CONT-002] Channel status — complete acceptance',async({page},info)=>{
+  test.setTimeout(240000);
+  await channelStatusJourney(page,info);
 });

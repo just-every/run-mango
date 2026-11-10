@@ -132,6 +132,7 @@ export type LifecycleJobs = JobDispatcher;
 export type LifecyclePlatform = Platform;
 
 export type LifecycleRuntime = {
+  synchronizeIncumbent?:()=>Promise<unknown>;
   synchronizeCommerce?: (payload: Record<string, unknown>) => Promise<unknown>;
   platform: LifecyclePlatform;
   audience: LifecycleAudience;
