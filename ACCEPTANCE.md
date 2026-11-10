@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 23 | 195 | 89 | 307 |
+| Core | 24 | 194 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 23 | 195 | 98 | 316 |
+| Full target | 24 | 194 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -270,7 +270,7 @@ Core · published · **partial** · Rules D-2
 
 #### CONT-004 — Opt-out precedence
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** An opt-out wins over every later marketing input and reaches pending marketing work before acknowledgment.
 
@@ -279,8 +279,8 @@ Core · published · **partial** · Rules D-2
 2. Imports, syncs, store events, merges and operator edits never reverse the opt-out.
 3. During a parallel run, incumbent opt-outs and suppressions apply the same precedence, and Mango writes its own restrictions back to the incumbent.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/go-live/delivery.journeys.ts` — “[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations” · `tests/move-in/held.journeys.ts` — “[CONT-004][CONT-010] undoing a CSV unsubscribe or cleaned list, or an archive, never lifts an opt-out” · `tests/go-live/sync-integrations.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sync, store events, merge and operator edits retain the restriction; Parallel-run incumbent writeback. Missing public-door journey: “Opt-out precedence — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression”, including “Opt-out precedence — complete acceptance” in `tests/go-live/opt-out-precedence-journey.ts` and signed SMS STOP in `tests/go-live/manual-entry-journey.ts`: email and one-click acknowledgments, independent SMS restriction, draft exclusion and queued skips with an allowed delivery control; sync and operator edits retain opt-outs; Mailchimp incoming unsubscribe and cleaned restrictions, restrictive writeback, failed-write retry, erasure replay and disconnect. `tests/move-in/held.journeys.ts` — “[CONT-002][CONT-004][CONT-006][CONT-010] restrictive move-in states win across held imports, retry, undo and rejected archives”: imports and undo. `tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent”, including “Merge — complete acceptance” in `tests/audience-controls/merge.flow.ts`: restrictive channel and alias merges. `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”: signed store events retain restrictions.
+**Gap.** None.
 
 #### CONT-005 — Resubscription
 
