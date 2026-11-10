@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 25 | 193 | 89 | 307 |
+| Core | 31 | 187 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 25 | 193 | 98 | 316 |
+| Full target | 31 | 187 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -106,7 +106,7 @@ Core · published · **done** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 
 #### OPER-003 — Removal does not rewrite history
 
-Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
+Core · published · **done** · Cites BASE-ACCESS-002, BASE-AUDIT-001
 
 **Requirement.** Removing an operator preserves Mango’s authorship and decision history.
 
@@ -115,8 +115,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
 2. Campaign approvals, revisions, approval requests, transitions and audit entries retain the removed author’s and approver’s identity.
 3. Review, campaign detail and activity expose that retained attribution at desktop and phone widths.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every proposal remains attributed to the removed operator.. Missing public-door journey: “Removal does not rewrite history — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: successful, dismissed, provider-failed and rejected-output proposals retain independently expected generation and decision actors, original detail and persisted transitions after authorized removal and repeated reads; fresh-proof refusal and revoked-session reads and writes. `tests/go-live/roles.journeys.ts` — “roles govern native requests and removal retains authors, approvers and history”: approvals, revisions, approval requests, transitions and audits retain authors and approvers; review, campaign detail and filtered activity expose those names at 1440 and 390.
+**Gap.** None.
 
 ### Store signals
 
@@ -138,15 +138,15 @@ Core · published · **partial** · Rules D-1
 
 #### STORE-002 — Source identity
 
-Core · published · **partial** · Cites BASE-OPS-003 · Rules D-1
+Core · published · **done** · Cites BASE-OPS-003 · Rules D-1
 
 **Requirement.** Repeated source deliveries preserve one commerce fact per source identity while refreshing its contents.
 
 **Acceptance.**
 1. A replayed webhook or repeated scheduled sync updates the existing customer, order, cart, refund or browsing-event source record without creating a duplicate.
 
-**Evidence.** `tests/shopify/connection.spec.ts` — “[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry”; “signed carts preserve string identity, multiple lines and ordering; conflicting delivery, tenant and topics cannot mutate source facts”; “signed pixel collector binds actual proxy customer, rejects forged identity/catalog/purposes/replays and keeps quiet replay and withdrawal truthful”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Customer and refund replay update existing contents without duplicates. Missing public-door journey: “Source identity — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”: changed customer and refund provider reads, signed notifications and replay retain one original source row, stored record and contact identities and occurrence times; refresh payloads and one refund projection without changing consent; order replay and repeated cart and browsing sync preserve original facts. `tests/shopify/connection.spec.ts` — “[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry”.
+**Gap.** None.
 
 #### STORE-003 — Freshness
 
@@ -531,7 +531,7 @@ Core · published · **partial** · Rules D-1
 
 #### PROP-005 — Owner control
 
-Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
+Core · published · **done** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · Rules D-1
 
 **Requirement.** A generated proposal preserves draft provenance and exact-revision control. An agent’s scheduling or sending call carries external, with money when it incurs provider spend; the company’s policy decides that call. A person’s campaign approval binds the particular saved revision they approved.
 
@@ -539,8 +539,8 @@ Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-A
 1. Creating or adopting a generated proposal creates an editable draft without itself scheduling or sending.
 2. Under a company policy that holds activation for approval, the particular saved revision runs only after the named person approves it.
 
-**Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
-**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes” · `tests/proposals-decision/owner-control.spec.ts` — “[PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs”; `tests/proposals-decision/decision-routes.spec.ts` ([PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes); `tests/proposals-decision/owner-control.spec.ts` ([PROP-005] an adopted proposal is an unscheduled draft, and under held approval only the exact revision its person approves runs)
+**Gap.** None.
 
 #### PROP-006 — Grounded generation
 
@@ -848,7 +848,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-007 — Scheduled edits
 
-Core · published · **partial** · Rules D-1, D-3
+Core · published · **done** · Rules D-1, D-3
 
 **Requirement.** Editing a scheduled campaign preserves its approved work until a replacement is approved, and cannot rewrite a dispatch already begun.
 
@@ -857,8 +857,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. Replacement approval atomically makes the new revision the only active schedule and cancels every prior pending recipient-step.
 3. After any step begins dispatching, an edit creates a different campaign; the original campaign and later steps stay active until explicitly canceled.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CAMP-007] replacement and dispatch each win a forced real D1 ordering without mixing revisions”
-**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation. Missing public-door journey: “Scheduled edits — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch”, invoking `tests/go-live/scheduled-edit-journey.ts`: acceptance 1 reads back unchanged active revision, immutable approval and queued recipients after replacement creation and editing; acceptance 2 retains both forced replacement and dispatch orderings, prior pending skips and stale dispatch replay; acceptance 3 forks a three-step campaign after its first handoff, retains original authority, sends its second step once, then explicitly cancels the third with named skips and unchanged accepted outcomes. Native route, browser and network-edge journey with screens at 1440 and 390.
+**Gap.** None.
 
 #### CAMP-008 — Test send
 
@@ -890,7 +890,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-010 — Step deadline
 
-Core · published · **partial** · Rules D-1, D-3
+Core · published · **done** · Rules D-1, D-3
 
 **Requirement.** Steps never begin sending after their send-by deadline.
 
@@ -899,8 +899,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. A recipient-step not handed off by that instant is skipped with a deadline-passed reason.
 3. A step whose deadline passed before dispatch begins sends nothing.
 
-**Evidence.** `tests/go-live/scheduler.journeys.ts`; `tests/campaign-authoring/step-deadline.spec.ts` — “[CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving”: authenticated native draft save with both send-by fields omitted; independently specified ordinary, spring-forward and fall-back UTC values reconciled with persisted steps and repeated detail and review reads; reopened and reloaded deadline controls; no approval, recipients or dispatch jobs.
-**Gap.** Acceptance 1 is proved for native email draft PATCH with a local scheduled time and IANA zone, defaulting to 23:59 of its local day across ordinary and daylight-saving days. Unasserted: the other channel and scheduling doors for step send-by instants and their local-day-end defaults; acceptance 2’s complete recipient deadline skip and named-reason matrix; acceptance 3’s complete no-late-dispatch matrix. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration. Carried expiry evidence and reason terminology remain unchanged.
+**Evidence.** `tests/campaign-authoring/step-deadline.spec.ts` — “[CAMP-010] native deadline defaults and expired dispatch stay safe through authoring, Cron and Queue”, invoking `tests/campaign-authoring/step-deadline-dispatch-journey.ts`: acceptance 1 — native email and SMS creation and PATCH, local and UTC-only inputs without send-by fields, independently specified ordinary and daylight-saving day ends, explicit overrides, agreement and mismatch refusals, saved and reopened deadline controls, no draft approval or dispatch authority; acceptance 2 — native approval and production Cron and Queue consumers skip queued and prepared recipients at expiry with send-window-expired while retaining accepted and uncertain handoffs; acceptance 3 — expired first and later steps, delayed commands, paused windows and late queue replay produce no marketing handoff. The authoring fixture substitutes mail capabilities and records domain queue jobs. The dispatch journey exercises production Cron and Queue with HTTP fixtures for SendGrid, DNS, Mobile Message and the mailbox receipt connector; clock and D1/Queue barriers control timing only. These establish native behavior, not live provider qualification. Existing scheduler evidence remains in `tests/go-live/scheduler.journeys.ts`. SMS transport and qualification remain held on owner Twilio A2P and US carrier registration.
+**Gap.** None.
 
 #### CAMP-011 — Dispatch punctuality
 
@@ -1620,7 +1620,7 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE
 
 #### RESULT-010 — Ordinary campaign images are untracked
 
-Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
+Core · published · **done** · From RESULT-005 · Cites BASE-DATA-005
 
 **Requirement.** An ordinary campaign image is shared content and never an open tracker.
 
@@ -1629,8 +1629,8 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
 2. A fetch retains no address, user agent, cookie, recipient or request time, only the current-minute per-image rate counter.
 3. An ordinary image fetch is never counted or shown as an open.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. Missing public-door journey: “Ordinary campaign images are untracked — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/ordinary-images.journeys.ts` — “[RESULT-010] delivered ordinary images share one URL, retain only a minute counter and never credit opens”: acceptance 1 compares both actual email handoffs with the native upload URL; acceptance 2 compares every application table after GET and HEAD with distinct requester inputs, allowing only the current-minute image counter; acceptance 3 reconciles unchanged native results and operator counts after reload, with a distinct pixel as the positive control and 1440 and 390 browser proof.
+**Gap.** None.
 
 #### RESULT-006 — Deliverability reporting
 
