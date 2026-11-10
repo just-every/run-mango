@@ -4053,8 +4053,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 17 | 93 | 0 | 110 |
-| Target and push further | 7 | 101 | 98 | 206 |
-| All | 24 | 194 | 98 | 316 |
+| Target and push further | 8 | 100 | 98 | 206 |
+| All | 25 | 193 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -4187,7 +4187,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `CONT-019` | US SMS consent capture | target | partial | `src/core/features/sms/signup.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: A form with phone capture shows the disclosure, the submission stores every evidence field, the confirmation text is sent once through the provider edge, and only a signed confirming reply subscribes; a pre-checked or missing disclosure blocks the form from publishing. |
 | `CONT-020` | Engagement-based sunsetting | target | missing |  | not implemented |
 | `CONT-021` | US privacy requests | target | partial | `tests/audience-import/erasure.spec.ts` | acceptance not yet met: A Support operator records an access request and a do-not-share request; the export contains every record type for that contact and no other contact; the next ad-audience sync omits the contact. |
-| `CONT-022` | Contact search and bulk actions | target | partial | `src/core/features/audience/ui/contact-merge.tsx` | acceptance not yet met: A search for a property value returns the matching contacts; a bulk tag of 5,000 contacts completes as a job with a receipt; a bulk "add to topic" refuses contacts without covering evidence and names them. |
+| `CONT-022` | Contact search and bulk actions | target | done | `src/core/features/audience/ui/contact-merge.tsx`; `tests/audience-controls/segments.spec.ts` ([CONT-022] find contacts and complete consent-safe durable bulk actions) | |
 | `CONT-023` | Custom objects | target | missing |  | not implemented |
 | `CONT-024` | Incumbent-held consent | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Mailchimp archive and named CSV/API source attestation and incumbent-held email evidence are exercised through the public preview, apply, campaign-review, native export/restore, revocation and erasure doors at 1440/390. Store connections (INT-001 to INT-006), five-year expiry and positive SMS evidence (A2P hold) remain unproved. A source without a row time requires an explicitly supplied export creation time. No real provider call or consent was used. |
 | `CONT-038` | Source consent attestation | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Mailchimp archive and named CSV/API attestation, native export/restore and erasure are exercised. Store-connection attestation and five-year retention/expiry remain unproved; no real provider consent was used. |
