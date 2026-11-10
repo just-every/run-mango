@@ -18,8 +18,8 @@ A claim is done when every clause behind it is done, missing when every one is m
 | 10 | Every reader said yes. Your list is built on consent, not assumptions. | `CONT-003` partial; `AUD-002` done | partial |
 | 11 | Share your hosted signup page; new readers confirm their address before they get a single letter. | `FORM-001` partial; `CONT-009` partial; `CONT-028` partial; `AUD-002` done | partial |
 | 12 | Mango keeps when and how each reader agreed, and the exact wording they saw. | `CONT-003` partial | partial |
-| 13 | Bring your list as CSV. Opt-outs and suppressions are applied first and never undone by a later import. | `CONT-004` partial; `CONT-006` partial; `CONT-010` partial | partial |
-| 14 | Every letter carries a visible unsubscribe link, and an opt-out is recorded before the reader is told it worked. | `MSG-003` partial; `MSG-010` partial; `CONT-004` partial | partial |
+| 13 | Bring your list as CSV. Opt-outs and suppressions are applied first and never undone by a later import. | `CONT-004` done; `CONT-006` partial; `CONT-010` partial | partial |
+| 14 | Every letter carries a visible unsubscribe link, and an opt-out is recorded before the reader is told it worked. | `MSG-003` partial; `MSG-010` partial; `CONT-004` done | partial |
 | 15 | What you approve is exactly what goes out. | `CAMP-003` partial; `CAMP-022` partial; `CAMP-004` partial; `CAMP-007` partial | partial |
 | 16 | Mango records who approved the letter and when, against the exact content they saw. | `CAMP-004` partial; `CAMP-005` done | partial |
 | 17 | After approval the letter can't be edited. To send something different, write it and approve it on its own. | `CAMP-007` partial | partial |

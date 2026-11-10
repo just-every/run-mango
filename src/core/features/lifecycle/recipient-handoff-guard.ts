@@ -43,7 +43,7 @@ export function recipientHandoffGuard(senderGuard: string, provider: string, rep
       ((recipient_steps.channel='email' AND b.provider IN ('resend','sendgrid')) OR (recipient_steps.channel='sms' AND b.provider='mobile-message'))
       AND (json_extract(b.detail_json,'$.destination')=recipient_steps.destination OR json_extract(b.detail_json,'$.destinationHash')=?)
       AND (b.kind IN ('complained','suppressed') OR (b.kind='bounced' AND json_extract(b.detail_json,'$.hard')=1)))`,
-    `EXISTS (SELECT 1 FROM contacts ct WHERE ct.id=recipient_steps.contact_id
+    `EXISTS (SELECT 1 FROM contacts ct WHERE ct.id=recipient_steps.contact_id AND ct.merge_lock IS NULL
       AND (CASE WHEN channel='email' THEN ct.email_status ELSE ct.sms_status END)='subscribed')`,
     "NOT EXISTS(SELECT 1 FROM provider_outages o WHERE o.channel=recipient_steps.channel AND o.state='paused')",
     `EXISTS(SELECT 1 FROM campaign_revisions pv WHERE pv.id=recipient_steps.revision_id

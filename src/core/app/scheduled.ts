@@ -10,7 +10,9 @@ export async function runScheduled<Environment extends {DB:D1Database; MANGO_RES
   const runId=await observations.enter(controller.scheduledTime);
   try {
     if(environment.MANGO_RESTORE_MODE==='1') {await observations.finish(runId,'blocked-restore');return;}
-    const outcome=await runLifecycleCron(controller,await runtime(environment));
+    const services=await runtime(environment);
+    await services.synchronizeIncumbent?.();
+    const outcome=await runLifecycleCron(controller,services);
     await summariseSignupRefusals(environment.DB,controller.scheduledTime);
     await observations.finish(runId,outcome);
   } catch(error) {
