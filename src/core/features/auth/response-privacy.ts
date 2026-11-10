@@ -128,7 +128,8 @@ export function projectPrivateResponse(role: ProductRole, path: string, value: u
     // Campaign content is readable by these roles, but handoff recovery includes
     // individual recipient destinations and provider receipts outside that grant,
     // and rendered SMS examples carry each recipient's number and personalised text.
-    return {...body,revision:{...object(body.revision),...restrictedRules},masked:true, uncertainDeliveries: rows(body.uncertainDeliveries).map(row => ({
+    return {...body,revision:{...object(body.revision),...restrictedRules},masked:true,
+      ...(Array.isArray(body.checks)?{checks:rows(body.checks).map(check=>check.kind==='audience.structured-rule'?{...check,detail:'Audience conditions are restricted by your role.'}:check)}:{}), uncertainDeliveries: rows(body.uncertainDeliveries).map(row => ({
       id: id(row.id), destination: masked(row.destination), providerMessageId: null, detail: 'Restricted',
     })),
     ...(Array.isArray(body.steps) ? {steps: operatorReasons(body.steps)} : {}),

@@ -1,4 +1,5 @@
 import {SettingsProperties} from './settings-properties';
+import {SettingsIncumbentRestrictions} from './settings-incumbent-restrictions';
 import {SettingsSending} from './settings-sending';
 import {SettingsWooCommerce} from './settings-woocommerce';
 import {SettingsAudienceExclusions} from './settings-audience-exclusions';
@@ -40,6 +41,7 @@ export function SettingsPage() {
       <Can permission="integration.manage"><SettingsProperties /></Can>
       <Can permission="settings.manage"><SettingsStripe /></Can>
       <Can permission="settings.manage"><SettingsWooCommerce /></Can>
+      <Can permission="settings.manage"><SettingsIncumbentRestrictions /></Can>
       <Can permission="settings.manage"><SettingsDomainGuide /></Can>
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">

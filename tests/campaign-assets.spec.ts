@@ -1,3 +1,5 @@
+import { createLinkInspector } from '../src/core/platform/link-inspector';
+import { fixtureLinkResponse } from './go-live/fixture-links';
 import { expect, test } from '@playwright/test';
 import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -206,4 +208,25 @@ test('[CAMP-012] approval verifies this deployment\'s own images in storage, nev
 test('[CAMP-012] original image files survive export and a changed origin and are unavailable during erasure', async () => {
   test.setTimeout(360000);
   await campaignAssetLifecycle();
+});
+
+test('[MSG-006] the go-live destination uses injected DNS and HEAD responses while link policy still blocks unsafe destinations', async () => {
+  const attempted: string[] = [];
+  const transport: typeof fetch = async (input, init) => {
+    const request = new Request(input, init), url = new URL(request.url);
+    const response = fixtureLinkResponse(url, request.method);
+    if (response) return response;
+    attempted.push(request.url);
+    throw new Error('Synthetic edge is unavailable.');
+  };
+  const inspector = createLinkInspector(['shop.example.test'], transport);
+  expect(await inspector.inspect('https://shop.example.test/market')).toMatchObject({ok: true, finalUrl: 'https://shop.example.test/market'});
+  expect(await inspector.inspect('https://unlisted.example.test/market')).toMatchObject({ok: false, blockedHost: 'unlisted.example.test'});
+  expect(await inspector.inspect('http://shop.example.test/market')).toMatchObject({ok: false});
+  expect(await inspector.inspect('mailto:garden@example.test')).toMatchObject({ok: true});
+  expect(attempted).toEqual([]);
+  // The fixture does not turn unknown hosts into successful resolutions.
+  const unavailable = createLinkInspector(['other.example.test'], transport);
+  expect(await unavailable.inspect('https://other.example.test/market')).toMatchObject({ok: false, detail: expect.stringContaining('could not be resolved and checked')});
+  expect(attempted).toHaveLength(1);
 });

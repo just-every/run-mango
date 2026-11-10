@@ -29,6 +29,7 @@ export type ConfirmationDispatcher = {
 };
 
 export type AudienceDependencies = {
+  restrictionChanged?(destination:string,channel:Channel):Promise<void>;
   validateConsent?(input: ConsentCapture): void;
   contactHashSalt: string;
   publicTokens: PublicTokenSigner;
@@ -221,6 +222,7 @@ export function createAudienceService(
       await repository.setDestinationStatus(input.channel, normalized, 'unsubscribed', input.occurredAt);
       await recordHistory(contact.id, 'opt-out', input.reason, input.occurredAt, input.stableId);
     }
+    await dependencies?.restrictionChanged?.(normalized,input.channel);
     return { contact, destination: normalized };
   }
 
@@ -484,6 +486,7 @@ export function createAudienceService(
       id: ulid(input.occurredAt.getTime()), destination, destinationHash, channel: input.channel,
       cause: input.cause, occurredAt: input.occurredAt, providerEventId: input.providerEventId,
     });
+    await dependencies?.restrictionChanged?.(destination,input.channel);
     return {...result, contact};
   }
 
@@ -579,13 +582,7 @@ export function createAudienceService(
     try {
       const [survivor, merged] = await Promise.all([repository.getContact(survivorContactId), repository.getContact(mergedContactId)]);
       if (!survivor || !merged) throw new Error('Both contacts must exist before they can be merged.');
-      const emailStatus = mostRestrictive(survivor.emailStatus as ChannelStatus, merged.emailStatus as ChannelStatus);
-      const smsStatus = mostRestrictive(survivor.smsStatus as ChannelStatus, merged.smsStatus as ChannelStatus);
       await repository.updateContact(survivor.id, {
-        emailStatus,
-        smsStatus,
-        emailStatusAt: new Date(Math.max(survivor.emailStatusAt?.getTime() ?? 0, merged.emailStatusAt?.getTime() ?? 0)),
-        smsStatusAt: new Date(Math.max(survivor.smsStatusAt?.getTime() ?? 0, merged.smsStatusAt?.getTime() ?? 0)),
         lastActivityAt: survivor.lastActivityAt || merged.lastActivityAt ? new Date(Math.max(survivor.lastActivityAt?.getTime() ?? 0, merged.lastActivityAt?.getTime() ?? 0)) : null,
         updatedAt: now,
       });

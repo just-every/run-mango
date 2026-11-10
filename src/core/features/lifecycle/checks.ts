@@ -22,6 +22,7 @@ import { senderReasonText } from '@/core/features/sender-verification/reason-tex
 import { invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { parseStructuredRules } from './rules';
+import { summarizeAudienceRules } from '@/core/features/campaigns/audience-summary';
 import { prepareApprovalChecks } from './checks-preparation';
 import type { ApprovalCheck, LifecycleRepository } from './repository';
 import type { CampaignRevisionSnapshot, FrozenCandidate, LifecyclePlatform, SenderCapabilities } from './types';
@@ -46,7 +47,7 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
   const findings: ApprovalCheck[] = [];
   findings.push(check('campaign.name', Boolean(revision.name.trim()), 'Add a campaign name before approval.'));
   findings.push(check('audience.structured-rule', parseStructuredRules(revision.inclusionRuleJson, revision.exclusionRulesJson).ok,
-    'Audience inclusion and exclusions must use complete Mango structured rule version 1 conditions; prose is never executed.'));
+    summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)));
   findings.push(check('schedule.steps', steps.length > 0 && steps.every((step) => step.sendByAt > step.scheduledAt),
     'Each step requires a resolved UTC instant before its send-by deadline.'));
   findings.push(check('schedule.timezone', steps.every((step) => validIanaTimeZone(step.timezone)),

@@ -1,3 +1,4 @@
+import {fixtureLinkResponse} from './fixture-links';
 import {loadSendingConnection} from '../../src/core/features/sending/load-connection';
 import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
@@ -38,6 +39,8 @@ let extraHosts: string[] = [];
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const request = new Request(input, init), url = new URL(request.url);
   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
+  const fixture = fixtureLinkResponse(url, request.method);
+  if (fixture) return fixture;
   if (!['links.example.test', 'api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname) && !extraHosts.includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,

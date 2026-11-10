@@ -112,7 +112,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     const stored = (await repository.candidates(params.data.id)).find(item => item.slot === params.data.slot && item.state === 'succeeded');
     const object = stored ? await platform.blobs.get(designCandidateKey(params.data.id, params.data.slot)) : null;
     if (!object) return context.json({ error: 'not_found' }, 404);
-    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'private, max-age=3600', 'X-Content-Type-Options': 'nosniff' } });
+    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   });
 
   routes.get('/design-jobs/:id/layerdoc', async context => {
