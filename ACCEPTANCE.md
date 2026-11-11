@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 31 | 187 | 89 | 307 |
+| Core | 35 | 183 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 31 | 187 | 98 | 316 |
+| Full target | 35 | 183 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-010 was exercised through its native registered segments journey on this cloud candidate, including the audience derivation code saved in commit `9df269d34f008ad08bc4d4d59ae51bbb1cbbb057` (6 November 2026) and the completed condition and display-door proof. The fleet receipt identifies the exact final candidate and its local run; acceptance text and earlier judgments are unchanged. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -226,7 +226,7 @@ Core · published · **partial** · Rules D-1
 
 #### CONT-001 — Contact identity
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Canonical email and phone identities identify one Mango contact.
 
@@ -235,8 +235,8 @@ Core · published · **partial** · Rules D-2
 2. Phone identities use the documented international canonical form.
 3. Each canonical email or phone identity belongs to at most one contact on capture and import.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import. Missing public-door journey: “Contact identity — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients”
+**Gap.** None.
 
 #### CONT-002 — Channel status
 
@@ -602,7 +602,7 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1
 
 #### AUD-001 — Review snapshot
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Campaign review makes the frozen audience and its exclusions inspectable.
 
@@ -611,8 +611,8 @@ Core · published · **partial** · Rules D-2
 2. It shows candidate count, each exclusion reason with its count, and eligible contact count.
 3. It shows recipient-step count separately for each channel.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable”
-**Gap.** Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count. Missing public-door journey: “Review snapshot — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent”
+**Gap.** None.
 
 #### AUD-002 — Consent and suppression
 
@@ -669,7 +669,7 @@ Core · published · **partial** · Rules D-2
 
 #### AUD-006 — Multi-step exit
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Every later step applies its own current inclusion and exclusion rules to the frozen audience.
 
@@ -678,8 +678,8 @@ Core · published · **partial** · Rules D-2
 2. After the first send, changes to inclusion, a custom exclusion and consent yield named skips at the second step, with only the still-eligible control sent.
 3. A contact newly matching the rule remains outside the frozen audience.
 
-**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”
-**Gap.** Asserted: after the first send, changed inclusion, a custom exclusion and an opt-out are named skips at the second step, only the still-eligible control is sent, and a newly matching contact stays outside the frozen audience. Unasserted: a conversion after an earlier step prevents later steps; no journey records a purchase of the campaign's product between steps and shows the next step skipped (recent-product-purchase is asserted only at review).
+**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-001][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”: after the first handoff, a signed paid order for the campaign product prevents both later buyer steps with recent-product-purchase, zero attempts and no handoff; current inclusion, custom exclusion and opt-out remain named skips; only the eligible control sends once at each later step and a newly matching contact stays outside the frozen audience.
+**Gap.** None.
 
 #### AUD-007 — Frozen candidate set
 
@@ -786,7 +786,7 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-022 — Canonical saved email bytes
 
-Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
+Core · published · **done** · From CAMP-003 · Rules D-1, D-3
 
 **Requirement.** One canonical saved body is the authority for preview, checking and exact-revision approval.
 
@@ -798,8 +798,8 @@ Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
 5. Leading newlines in preformatted controls and unclosed plaintext settle without growing or moving the footer; a form that has not settled after sixteen rounds is refused rather than saved unstably.
 6. All newly saved drafts, including older drafts saved through other field edits, use this canonical form; plain text comes from the same parse.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”; “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”
-**Gap.** Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse. Missing public-door journey: “Canonical saved email bytes — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft” · `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”; “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it” · `tests/campaign-authoring/canonical-content-journey.ts` — invoked by the second named canonical-save journey: acceptance 1 exact create and repeated-save HTML, one postal and unsubscribe footer and destination-bearing text; acceptance 2 scripting-off noscript children and fixed-point resaves; acceptance 3 kept attribute values, inline styles and tokens, unrepaired comments and refused markup, accepted noncanonical syntax; acceptance 4 discarded closing-tag attributes, with duplicate and misplaced-tag coverage in the first named journey; acceptance 5 leading newlines, stable plaintext, settling raw-text control and named excessive-nesting refusal with unchanged populated authority; acceptance 6 historical name-only and subject-only saves, independent HTML, text and link expectations, and repeated authenticated reads in the second named journey.
+**Gap.** None.
 
 #### CAMP-004 — Approval checks
 
