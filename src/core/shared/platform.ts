@@ -256,6 +256,8 @@ export type AppConfig = {
   mailboxReceiptRecipient?: string;
   signupTurnstile?: { siteKey: string; secretKey: string };
   mailProvider?: 'rer' | 'resend' | 'sendgrid';
+  /** MAIL_PROVIDER=none: nothing is sent and every send is refused as mail_off; the owner signs in with `rer signin`. */
+  mailOff?: true;
   /** Managed transactional connection, independent of the owner's marketing credentials. */
   authMail?: { provider: 'rer'; apiKey: string; relayUrl: string };
   mailRelayUrl?: string;
@@ -370,7 +372,7 @@ export interface AppBindings {
   MAILBOX_RECEIPT_RECIPIENT?: string;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
-  MAIL_PROVIDER?: 'rer' | 'resend' | 'sendgrid';
+  MAIL_PROVIDER?: 'rer' | 'resend' | 'sendgrid' | 'none';
   MAIL_FROM?: string;
   MAIL_RELAY_URL?: string;
   MAIL_API_KEY?: string;

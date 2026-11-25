@@ -101,7 +101,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
           ? { title: 'Mango sign-in', heading: 'Check your sign-in message', text: 'If this address has access, open your message and press Confirm.', mark: 'stamp',
               links: [{ href: '/signin', label: 'Return to sign-in' }] }
           : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: mailProblem
-              ? local ? 'Local email is unavailable. Open the private RER_OPEN link from rer dev to sign in on this computer.' : 'Email could not be sent. Check the mail connection in RER or the operations guide, then request a new sign-in link.'
+              ? local ? 'Local email is unavailable. Open the private RER_OPEN link from rer dev to sign in on this computer.' : config.mailOff ? 'Email is off for this installation. The owner signs in by running rer signin from the checkout that deployed it.' : 'Email could not be sent. Check the mail connection in RER or the operations guide, then request a new sign-in link.'
               : 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });
         const answer = new Headers(response.headers);
         for (const [name, value] of Object.entries(headers)) answer.set(name, value); // the page's own policy replaces the JSON answer's

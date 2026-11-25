@@ -15,6 +15,7 @@ import type {
 import { createMobileMessageAdapter } from './adapters/mobile-message';
 import { createOpenAiAdapter } from './adapters/openai';
 import { createResendAdapter } from './adapters/resend';
+import { createMailOffAdapter } from './adapters/mail-off';
 import { createRerAdapter } from './adapters/rer';
 import { createShopifyAdapter } from './adapters/shopify';
 import { createTwelveUiAdapter } from './adapters/twelve-ui';
@@ -80,7 +81,8 @@ export function createProductionPlatform(environment: AppBindings): Platform {
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
   const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'> = {
     ...designAdapter(config.modules.design),
-    mailer: config.mailProvider === 'rer' ? createRerAdapter(config)
+    mailer: config.mailOff ? createMailOffAdapter()
+      : config.mailProvider === 'rer' ? createRerAdapter(config)
       : config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
       apiKey: config.mailProviderApiKey,
       webhookSecret: config.mailWebhookSecret,
@@ -113,7 +115,7 @@ export function createProductionPlatform(environment: AppBindings): Platform {
     });
   }
   const database=createDatabase(environment.DB);
-  adapters.mailer=pacedAdapter(adapters.mailer,database,config);
+  if (!config.mailOff) adapters.mailer=pacedAdapter(adapters.mailer,database,config);
   if (config.authMail) {
     const transactional = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
     adapters.confirmationMailer = pacedAdapter(createRerAdapter(transactional), database, transactional);

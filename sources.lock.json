@@ -1018,7 +1018,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "d9cc7bbc91016cecf6b1dcbb232e2ea2b837f27b8831f8e58cf5f74da9e62be3",
+      "sha256": "f7ba74c729f88d0847d030c80ed5e8dd230aff2b76eaf32e96786314b3b58947",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1642,7 +1642,7 @@
       "executable": false
     },
     "operations/base-runtime.mjs": {
-      "sha256": "efc17a562abd988db0824f8fca4abdf54677cc60f257264a93654ce56a02b7c5",
+      "sha256": "3453709923955f2152814cd58c69a03b28fe188a7128583645914584a96de1ee",
       "executable": false
     },
     "operations/deploy-optional-secrets.test.mjs": {
@@ -1666,7 +1666,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "4ad8cfd01ff810bca8b6cab57cc87e2f68f9e9583eb4a8283df970be7c4da090",
+      "sha256": "06eb09f210a2b99a6d8693d368a1a575506f7a36ecfaa6486277036fe5a1afe0",
       "executable": false
     },
     "playwright.config.js": {
@@ -1674,7 +1674,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "82ac3cb3815e42a0d4a5ba982a51be77fa71abe9980f967583db76467f1133d6",
+      "sha256": "d68d3f7f08314706feb64249b0d77f433a1d7c01aca0f00953227fcad4d9eb58",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -2522,7 +2522,7 @@
       "executable": false
     },
     "scripts/installer/deploy-declaration.mjs": {
-      "sha256": "65a373559f8c739250322c38976eb31a6a46cfae240042eedcd89c08ea3438e2",
+      "sha256": "3e2f0beb9344e1b16e0d54b8c1f47635eeac7d0194c384841e99536a45f7cc3d",
       "executable": false
     },
     "scripts/installer/environment.mjs": {
@@ -2538,7 +2538,7 @@
       "executable": false
     },
     "scripts/installer/local.mjs": {
-      "sha256": "c1446ebd77f9dabec6f79a988bc9692c0960152142b9b87d4d1d0e98e55ba208",
+      "sha256": "7c9fad2fa53b731ac270a46a4938495194ceec781865dd1b0e30223544e13162",
       "executable": false
     },
     "scripts/installer/migration-replay.mjs": {
@@ -2650,7 +2650,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "fcb903d6bdfad8b5c76b66eb26a53ce0dbbcd0b2a459fd7698d9368978d63d3d",
+      "sha256": "73b96972446bee66dc7d4fc70328eca5f61142c4e637f94a29135e3f173753b4",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -2686,7 +2686,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "8c1d0de7f717daf68dffd990e69264f894c86c0267a228baac332bc17e3bfb4b",
+      "sha256": "d718ee89c2cdc0adc549f01feb334351f2b42059ef412c561ae1b001a5cf611e",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -3786,7 +3786,7 @@
       "executable": false
     },
     "src/core/features/auth/service.ts": {
-      "sha256": "f2d36edcd659fb1cb7582bc72c202d414c633b0353e2bc0fb4c4971f75aa9544",
+      "sha256": "05d1b769616056c5feb84decac779ff6f8acbbf4215998948aadaa1a79627787",
       "executable": false
     },
     "src/core/features/auth/setup-complete.ts": {
@@ -6074,7 +6074,7 @@
       "executable": false
     },
     "src/core/platform/adapters/base-mail.ts": {
-      "sha256": "f441cbaee1170e36d38a337de99338f1dfc3b9075335de5d512cdaceef318e82",
+      "sha256": "d83e88ba79780d2968bc0e78b06dbca4ac760c2d625c8bc14f1406c1813fbb98",
       "executable": false
     },
     "src/core/platform/adapters/bounded-read.ts": {
@@ -6170,7 +6170,7 @@
       "executable": false
     },
     "src/core/platform/config.ts": {
-      "sha256": "6f7b25000bb5165b114e36ea314b33657092f0068c4645d95e0ff2011cdc4093",
+      "sha256": "76faa594e5c31e524c31406df7995f3430ba547f5e2fa3b8d19ad2dba3077cab",
       "executable": false
     },
     "src/core/platform/crypto.ts": {
@@ -6238,7 +6238,7 @@
       "executable": false
     },
     "src/core/platform/runtime.ts": {
-      "sha256": "f39c0b872b3de43fd261b18fa7f6542a7ce800f8975a83c532d2b148507b474c",
+      "sha256": "8b06a72f36e35a7d8bf4a702799382b1164d33e0de87001ee2fa542127ee5f99",
       "executable": false
     },
     "src/core/platform/worker-runtime.ts": {
@@ -6250,7 +6250,7 @@
       "executable": false
     },
     "src/core/shared/platform.ts": {
-      "sha256": "7985ef7168a7aee4ab32b17d1c78b144a2356483ee8abfb4404825ae1209f81f",
+      "sha256": "8e3ae70b6342fe13da0dc4d3ac63c827bece212bd6fb3923e2a8b144a7103d96",
       "executable": false
     },
     "src/core/shared/product-config.ts": {

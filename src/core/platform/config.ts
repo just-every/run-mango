@@ -128,13 +128,19 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   if (signingKey.length < 32 || signingKey.length > 1024) throw new Error('SESSION_SIGNING_KEY must contain 32–1024 characters.');
   if (environment.AUTH_SETUP_TOKEN !== undefined && (environment.AUTH_SETUP_TOKEN.length < 32 || environment.AUTH_SETUP_TOKEN.length > 1024)) throw new Error('AUTH_SETUP_TOKEN must contain 32–1024 characters.');
   const mailProvider = required(environment, 'MAIL_PROVIDER');
-  if (!['rer', 'resend', 'sendgrid'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be rer, resend or sendgrid.');
+  if (!['rer', 'resend', 'sendgrid', 'none'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be rer, resend, sendgrid or none.');
+  // Mail off (rer's mail-off deploy): no sender, no key, nothing sent. The owner signs in with `rer signin`.
+  const mailOff = mailProvider === 'none';
+  const mailOffConflicts = mailOff ? ([['MAIL_API_KEY', environment.MAIL_API_KEY], ['MAIL_PROVIDER_API_KEY', environment.MAIL_PROVIDER_API_KEY], ['MAIL_RELAY_URL', environment.MAIL_RELAY_URL],
+    ['MARKETING_MAIL_PROVIDER', environment.MARKETING_MAIL_PROVIDER], ['MARKETING_MAIL_API_KEY', environment.MARKETING_MAIL_API_KEY], ['MARKETING_MAIL_WEBHOOK_SECRET', environment.MARKETING_MAIL_WEBHOOK_SECRET],
+    ['MARKETING_MAIL_WEBHOOK_ID', environment.MARKETING_MAIL_WEBHOOK_ID]] as const).filter(([, value]) => value?.trim()).map(([name]) => name) : [];
+  if (mailOffConflicts.length) throw new Error(`MAIL_PROVIDER=none turns mail off, and ${mailOffConflicts.join(', ')} would set a way to send. Remove them or choose a mail provider.`);
   // Canonical fields are shared with RER Configure. Existing direct-provider installs retain their inputs.
   const legacyMailKeyEnvironment = 'MAIL_PROVIDER_API_KEY';
   const mailWebhookSecretEnvironment = 'MAIL_WEBHOOK_SECRET';
   const mailKeyEnvironment = mailProvider === 'rer' || environment.MAIL_API_KEY?.trim() ? 'MAIL_API_KEY' : legacyMailKeyEnvironment;
   const mailFromField = mailProvider === 'rer' || environment.MAIL_FROM?.trim() ? 'MAIL_FROM' : 'MAIL_AUTH_FROM';
-  const mailAuthFrom = required(environment, mailFromField);
+  const mailAuthFrom = mailOff ? (environment.MAIL_FROM?.trim() || environment.MAIL_AUTH_FROM?.trim() || '') : required(environment, mailFromField);
   const mailRelayUrl = mailProvider === 'rer' ? requiredUrl(environment, 'MAIL_RELAY_URL').href : undefined;
   const marketingInputs = ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_API_KEY', 'MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'] as const;
   const hasMarketing = marketingInputs.some(name => environment[name]?.trim());
@@ -167,7 +173,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   return {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
-    mailProvider: effectiveMailProvider as 'rer' | 'resend' | 'sendgrid',
+    ...(mailOff ? {mailOff: true as const} : {mailProvider: effectiveMailProvider as 'rer' | 'resend' | 'sendgrid'}),
     ...(mailProvider === 'rer' ? {authMail: {provider: 'rer' as const, apiKey: required(environment, mailKeyEnvironment), relayUrl: mailRelayUrl!}} : {}),
     mailRelayUrl,
     mailboxReceiptUrl,
@@ -176,7 +182,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS'), 'INITIAL_OPERATOR_EMAILS'),
     contactHashSalt: required(environment, 'CONTACT_HASH_SALT'),
     modules,
-    mailProviderApiKey: required(environment, marketingProvider ? 'MARKETING_MAIL_API_KEY' : mailKeyEnvironment),
+    mailProviderApiKey: mailOff ? '' : required(environment, marketingProvider ? 'MARKETING_MAIL_API_KEY' : mailKeyEnvironment),
     mailAuthFrom,
     // SendGrid's signed Event Webhook is optional: without it delivery shows Accepted, never Delivered.
     mailWebhookSecret: effectiveMailProvider === 'resend' ? required(environment, marketingProvider ? 'MARKETING_MAIL_WEBHOOK_SECRET' : mailWebhookSecretEnvironment) : (marketingProvider ? environment.MARKETING_MAIL_WEBHOOK_SECRET : environment.MAIL_WEBHOOK_SECRET)?.trim() ?? '',

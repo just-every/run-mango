@@ -57,6 +57,8 @@ function deploy() {
 }
 export const {install}=lifecycle;
 export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'scripts/installer/local-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
+ // A deploy with MAIL_PROVIDER=none runs with mail off: the owner signs in with this command instead of an emailed link.
+ mailOffSignIn:'rer signin',
  // Generated configs are outputs rather than inputs to preview's fixed-build receipt.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
  devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/go-live/roles.journeys.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
@@ -68,7 +70,8 @@ export const commandAdapter=commands(lifecycle,{dev:development,preview:previewT
 // Not enumerable: the setup seed loader spreads the adapter for every verb, and only verify's hosted check may read
 // deploy.json and write the declaration it resolves.
 Object.defineProperty(commandAdapter,'deployDeclaration',{enumerable:false,get(){
- return resolveDeclaration(fileURLToPath(new URL('../../',import.meta.url)),'verify');
+ // With MAIL_PROVIDER=none in the environment (rer's mail-off deploy) no mail sender or key is declared, so none is required.
+ return resolveDeclaration(fileURLToPath(new URL('../../',import.meta.url)),'verify',process.env.MAIL_PROVIDER?.trim()==='none'?{MAIL_PROVIDER:'none'}:{});
 }});
 
 // Supply the old inventory to Base's existing state validator so it refuses

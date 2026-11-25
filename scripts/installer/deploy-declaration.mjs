@@ -11,6 +11,8 @@ export const declarationPaths = { deploy: '.rer/declarations/deploy.json', verif
 
 export function resolveDeclaration(root, purpose, env = {}) {
   const declaration = JSON.parse(readFileSync(join(root, 'deploy.json'), 'utf8'));
+  const provider = env.MAIL_PROVIDER?.trim() || declaration.vars.MAIL_PROVIDER;
+  const mailOff = provider === 'none';
   const supplied = item => typeof env[item.environment] === 'string' && env[item.environment].trim() !== '';
   if (purpose === 'deploy') {
     for (const pair of [['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'], ['MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT'], ['TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY']]) {
@@ -19,6 +21,7 @@ export function resolveDeclaration(root, purpose, env = {}) {
     }
     const marketingNames = ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_API_KEY', 'MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'];
     const marketingValue = name => env[name]?.trim() || declaration.vars[name]?.trim();
+    if (mailOff && marketingNames.some(name => marketingValue(name))) throw new Error('MAIL_PROVIDER=none turns mail off, so the MARKETING_MAIL_* newsletter connection must be unset. Remove it or choose a mail provider.');
     if (marketingNames.some(name => marketingValue(name))) {
       const marketingProvider = marketingValue('MARKETING_MAIL_PROVIDER');
       if (!marketingProvider) throw new Error('Configure MARKETING_MAIL_PROVIDER (sendgrid or resend) or leave all marketing mail inputs unset.');
@@ -31,10 +34,10 @@ export function resolveDeclaration(root, purpose, env = {}) {
       if (supplied({environment: name})) declaration.vars[name] = env[name].trim();
     }
   }
-  const provider = env.MAIL_PROVIDER?.trim() || declaration.vars.MAIL_PROVIDER;
   const managedMail = provider === 'rer';
   const legacyMailKeyEnvironment = 'MAIL_PROVIDER_API_KEY';
-  const mailSources = managedMail ? ['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL'] : [
+  // Mail off (rer's mail-off deploy): no sender and no key are declared or bound, so none is required.
+  const mailSources = mailOff ? [] : managedMail ? ['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL'] : [
     supplied({environment: 'MAIL_FROM'}) ? 'MAIL_FROM' : 'MAIL_AUTH_FROM',
     supplied({environment: 'MAIL_API_KEY'}) ? 'MAIL_API_KEY' : legacyMailKeyEnvironment,
   ];

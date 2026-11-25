@@ -9,7 +9,9 @@ import type { AppConfig } from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 import { prepareAuthMailCost } from '@/core/features/auth/mail-cost';
 
-export function createBaseMailSender(config: Pick<AppConfig, 'authMail' | 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+export function createBaseMailSender(config: Pick<AppConfig, 'authMail' | 'mailOff' | 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+  // Mail off: no sign-in mail leaves; Base records the refusal and the owner signs in with `rer signin`.
+  if (config.mailOff) return { send: async () => ({ status: 'rejected', provider: 'none', providerMessageId: null, code: 'mail_off' }) };
   if (config.authMail) config = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
   let retryAfterSeconds = 0;
   const sender = createMailSender({ provider: config.mailProvider, mode: 'production', apiKey: config.mailProviderApiKey,

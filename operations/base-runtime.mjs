@@ -24,6 +24,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
           return Response.json(input.relayStatus === 202 ? {accepted:true} : {error:'test relay refusal'},
             {status:input.relayStatus ?? 202,headers:input.relayStatus === 429 ? {'Retry-After':'1'} : {}});
         }
+        if (env.MAIL_PROVIDER === 'none') throw new Error('Mail is off: nothing may reach a mail provider');
         if (url !== 'https://api.sendgrid.com/v3/mail/send') throw new Error('Unexpected test transport');
         await env.DB.prepare('INSERT INTO test_mail(body) VALUES(?)').bind(options.body).run();
         return new Response(null, { status: 202, headers: { 'x-message-id': 'test-provider-message' } });
@@ -53,6 +54,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
     MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '48', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '10',
     MANGO_DELIVERABILITY_WINDOW_DAYS: '30', MAIL_SENDER_NAME: 'Example', MAIL_REPLY_TO: 'owner@example.test', MAIL_PHYSICAL_ADDRESS: 'Test address' };
   Object.assign(bindings, admission);
+  for (const [name, value] of Object.entries(bindings)) if (value === undefined) delete bindings[name];
   if (admission.OWNER_EMAIL) for (const name of ['INITIAL_OPERATOR_EMAILS','SESSION_SIGNING_KEY','AUTH_SETUP_TOKEN']) delete bindings[name];
   const mf = new Miniflare({ host: '127.0.0.1', cf: false, telemetry: {enabled:false}, workers: [{ config: {
     name: 'base-adoption-test', type: 'worker', compatibilityDate: '2026-09-01',
