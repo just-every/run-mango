@@ -1661,6 +1661,10 @@
       "sha256": "fc6cae353924f4b7b62392e205ce27180879e0c58f43c3f58a3afab3f0fe951a",
       "executable": false
     },
+    "operations/mail-off.test.mjs": {
+      "sha256": "778473b38b73d8b27c646d4f081df367de8b7f40824a5ba125e5e3ede579f052",
+      "executable": false
+    },
     "operations/sql-statements.mjs": {
       "sha256": "3f90853269ff79f1154cdc546c6125a8ddbced4515f2b3c351fdf1cdf121e096",
       "executable": false
@@ -6087,6 +6091,10 @@
     },
     "src/core/platform/adapters/http.ts": {
       "sha256": "5f4865f7e6e193a783ebba552f2dced9199e1bfb3d340b5a01a4414ded72561b",
+      "executable": false
+    },
+    "src/core/platform/adapters/mail-off.ts": {
+      "sha256": "989dbefc042ab0bf530ee600e9d962f9a4f6e8d01a0f910a32466fad0901396c",
       "executable": false
     },
     "src/core/platform/adapters/mobile-message.ts": {
