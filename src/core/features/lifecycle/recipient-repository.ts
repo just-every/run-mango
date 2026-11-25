@@ -342,12 +342,12 @@ export function createRecipientLifecycleRepository(database: Database) {
            last_error_code = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'uncertain' ELSE NULL END,
            last_error_detail = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'Uncertain submission: operator review required. Never automatically retried.' ELSE NULL END,
            provider_accepted_at = ?, handed_off_at = CASE WHEN ? = 'accepted' THEN ? ELSE handed_off_at END,
-           lease_token = NULL, lease_expires_at = NULL, updated_at = ?
+           lease_token = NULL, lease_expires_at = NULL, updated_at = ?, reconcile_queued_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'handoff-unknown'`,
       ).bind(
         input.provider, input.providerMessageId || null, input.disposition, input.actualSender??null,
         input.disposition, input.provider, input.disposition, input.provider,
-        input.acceptedAt?.getTime() ?? null, input.disposition, input.now.getTime(), input.now.getTime(), input.id, input.leaseToken,
+        input.acceptedAt?.getTime() ?? null, input.disposition, input.now.getTime(), input.now.getTime(), input.now.getTime(), input.id, input.leaseToken,
       ).run();
     },
 
@@ -379,13 +379,23 @@ export function createRecipientLifecycleRepository(database: Database) {
       ).bind(detail, now.getTime(), id, leaseToken).run();
     },
 
-    async listUnresolved(now: Date, limit = 100) {
+    /** Unresolved recipients not queued for lookup within `intervalMs`, oldest first. The partial index orders
+     * them, so a sweep reads at most `limit` rows however many sends are stored. */
+    async listDueReconciliations(now: Date, intervalMs: number, limit = 100) {
       const rows = await client.prepare(
-        `SELECT * FROM recipient_steps
-         WHERE transport_disposition IN ('handoff-unknown', 'handed-off', 'accepted')
-         ORDER BY updated_at LIMIT ?`,
-      ).bind(limit).all<Row>();
-      return rows.results.map(recipientFromRow).map((item) => ({ ...item, expired: Boolean(item.reconcileUntil && item.reconcileUntil <= now) }));
+        // INDEXED BY: the planner would otherwise read and sort every unresolved recipient to find the first 100.
+        `SELECT id FROM recipient_steps INDEXED BY recipient_steps_unresolved_idx
+         WHERE transport_disposition IN ('handoff-unknown', 'handed-off', 'accepted') AND reconcile_queued_at <= ?
+         ORDER BY reconcile_queued_at, updated_at LIMIT ?`,
+      ).bind(now.getTime() - intervalMs, limit).all<Row>();
+      return rows.results.map((row) => String(row.id));
+    },
+
+    async markReconcileQueued(ids: string[], now: Date) {
+      if (!ids.length) return;
+      await client.prepare(
+        `UPDATE recipient_steps SET reconcile_queued_at = ? WHERE id IN (SELECT value FROM json_each(?))`,
+      ).bind(now.getTime(), JSON.stringify(ids)).run();
     },
 
     async failUnconfirmed(id: string, now: Date) {

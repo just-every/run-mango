@@ -1206,7 +1206,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "b5be2211f0dcb8a5c0dfbe3d0931b6e6fedd0c5676cc03ab7799c04af1d43378",
+      "sha256": "487b2d5281fa1ef693f6fd42f200a8c73661a123a675cf0343dfd39af58bfe45",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -2650,7 +2650,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "fcb903d6bdfad8b5c76b66eb26a53ce0dbbcd0b2a459fd7698d9368978d63d3d",
+      "sha256": "a331d164e151b3037602ee642c487d3d8571ecf5308d67c21e0164739b9495ba",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -4730,7 +4730,7 @@
       "executable": false
     },
     "src/core/features/insights/compliance-report.ts": {
-      "sha256": "b39a7c2cbaa8082e97979617177a08065a06f3130326497b919aea8adffeb8b9",
+      "sha256": "43913bc17fea3ebcaa9afc4428f3c6093de524f19b888ce999b61cd014c5dc0a",
       "executable": false
     },
     "src/core/features/insights/conversion-events.ts": {
@@ -4930,7 +4930,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
-      "sha256": "806790d062e4afdff2214a1956357e95e5f2f136ccdab5e74ded29079f79e588",
+      "sha256": "9fb9bceda7b66729f74d2f85a8cd4a0dd8d8f5245b2c3d7001798963b0041956",
       "executable": false
     },
     "src/core/features/insights/ui/settings-usage.tsx": {
@@ -5202,7 +5202,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/delivery.ts": {
-      "sha256": "23be0a4b82a9fd3aa9f85d6b5a00d035f94d322edb89123f907f66218a37e44a",
+      "sha256": "46b80c736dcf41358bf09296a3ee3414364ce6bb554ed29109879117cc6bd295",
       "executable": false
     },
     "src/core/features/lifecycle/digest.ts": {
@@ -5274,7 +5274,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/recipient-repository.ts": {
-      "sha256": "790557e51470ce777ac37d0dcd4c3621abc896bfad6e9dfbd97665a551bc5ac3",
+      "sha256": "8253f34de6a40242d1d6c6fbf9d90df55b8414e446d0456b837600a71d2c688f",
       "executable": false
     },
     "src/core/features/lifecycle/repository.ts": {
@@ -5286,11 +5286,11 @@
       "executable": false
     },
     "src/core/features/lifecycle/reputation-guard.ts": {
-      "sha256": "5d189b79fa023aa99b5219d83bf79d35d1ffc349263dd6c05f8b43b6a5716931",
+      "sha256": "5ff6182b266bf969cc273d0b31ac47340c42b50c2bf91f8298046ad3fdb21923",
       "executable": false
     },
     "src/core/features/lifecycle/reputation-report.ts": {
-      "sha256": "bb17000e9143c88d99565294df437f580da22751c5590f86646e4e1523c535f3",
+      "sha256": "e603c47971925970cb724d103e364dc7d5a332bb1a715bdc27f3e7acfe9b6086",
       "executable": false
     },
     "src/core/features/lifecycle/routes.ts": {
@@ -5310,7 +5310,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/schema.ts": {
-      "sha256": "68ef74b217a72424df7eb02d0d504c15d4a00114367f649f2519051cfa80ec70",
+      "sha256": "2eeb2ab5d22316d35e3a974b718f4aa12d18988884f325dd2a778299bae1d2b7",
       "executable": false
     },
     "src/core/features/lifecycle/sendgrid-facts.ts": {
@@ -9362,7 +9362,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "5be0444a3c4e9fe91c5a7b12f5f317c01258a89253cffca894288c44662a8777",
+      "sha256": "fba745777ca67835b6e64887b6dd330420711b5534444025277c4e9c17ea1e94",
       "executable": false
     },
     "tests/health-lifetime.ts": {

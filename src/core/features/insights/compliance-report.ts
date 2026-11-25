@@ -12,30 +12,37 @@ export type ComplianceRow={requirement:string;key:string;state:ComplianceState;v
 export type DomainCompliance={domain:string;hasSignedOutcomes:boolean;figures:string;rows:ComplianceRow[]};
 type StoredInspection=SenderInspection&{evidence?:{binding?:SenderBinding;configuration?:ConfigurationInspection}};
 type Rate=Awaited<ReturnType<typeof readSenderRates>>[number];
-/** Reporting only: five aggregate reads, no DNS, provider call or state mutation.
+/** Reporting only: five reads bounded by the reporting window or a stored fact, never by stored history, no DNS, provider call or state mutation.
  * Inspect persisted authority, never run senderVerification.inspect() from Insights. */
 export async function complianceReport(database:Database,senders:Rate[],windowDays:number,now:Date):Promise<DomainCompliance[]> {
-  const db=database.$client;
+  const db=database.$client,windowStart=now.getTime()-windowDays*86400000;
   const [domains,inspections,outcomes,unsubscribes,connection]=await db.batch<Record<string,unknown>>([
-    db.prepare(`SELECT lower(substr(from_email,instr(from_email,'@')+1)) domain FROM sender_settings
-      UNION SELECT lower(substr(from_email,instr(from_email,'@')+1)) FROM campaign_revisions WHERE from_email<>''`),
+    // Distinct revision senders by index skip-scan: one probe per sender address, not one read per revision.
+    db.prepare(`WITH RECURSIVE senders(email) AS (
+        SELECT min(from_email) FROM campaign_revisions WHERE from_email<>''
+        UNION ALL SELECT (SELECT min(from_email) FROM campaign_revisions WHERE from_email>senders.email) FROM senders WHERE senders.email IS NOT NULL
+      )
+      SELECT lower(substr(from_email,instr(from_email,'@')+1)) domain FROM sender_settings
+      UNION SELECT lower(substr(email,instr(email,'@')+1)) FROM senders WHERE email IS NOT NULL`),
     db.prepare(`SELECT i.result_json,o.result_json observation_json FROM sender_verification_inspections i JOIN sender_verification_state s ON s.id=i.state_id
       AND s.generation=i.generation AND s.binding_digest=i.binding_digest AND s.configuration_digest=i.configuration_digest
       AND s.observation_id=i.observation_id JOIN sender_verification_observations o ON o.id=s.observation_id
       WHERE s.revoked_at IS NULL AND i.expires_at>? AND i.checked_at<=?
       ORDER BY i.checked_at DESC,i.rowid DESC`).bind(now.getTime(),now.getTime()),
-    db.prepare(`SELECT DISTINCT lower(substr(v.from_email,instr(v.from_email,'@')+1)) domain,f.provider
-      FROM delivery_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id JOIN campaign_revisions v ON v.id=r.revision_id
-      WHERE r.channel='email' AND f.kind IN ('delivered','bounced','complained','failed')`),
-    db.prepare(`SELECT lower(substr(v.from_email,instr(v.from_email,'@')+1)) domain,
+    db.prepare('SELECT domain,provider FROM delivery_outcome_providers'),
+    db.prepare(`WITH measured(id) AS (
+        SELECT id FROM recipient_steps WHERE channel='email' AND first_attempt_at>=? AND first_attempt_at<?
+        UNION SELECT recipient_step_id FROM public_action_tokens WHERE purpose='unsubscribe' AND used_at>=? AND recipient_step_id IS NOT NULL
+      )
+      SELECT lower(substr(v.from_email,instr(v.from_email,'@')+1)) domain,
       COUNT(DISTINCT CASE WHEN json_extract(r.outbound_request_json,'$.content.headers."List-Unsubscribe-Post"')='List-Unsubscribe=One-Click'
         AND json_extract(r.outbound_request_json,'$.content.headers."List-Unsubscribe"') LIKE '<https://%/unsubscribe/one-click/%>' THEN r.id END) headers,
       COUNT(DISTINCT CASE WHEN t.used_method=2 THEN t.id END) one_click,
       COUNT(DISTINCT CASE WHEN t.updated_at>t.used_at THEN t.id END) samples,
       MAX(CASE WHEN t.updated_at>t.used_at THEN t.updated_at-t.used_at END) max_ms
-      FROM recipient_steps r JOIN campaign_revisions v ON v.id=r.revision_id
+      FROM measured m JOIN recipient_steps r ON r.id=m.id JOIN campaign_revisions v ON v.id=r.revision_id
       LEFT JOIN public_action_tokens t ON t.recipient_step_id=r.id AND t.purpose='unsubscribe' AND t.used_at>=?
-      WHERE r.channel='email' GROUP BY domain`).bind(now.getTime()-windowDays*86400000),
+      WHERE r.channel='email' GROUP BY domain`).bind(windowStart,now.getTime()+1,windowStart,windowStart),
     db.prepare('SELECT state,account_id,delivery_proved_at,last_error FROM sending_connection WHERE id=1'),
   ]);
   const saved=inspections.results.map(row=>({...JSON.parse(String(row.result_json)) as StoredInspection,

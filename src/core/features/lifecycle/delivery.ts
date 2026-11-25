@@ -423,8 +423,11 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     importFacts,
 
     async reconcileUnresolved() {
-      const unresolved = await repository.listUnresolved(new Date());
-      for (const recipient of unresolved)await runtime.platform.jobs.enqueue({kind:'delivery.reconcile',idempotencyKey:`reconcile:${recipient.id}`,payload:{recipientStepId:recipient.id}});
+      // Each unresolved recipient is queued at most once per reconciliation interval; the post-handoff lookup counts.
+      const now = new Date();
+      const due = await repository.listDueReconciliations(now, runtime.platform.config.providerReconciliationIntervalMinutes * 60_000);
+      for (const id of due) await runtime.platform.jobs.enqueue({ kind: 'delivery.reconcile', idempotencyKey: `reconcile:${id}`, payload: { recipientStepId: id } });
+      await repository.markReconcileQueued(due, now);
     },
 
     async probeOutage(channel: Channel) {
