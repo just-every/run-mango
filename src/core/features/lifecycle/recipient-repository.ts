@@ -342,12 +342,12 @@ export function createRecipientLifecycleRepository(database: Database) {
            last_error_code = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'uncertain' ELSE NULL END,
            last_error_detail = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'Uncertain submission: operator review required. Never automatically retried.' ELSE NULL END,
            provider_accepted_at = ?, handed_off_at = CASE WHEN ? = 'accepted' THEN ? ELSE handed_off_at END,
-           lease_token = NULL, lease_expires_at = NULL, updated_at = ?, reconcile_queued_at = ?
+           lease_token = NULL, lease_expires_at = NULL, updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'handoff-unknown'`,
       ).bind(
         input.provider, input.providerMessageId || null, input.disposition, input.actualSender??null,
         input.disposition, input.provider, input.disposition, input.provider,
-        input.acceptedAt?.getTime() ?? null, input.disposition, input.now.getTime(), input.now.getTime(), input.now.getTime(), input.id, input.leaseToken,
+        input.acceptedAt?.getTime() ?? null, input.disposition, input.now.getTime(), input.now.getTime(), input.id, input.leaseToken,
       ).run();
     },
 
@@ -384,11 +384,11 @@ export function createRecipientLifecycleRepository(database: Database) {
     async listDueReconciliations(now: Date, intervalMs: number, limit = 100) {
       const rows = await client.prepare(
         // INDEXED BY: the planner would otherwise read and sort every unresolved recipient to find the first 100.
-        `SELECT id FROM recipient_steps INDEXED BY recipient_steps_unresolved_idx
+        `SELECT id, first_attempt_at FROM recipient_steps INDEXED BY recipient_steps_unresolved_idx
          WHERE transport_disposition IN ('handoff-unknown', 'handed-off', 'accepted') AND reconcile_queued_at <= ?
          ORDER BY reconcile_queued_at, updated_at LIMIT ?`,
       ).bind(now.getTime() - intervalMs, limit).all<Row>();
-      return rows.results.map((row) => String(row.id));
+      return rows.results.map((row) => ({ id: String(row.id), firstAttemptAt: row.first_attempt_at == null ? undefined : Number(row.first_attempt_at) }));
     },
 
     async markReconcileQueued(ids: string[], now: Date) {

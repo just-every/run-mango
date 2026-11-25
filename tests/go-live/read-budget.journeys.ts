@@ -35,7 +35,13 @@ test('[CAMP-010] the minute Cron and the deliverability poll read a bounded numb
     const pollRows = Number(poll.headers.get('X-GoLive-Rows-Read'));
     expect(pollRows).toBeGreaterThan(0);
     expect(pollRows, `deliverability poll read ${pollRows} rows: ${poll.headers.get('X-GoLive-Costliest')}`).toBeLessThan(8000);
-    console.log(`READ_BUDGET ${JSON.stringify({cronWithoutHistory:empty,cronWithHistory:stored,pollOneDayWindow:pollRows})}`);
+    // The open tab asks every 20 seconds: unchanged data revalidates for a few rows instead of re-aggregating.
+    const unchanged = await site.call('/api/insights/deliverability?windowDays=1', { cookie,
+      headers: { 'X-GoLive-Meter': site.runtime.token, 'If-None-Match': poll.headers.get('ETag')! } });
+    expect(unchanged.status).toBe(304);
+    const unchangedRows = Number(unchanged.headers.get('X-GoLive-Rows-Read'));
+    expect(unchangedRows).toBeLessThan(300);
+    console.log(`READ_BUDGET ${JSON.stringify({cronWithoutHistory:empty,cronWithHistory:stored,pollOneDayWindow:pollRows,pollUnchanged:unchangedRows})}`);
   } finally {
     await site.runtime.close();
     await edge.close();
