@@ -9,7 +9,14 @@ type Rate={channel:string;providers:string[];sender:string;windowStart:string;de
 export function SenderRates() {
   const dateTime=useDateFormatter();
   const {data,error,reload}=useResource<{windowDays:number;senders:Rate[];mailboxes:MailboxReport;compliance:DomainCompliance[]}>('/api/insights/deliverability');
-  useEffect(()=>{const timer=setInterval(()=>void reload(),20000);return()=>clearInterval(timer);},[reload]);
+  // The report answers 304 while its sources are unchanged, so the open tab can follow receipts every 20 seconds;
+  // a hidden tab does not ask, and catches up when it is shown again.
+  useEffect(()=>{
+    const refresh=()=>{if(!document.hidden)void reload();};
+    const timer=setInterval(refresh,20000);
+    document.addEventListener('visibilitychange',refresh);
+    return()=>{clearInterval(timer);document.removeEventListener('visibilitychange',refresh);};
+  },[reload]);
   return <><ComplianceDashboard domains={data?.compliance} error={error}/><section className="panel"><h2>Sender reputation</h2>
     <p>Marketing outcomes combined across providers for each From domain or SMS sender, using the same totals as the local reputation guard. Test messages do not contribute; acceptance is not delivery.</p>
     {error?<p role="alert">Reputation could not be refreshed.</p>:null}

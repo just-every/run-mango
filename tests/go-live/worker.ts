@@ -4,6 +4,8 @@ import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connect
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
 import {advanceClock} from './clock';
 import {pacedAdapter} from '../../src/core/features/lifecycle/transport-pacing';
+import {meteredDatabase} from './read-meter';
+import {seedSendHistory} from './history-seed';
 import {controlledDatabase,controlledQueue,arm,release,status,capturedEmissions,replay} from './delivery-controls';
 import {createProductionPlatform} from '../../src/core/platform/runtime';
 import productionWorker from '../../src/core/app/worker';
@@ -124,11 +126,17 @@ async function control(request: Request, bindings: Bindings) {
   // The deployed scheduled handler: due steps are queued for the real consumer.
   if (path === '/_golive/cron') {
     edge=bindings.GO_LIVE_EDGE_ORIGIN;extraHosts=JSON.parse(bindings.GO_LIVE_EXTRA_HOSTS??'[]');
-    const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
+    const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean; meter?:boolean};
     const pending:Promise<unknown>[]=[];
-    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
+    const measured=body.meter?meteredDatabase(bindings.DB):undefined;
+    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(measured?{...bindings,DB:measured.database}:bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
       {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
     await Promise.all(pending);
+    return Response.json({ok:true,rowsRead:measured?.meter.rowsRead,costliest:measured?.meter.top()});
+  }
+  if (path === '/_golive/seed-history') {
+    const { recipients } = await request.json() as { recipients: number };
+    await seedSendHistory(bindings.DB, recipients, Date.now());
     return Response.json({ok:true});
   }
   if (path === '/_golive/rows') {
@@ -178,6 +186,9 @@ const worker = {
       headers.set('Host', transportHost); headers.delete('X-GoLive-Host'); headers.delete('X-Test-Token');
       request = new Request(new URL(url.pathname + url.search, 'https://' + transportHost), new Request(request, {headers}));
     }
+    // A request carrying the runtime token asks for the D1 rows its own reads cost, composition included.
+    const measured = request.headers.get('X-GoLive-Meter') === bindings.LOCAL_BOOTSTRAP_TOKEN ? meteredDatabase(bindings.DB) : undefined;
+    if (measured) bindings = { ...bindings, DB: measured.database };
     const { platform } = await compose(bindings);
     if (bindings.GO_LIVE_MANAGED) {
       // The loopback test transport represents the public HTTPS origin.
@@ -188,7 +199,12 @@ const worker = {
     }
     // Links carry the HTTPS public origin while this runtime listens on loopback, so the
     // app's origin check is trusted locally; Base's transfer handler still checks its own.
-    return dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));
+    const response = await dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));
+    if (!measured) return response;
+    const headers = new Headers(response.headers);
+    headers.set('X-GoLive-Rows-Read', String(measured.meter.rowsRead));
+    headers.set('X-GoLive-Costliest', JSON.stringify(measured.meter.top()));
+    return new Response(response.body, { status: response.status, headers });
   },
   scheduled(controller:ScheduledController,bindings:Bindings,context:ExecutionContext) {
     edge=bindings.GO_LIVE_EDGE_ORIGIN;

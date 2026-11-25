@@ -423,8 +423,12 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     importFacts,
 
     async reconcileUnresolved() {
-      const unresolved = await repository.listUnresolved(new Date());
-      for (const recipient of unresolved)await runtime.platform.jobs.enqueue({kind:'delivery.reconcile',idempotencyKey:`reconcile:${recipient.id}`,payload:{recipientStepId:recipient.id}});
+      // Every tick looks up a recipient handed off within the reconciliation interval; after that, once per interval,
+      // so a send whose delivery events never arrive costs a lookup every interval and not every minute.
+      const now = new Date(), intervalMs = runtime.platform.config.providerReconciliationIntervalMinutes * 60_000;
+      const due = await repository.listDueReconciliations(now, intervalMs);
+      for (const { id } of due) await runtime.platform.jobs.enqueue({ kind: 'delivery.reconcile', idempotencyKey: `reconcile:${id}`, payload: { recipientStepId: id } });
+      await repository.markReconcileQueued(due.filter(({ firstAttemptAt }) => firstAttemptAt === undefined || firstAttemptAt <= now.getTime() - intervalMs).map(({ id }) => id), now);
     },
 
     async probeOutage(channel: Channel) {

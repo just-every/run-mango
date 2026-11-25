@@ -47,6 +47,7 @@ export const recipientSteps = sqliteTable(
     nextAttemptAt: integer('next_attempt_at', { mode: 'timestamp_ms' }),
     handoffStartedAt: integer('handoff_started_at', { mode: 'timestamp_ms' }),
     reconcileUntil: integer('reconcile_until', { mode: 'timestamp_ms' }),
+    reconcileQueuedAt: integer('reconcile_queued_at').notNull().default(0),
     reconcileCursor: text('reconcile_cursor'),
     leaseToken: text('lease_token'),
     leaseExpiresAt: integer('lease_expires_at', { mode: 'timestamp_ms' }),
@@ -63,6 +64,10 @@ export const recipientSteps = sqliteTable(
     uniqueIndex('recipient_steps_once_idx').on(table.revisionId, table.stepId, table.contactIdentityKey),
     index('recipient_steps_dispatch_idx').on(table.stepId, table.transportDisposition, table.nextAttemptAt),
     index('recipient_steps_reconcile_idx').on(table.transportDisposition, table.reconcileUntil),
+    index('recipient_steps_campaign_idx').on(table.campaignId, table.transportDisposition),
+    index('recipient_steps_first_attempt_idx').on(table.firstAttemptAt),
+    index('recipient_steps_unresolved_idx').on(table.reconcileQueuedAt, table.updatedAt)
+      .where(sql`${table.transportDisposition} IN ('handoff-unknown', 'handed-off', 'accepted')`),
   ],
 );
 

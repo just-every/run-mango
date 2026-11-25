@@ -1,4 +1,5 @@
 import {complianceReport} from './compliance-report';
+import {deliverabilityVersion,presented} from './deliverability-version';
 import {savedReportRoutes} from './saved-report-routes';
 import {overviewQuery,overviewPeriod} from './overview-period';
 import { createListGrowthRoutes } from './list-growth-routes';
@@ -31,9 +32,13 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
       return context.json({ error: 'invalid_reporting_window' }, 400);
     }
     const now=new Date();
+    // Revalidated on every read; the browser reuses its copy only when this version still matches.
+    const version=await deliverabilityVersion(database,windowDays,now);
+    context.header('Cache-Control','private, no-cache');
+    context.header('ETag',version);
+    if(presented(context.req.header('If-None-Match'),version))return context.body(null,304);
     const [senders,mailboxes]=await Promise.all([service.deliverability(windowDays,now),service.mailboxes(windowDays,now)]);
     const compliance=await complianceReport(database,senders,windowDays,now);
-    context.header('Cache-Control','no-store');
     return context.json({windowDays,senders,mailboxes,compliance});
   });
   return routes;
