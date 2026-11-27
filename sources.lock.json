@@ -1634,7 +1634,7 @@
       "executable": false
     },
     "OPERATIONS.json": {
-      "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
+      "sha256": "20c98d16750104e56c413907640e7c206f1a2c1ae3d6f4eb48c13136b64ba417",
       "executable": false
     },
     "OPERATIONS.md": {
@@ -2587,10 +2587,6 @@
     },
     "scripts/installer/write-generated-config.mjs": {
       "sha256": "e3547a6367f3c6a3dfd555d60795f67ae306f4449f26143b1128f59c1955e2f6",
-      "executable": false
-    },
-    "scripts/operations-config.mjs": {
-      "sha256": "bdf10a39f5ec2844e85245d7e37a733c9c1a9d80de88ba9eaf6c059de43624ce",
       "executable": false
     },
     "scripts/package-local-source.mjs": {
