@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2026-11-27)
+
+**Back up first.** Back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `pnpm install --frozen-lockfile`, then `rer setup` locally or `rer deploy --environment <name>` hosted; both apply the 25 new migrations (0081_imported_engagement.sql through 0106_contact_bulk_actions.sql) in filename order.
+
+### Since 0.4.0
+
+- **A paid tier** on the owner's own Stripe account: Mango stores Stripe ids, states and the tax figures Stripe reports, never card data or funds.
+- **Connections:** WooCommerce (with plugin flows), review and loyalty adapters (inbound only, encrypted, never exported), and a sending connection whose authority never travels in an export.
+- **Moving in from another tool:** imported engagement kept apart from Mango's own sends, consent attestations, restrictions and images from the incumbent, and reviewed counts that never assert what was not calculated.
+- **Reports and measurement:** a selectable attribution policy over immutable clicks, saved report schedules with aggregate figures only, analytics tagging, and recipient unsubscribe methods (visible link, one-click, SMS reply).
+- **Building and sending:** opt-in mode per capture point (hosted, kiosk, manual), signup capacity levels, link host sources, reusable email blocks, visual flow drafts that grant no delivery authority, typed contact properties and durable contact bulk actions, sender renewal reminders, and a hold on Resend marketing after a day without current signed events.
+- **The Decision Desk** opens on the owner's work.
+
+### Toolchain and mail off
 
 - **Deploy with mail off.** `MAIL_PROVIDER=none` is accepted by `rer deploy` (rer 0.2.134): no sender or key is needed, nothing is sent, every send is refused as `mail_off`, and the owner signs in with `rer signin`. Sign-in email, invitations, consent confirmations and newsletters stay unavailable until a redeploy with a mail provider. The hosted Configure form does not offer this choice yet; it is for an outside agent deploying with the environment variable.
 - Pinned rer 0.2.85 to 0.2.134.

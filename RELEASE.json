@@ -1,119 +1,112 @@
 {
-  "version": "0.4.0",
-  "previousVersion": "0.3.0",
-  "date": "2026-10-21",
-  "contractChanges": {
-    "OPER-003": {
-      "change": "status",
-      "was": "partial",
-      "now": "done",
-      "summary": "Removal does not rewrite history: removing an operator revokes their sessions and keeps their name on campaigns, approval requests, approvals, revisions and audit records, proven through review, detail and activity at 1440 and 390."
-    },
-    "OPER-007": {
-      "change": "changed",
-      "summary": "Activity log: the Owner and Admins read Settings \u2192 Activity, filtered by operator, agent, action, object and date with a CSV of the filtered view. The clause now names that flow activations and pauses (FLOW-008) and agent actions (AGENT-010) join the log when those clauses are built. Status stays partial: a completed restore has no activity entry yet."
-    },
-    "AUD-003": {
-      "change": "status",
-      "was": "partial",
-      "now": "done",
-      "summary": "Commerce and dormancy exclusions: review lists recent-purchase, unresolved-refund, unresolved-return and dormant exclusions with their counts at 1440 and 390."
-    },
-    "MSG-005": {
-      "change": "status",
-      "was": "partial",
-      "now": "done",
-      "summary": "SMS opt-out: review of an SMS step shows the program identity, Reply STOP to unsubscribe, the frequency disclosure, the help contact and the segment count."
-    },
-    "MSG-006": {
-      "change": "status",
-      "was": "partial",
-      "now": "done",
-      "summary": "Links: review and approval name every blocked link and image with the scheme, fault or host that blocks it; only unlisted HTTPS hosts offer Allow this host."
-    },
-    "MSG-015": {
-      "change": "status",
-      "was": "missing",
-      "now": "done",
-      "summary": "Allow a blocked host from review: a Manager allows an unlisted host from review, Authors cannot, checks rerun, and the allowance is recorded with operator, host and campaign."
-    },
-    "INT-004": {
-      "change": "status",
-      "was": "missing",
-      "now": "partial",
-      "summary": "Stripe: an owner-only encrypted Stripe connection and signed once-only commerce event ingestion. A real Stripe subscription lifecycle is not proven yet."
-    },
-    "FLOW-001": {
-      "change": "changed",
-      "summary": "Visual flow builder: inherits INT-004's Stripe renewal-reminder enrolment for when flows are built; status unchanged (missing)."
-    },
-    "FLOW-002": {
-      "change": "changed",
-      "summary": "Triggers: inherits INT-004's Stripe subscription-event enrolment for when flows are built; status unchanged (missing)."
-    },
-    "FLOW-008": {
-      "change": "changed",
-      "summary": "Reviewed activation: activation, pause and archive of a flow revision will each be an OPER-007 activity entry; status unchanged (missing)."
-    },
-    "AGENT-010": {
-      "change": "changed",
-      "summary": "Agent authority and guardrails: every agent action will be an OPER-007 activity entry under the agent's grant; status unchanged (partial)."
-    },
-    "CAMP-019": {
-      "change": "changed",
-      "summary": "Status stays partial. Extend the existing typed-test journey with Activity actor/time, action/object filters, CSV and erased-contact redaction at desktop and phone widths."
-    },
-    "BUILD-002": {
-      "change": "changed",
-      "summary": "Status stays partial. Archive templates enter the library with untouched-only undo; the first save of an imported or generated design files an independent template. Existing archive draft custody retains its undo path. No migration is needed."
-    },
-    "DELIV-008": {
-      "change": "changed",
-      "summary": "Status stays partial. Carry the SendGrid Settings connection and signed webhook flow with a completed Activity receipt, Owner-only mutations and named Admin refusals. Migration 0097 is additive; existing developer inputs remain until a Settings connection is made. Resend, fresh Free/Assisted sign-in, alerts, full developer labeling, domain creation and provider sandbox proof remain open."
-    },
-    "BUILD-010": {
-      "change": "status",
-      "was": "missing",
-      "now": "partial",
-      "summary": "Generated responsive CSS and both-tree checks pass the existing 180-second canonical-save registration, including 138 adversarial cases, stored-body 375/600 standards/quirks renders with and without style, transmitted-byte accounting and Preview at 1440/390. The audit avoids sandbox child-frame discovery without losing shell rules or the eight direct email audits. Per-block controls, nested orientation and full editor acceptance remain open."
-    },
-    "BUILD-013": {
-      "change": "changed",
-      "summary": "Receiving part of BUILD-010: the generated responsive CSS and exact-byte save guard described in the BUILD-010 release receipt apply here. Status stays partial; the complete responsive authoring workflow remains open."
-    },
-    "BUILD-014": {
-      "change": "changed",
-      "summary": "Receiving part of BUILD-010: both-tree checks and hidden-compliance refusal, the 138 adversarial cases and stored-body standards/quirks renders described in the BUILD-010 release receipt apply here. Status stays partial; complete editor acceptance remains open."
-    },
-    "DELIV-009": {
-      "change": "changed",
-      "summary": "Status stays partial. Settings-connected Resend detects a day of accepted marketing handoffs without correlated signed events for the current connection. Home and current Owner and Admin notices name delivery-events-silent; approval and further handoffs remain held through original deadlines. Diagnostics, lookup facts and old connection traffic do not recover the watch. SendGrid silence, disabled signing, full flow and replacement coverage, developer authority and provider qualification remain open."
-    }
-  },
+  "version": "0.5.0",
+  "previousVersion": "0.4.0",
+  "date": "2026-11-27",
+  "contractChanges": {},
   "extensionPointChanges": [],
   "migrations": [
     {
-      "id": "0077_signup_refusal_hours.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the hourly public-signup refusal counts that the Activity log summarises."
+      "id": "0081_imported_engagement.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Imported observations are distinct from Mango sends and their results. Generic portability discovers these tables; no credentials or replay are needed. Existing revisions retain their historical default. New authored drafts copy the installation policy, then carry it through approval and dispatch."
     },
     {
-      "id": "0078_stripe_connection.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the optional Stripe connection, stored encrypted and owned by this installation: it is never exported or restored."
+      "id": "0082_campaign_attribution_policy.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Report policy is independent of immutable clicks, sources and the historical seven-day financial ledger. A read projects the selected policy over facts. Remember a received order even when a later update voids it. The legacy ledger may never have attributed it: the operator can now choose a longer w"
     },
     {
-      "id": "0079_tracking_domain.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the branded tracking host that domain setup records."
+      "id": "0083_failed_operations.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. STORE-004: a verified webhook the commerce adapter cannot read and proposal generation refused by a failed source record a failed operation on the same record as a failed sync, carrying the adapter's error. A provider delivery records at most one row; its retry after recovery completes that row."
     },
     {
-      "id": "0080_portability_import_leases.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds restore bookkeeping before any archive is admitted, so a refused restore never changes the database's schema. It uses CREATE TABLE IF NOT EXISTS."
+      "id": "0084_paid_tier.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. PUB-002: one paid tier on the owner's own Stripe account. Mango stores Stripe ids, states and the tax figures Stripe reports; never card data, never funds. A paid subscription never creates consent: paid-topic membership is read at review time from an active row and the contact's own confirmed conse"
+    },
+    {
+      "id": "0085_woocommerce_connection.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Connection authority is private installation state, excluded from archives."
+    },
+    {
+      "id": "0086_woocommerce_plugin_flows.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0087_paid_state_authority.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Existing subscriptions retain their state; the first fresh read supersedes event-second ordering. No payment or consent record is recreated. The hand-off claim fences every paid-state write, including replay/restore."
+    },
+    {
+      "id": "0089_signup_capacity.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Capacity revisions activate at a UTC window boundary. No contact data is held."
+    },
+    {
+      "id": "0090_analytics_tagging.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. NULL preserves issued and historical message URLs and their approval digests."
+    },
+    {
+      "id": "0091_capture_opt_in_modes.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0092_link_host_sources.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0093_recipient_unsubscribe_method.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Methods: 1 visible link, 2 RFC 8058 one-click, 3 authenticated SMS reply. Numeric outcomes contain no personal text."
+    },
+    {
+      "id": "0094_sender_renewal_deliveries.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Operator-only reminder claims survive replay. No contact identities or mail bodies."
+    },
+    {
+      "id": "0095_saved_report_schedules.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Reports contain aggregate figures and native operator IDs, never contact rows."
+    },
+    {
+      "id": "0096_review_loyalty_adapters.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Encrypted inbound-only connection authority is excluded from account exports. Receipt identifiers/digests contain no address, payload or contact link."
+    },
+    {
+      "id": "0097_sending_connection.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Installation authority never travels in an audience export or restored archive."
+    },
+    {
+      "id": "0098_incumbent_attestations.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. A reviewed import cannot restore subscription from authority revoked while its native stream was paused. Historical evidence may remain non-subscribed."
+    },
+    {
+      "id": "0099_flow_draft_revisions.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Inert visual flow revisions. They grant no enrolment or delivery authority."
+    },
+    {
+      "id": "0100_incumbent_review_counts.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Historical reviews do not assert a count that was never calculated."
+    },
+    {
+      "id": "0101_reusable_email_blocks.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0102_incumbent_images.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Import attempts are durable so continuation never fetches an image twice. Keep the restore engine's proven CHECK-only rebuild shape and every rowid. > statement-breakpoint > statement-breakpoint Recovery: stop writers and restore the matching pre-upgrade D1/R2 backup through rer import into an empty"
+    },
+    {
+      "id": "0103_contact_property_definitions.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Additive: legacy profile JSON is retained byte-for-byte. Typed changes use the existing contact ledger, so import undo, portability and erasure share custody. Property reads participate in Mango's existing audience-authority fence."
     },
     {
       "id": "0104_sending_event_silence.sql",
       "buyerSteps": "Back up matching source, data and private settings, then apply pending migrations in filename order before starting the new code. Additive recipient timestamps and a connection generation record only new accepted marketing and signed event provenance; earlier traffic is not inferred. Existing recipient authority, destinations and outcomes remain unchanged."
+    },
+    {
+      "id": "0105_incumbent_restrictions.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0106_contact_bulk_actions.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Frozen selections contain references only; receipts resolve identities live. Native erasure also operates when a restore tool disables foreign keys."
     }
   ],
   "breaking": false,
-  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source/D1/R2/private-settings backups. Mango 0.4.0 uses pinned @runeditrun/rer 0.2.76, Node 22.20.0 and pnpm 10.12.4. Stop dev and writers before upgrading. Back up first, then git pull --ff-only (or merge/reapply customizations deliberately), rer install, and apply migrations 0077_signup_refusal_hours through 0080_portability_import_leases in filename order (rer setup locally; rer deploy --environment NAME hosted). Earlier migration files are unchanged; never rename or renumber a migration. Run rer build before a fresh export. Base portability copies are recorded at rer-v0.2.76 (base-copies.json, verify-base drift 0); import.mjs, journal.mjs, copies.mjs and backfills.mjs are Mango adaptations recorded in edition.json. backfills.mjs keeps a write that reads a table the applied history created and dropped out of restore replays; once Base ships that rule, readopt its verbatim file. The local restore door replays this checkout's migrations, resolves Platform rer_migrations entries by SHA-256 with core- aliases, and on a Platform-migrated database skips Wrangler after checking every migration file is applied; keep that preflight. Stripe connections and role grants belong to the destination and are not restored from an archive. Keep confirmed-only resubscription, consent and opt-out precedence, suppression, exact-revision approval and uncertain-handoff fences intact. Local rer dev admits the owner through the private RER_OPEN entry; never add a captured-mail inbox or outbox. Use affected public-flow checks and CI Verify; local proof is not hosted acceptance. Refresh source:lock and integration declarations for intentional source changes. Apply 0104_sending_event_silence.sql before running the Resend silence watch. Preserve connection generations and original event timestamps; provider lookups and sender diagnostics must not certify the marketing event stream.",
-  "publicReleaseNotes": "Mango 0.4.0 (21 October 2026) adds an activity log for the Owner and Admins with filters and CSV export, keeps a removed operator's name on their work, names every blocked link and image in review and lets a Manager allow an unlisted host there, shows the SMS opt-out wording in review, and lists commerce and dormancy exclusions. It also adds an optional Stripe connection and SendGrid domain setup, both partial. A backup from an earlier Mango, including the build Run Edit Run Managed lists, now restores with rer import, also into a database Run Edit Run Platform migrated. Back up first: four additive migrations (0077-0080) apply in filename order and a 0.3.0 install keeps all its data. It pins rer 0.2.76 and adapts one Base restore rule until Base ships it. Hosted backup and restore are not built in, and Delivered, bounce and complaint reports need a SendGrid signed Event Webhook. Product screenshot: .github/assets/release/mango-0.4.0-activity-1440.png"
+  "agentUpdateInstructions": "Back up the matching source, D1 database, R2 bucket and private settings (.dev.vars, or .rer/hosted.env and the deploy receipt for a hosted copy) and exercise a restored copy. Stop rer dev, run git pull --ff-only to v0.5.0, pnpm install --frozen-lockfile, then rer setup locally or rer deploy --environment <name> hosted: both apply the 25 new migrations (0081_imported_engagement.sql through 0106_contact_bulk_actions.sql) in filename order. @runeditrun/rer moves from 0.2.85 to 0.2.134. MAIL_PROVIDER=none is new: it needs no sender or key, refuses every send as mail_off, and the owner signs in with rer signin; an existing mail configuration is unchanged.",
+  "publicReleaseNotes": "Mango 0.5.0 brings the release up to Run Edit Run 0.2.134 and lets a Business run Mango with mail off: MAIL_PROVIDER=none needs no sender or key, every send is refused as mail_off, and the owner signs in with rer signin. Since 0.4.0 it adds a paid tier on the owner's own Stripe account, WooCommerce and review/loyalty connections, imported engagement and incumbent move-in (consent attestations, restrictions, images), attribution policy, saved report schedules, analytics tagging, opt-in modes per capture point, reusable email blocks, visual flow drafts, typed contact properties and contact bulk actions, and the Decision Desk as the owner's first screen. Migrations: 0081_imported_engagement.sql, 0082_campaign_attribution_policy.sql, 0083_failed_operations.sql, 0084_paid_tier.sql, 0085_woocommerce_connection.sql, 0086_woocommerce_plugin_flows.sql, 0087_paid_state_authority.sql, 0089_signup_capacity.sql, 0090_analytics_tagging.sql, 0091_capture_opt_in_modes.sql, 0092_link_host_sources.sql, 0093_recipient_unsubscribe_method.sql, 0094_sender_renewal_deliveries.sql, 0095_saved_report_schedules.sql, 0096_review_loyalty_adapters.sql, 0097_sending_connection.sql, 0098_incumbent_attestations.sql, 0099_flow_draft_revisions.sql, 0100_incumbent_review_counts.sql, 0101_reusable_email_blocks.sql, 0102_incumbent_images.sql, 0103_contact_property_definitions.sql, 0104_sending_event_silence.sql, 0105_incumbent_restrictions.sql, 0106_contact_bulk_actions.sql."
 }

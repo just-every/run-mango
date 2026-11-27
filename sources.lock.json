@@ -1018,7 +1018,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "f7ba74c729f88d0847d030c80ed5e8dd230aff2b76eaf32e96786314b3b58947",
+      "sha256": "ce8eeb3be34688d8fdad2e038348112172d2ff69a29c555567af0779a751caba",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1046,7 +1046,7 @@
       "executable": false
     },
     "deploy.json": {
-      "sha256": "4d4c0cc0123d265471f37e80db0456e87bc3fc0752ac012134b6dbae1b89f6f1",
+      "sha256": "e62f4d1a9e07a230b38f3355e14be749094bcdc0e873904bcdd1d067e098130c",
       "executable": false
     },
     "deploy/wrangler.local.template.toml": {
@@ -1206,7 +1206,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "b5be2211f0dcb8a5c0dfbe3d0931b6e6fedd0c5676cc03ab7799c04af1d43378",
+      "sha256": "4df9a6b2e9aafadb02ec585a307a21d90810ef4dbc6ebdedac2d2f32101b6b41",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1670,7 +1670,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "06eb09f210a2b99a6d8693d368a1a575506f7a36ecfaa6486277036fe5a1afe0",
+      "sha256": "851cca62109e29a7b26c62cbe14eae3b7d7cd2f7b8994c0a3f20bf046352030c",
       "executable": false
     },
     "playwright.config.js": {
@@ -1746,11 +1746,11 @@
       "executable": false
     },
     "RELEASE-STATUS.md": {
-      "sha256": "a9e60254df55b2c4bf27644130990e909bc4092ee217e2b6ea28c730f2c1bec0",
+      "sha256": "893e72beffe16795e1f7ed1ec1516073b5720cba889bcde690130ca411571799",
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "2d0598cb3e6abe9ac5e2f87eae3dfaad9cdc34bd08f0762db7a006aee0e31a04",
+      "sha256": "34b0748da43df2f4cd44428b12b5f7a2ab7c45af5cf19e5a2e11b454b3f5b7f1",
       "executable": false
     },
     "RENDERING.md": {
@@ -2690,7 +2690,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "d718ee89c2cdc0adc549f01feb334351f2b42059ef412c561ae1b001a5cf611e",
+      "sha256": "0cdc1b1e5f41af52cf3c02972ce04f937c086d9fb7a7e9303829f447fbec8b89",
       "executable": false
     },
     "src/base/actor.ts": {
